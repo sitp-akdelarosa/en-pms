@@ -31,7 +31,6 @@
         <div class="col-6">
             <button type="submit" class="btn btn-info btn-block btn-flat margin-top-10">LOGIN</button>
         </div>
-
         <div class="col-6">
             <button type="button" class="btn btn-info btn-block btn-flat margin-top-10">RESET</button>
         </div>

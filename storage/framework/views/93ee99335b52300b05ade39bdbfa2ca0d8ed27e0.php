@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="<?php echo e(app()->getLocale()); ?>">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,7 +10,7 @@
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
 
     <?php if(Auth::check()): ?>
-        <meta name="user_id" content="<?php echo e(Auth::user()->id); ?>">
+    <meta name="user_id" content="<?php echo e(Auth::user()->id); ?>">
     <?php endif; ?>
 
     <title><?php echo e(config('app.name', 'Production Monitoring System')); ?></title>
@@ -19,13 +20,14 @@
 
     <link rel="shortcut icon" type="image/x-icon" href="<?php echo e(asset('images/favicon.ico')); ?>">
 </head>
+
 <body class="hold-transition skin-blue sidebar-mini">
     <div id="app" class="wrapper">
 
         <?php echo $__env->make('includes.layout.header', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
-        
+
         <?php echo $__env->make('includes.layout.sidebar', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
-        
+
 
         <div class="content-wrapper">
             <?php echo $__env->yieldContent('content'); ?>
@@ -46,6 +48,7 @@
 
     <script src="<?php echo e(mix('/js/main.js')); ?>"></script>
     <?php echo $__env->yieldPushContent('scripts'); ?>
-    
+
 </body>
+
 </html>

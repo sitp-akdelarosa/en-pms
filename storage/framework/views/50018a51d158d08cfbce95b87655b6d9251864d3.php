@@ -91,8 +91,8 @@
                                                 <tr>
                                                     <th width="20%">Product Code</th>
                                                     <th width="10%">Issued Qty</th>
-                                                    <th width="10%">SC. Qty</th>
-                                                    <th width="60%">SC No.</th>
+                                                    <th width="20%">SC. Qty</th>
+                                                    <th width="50%">SC No.</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="tbl_product_body"></tbody>
