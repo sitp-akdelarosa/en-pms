@@ -25,7 +25,6 @@ foreach ($user_accesses as $user_access){
                 <div class="box-body">
                 	<div class="row mb-10">
                 		<div class="col-md-12">
-                			<div class="loadingOverlay"></div>
                 			<h4>Add a Set</h4>
                 			<form method="post" action="{{ url('/masters/process-master/save-set') }}" id="frm_add_set">
                 				@csrf

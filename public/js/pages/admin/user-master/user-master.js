@@ -93,35 +93,10 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-var dataColumn = [{
-  data: 'user_id',
-  name: 'user_id'
-}, {
-  data: 'firstname',
-  name: 'firstname'
-}, {
-  data: 'lastname',
-  name: 'lastname'
-}, {
-  data: 'email',
-  name: 'email'
-}, {
-  data: 'user_type',
-  name: 'user_type'
-}, // {data: 'div_code', name: 'div_code'},
-{
-  data: 'created_at',
-  name: 'created_at'
-}, {
-  data: 'action',
-  name: 'action',
-  orderable: false,
-  searchable: false
-}];
 $(function () {
   "use strict";
 
-  getDatatable('tbl_user', userListURL, dataColumn, [], 0); //getDivisionCode('#div_code');
+  userList(); //getDivisionCode('#div_code');
 
   get_user_type('#user_type');
   modules(1, '');
@@ -132,7 +107,45 @@ $(function () {
     readPhotoURL(this);
   });
   $('#tbl_user_body').on('click', '.btn_delete_user', function (e) {
-    confirm_delete($(this).attr('data-id'), token, userDeleteURL, true, 'tbl_user', userListURL, dataColumn);
+    var id = $(this).attr('data-id');
+    swal({
+      title: "Are you sure?",
+      text: "You will not be able to recover your data!",
+      type: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#f95454",
+      confirmButtonText: "Yes",
+      cancelButtonText: "No",
+      closeOnConfirm: true,
+      closeOnCancel: false
+    }, function (isConfirm) {
+      if (isConfirm) {
+        $('.loadingOverlay').show();
+        $.ajax({
+          url: userDeleteURL,
+          type: 'POST',
+          dataType: 'JSON',
+          data: {
+            _token: token,
+            id: id
+          }
+        }).done(function (data, textStatus, xhr) {
+          if (data.status == 'success') {
+            msg(data.msg, data.status);
+          } else {
+            msg(data.msg, data.status);
+          }
+
+          userList(); // in here, the loading will close 
+
+          return data.status;
+        }).fail(function (xhr, textStatus, errorThrown) {
+          msg(errorThrown, 'error');
+        });
+      } else {
+        swal("Cancelled", "Your data is safe and not deleted.");
+      }
+    });
   });
   $('#tbl_user_body').on('click', '.btn_edit_user', function (e) {
     clear();
@@ -160,7 +173,7 @@ $(function () {
     modules($(this).val());
   });
   $('#frm_user').on('submit', function (e) {
-    $('.loadingOverlay').show();
+    $('.loadingOverlay-modal').show();
     e.preventDefault();
     var data = new FormData(this);
     $.ajax({
@@ -173,7 +186,7 @@ $(function () {
       cache: false,
       processData: false
     }).done(function (data, textStatus, xhr) {
-      $('.loadingOverlay').hide();
+      $('.loadingOverlay-modal').hide();
 
       if (textStatus) {
         if (data.status == "failed") {
@@ -182,7 +195,7 @@ $(function () {
           msg("User data was successfully saved.", textStatus);
         }
 
-        getDatatable('tbl_user', userListURL, dataColumn, [], 0);
+        userList();
       }
     }).fail(function (xhr, textStatus, errorThrown) {
       var errors = xhr.responseJSON.errors;
@@ -192,7 +205,7 @@ $(function () {
         msg(errorThrown, textStatus);
       }
 
-      $('.loadingOverlay').hide();
+      $('.loadingOverlay-modal').hide();
     });
   });
 });
@@ -232,8 +245,7 @@ function clear() {
 
 function modules(user_type) {
   var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-  console.log(user_type);
-  $('.loadingOverlay').show();
+  $('.loadingOverlay-modal').show();
   tbl = '';
   $('#tbl_modules_body').html(tbl);
   var d = {
@@ -246,7 +258,7 @@ function modules(user_type) {
     dataType: 'JSON',
     data: d
   }).done(function (data, textStatus, xhr) {
-    $('.loadingOverlay').hide();
+    $('.loadingOverlay-modal').hide();
 
     if (data.length < 1) {
       tbl = '<tr>' + '<td colspan="4">No data displayed.</td>' + '</tr>';
@@ -267,6 +279,91 @@ function modules(user_type) {
     }
   }).fail(function (xhr, textStatus, errorThrown) {
     msg(errorThrown, textStatus);
+  });
+}
+
+function userList() {
+  $('.loadingOverlay').show();
+  $.ajax({
+    url: userListURL,
+    type: 'GET',
+    dataType: 'JSON',
+    data: {
+      _token: token
+    }
+  }).done(function (data, textStatus, xhr) {
+    var table = $('#tbl_user');
+    table.dataTable().fnClearTable();
+    table.dataTable().fnDestroy();
+    table.dataTable({
+      data: data,
+      processing: true,
+      deferRender: true,
+      responsive: true,
+      language: {
+        aria: {
+          sortAscending: ": activate to sort column ascending",
+          sortDescending: ": activate to sort column descending"
+        },
+        emptyTable: "No data available in table",
+        info: "Showing _START_ to _END_ of _TOTAL_ records",
+        infoEmpty: "No records found",
+        infoFiltered: "(filtered1 from _MAX_ total records)",
+        lengthMenu: "Show _MENU_",
+        search: "Search:",
+        zeroRecords: "No matching records found",
+        paginate: {
+          "previous": "Prev",
+          "next": "Next",
+          "last": "Last",
+          "first": "First"
+        }
+      },
+      pageLength: 10,
+      columnDefs: [{
+        orderable: false,
+        targets: [6]
+      }, {
+        searchable: false,
+        targets: [6]
+      }],
+      order: [[5, "desc"]],
+      columns: [{
+        data: 'user_id',
+        name: 'user_id'
+      }, {
+        data: 'firstname',
+        name: 'firstname'
+      }, {
+        data: 'lastname',
+        name: 'lastname'
+      }, {
+        data: 'email',
+        name: 'email'
+      }, {
+        data: 'user_type',
+        name: 'user_type'
+      }, {
+        data: 'created_at',
+        name: 'created_at'
+      }, {
+        data: function data(x) {
+          return '<button type="button" class="btn btn-sm bg-blue btn_edit_user" data-id="' + x.id + '">' + '<i class="fa fa-edit"></i>' + '</button>' + '<button type="button" class="btn btn-sm bg-red btn_delete_user permission-button" data-id="' + x.id + '">' + '<i class="fa fa-trash"></i>' + '</button>';
+        },
+        name: 'action',
+        orderable: false,
+        searchable: false
+      }],
+      "initComplete": function initComplete() {
+        $('.loadingOverlay').hide();
+      },
+      "fnDrawCallback": function fnDrawCallback() {}
+    });
+  }).fail(function (xhr, textStatus, ErrMsg) {
+    var msgErr = xhr.responseJSON.message;
+    msg(msgErr, textStatus);
+  }).always(function () {
+    console.log("complete");
   });
 } // function getdivisionsuggest(){
 //     var options = '';
@@ -308,7 +405,7 @@ function modules(user_type) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\xampp\htdocs\en-pms\resources\assets\js\pages\admin\user-master\user-master.js */"./resources/assets/js/pages/admin/user-master/user-master.js");
+module.exports = __webpack_require__(/*! C:\laragon\www\en-pms\resources\assets\js\pages\admin\user-master\user-master.js */"./resources/assets/js/pages/admin/user-master/user-master.js");
 
 
 /***/ })

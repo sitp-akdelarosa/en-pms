@@ -23,7 +23,6 @@ foreach ($user_accesses as $user_access){
 
             <div class="box">
                 <div class="box-body">
-                    <div class="loadingOverlay"></div>
 
                     <form id="frm_division" method="POST" action="{{ route('masters.division-master.save') }}" role="form">
                     	@csrf

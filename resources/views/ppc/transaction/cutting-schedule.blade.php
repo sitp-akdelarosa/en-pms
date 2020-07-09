@@ -84,7 +84,6 @@ if ($exist == 0) {
 
 
                     <div class="col-md-7">
-                        <div class="loadingOverlay"></div>
 
                         <form id="frm_cut_sched">
                             <div class="form-group row">

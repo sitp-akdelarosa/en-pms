@@ -53256,7 +53256,7 @@ window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0___default.a({
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\xampp\htdocs\en-pms\resources\assets\js\app.js */"./resources/assets/js/app.js");
+module.exports = __webpack_require__(/*! C:\laragon\www\en-pms\resources\assets\js\app.js */"./resources/assets/js/app.js");
 
 
 /***/ })

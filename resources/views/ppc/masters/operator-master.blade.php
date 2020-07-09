@@ -10,7 +10,6 @@
         <div class="col-lg-6 col-md-8 col-sm-12 col-xs-12">
             <div class="box">
                 <div class="box-body">
-                    <div class="loadingOverlay"></div>
 
                     <form method="post" action="{{ url('/masters/operator-master/save') }}" id="frm_operator">
                         @csrf

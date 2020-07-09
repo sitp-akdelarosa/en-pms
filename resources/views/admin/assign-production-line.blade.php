@@ -14,7 +14,6 @@ foreach ($user_accesses as $user_access){
     }
 ?>
 
-<div class="loadingOverlay"></div>
 
 <section class="content-header">
     <h1>Assign Product Line</h1>

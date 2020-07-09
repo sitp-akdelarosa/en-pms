@@ -38,47 +38,20 @@ class UserController extends Controller
 
     public function user_list()
     {
-        $users = DB::table('users as u')->orderBy('u.id','desc')
-                    ->select([
-                        DB::raw("u.id as id"),
-                        DB::raw("u.user_id as user_id"),
-                        DB::raw("u.firstname as firstname"),
-                        DB::raw("u.lastname as lastname"),
-                        DB::raw("ifnull(u.email,'') as email"),
-                        DB::raw("ut.description as user_type"),
-                        DB::raw("u.div_code as div_code"),
-                        DB::raw("DATE_FORMAT(u.created_at, '%m/%d/%Y %h:%i %p') as created_at")
-                    ])
-                    ->join('admin_user_types as ut','u.user_type','=','ut.id');
+        $users = DB::select("SELECT u.id as id,
+                                   u.user_id as user_id,
+                                   u.firstname as firstname,
+                                   u.lastname as lastname,
+                                   ifnull(u.email,'') as email,
+                                   ut.description as user_type,
+                                   u.div_code as div_code,
+                                   DATE_FORMAT(u.created_at, '%Y/%m/%d %h:%i %p') as created_at
+                            FROM users as u
+                            INNER JOIN  admin_user_types as ut 
+                            ON u.user_type =  ut.id
+                            ORDER BY u.id DESC");
 
-        return DataTables::of($users)
-                        ->addColumn('action', function($data) {
-                            $access = AdminModuleAccess::where('user_id',Auth::user()->id)
-                                                    ->where('code','A0001')
-                                                    ->select('access')->first();
-                            $permission = '';
-
-                            if (isset($access->access)) {
-                                switch ($access->access) {
-                                    case 2:
-                                        $permission = 'disabled="true"';
-                                        break;
-                                    
-                                    default:
-                                        $permission = '';
-                                        break;
-                                }
-                            }
-                            
-
-                            return '<button type="button" class="btn btn-sm bg-blue btn_edit_user" data-id="'.$data->id.'">
-                                        <i class="fa fa-edit"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-sm bg-red btn_delete_user" data-id="'.$data->id.'" '.$permission.'>
-                                        <i class="fa fa-trash"></i>
-                                    </button>';
-                        })
-                        ->make(true);
+        return $users;
     }
 
     public function save(Request $req)

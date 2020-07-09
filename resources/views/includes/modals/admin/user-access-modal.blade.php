@@ -10,7 +10,7 @@
                 </div>
 
                 <div class="modal-body table-responsive">
-                    <div class="loadingOverlay"></div>
+                    <div class="loadingOverlay-modal"></div>
                     <div class="row">
                         <div class="col-md-4">
 							<div class="form-group row">

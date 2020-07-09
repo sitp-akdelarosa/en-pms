@@ -167,7 +167,7 @@ function makeOperatorTable(arr) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\xampp\htdocs\en-pms\resources\assets\js\pages\production\reports\operators-output.js */"./resources/assets/js/pages/production/reports/operators-output.js");
+module.exports = __webpack_require__(/*! C:\laragon\www\en-pms\resources\assets\js\pages\production\reports\operators-output.js */"./resources/assets/js/pages/production/reports/operators-output.js");
 
 
 /***/ })

@@ -55,7 +55,6 @@ foreach ($user_accesses as $user_access){
 
                 <div class="row mb-10">
                 	<div class="col-md-3">
-                        <div class="loadingOverlay"></div>
                 		<input class="clear" type="hidden" name="item_id" id="item_id">
                         <input class="clear" type="hidden" name="save_issued_qty" id="save_issued_qty">
                         <div class="form-group row">

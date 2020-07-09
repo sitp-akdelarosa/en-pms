@@ -18,7 +18,6 @@ foreach ($user_accesses as $user_access){
 </section>
 
 <section class="content">
-    <div class="loadingOverlay"></div>
     
 	<div class="row justify-content-center">
         <div class="col-lg-8 col-md-10 col-sm-12 col-xs-12">

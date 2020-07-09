@@ -24,6 +24,8 @@
 <body class="hold-transition skin-blue sidebar-mini">
     <div id="app" class="wrapper">
 
+        <div class="loadingOverlay"></div>
+        
         @include('includes.layout.header')
 
         @include('includes.layout.sidebar')

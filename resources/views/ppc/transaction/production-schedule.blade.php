@@ -26,7 +26,7 @@ foreach ($user_accesses as $user_access){
         <div class="tab-content">
 
             <div class="tab-pane active" id="production_summary">
-                <div class=".loadingOverlay"></div>
+                
                 <div class="row justify-content-center">
                     <div class="col-md-8">
                         <div class="form-group row">

@@ -46,7 +46,7 @@ foreach ($user_accesses as $user_access){
         <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
             <div class="box">
                 <div class="box-body">
-                    <div class="loadingOverlay"></div>
+                    
                     <div class="table-responsive">
                         <table class="table table-sm table-hover table-striped dt-responsive nowrap mb-10" id="tbl_Upload" style="width: 100%">
                             <thead class="thead-dark">

@@ -144,7 +144,7 @@ function getTimeline(user_id) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\xampp\htdocs\en-pms\resources\assets\js\pages\profile.js */"./resources/assets/js/pages/profile.js");
+module.exports = __webpack_require__(/*! C:\laragon\www\en-pms\resources\assets\js\pages\profile.js */"./resources/assets/js/pages/profile.js");
 
 
 /***/ })

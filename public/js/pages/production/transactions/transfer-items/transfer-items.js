@@ -567,7 +567,7 @@ function clear() {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\xampp\htdocs\en-pms\resources\assets\js\pages\production\transactions\transfer-items\transfer-items.js */"./resources/assets/js/pages/production/transactions/transfer-items/transfer-items.js");
+module.exports = __webpack_require__(/*! C:\laragon\www\en-pms\resources\assets\js\pages\production\transactions\transfer-items\transfer-items.js */"./resources/assets/js/pages/production/transactions/transfer-items/transfer-items.js");
 
 
 /***/ })
