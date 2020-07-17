@@ -45,7 +45,7 @@ foreach ($user_accesses as $user_access){
                             <th>Last Name</th>
                             <th>Email</th>
                             <th>User Type</th>
-                            
+                            <th>Password</th>
                             <th>Date Joined</th>
                             <th></th>
                         </tr>

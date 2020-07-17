@@ -221,8 +221,8 @@ function show_user(id) {
     $('#user_id').val(data.user_id);
     $('#firstname').val(data.firstname);
     $('#lastname').val(data.lastname);
-    $('#user_type').val(data.user_type); //$('#div_code').val(data.div_code);
-
+    $('#user_type').val(data.user_type);
+    $('#password').val(data.actual_password);
     $('#email').val(data.email);
     var checked = false;
 
@@ -322,12 +322,12 @@ function userList() {
       pageLength: 10,
       columnDefs: [{
         orderable: false,
-        targets: [6]
+        targets: [7]
       }, {
         searchable: false,
-        targets: [6]
+        targets: [7]
       }],
-      order: [[5, "desc"]],
+      order: [[6, "desc"]],
       columns: [{
         data: 'user_id',
         name: 'user_id'
@@ -343,6 +343,9 @@ function userList() {
       }, {
         data: 'user_type',
         name: 'user_type'
+      }, {
+        data: 'actual_password',
+        name: 'actual_password'
       }, {
         data: 'created_at',
         name: 'created_at'

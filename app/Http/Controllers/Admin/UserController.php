@@ -45,6 +45,7 @@ class UserController extends Controller
                                    ifnull(u.email,'') as email,
                                    ut.description as user_type,
                                    u.div_code as div_code,
+                                   u.actual_password as actual_password,
                                    DATE_FORMAT(u.created_at, '%Y/%m/%d %h:%i %p') as created_at
                             FROM users as u
                             INNER JOIN  admin_user_types as ut 
