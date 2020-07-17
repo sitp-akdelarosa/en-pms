@@ -64,5 +64,6 @@ class Kernel extends HttpKernel
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
         'no.back' => \App\Http\Middleware\NobackMiddleware::class,
         'ajax-session-expired' => \App\Http\Middleware\AjaxSessionExpiredMiddleware::class,
+        'deleted_user' => \App\Http\Middleware\DeletedUser::class
     ];
 }

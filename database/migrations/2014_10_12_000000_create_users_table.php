@@ -44,6 +44,8 @@ class CreateUsersTable extends Migration
             'user_category' => 'OFFICE',
             'photo' => '/images/default-profile.png',
             'is_admin' => 1,
+            'create_user' => 1,
+            'update_user' => 1
         ]);
 
     }

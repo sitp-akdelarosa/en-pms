@@ -3,6 +3,13 @@
 @section('content')
 <form action="{{ route('login') }}" method="post" class="form-element">
     @csrf
+
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+    
     <div class="form-group has-feedback">
         <input type="text" class="form-control{{ $errors->has('user_id') ? ' is-invalid' : '' }}" name="user_id" placeholder="User ID" value="{{ old('user_id') }}" required autofocus>
         <span class="ion ion-person form-control-feedback"></span>
