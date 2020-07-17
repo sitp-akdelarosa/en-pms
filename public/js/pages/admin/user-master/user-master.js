@@ -357,6 +357,12 @@ function userList() {
         orderable: false,
         searchable: false
       }],
+      createdRow: function createdRow(row, data, dataIndex) {
+        if (data.del_flag === 1) {
+          $(row).css('background-color', '#ff6266');
+          $(row).css('color', '#fff');
+        }
+      },
       "initComplete": function initComplete() {
         $('.loadingOverlay').hide();
       },

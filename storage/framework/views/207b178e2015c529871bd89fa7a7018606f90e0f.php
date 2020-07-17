@@ -1,6 +1,14 @@
 <?php $__env->startSection('content'); ?>
 <form action="<?php echo e(route('login')); ?>" method="post" class="form-element">
     <?php echo csrf_field(); ?>
+
+    <?php if(session('error')): ?>
+        <div class="alert alert-danger">
+            <?php echo e(session('error')); ?>
+
+        </div>
+    <?php endif; ?>
+    
     <div class="form-group has-feedback">
         <input type="text" class="form-control<?php echo e($errors->has('user_id') ? ' is-invalid' : ''); ?>" name="user_id" placeholder="User ID" value="<?php echo e(old('user_id')); ?>" required autofocus>
         <span class="ion ion-person form-control-feedback"></span>
