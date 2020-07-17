@@ -233,7 +233,7 @@ function get_jono() {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\laragon\www\en-pms\resources\assets\js\pages\ppc\dashboard\dashboard.js */"./resources/assets/js/pages/ppc/dashboard/dashboard.js");
+module.exports = __webpack_require__(/*! C:\xampp\htdocs\en-pms\resources\assets\js\pages\ppc\dashboard\dashboard.js */"./resources/assets/js/pages/ppc/dashboard/dashboard.js");
 
 
 /***/ })
