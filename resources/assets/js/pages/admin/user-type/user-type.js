@@ -1,21 +1,12 @@
-var dataColumn = [
-    {data: function(data) {
-    	return "<input type='checkbox' class='table-checkbox check_item' value='"+data.id+"'>";
-    }, name: 'id', orderable: false, searchable: false},
-    {data: 'action', name: 'action', orderable: false, searchable: false},
-    {data: 'description', name: 'description'},
-    {data: 'category', name: 'category'},
-];
-
 $( function() {
 	checkAllCheckboxesInTable('.check_all','.check_item');
-	getDatatable('tbl_type',typeListURL,dataColumn,[],0);
-
 	check_permission(code_permission);
+
+	getUserType();
 
 	$('#frm_user_type').on('submit', function(e) {
 		e.preventDefault();
-   		$.ajax({
+		$.ajax({
 			url: $(this).attr('action'),
 			type: 'POST',
 			dataType: 'JSON',
@@ -23,7 +14,7 @@ $( function() {
 		}).done(function(data, textStatus, xhr) {
 			if (textStatus) {
 				msg("User Type was successfully added.",textStatus);
-				getDatatable('tbl_type',typeListURL,dataColumn,[],0);
+				getUserType();
 			}
 			clear();
 			$('#btn_save').removeClass('bg-green');
@@ -56,14 +47,127 @@ function clear() {
 	$('.clear').val('');
 }
 
+function getUserType() {
+	$('.loadingOverlay').show();
+	$.ajax({
+		url: typeListURL,
+		type: 'GET',
+		dataType: 'JSON',
+		data: {
+			_token:token
+		},
+	}).done(function(data, textStatus, xhr) {
+		UserTypeDataTable(data);
+	}).fail(function(xhr, textStatus, errorThrown) {
+		var errors = xhr.responseJSON.errors;
+		showErrors(errors);
+	});
+}
+
+function UserTypeDataTable(dataArr) {
+	var table = $('#tbl_type');
+
+        table.dataTable().fnClearTable();
+        table.dataTable().fnDestroy();
+        table.dataTable({
+            data: dataArr,
+            processing: true,
+            deferRender: true,
+            language: {
+                aria: {
+                    sortAscending: ": activate to sort column ascending",
+                    sortDescending: ": activate to sort column descending"
+                },
+                emptyTable: "No data available in table",
+                info: "Showing _START_ to _END_ of _TOTAL_ records",
+                infoEmpty: "No records found",
+                infoFiltered: "(filtered1 from _MAX_ total records)",
+                lengthMenu: "Show _MENU_",
+                search: "Search:",
+                zeroRecords: "No matching records found",
+                paginate: {
+                    "previous":"Prev",
+                    "next": "Next",
+                    "last": "Last",
+                    "first": "First"
+                }
+            },
+            searching: false,
+            pageLength: 10,
+            columns: [
+                {data: function(x) {
+                	return "<input type='checkbox' class='table-checkbox check_item' value='"+x.id+"'>";
+                }, name: 'id', orderable: false, searchable: false},
+                {data: function (x) {
+                	return '<button type="type" class="btn btn-sm bg-blue btn_edit" data-id="'+x.id+'" '+
+                				'data-description="'+x.description+'" '+
+                				'data-category="'+x.categor+'"> '+
+                				'<i class="fa fa-edit"></i>'+
+                			'</button>';
+                }, orderable: false, searchable: false},
+                {data: 'description', name: 'description'},
+                {data: 'category', name: 'category'},
+            ],
+            // createdRow: function (row, data, dataIndex) {
+            //     if (data.del_flag === 1) {
+            //         $(row).css('background-color', '#ff6266');
+            //         $(row).css('color', '#fff');
+            //     }
+            // },
+            "initComplete": function () {
+                $('.loadingOverlay').hide();
+            },
+            "fnDrawCallback": function () {
+            },
+        });
+}
+
 function delete_items(checkboxClass,deleteURL) {
 	var chkArray = [];
-	$(checkboxClass+":checked").each(function() {
-		chkArray.push($(this).val());
-	});
+	var table = $('#tbl_type').DataTable();
+
+	for (var x = 0; x < table.context[0].aoData.length; x++) {
+		var DataRow = table.context[0].aoData[x];
+		if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
+			chkArray.push(table.context[0].aoData[x].anCells[0].firstChild.value)
+		}
+	}
+
+	// $(checkboxClass+":checked").each(function() {
+	// 	chkArray.push($(this).val());
+	// });
 
 	if (chkArray.length > 0) {
-		confirm_delete(chkArray,token,deleteURL,true,'tbl_type',typeListURL,dataColumn);
+		swal({
+			title: "Are you sure?",
+			text: "You will not be able to recover your data!",
+			type: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#f95454",
+			confirmButtonText: "Yes",
+			cancelButtonText: "No",
+			closeOnConfirm: true,
+			closeOnCancel: false
+		}, function(isConfirm){
+			if (isConfirm) {
+				$.ajax({
+					url: deleteURL,
+					type: 'POST',
+					dataType: 'JSON',
+					data: {
+						_token:token,
+						id: chkArray
+					},
+				}).done(function(data, textStatus, xhr) {
+					msg(data.msg,data.status);
+					getUserType();
+				}).fail(function(xhr, textStatus, errorThrown) {
+					msg(errorThrown,'error');
+				});
+			} else {
+				swal("Cancelled", "Your data is safe and not deleted.");
+			}
+		});
 	} else {
 		msg("Please select at least 1 item." , "warning");
 	}

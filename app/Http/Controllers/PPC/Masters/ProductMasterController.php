@@ -57,7 +57,7 @@ class ProductMasterController extends Controller
                 'pca.character_code',
                 'pca.description'
             )
-            ->orderBy('pca.id', 'asc')->get();
+            ->orderBy('pca.id', 'desc')->get();
             
 
 
