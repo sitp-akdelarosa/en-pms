@@ -45,6 +45,34 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-12">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Plant:</span>
+                            </div>
+                            <input type="text" class="form-control input-sm validate clear" name="plant" id="plant">
+                            <div id="plant_feedback"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-12">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Print Format:</span>
+                            </div>
+                            <select class="form-control input-sm validate clear" name="print_format" id="print_format">
+                                <option value=""></option>
+                                <option value="material_withdrawal">Material Withdrawal</option>
+                                <option value="same_with_cutting_schedule">Same w/ Cutting Schedule</option>
+                            </select>
+                            <div id="print_format_feedback"></div>
+                        </div>
+                    </div>
+                </div>
                         
             </div>
             <div class="modal-footer">

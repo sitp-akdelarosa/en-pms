@@ -1,5 +1,3 @@
-
-
 <?php $__env->startPush('styles'); ?>
     <style>
         .stuck {

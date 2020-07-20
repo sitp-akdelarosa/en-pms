@@ -16,7 +16,6 @@ foreach ($user_accesses as $user_access){
 </section>
 
 <section class="content">
-    <div class="loadingOverlay"></div>
     
 	<div class="row justify-content-center">
         <div class="col-lg-8 col-md-10 col-sm-12 col-xs-12">
@@ -58,12 +57,15 @@ foreach ($user_accesses as $user_access){
                                     <th>Alloy</th>
                                     <th>Schedule</th>
                                     <th>Size</th>
+                                    <th>Width</th>
+                                    <th>Length</th>
                                     <th>Qty</th>
                                     <th>UOM</th>
                                     <th>Heat No.</th>
                                     <th>Invoice No.</th>
                                     <th>Received Date</th>
                                     <th>Supplier</th>
+                                    <th>Supplier Heat No.</th>
                                 </tr>
                             </thead>
                             <tbody id="tbl_materials_body"></tbody>
@@ -72,8 +74,17 @@ foreach ($user_accesses as $user_access){
                     
                     <div class="row justify-content-center">
                         <div class="col-md-2">
+                            <button id="btn_zero" class="btn btn-lg btn-block bg-blue mb-3">Include 0 quantity</button>
+                        </div>
+                        <div class="col-md-2">
                             <button id="btn_add" class="btn btn-lg btn-block bg-green mb-3 permission-button">
                                 <i class="fa fa-plus"></i> Add Materials
+                            </button>
+                        </div>
+
+                        <div class="col-md-2">
+                            <button id="btn_check_unregistered" class="btn btn-lg btn-block bg-purple mb-3 permission-button">
+                                <i class="fa fa-check"></i> Check Unregistered Materials
                             </button>
                         </div>
                     </div>
@@ -96,6 +107,8 @@ foreach ($user_accesses as $user_access){
         var GetMaterialCode = "<?php echo e(url('/transaction/update-inventory/GetMaterialCode')); ?>";
         var GetMaterialCodeDetailsurl = "<?php echo e(url('/transaction/update-inventory/GetMaterialCodeDetails')); ?>";
         var code_permission = 'T0001';
+        var downloadNonexistingURL = "<?php echo e(url('/transaction/update-inventory/download-unregistered-materials')); ?>";
+        var getNonexistingURL = "<?php echo e(url('/transaction/update-inventory/get-unregistered-materials')); ?>";
     </script>
     <script type="text/javascript" src="<?php echo e(mix('/js/pages/ppc/transactions/update-inventory/update-inventory.js')); ?>"></script>
 

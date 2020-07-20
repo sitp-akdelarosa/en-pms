@@ -24,6 +24,7 @@ foreach ($user_accesses as $user_access){
         <div class="tab-content">
 
             <div class="tab-pane active" id="production_summary">
+                
                 <div class="row justify-content-center">
                     <div class="col-md-8">
                         <div class="form-group row">
@@ -93,6 +94,15 @@ foreach ($user_accesses as $user_access){
                             </select>
                         </div>
                     </div>
+
+                    <div class="offset-md-6 col-md-4">
+                        <div class="input-group input-group-sm mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Withdrawal Number</span>
+                            </div>
+                            <input type="text" class="form-control clear" name="rmw_no" id="rmw_no">
+                        </div>
+                    </div>
                 </div>
 
                 <div class="row justify-content-center mb-15">
@@ -102,15 +112,15 @@ foreach ($user_accesses as $user_access){
                             <table class="table table-sm table-striped dt-responsive nowrap" style="width:100%" id="tbl_jo_details">
                                 <thead class="thead-dark">
                                     <tr>
-                                        <th></th>
-                                        <th>SC No.</th>
-                                        <th>Product Code</th>
-                                        <th>Description</th>
-                                        <th>Back Order Qty.</th>
-                                        <th>Sched. Qty.</th>
-                                        <th>Material Heat No.</th>
-                                        <th>Material Used</th>
-                                        <th>Lot No.</th>
+                                        <th width="5%"></th>
+                                        <th width="10%">SC No.</th>
+                                        <th width="10%">Product Code</th>
+                                        <th width="15%">Description</th>
+                                        <th width="15%">Back Order Qty.</th>
+                                        <th width="15%">Material Heat No.</th>
+                                        <th width="10%">Material Used</th>
+                                        <th width="10%">Lot No.</th>
+                                        <th width="10%">Sched. Qty.</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbl_jo_details_body"></tbody>
@@ -136,7 +146,18 @@ foreach ($user_accesses as $user_access){
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">Total Schedule Quantity:</span>
                                         </div>
-                                        <input type="text" class="form-control clear" name="total_sched_qty" id="total_sched_qty" readonly value="0">
+                                        <input type="number" class="form-control clear" name="total_sched_qty" id="total_sched_qty" readonly value="0">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-sm-12">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Total Heat No. Qty.:</span>
+                                        </div>
+                                        <input type="number" class="form-control clear" name="total_heat_qty" id="total_heat_qty" readonly value="0">
                                     </div>
                                 </div>
                             </div>
@@ -259,6 +280,7 @@ foreach ($user_accesses as $user_access){
         var token = $('meta[name="csrf-token"]').attr('content');
         var datatableUpload = "<?php echo e(url('/transaction/production-schedule/get-production-list')); ?>";
         var getMaterialUsedURL = "<?php echo e(url('/transaction/production-schedule/get-material-used')); ?>";
+        var getStandardMaterialUsedURL = "<?php echo e(url('/transaction/production-schedule/get-standard-material-used')); ?>";
         var getMaterialHeatNoURL = "<?php echo e(url('/transaction/production-schedule/get-material-heat-no')); ?>";
         var savejodetailsURL = "<?php echo e(url('/transaction/production-schedule/SaveJODetails')); ?>";
         var getjosuggest = "<?php echo e(url('/transaction/production-schedule/JOsuggest')); ?>";

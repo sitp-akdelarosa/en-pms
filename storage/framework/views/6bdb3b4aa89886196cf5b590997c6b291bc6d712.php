@@ -50,7 +50,7 @@ foreach ($user_accesses as $user_access){
                                         </div>
                                         <input class="form-control input-sm validate clear" name="search_jo" id="search_jo">
                                         <div id="search_jo_feedback"></div>
-                                        <button type="submit" class="btn btn-sm bg-blue">Search</button>
+                                        <!-- <button type="submit" class="btn btn-sm bg-blue">Search</button> -->
                                     </div>
                                 </div>
                             </div>

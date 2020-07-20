@@ -21,7 +21,6 @@ foreach ($user_accesses as $user_access){
 
             <div class="box">
                 <div class="box-body">
-                    <div class="loadingOverlay"></div>
 
                     <form id="frm_division" method="POST" action="<?php echo e(route('masters.division-master.save')); ?>" role="form">
                     	<?php echo csrf_field(); ?>
@@ -65,10 +64,19 @@ foreach ($user_accesses as $user_access){
                                 </div>
 
                                 <div class="form-group row">
-                                	<label for="leader" class="col-sm-3 control-label">Leader:</label>
+                                    <label for="process" class="col-sm-3 control-label">Product Line:</label>
+                                    <div class="col-sm-9">
+                                        <button type="button" class="btn btn-block btn-sm bg-green" id="btn_prodline">
+                                            Assign Product Line
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="leader" class="col-sm-3 control-label">Leader:</label>
                                     <div class="col-sm-9">
                                         <select name="leader" class="form-control form-control-sm select-validate clear" id="leader"></select>
-                                   		<input type="hidden" name="user_id" id="user_id">
+                                        <input type="hidden" name="user_id" id="user_id">
                                         <div id="leader_feedback"></div>
                                     </div>
                                 </div>
@@ -110,11 +118,12 @@ foreach ($user_accesses as $user_access){
                                         	<input type="checkbox" class="table-checkbox check_all">
                                         </th>
                                         <th width="5%"></th>
-                                        <th width="20%">Division Code</th>
-                                        <th width="20%">Division Name</th>
+                                        <th width="15%">Division Code</th>
+                                        <th width="15%">Division Name</th>
                                         <th width="10%">Plant</th>
                                         
                                         <th width="20%">Leader</th>
+                                        <th width="10%"></th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbl_division_body"></tbody>
@@ -147,11 +156,14 @@ foreach ($user_accesses as $user_access){
 <?php $__env->startPush('scripts'); ?>
 	<script type="text/javascript">
 		var token = $('meta[name="csrf-token"]').attr('content');
-		var divListURL = "<?php echo e(url('masters/division-master/list')); ?>";
+        var divListURL = "<?php echo e(url('masters/division-master/list')); ?>";
+        var disableEnableDivisionURL = "<?php echo e(url('masters/division-master/disableEnableDivision')); ?>";
 		var divDeleteURL = "<?php echo e(url('masters/division-master/destroy')); ?>";
 		var getuserIDURL = "<?php echo e(url('masters/division-master/getuserID')); ?>";
-		var getProcessURL = "<?php echo e(url('masters/division-master/get-process')); ?>";
+        var getProcessURL = "<?php echo e(url('masters/division-master/get-process')); ?>";
+		var getProductlineURL = "<?php echo e(url('masters/division-master/get-productline')); ?>";        
         var code_permission = "M0001";
+        var dropdownProduct = "<?php echo e(url('/admin/assign-production-line/dropdownProduct')); ?>";
         
 	</script>
 	<script type="text/javascript" src="<?php echo e(asset('/js/pages/ppc/masters/division-master/division-master.js')); ?>"></script>

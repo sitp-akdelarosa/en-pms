@@ -121,6 +121,7 @@ foreach ($user_accesses as $user_access){
 
             <div class="tab-pane" id="product_code_tab">
 		        <div class="row mb-5">
+                    <div class="loading"></div>
 		            <div class="col-md-5">
 
 		                <div class="form-group row mb-10">
@@ -135,11 +136,6 @@ foreach ($user_accesses as $user_access){
                             <input type="hidden" name="product_type" id="product_type" class="clear">
                             <input type="hidden" name="product_id" id="product_id" class="clear">
 
-                            <input type="hidden" name="alloy" id="alloy" class="clear">
-                            <input type="hidden" name="item" id="item" class="clear">
-                            <input type="hidden" name="size" id="size" class="clear">
-                            <input type="hidden" name="class" id="class" class="clear">
-
                             <div class="form-group row">
                                 <label for="" class="control-label mt-5 col-sm-3">Product Code:</label>
                                 <div class="col-sm-9">
@@ -153,6 +149,40 @@ foreach ($user_accesses as $user_access){
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control validate clear" name="code_description" id="code_description">
                                     <div id="code_description_feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="" class="control-label mt-5 col-sm-3">Alloy:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control clear" name="alloy" id="alloy">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="" class="control-label mt-5 col-sm-3">Item:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control clear" name="item" id="item">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="" class="control-label mt-5 col-sm-3">Size:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control clear" name="size" id="size" >
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="" class="control-label mt-5 col-sm-3">Class:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control clear" name="class" id="class" >
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="" class="control-label mt-5 col-sm-3">Standard Material Used:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control clear" name="standard_material_used" id="standard_material_used" >
                                 </div>
                             </div>
 
@@ -346,7 +376,7 @@ foreach ($user_accesses as $user_access){
 
 		            <div class="col-md-7">
 		                <div class="table-reponsive">
-		                    <table class="table table-striped table-sm mb-10 dt-responsive nowrap" id="tbl_product_code" style="width:100%">
+		                    <table class="table table-striped table-sm mb-10 dt-responsive display nowrap" id="tbl_product_code" style="width:100%">
 		                        <thead class="thead-dark">
 		                            <tr>
 		                                <th width="5%">
@@ -396,6 +426,7 @@ foreach ($user_accesses as $user_access){
         var getProductLineURL = "<?php echo e(url('/masters/product-master/get-product-line')); ?>";
         var getProcessURL = "<?php echo e(url('/masters/product-master/getProcessURL')); ?>";
         var getdropdownproduct = "<?php echo e(url('/masters/product-master/get_dropdown_product')); ?>";
+        var getStandardMaterialURL = "<?php echo e(url('/masters/product-master/get-standard-material')); ?>";
 
         var getSetURL = "<?php echo e(url('masters/process-master/get-set')); ?>";
 
