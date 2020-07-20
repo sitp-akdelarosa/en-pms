@@ -352,11 +352,11 @@ function checkAllCheckboxesInTable(tblID, checkAllClass, checkItemClass, deleteB
             }
         }
 
-        if (checked > 0) {
-            $(deleteButtonID).prop('disabled', false);
-        } else {
-            $(deleteButtonID).prop('disabled', true);
-        }
+        // if (checked > 0) {
+        //     $(deleteButtonID).prop('disabled', false);
+        // } else {
+        //     $(deleteButtonID).prop('disabled', true);
+        // }
     });
 }
 

@@ -35,19 +35,21 @@ class UserTypeController extends Controller
                         'id',
                         'description',
                         'category'
-                    ]);
-        return DataTables::of($type)
-                        ->editColumn('id', function($data) {
-                            return $data->id;
-                        })
-                        ->addColumn('action', function($data) {
-                            return '<a class="btn btn-sm bg-blue btn_edit" data-id="'.$data->id.'" 
-                                        data-description="'.$data->description.'"
-                                        data-category="'.$data->category.'">
-                                        <i class="fa fa-edit"></i>
-                                    </a>';
-                        })
-                        ->make(true);
+                    ])->get();
+        
+        return response()->json($type);
+        // return DataTables::of($type)
+        //                 ->editColumn('id', function($data) {
+        //                     return $data->id;
+        //                 })
+        //                 ->addColumn('action', function($data) {
+        //                     return '<a class="btn btn-sm bg-blue btn_edit" data-id="'.$data->id.'" 
+        //                                 data-description="'.$data->description.'"
+        //                                 data-category="'.$data->category.'">
+        //                                 <i class="fa fa-edit"></i>
+        //                             </a>';
+        //                 })
+        //                 ->make(true);
     }
 
     public function save(Request $req)

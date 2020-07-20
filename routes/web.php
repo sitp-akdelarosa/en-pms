@@ -29,7 +29,7 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::group(['middleware' => ['ppc', 'auth', 'no.back']], function () {
+Route::group(['middleware' => ['ppc', 'auth', 'no.back', 'deleted_user']], function () {
 
     Route::group(['prefix' => 'dashboard'], function () {
         Route::get('/', 'PPC\DashboardController@index')->name('dashboard');
@@ -336,7 +336,7 @@ Route::group(['middleware' => ['ppc', 'auth', 'no.back']], function () {
     });
 });
 
-Route::group(['prefix' => 'prod', 'middleware' => ['production', 'auth', 'no.back']], function () {
+Route::group(['prefix' => 'prod', 'middleware' => ['production', 'auth', 'no.back', 'deleted_user']], function () {
     Route::group(['prefix' => 'dashboard'], function () {
         Route::get('/', 'Production\DashboardController@index')
             ->name('prod.dashboard');
@@ -409,11 +409,11 @@ Route::group(['prefix' => 'prod', 'middleware' => ['production', 'auth', 'no.bac
             ->name('prod.reports.operators-output.search_operator');
 
         Route::get('/summary-report', 'Production\Reports\SummaryReportController@index')
-            ->name('prod.reports.summary-report');
+            ->name('prod.reports.production-summary-report');
     });
 });
 
-Route::group(['prefix' => 'admin', 'middleware' => ['admin', 'auth', 'no.back']], function () {
+Route::group(['prefix' => 'admin', 'middleware' => ['admin', 'auth', 'no.back', 'deleted_user']], function () {
 
     Route::group(['prefix' => 'user-type'], function () {
         Route::get('/', 'Admin\UserTypeController@index')
@@ -506,12 +506,12 @@ Route::group(['prefix' => 'pdf'], function () {
     Route::get('travel-sheet', 'PDFController@TravelSheet')->name('pdf.travel-sheet');
 });
 
-Route::group(['prefix' => 'profile', 'middleware' => ['auth', 'no.back']], function () {
+Route::group(['prefix' => 'profile', 'middleware' => ['auth', 'no.back', 'deleted_user']], function () {
     Route::get('/user/{user_id}', 'ProfileController@index');
     Route::get('/timeline', 'ProfileController@getActivity');
 });
 
-Route::group(['prefix' => 'notification', 'middleware' => ['auth', 'no.back']], function () {
+Route::group(['prefix' => 'notification', 'middleware' => ['auth', 'no.back', 'deleted_user']], function () {
     Route::get('/', 'NotificationController@index');
     Route::get('/get-unread', 'NotificationController@getUnreadNotification');
     Route::post('/read', 'NotificationController@readNotification');

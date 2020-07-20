@@ -27,6 +27,7 @@ class CreateUsersTable extends Migration
             $table->string('user_category')->default('OFFICE');
             $table->string('photo')->default('images/default-profile.png');
             $table->integer('is_admin')->default(0);
+            $table->integer('del_flag')->default(0);
             $table->rememberToken();
             $table->timestamps();
         });
@@ -43,6 +44,8 @@ class CreateUsersTable extends Migration
             'user_category' => 'OFFICE',
             'photo' => '/images/default-profile.png',
             'is_admin' => 1,
+            'create_user' => 1,
+            'update_user' => 1
         ]);
 
     }

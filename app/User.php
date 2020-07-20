@@ -25,7 +25,8 @@ class User extends Authenticatable
         'photo',
         'div_code',
         'is_admin',
-        'user_category'
+        'user_category',
+        'del_flag'
     ];
 
     /**
@@ -34,7 +35,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token', 'actual_password'
+        'password', 'remember_token'
     ];
 
     public function product_lines()
