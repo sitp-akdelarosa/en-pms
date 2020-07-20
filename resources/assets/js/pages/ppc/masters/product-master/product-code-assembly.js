@@ -1,7 +1,7 @@
 $( function() {
 	$('#div_cancel').hide();
-    checkAllCheckboxesInTable('.check_all','.check_item');
-	getAssemblies()
+	checkAllCheckboxesInTable('#tbl_prodcode_assembly','.check_all','.check_item','#btn_delete_assembly');
+	getAssemblies();
 	get_dropdown_product_assembly();
 
 	$('body').on('keydown', '.switch', function(e) {
@@ -31,14 +31,14 @@ $( function() {
 		}
 	});
 
-    $('.validate').on('keyup', function(e) {
+	$('.validate').on('keyup', function(e) {
 		var no_error = $(this).attr('id');
 		hideErrors(no_error)
 	});
 
-    $('#frm_code_assembly').on('submit', function(e) {
+	$('#frm_code_assembly').on('submit', function(e) {
 		e.preventDefault();
-   		$.ajax({
+		$.ajax({
 			url: $(this).attr('action'),
 			type: 'POST',
 			dataType: 'JSON',
@@ -46,7 +46,7 @@ $( function() {
 		}).done(function(data, textStatus, xhr) {
 			if (textStatus == 'success') {
 				msg("Data was successfully saved.","success");
-				getAssemblies()
+				getAssemblies();
 				new_assembly();
 			}
 		}).fail(function(xhr, textStatus, errorThrown) {
@@ -55,7 +55,7 @@ $( function() {
 		});
 	});
 
-    $('#tbl_prodcode_assembly_body').on('click', '.btn_edit_assembly', function(e) {
+	$('#tbl_prodcode_assembly_body').on('click', '.btn_edit_assembly', function(e) {
 		e.preventDefault();
 		update_assembly();
 		$('#assembly_id').val($(this).attr('data-id'));
@@ -65,7 +65,7 @@ $( function() {
 		$('#description').val($(this).attr('data-description'));
 	});
 
-    $('#btn_clear_assembly').on('click', function(e) {
+	$('#btn_clear_assembly').on('click', function(e) {
 		clear();
 	});
 
@@ -73,7 +73,7 @@ $( function() {
 		cancel_assembly();
 	});
 
-    $('#btn_delete_assembly').on('click', function(e) {
+	$('#btn_delete_assembly').on('click', function(e) {
 		delete_assembly('.check_item',assemblyDeleteURL);
 	});
 });
@@ -117,12 +117,52 @@ function clear() {
 
 function delete_assembly(checkboxClass,deleteURL) {
 	var chkArray = [];
-	$(checkboxClass+":checked").each(function() {
-		chkArray.push($(this).val());
-	});
+	var table = $('#tbl_prodcode_assembly').DataTable();
+
+	for (var x = 0; x < table.context[0].aoData.length; x++) {
+		var DataRow = table.context[0].aoData[x];
+		if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
+			chkArray.push(table.context[0].aoData[x].anCells[0].firstChild.value)
+		}
+	}
+
+	// $(checkboxClass+":checked").each(function() {
+	// 	chkArray.push($(this).val());
+	// });
 
 	if (chkArray.length > 0) {
-		confirm_delete(chkArray,token,deleteURL,true,'tbl_prodcode_assembly',assemblyListURL,dataColumn);
+		swal({
+			title: "Are you sure?",
+			text: "You will not be able to recover your data!",
+			type: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#f95454",
+			confirmButtonText: "Yes",
+			cancelButtonText: "No",
+			closeOnConfirm: true,
+			closeOnCancel: false
+		}, function(isConfirm){
+			if (isConfirm) {
+				$('.loadingOverlay').show();
+				$.ajax({
+					url: deleteURL,
+					type: 'POST',
+					dataType: 'JSON',
+					data: {
+						_token:token,
+						id: chkArray
+					},
+				}).done(function(data, textStatus, xhr) {
+					msg(data.msg,data.status);
+					getAssemblies();
+				}).fail(function(xhr, textStatus, errorThrown) {
+					$('.loadingOverlay').hide();
+					msg(errorThrown,'error');
+				});
+			} else {
+				swal("Cancelled", "Your data is safe and not deleted.");
+			}
+		});
 	} else {
 		msg("Please select at least 1 item." , "failed");
 	}
@@ -131,24 +171,25 @@ function delete_assembly(checkboxClass,deleteURL) {
 }
 
 function get_dropdown_product_assembly() {
-    var opt = "<option value=''></option>";
-    $('#prod_type').html(opt);
-    $.ajax({
-        url: getdropdownproduct,
-        type: 'GET',
-        dataType: 'JSON',
-        data: {_token: token},
-    }).done(function(data, textStatus, xhr) {
-        $.each(data, function(i, x) {
-            opt = "<option value='"+x.product_line+"'>"+x.product_line+"</option>";
-            $('#prod_type').append(opt);
-        });
-    }).fail(function(xhr, textStatus, errorThrown) {
-        msg(errorThrown,textStatus);
-    });
+	var opt = "<option value=''></option>";
+	$('#prod_type').html(opt);
+	$.ajax({
+		url: getdropdownproduct,
+		type: 'GET',
+		dataType: 'JSON',
+		data: {_token: token},
+	}).done(function(data, textStatus, xhr) {
+		$.each(data, function(i, x) {
+			opt = "<option value='"+x.product_line+"'>"+x.product_line+"</option>";
+			$('#prod_type').append(opt);
+		});
+	}).fail(function(xhr, textStatus, errorThrown) {
+		msg(errorThrown,textStatus);
+	});
 }
 
 function getAssemblies() {
+	$('.loadingOverlay').show();
 	$.ajax({
 		url: assemblyListURL,
 		type: 'GET',
@@ -162,47 +203,52 @@ function getAssemblies() {
 
 function AssemblyTable(arr) {
 	$('#tbl_prodcode_assembly').dataTable().fnClearTable();
-    $('#tbl_prodcode_assembly').dataTable().fnDestroy();
-    $('#tbl_prodcode_assembly').dataTable({
-        data: arr,
-        processing: true,
-        deferRender: true,
-        language: {
-            aria: {
-                sortAscending: ": activate to sort column ascending",
-                sortDescending: ": activate to sort column descending"
-            },
-            emptyTable: "No data available in table",
-            info: "Showing _START_ to _END_ of _TOTAL_ records",
-            infoEmpty: "No records found",
-            infoFiltered: "(filtered1 from _MAX_ total records)",
-            lengthMenu: "Show _MENU_",
-            search: "Search:",
-            zeroRecords: "No matching records found",
-            paginate: {
-                "previous":"Prev",
-                "next": "Next",
-                "last": "Last",
-                "first": "First"
-            }
-        },
-        columns: [
-		    {data: function(data) {
-		    	return '<input type="checkbox" class="table-checkbox check_item" value="'+data.id+'">';
-		    }, orderable: false, searchable: false},
-		    {data: function(data) {
-		    	return "<button class='btn btn-sm bg-blue btn_edit_assembly' data-id='"+data.id+"' "
-		    				"data-prod_type='"+data.prod_type+"' "
-		    				"data-character_num='"+data.character_num+"' "
-		    				"data-character_code='"+data.character_code+"' "
-		    				"data-description='"+data.description+"'>"
-                            "<i class='fa fa-edit'></i>"
-                        "</button>";
-		    }, orderable: false, searchable: false},
-		    {data: 'prod_type'},
-		    {data: 'character_num'},
-		    {data: 'character_code'},
-		    {data: 'description'},
-		]
-    });
+	$('#tbl_prodcode_assembly').dataTable().fnDestroy();
+	$('#tbl_prodcode_assembly').dataTable({
+		data: arr,
+		processing: true,
+		deferRender: true,
+		language: {
+			aria: {
+				sortAscending: ": activate to sort column ascending",
+				sortDescending: ": activate to sort column descending"
+			},
+			emptyTable: "No data available in table",
+			info: "Showing _START_ to _END_ of _TOTAL_ records",
+			infoEmpty: "No records found",
+			infoFiltered: "(filtered1 from _MAX_ total records)",
+			lengthMenu: "Show _MENU_",
+			search: "Search:",
+			zeroRecords: "No matching records found",
+			paginate: {
+				"previous":"Prev",
+				"next": "Next",
+				"last": "Last",
+				"first": "First"
+			}
+		},
+		columns: [
+			{data: function(data) {
+				return '<input type="checkbox" class="table-checkbox check_item" value="'+data.id+'">';
+			}, orderable: false, searchable: false},
+			{data: function(data) {
+				return "<button class='btn btn-sm bg-blue btn_edit_assembly' data-id='"+data.id+"' "+
+							"data-prod_type='"+data.prod_type+"' "+
+							"data-character_num='"+data.character_num+"' "+
+							"data-character_code='"+data.character_code+"' "+
+							"data-description='"+data.description+"'>"+
+							"<i class='fa fa-edit'></i>"+
+						"</button>";
+			}, orderable: false, searchable: false},
+			{data: 'prod_type'},
+			{data: 'character_num'},
+			{data: 'character_code'},
+			{data: 'description'},
+		],
+		"initComplete": function () {
+			$('.loadingOverlay').hide();
+		},
+		"fnDrawCallback": function () {
+		},
+	});
 }
