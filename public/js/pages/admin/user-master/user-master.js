@@ -223,6 +223,7 @@ function show_user(id) {
     $('#lastname').val(data.lastname);
     $('#user_type').val(data.user_type);
     $('#password').val(data.actual_password);
+    $('#password_confirmation').val(data.actual_password);
     $('#email').val(data.email);
     var checked = false;
 
@@ -239,6 +240,12 @@ function show_user(id) {
 
 function clear() {
   $('.clear').val('');
+  hideErrors('user_id');
+  hideErrors('firstname');
+  hideErrors('lastname');
+  hideErrors('user_type');
+  hideErrors('email');
+  hideErrors('password');
   $('#photo_profile').attr('src', defaultPhoto);
   $('#photo_label').html("Select a photo...");
 }
