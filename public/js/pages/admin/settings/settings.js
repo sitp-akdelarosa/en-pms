@@ -94,9 +94,9 @@
 /***/ (function(module, exports) {
 
 $(function () {
-  check_permission(code_permission);
+  init();
   getISO();
-  checkAllCheckboxesInTable('.check_all', '.check_item');
+  checkAllCheckboxesInTable('#tbl_iso', '.check_all', '.check_item');
   $('.custom-file-input').on('change', function () {
     var fileName = $(this).val().split('\\').pop();
     $(this).next('.custom-file-label').addClass("selected").html(fileName);
@@ -164,15 +164,24 @@ function getISO() {
   });
 }
 
+function init() {
+  check_permission(code_permission, function (output) {
+    if (output == 1) {}
+  });
+}
+
 function makeISOdatatable(arr) {
   $('#tbl_iso').dataTable().fnClearTable();
   $('#tbl_iso').dataTable().fnDestroy();
   $('#tbl_iso').dataTable({
     data: arr,
+    order: [[2, 'asc']],
     columns: [{
       data: function data(x) {
         return '<input type="checkbox" class="table-checkbox check_item" value="' + x.id + '">';
-      }
+      },
+      searchable: false,
+      orderable: false
     }, {
       data: function data(x) {
         return '<button class="btn btn-sm bg-blue btn_edit permission-button" data-id="' + x.id + '" ' + 'data-iso_code="' + x.iso_code + '" data-iso_name="' + x.iso_name + '" ' + 'data-photo="' + x.photo + '">' + '<i class="fa fa-edit"></i>' + '</button>';

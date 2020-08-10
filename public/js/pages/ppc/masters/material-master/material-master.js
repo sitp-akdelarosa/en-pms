@@ -7,13 +7,14 @@ var dataColumn = [
     {data: 'character_num', name: 'pma.character_num'},
     {data: 'character_code', name: 'pma.character_code'},
     {data: 'description', name: 'pma.description'},
+    {data: 'created_at', name: 'pma.created_at'},
 ];
 
 $( function() {
 	$('#div_cancel').hide();
 	get_dropdown_material_type_assembly()
-    checkAllCheckboxesInTable('.check_all','.check_item');
-	getDatatable('tbl_matcode_assembly',assemblyListURL,dataColumn,[],0);
+    checkAllCheckboxesInTable('#tbl_matcode_assembly','.check_all','.check_item');
+	getDatatable('tbl_matcode_assembly',assemblyListURL,dataColumn,[],6);
 
 
 	$('body').on('keydown', '.switch', function(e) {
@@ -58,7 +59,7 @@ $( function() {
 		}).done(function(data, textStatus, xhr) {
 			if (textStatus == 'success') {
 				msg("Data was successfully saved.","success");
-				getDatatable('tbl_matcode_assembly',assemblyListURL,dataColumn,[],0);
+				getDatatable('tbl_matcode_assembly',assemblyListURL,dataColumn,[],6);
 				new_assembly();
 				showDropdowns($('#mat_type').val())
 				$('#material_type').val($('#mat_type').val());
@@ -195,10 +196,10 @@ $( function() {
 		}
 	});
 
-	checkAllCheckboxesInTable('.check_all_material','.check_material_item');
-	getDatatable('tbl_material_code',matCodeListURL,material_dataColumn,[],0);
+	checkAllCheckboxesInTable('#tbl_material_code','.check_all_material','.check_material_item');
+	getDatatable('tbl_material_code',matCodeListURL,material_dataColumn,[],6);
 
-	check_permission(code_permission);
+	init();
 
 	$('#material-type').on('change', function(e) {
 		e.preventDefault();
@@ -274,7 +275,7 @@ $( function() {
 		}).done(function(data, textStatus, xhr) {
 			if (data.status == 'success') {
 				msg(data.msg,data.status);
-				getDatatable('tbl_material_code',matCodeListURL,material_dataColumn,[],0);
+				getDatatable('tbl_material_code',matCodeListURL,material_dataColumn,[],6);
 				$('#btn_save').html('<i class="fa fa-floppy-o"></i> Save');
 				clearInputs();
 				clearCode();
@@ -312,6 +313,12 @@ $( function() {
 		showDescription();
 	});
 });
+
+function init() {
+	check_permission(code_permission, function(output) {
+		if (output == 1) {}
+	});
+}
 
 function showDropdowns(mat_type) {
 	$.ajax({

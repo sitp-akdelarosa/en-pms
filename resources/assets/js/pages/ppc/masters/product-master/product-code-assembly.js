@@ -4,6 +4,8 @@ $( function() {
 	getAssemblies();
 	get_dropdown_product_assembly();
 
+	init();
+
 	$('body').on('keydown', '.switch', function(e) {
 		var self = $(this)
 			, form = self.parents('form:eq(0)')
@@ -77,6 +79,12 @@ $( function() {
 		delete_assembly('.check_item',assemblyDeleteURL);
 	});
 });
+
+function init() {
+	check_permission(code_permission, function(output) {
+		if (output == 1) {}
+	});
+}
 
 function new_assembly() {
 	$('#assembly_id').val('');
@@ -227,10 +235,11 @@ function AssemblyTable(arr) {
 				"first": "First"
 			}
 		},
+		order: [[6,'desc']],
 		columns: [
 			{data: function(data) {
 				return '<input type="checkbox" class="table-checkbox check_item" value="'+data.id+'">';
-			}, orderable: false, searchable: false},
+			}, orderable: false, searchable: false, width: '5.28%'},
 			{data: function(data) {
 				return "<button class='btn btn-sm bg-blue btn_edit_assembly' data-id='"+data.id+"' "+
 							"data-prod_type='"+data.prod_type+"' "+
@@ -239,11 +248,12 @@ function AssemblyTable(arr) {
 							"data-description='"+data.description+"'>"+
 							"<i class='fa fa-edit'></i>"+
 						"</button>";
-			}, orderable: false, searchable: false},
-			{data: 'prod_type'},
-			{data: 'character_num'},
-			{data: 'character_code'},
-			{data: 'description'},
+			}, orderable: false, searchable: false, width: '5.28%'},
+			{data: 'prod_type', width: '22.28%'},
+			{data: 'character_num', width: '14.28%'},
+			{data: 'character_code', width: '14.28%'},
+			{data: 'description', width: '22.28%'},
+			{data: 'created_at', width: '14.28%'}
 		],
 		"initComplete": function () {
 			$('.loadingOverlay').hide();

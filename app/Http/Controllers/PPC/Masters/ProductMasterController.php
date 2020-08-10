@@ -47,7 +47,8 @@ class ProductMasterController extends Controller
                 'pca.prod_type as prod_type',
                 'pca.character_num as character_num',
                 'pca.character_code as character_code',
-                'pca.description as description'
+                'pca.description as description',
+                'pca.created_at as created_at'
             )
             ->where('apl.user_id', Auth::user()->id)
             ->groupBy(
@@ -55,7 +56,8 @@ class ProductMasterController extends Controller
                 'pca.prod_type',
                 'pca.character_num',
                 'pca.character_code',
-                'pca.description'
+                'pca.description',
+                'pca.created_at'
             )
             ->orderBy('pca.id', 'desc')->get();
             
