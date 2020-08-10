@@ -5,13 +5,14 @@ var dataColumn = [
     {data: 'action', name: 'action', orderable: false, searchable: false},
     {data: 'operator_id', name: 'operator_id'},
     {data: 'firstname', name: 'firstname'},
-    {data: 'lastname', name: 'lastname'}
+    {data: 'lastname', name: 'lastname'},
+    {data: 'created_at', name: 'created_at'}
 ];
 
 $( function() {
-    getDatatable('tbl_operator',getOutputsURL,dataColumn,[],0);
-    check_permission(code_permission);
-    checkAllCheckboxesInTable('.check_all','.check_item');
+    getDatatable('tbl_operator',getOutputsURL,dataColumn,[],5);
+    init();
+    checkAllCheckboxesInTable('#tbl_operator','.check_all','.check_item');
 
     $('#btn_clear').on('click', function() {
         clear();
@@ -65,6 +66,12 @@ $( function() {
     });
 
 });
+
+function init() {
+    check_permission(code_permission, function(output) {
+        if (output == 1) {}
+    });
+}
 
 //Multiple Delete 
 function delete_set(checkboxClass,deleteOM) {

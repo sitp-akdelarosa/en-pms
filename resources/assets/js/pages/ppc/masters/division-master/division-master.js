@@ -58,9 +58,9 @@ $(function () {
 	divisionTable();
 	get_dropdown_items_by_id(1, '#process');
 
-	checkAllCheckboxesInTable('.check_all', '.check_item');
+	checkAllCheckboxesInTable('#tbl_division','.check_all', '.check_item');
 
-	check_permission(code_permission);
+	init();
 
 
 	$('.validate').on('keyup', function (e) {
@@ -247,6 +247,12 @@ $(function () {
 		}
 	});
 });
+
+function init() {
+    check_permission(code_permission, function(output) {
+        if (output == 1) {}
+    });
+}
 
 async function get_dropdown_productline() {
 	var items = [];

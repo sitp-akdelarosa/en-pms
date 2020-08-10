@@ -114,11 +114,14 @@ var dataColumn = [{
 }, {
   data: 'lastname',
   name: 'lastname'
+}, {
+  data: 'created_at',
+  name: 'created_at'
 }];
 $(function () {
-  getDatatable('tbl_operator', getOutputsURL, dataColumn, [], 0);
-  check_permission(code_permission);
-  checkAllCheckboxesInTable('.check_all', '.check_item');
+  getDatatable('tbl_operator', getOutputsURL, dataColumn, [], 5);
+  init();
+  checkAllCheckboxesInTable('#tbl_operator', '.check_all', '.check_item');
   $('#btn_clear').on('click', function () {
     clear();
     $('#btn_save').removeClass('bg-green');
@@ -165,7 +168,14 @@ $(function () {
   $('#btn_delete').on('click', function () {
     delete_set('.check_item', deleteOM);
   });
-}); //Multiple Delete 
+});
+
+function init() {
+  check_permission(code_permission, function (output) {
+    if (output == 1) {}
+  });
+} //Multiple Delete 
+
 
 function delete_set(checkboxClass, deleteOM) {
   var chkArray = [];

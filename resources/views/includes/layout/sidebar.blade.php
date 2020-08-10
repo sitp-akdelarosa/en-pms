@@ -15,7 +15,7 @@
                     @endif
                 </p>
                 <a href="#">
-                    <i class="fa fa-circle text-success"></i>
+                    {{-- <i class="fa fa-circle text-success"></i> --}}
                     @if (Auth::check())
 
                         {{ Auth::user()->user_types->description }}

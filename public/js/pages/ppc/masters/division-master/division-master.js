@@ -965,8 +965,8 @@ $(function () {
 
   divisionTable();
   get_dropdown_items_by_id(1, '#process');
-  checkAllCheckboxesInTable('.check_all', '.check_item');
-  check_permission(code_permission);
+  checkAllCheckboxesInTable('#tbl_division', '.check_all', '.check_item');
+  init();
   $('.validate').on('keyup', function (e) {
     var no_error = $(this).attr('id');
     hideErrors(no_error);
@@ -1143,6 +1143,12 @@ $(function () {
     }
   });
 });
+
+function init() {
+  check_permission(code_permission, function (output) {
+    if (output == 1) {}
+  });
+}
 
 function get_dropdown_productline() {
   return _get_dropdown_productline.apply(this, arguments);

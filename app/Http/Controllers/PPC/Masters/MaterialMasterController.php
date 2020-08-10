@@ -44,7 +44,8 @@ class MaterialMasterController extends Controller
                             'pma.mat_type as mat_type',
                             'pma.character_num as character_num',
                             'pma.character_code as character_code',
-                            'pma.description as description'
+                            'pma.description as description',
+                            'pma.created_at as created_at'
                         ])
                         ->where('apl.user_id' ,Auth::user()->id)
                         ->orderBy('pma.id','desc');

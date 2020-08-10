@@ -100,52 +100,67 @@ $(function () {
 
   get_user_type('#user_type');
   modules(1, '');
-  check_permission(code_module);
+  init();
+  checkAllCheckboxesInTable('#tbl_user', '.check_all_users', '.check_user');
   $('.custom-file-input').on('change', function () {
     var fileName = $(this).val().split('\\').pop();
     $(this).next('.custom-file-label').addClass("selected").html(fileName);
     readPhotoURL(this);
   });
-  $('#tbl_user_body').on('click', '.btn_delete_user', function (e) {
-    var id = $(this).attr('data-id');
-    swal({
-      title: "Are you sure?",
-      text: "You will not be able to recover your data!",
-      type: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#f95454",
-      confirmButtonText: "Yes",
-      cancelButtonText: "No",
-      closeOnConfirm: true,
-      closeOnCancel: false
-    }, function (isConfirm) {
-      if (isConfirm) {
-        $('.loadingOverlay').show();
-        $.ajax({
-          url: userDeleteURL,
-          type: 'POST',
-          dataType: 'JSON',
-          data: {
-            _token: token,
-            id: id
-          }
-        }).done(function (data, textStatus, xhr) {
-          if (data.status == 'success') {
-            msg(data.msg, data.status);
-          } else {
-            msg(data.msg, data.status);
-          }
+  $('#btn_delete').on('click', function () {
+    var chkArray = [];
+    var table = $('#tbl_user').DataTable();
 
-          userList(); // in here, the loading will close 
+    for (var x = 0; x < table.context[0].aoData.length; x++) {
+      var DataRow = table.context[0].aoData[x];
 
-          return data.status;
-        }).fail(function (xhr, textStatus, errorThrown) {
-          msg(errorThrown, 'error');
-        });
-      } else {
-        swal("Cancelled", "Your data is safe and not deleted.");
+      if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
+        chkArray.push(table.context[0].aoData[x].anCells[0].firstChild.value);
       }
-    });
+    }
+
+    if (chkArray.length > 0) {
+      swal({
+        title: "Are you sure?",
+        text: "You will not be able to recover your data!",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#f95454",
+        confirmButtonText: "Yes",
+        cancelButtonText: "No",
+        closeOnConfirm: true,
+        closeOnCancel: false
+      }, function (isConfirm) {
+        if (isConfirm) {
+          $('.loadingOverlay').show();
+          $.ajax({
+            url: userDeleteURL,
+            type: 'POST',
+            dataType: 'JSON',
+            data: {
+              _token: token,
+              ids: chkArray
+            }
+          }).done(function (data, textStatus, xhr) {
+            if (data.status == 'success') {
+              msg(data.msg, data.status);
+            } else {
+              msg(data.msg, data.status);
+            }
+
+            userList(); // in here, the loading will close 
+
+            return data.status;
+          }).fail(function (xhr, textStatus, errorThrown) {
+            msg(errorThrown, 'error');
+          });
+        } else {
+          swal("Cancelled", "Your data is safe and not deleted.");
+        }
+      });
+    } else {
+      msg('Please select at least 1 user.', 'failed');
+    }
   });
   $('#tbl_user_body').on('click', '.btn_edit_user', function (e) {
     clear();
@@ -209,6 +224,12 @@ $(function () {
     });
   });
 });
+
+function init() {
+  check_permission(code_module, function (output) {
+    if (output == 1) {}
+  });
+}
 
 function show_user(id) {
   $.ajax({
@@ -327,42 +348,53 @@ function userList() {
         }
       },
       pageLength: 10,
-      columnDefs: [{
-        orderable: false,
-        targets: [7]
-      }, {
-        searchable: false,
-        targets: [7]
-      }],
-      order: [[6, "desc"]],
+      order: [[8, "desc"]],
       columns: [{
-        data: 'user_id',
-        name: 'user_id'
-      }, {
-        data: 'firstname',
-        name: 'firstname'
-      }, {
-        data: 'lastname',
-        name: 'lastname'
-      }, {
-        data: 'email',
-        name: 'email'
-      }, {
-        data: 'user_type',
-        name: 'user_type'
-      }, {
-        data: 'actual_password',
-        name: 'actual_password'
-      }, {
-        data: 'created_at',
-        name: 'created_at'
+        data: function data(x) {
+          return '<input type="checkbox" class="table-checkbox check_user" value="' + x.id + '">';
+        },
+        name: 'id',
+        searchable: false,
+        orderable: false,
+        width: '3.11%'
       }, {
         data: function data(x) {
-          return '<button type="button" class="btn btn-sm bg-blue btn_edit_user" data-id="' + x.id + '">' + '<i class="fa fa-edit"></i>' + '</button>' + '<button type="button" class="btn btn-sm bg-red btn_delete_user permission-button" data-id="' + x.id + '">' + '<i class="fa fa-trash"></i>' + '</button>';
+          return '<button type="button" class="btn btn-sm bg-blue btn_edit_user" data-id="' + x.id + '">' + '<i class="fa fa-edit"></i>' + '</button>'; // '<button type="button" class="btn btn-sm bg-red btn_delete_user permission-button" data-id="'+x.id+'">'+
+          // 	'<i class="fa fa-trash"></i>'+
+          // '</button>';
         },
         name: 'action',
         orderable: false,
-        searchable: false
+        searchable: false,
+        width: '3.11%'
+      }, {
+        data: 'user_id',
+        name: 'user_id',
+        width: '13.11%'
+      }, {
+        data: 'firstname',
+        name: 'firstname',
+        width: '15.11%'
+      }, {
+        data: 'lastname',
+        name: 'lastname',
+        width: '15.11%'
+      }, {
+        data: 'email',
+        name: 'email',
+        width: '14.11%'
+      }, {
+        data: 'user_type',
+        name: 'user_type',
+        width: '14.11%'
+      }, {
+        data: 'actual_password',
+        name: 'actual_password',
+        width: '13.11%'
+      }, {
+        data: 'created_at',
+        name: 'created_at',
+        width: '11.11%'
       }],
       createdRow: function createdRow(row, data, dataIndex) {
         if (data.del_flag === 1) {

@@ -56,20 +56,23 @@ class ProcessMasterController extends Controller
             ];
 
         if (isset($req->processes)) {
-            PpcProcess::where('set_id',$req->set_id)->delete();
+            // $req->set_id is a array
+            PpcProcess::whereIn('set_id',$req->set_id)->delete();
 
             $saved = false;
 
             foreach ($req->processes as $key => $proc) {
-                PpcProcess::create([
-                    'set_id' => $req->set_id,
-                    'set' => strtoupper($req->sets),
-                    'sequence' => $proc['sequence'],
-                    'process' => strtoupper($proc['process']),
-                    'create_user' => Auth::user()->user_id,
-                    'update_user' => Auth::user()->user_id
-                ]);
-
+                foreach ($req->set_id as $key => $set_id) {
+                    $setname = PpcProcessSet::select('set')->where('id',$set_id)->first();
+                    PpcProcess::create([
+                        'set_id' => $set_id,
+                        'set' => strtoupper($setname->set),
+                        'sequence' => $proc['sequence'],
+                        'process' => strtoupper($proc['process']),
+                        'create_user' => Auth::user()->user_id,
+                        'update_user' => Auth::user()->user_id
+                    ]);
+                }
                 $saved = true;
             }
 
@@ -147,7 +150,13 @@ class ProcessMasterController extends Controller
 
     public function get_set()
     {
-        $set = PpcProcessSet::where('create_user',Auth::user()->user_id)->get();
+        $set = PpcProcessSet::select(
+                                DB::raw('id as id'),
+                                DB::raw('`set` as `text`')
+                            )
+                            ->where('create_user',Auth::user()->user_id)
+                            ->get();
+
         return response()->json($set);
     }
 

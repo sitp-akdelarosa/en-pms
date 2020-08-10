@@ -17,46 +17,79 @@
                     <div class="row mb-5">
                         <div class="col-sm-12">
 
-                            <div class="form-group row">
+                            <div class="input-group mb-3 input-group-sm">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Product Code:</span>
+                                </div>
+                                <input type="text" class="form-control validate" id="prod_code" readonly>
+                                <div id="prod_code_feedback"></div>
+                            </div>
+
+                            <div class="input-group mb-3 input-group-sm">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Set:</span>
+                                </div>
+                                <select class="form-control select-validate" id="set"></select>
+                                <div id="set_feedback"></div>
+                            </div>
+
+                            <div class="input-group mb-3 input-group-sm">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Process:</span>
+                                </div>
+                                <select class="form-control select-validate" id="process"></select>
+                                <div id="process_feedback"></div>
+                            </div>
+
+                            <div class="input-group mb-3 input-group-sm">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Sequence No.:</span>
+                                </div>
+                                <input type="number" class="form-control select-validate" id="sequence" min="1">
+                                <div id="sequence_feedback"></div>
+                            </div>
+
+                            {{-- <div class="form-group row">
                                 <label for="" class="control-label col-sm-3 mt-5">Product Code:</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control validate" id="prod_code" readonly>
                                     <div id="prod_code_feedback"></div>
                                 </div>
-                            </div>
+                            </div> --}}
 
-                            <div class="form-group row">
+                            {{-- <div class="form-group row">
                                 <label for="" class="control-label col-sm-3 mt-5">Set:</label>
                                 <div class="col-sm-9">
                                     <select class="form-control select-validate" id="set"></select>
                                     <div id="set_feedback"></div>
                                 </div>
-                            </div>
+                            </div> --}}
 
-                            <div class="form-group row">
+                            {{-- <div class="form-group row">
                                 <label for="" class="control-label col-sm-3 mt-5">Process:</label>
                                 <div class="col-sm-9">
                                     <select class="form-control select-validate" id="process"></select>
                                     <div id="process_feedback"></div>
                                 </div>
-                            </div>
+                            </div> --}}
 
-                            <div class="form-group row">
+                            {{-- <div class="form-group row">
                                 <label for="" class="control-label col-sm-3 mt-5">Sequence No.:</label>
                                 <div class="col-sm-9">
                                     <input type="number" class="form-control select-validate" id="sequence" min="1">
                                     <div id="sequence_feedback"></div>
                                 </div>
-                            </div>
+                            </div> --}}
 
                         </div>
                     </div>
 
                     <div class="row justify-content-center">
-                        <div class="col-sm-3 mb-10">
+                        <div class="col-sm-3 col-sm-3 mb-10">
                             <button type="button" id="btn_add_process" class="btn bg-green btn-block">
                                 <i class="fa fa-plus"></i> Add Process
                             </button>
+
                             <button type="button" id="btn_cancel_process" class="btn bg-red btn-block">
                                 <i class="fa fa-times"></i> Cancel
                             </button>
@@ -87,7 +120,7 @@
                     </div>
 
                     <div class="row justify-content-center">
-                        <div class="col-sm-3">
+                        <div class="col-md-2 col-sm-3">
                             <button type="submit" id="btn_save_process" class="btn bg-blue btn-block permission-button">
                                 <i class="fa fa-floppy-o"></i> Save
                             </button>
@@ -98,7 +131,7 @@
                     
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn bg-red" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-sm bg-red pull-right" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
