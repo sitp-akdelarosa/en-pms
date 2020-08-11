@@ -14,7 +14,6 @@ use App\PpcDivision;
 use App\AdminModule;
 use App\AdminModuleAccess;
 use App\AdminUserType;
-use App\AdminAssignProductionLine;
 use Carbon\Carbon;
 use DB;
 
@@ -201,49 +200,139 @@ class UserController extends Controller
 
 	public function destroy(Request $req)
 	{
-		if (Auth::user()->id == $req->id) {
-			$data = [
-				'msg' => "You cannot delete yourself.",
-				'status' => "warning"
-			];
-			return response()->json($data);
-		}
-
-		$ExistingDivision = PpcDivision::where('user_id',$req->id)->first();
-		if (isset($ExistingDivision)) {
-			$data = [
-				'msg' => "You cannot delete user that still existing on Division Master.",
-				'status' => "warning"
-			];
-			return response()->json($data);
-		}
-
-		$ExistingProductLine = AdminAssignProductionLine::where('user_id',$req->id)->first();
-		if (isset($ExistingProductLine)) {
-			 $data = [
-				'msg' => "You cannot delete user that still existing on Assign Production Line.",
-				'status' => "warning"
-			];
-			return response()->json($data);
-		}
-
 		$data = [
-			'msg' => "User data was successfully deleted.",
-			'status' => "success"
+			'msg' => 'Deleting process was unsuccessful.',
+			'status' => "warning"
 		];
 
-		$user = User::find($req->id);
-		$user->del_flag = 1;
-		$user->update_user = Auth::user()->id;
-		$user->deleted_at = Carbon::now();
-		$user->update();
+		foreach ($req->ids as $key => $id) {
+			if (Auth::user()->id == $id) {
+				$data = [
+					'msg' => "You cannot delete yourself.",
+					'status' => "warning"
+				];
+				return response()->json($data);
+			}
+		}
 
-		$this->_audit->insert([
-			'user_type' => Auth::user()->user_type,
-			'module' => 'User Master',
-			'action' => 'Deleted data ID '.$req->id,
-			'user' => Auth::user()->user_id
-		]);
+		$ExistingDivision = DB::table('ppc_divisions as d')
+								->join('users as u','u.id','d.user_id')
+								->whereIn('d.user_id',$req->ids)
+								->select(
+									DB::raw('d.user_id as user_id'),
+									DB::raw('u.lastname as lastname')
+								)
+								->groupBy('d.user_id','u.lastname')
+								->get();
+
+		if (count((array)$ExistingDivision) > 0) {
+			$extID = [];
+			$extLastName = [];
+			foreach ($ExistingDivision as $key => $extDiv) {
+				array_push($extID, $extDiv->user_id);
+				array_push($extLastName, $extDiv->lastname);
+			}
+
+			$msg = "You cannot delete ";
+			
+			if (count($extLastName) > 1 ) {
+				$msg .= nl2br("users that still existing on Division Master. \r\n");
+
+				foreach ($extLastName as $key => $lastname) {
+					$msg .= "- ". $lastname."\r\n";
+				}
+			} 
+
+			if (count($extLastName) == 1 ) {
+				$msg .= nl2br("user that still existing on Division Master. \r\n");
+				$msg .= "- ". $extLastName[0];
+			}
+
+			if (count($extLastName) > 0) {
+				$data = [
+					'msg' => $msg,
+					'status' => "warning"
+				];
+
+				return response()->json($data);
+			}
+		}
+
+		$ExistingProductLine = DB::table('admin_assign_production_lines as a')
+									->join('users as u','u.id','a.user_id')
+									->whereIn('a.user_id',$req->ids)
+									->select(
+										DB::raw('a.user_id as user_id'),
+										DB::raw('u.lastname as lastname')
+									)
+									->groupBy('a.user_id','u.lastname')
+									->get();
+
+		if (count((array)$ExistingProductLine) > 0) {
+			$extID = [];
+			$extLastName = [];
+			foreach ($ExistingProductLine as $key => $extProd) {
+				array_push($extID, $extProd->user_id);
+				array_push($extLastName, $extProd->lastname);
+			}
+
+			$msg = "You cannot delete ";
+			
+			if (count($extLastName) > 1 ) {
+				$msg .= nl2br("users that still existing on Assign Production Line. \r\n");
+
+				foreach ($extLastName as $key => $lastname) {
+					$msg .= nl2br("- ". $lastname."\r\n");
+				}
+			}
+
+			if (count($extLastName) == 1) {
+				$msg .= nl2br("user that still existing on Assign Production Line. \r\n");
+				$msg .= "- ". $extLastName[0];
+			}
+
+			if (count($extLastName) > 0) {
+				$data = [
+					'msg' => $msg,
+					'status' => "warning"
+				];
+				return response()->json($data);
+			}
+		}
+
+		$query = User::whereIn('id', $req->ids)
+					->update([
+						'del_flag' => 1,
+						'update_user' => Auth::user()->id,
+						'deleted_at' => Carbon::now(),
+						'updated_at' => Carbon::now()
+					]);
+
+		// $user = User::find($req->id);
+		// $user->del_flag = 1;
+		// $user->update_user = Auth::user()->id;
+		// $user->deleted_at = Carbon::now();
+		// $user->update();
+
+		if ($query) {
+			$msg = "User was successfully deleted.";
+
+			if (count($req->ids) > 0) {
+				$msg = "Users were successfully deleted.";
+			}
+
+			$data = [
+				'msg' => $msg,
+				'status' => "success"
+			];
+
+			$this->_audit->insert([
+				'user_type' => Auth::user()->user_type,
+				'module' => 'User Master',
+				'action' => 'Deleted data ID '.$req->id,
+				'user' => Auth::user()->user_id
+			]);
+		}
 
 		return response()->json($data);
 	}
@@ -270,7 +359,16 @@ class UserController extends Controller
 					$modules = AdminModule::where('user_category','<>','Administrator')->get();
 				} else {
 					//$modules = AdminModule::where('user_category','<>','Administrator')->get();
-					$modules = AdminModule::where('user_category', $userTypeCategory)->get();
+					//$modules = AdminModule::where('user_category', $userTypeCategory)->get();
+					$modules = DB::table('admin_user_type_modules as utm')
+								->join('admin_modules as m','utm.module_id','m.id')
+								->where('utm.user_type_id',$req->user_type)
+								->select(
+									DB::raw('utm.module_id as id'),
+									DB::raw('utm.code as code'),
+									DB::raw('m.title')
+								)
+								->get();
 				}
 				
 			} else {
@@ -292,7 +390,8 @@ class UserController extends Controller
 								->leftJoin('admin_module_accesses as acc', function($join) use($req) {
 									$join->on('mod.code','=','acc.code')->where('acc.user_id',$req->id);
 								})
-								->where('mod.user_category',$this->user_category($req->user_type))
+								->leftJoin('admin_user_type_modules as utm','mod.code','utm.code')
+								->where('utm.user_type_id',$req->user_type)
 								// ->where('acc.user_id',$req->id)
 								->select(
 									DB::raw("mod.id as id"),

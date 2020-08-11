@@ -43,7 +43,22 @@
                 
                 <div class="modal-body">
                     <div class="loadingOverlay"></div>
-                    <div class="form-group row">
+
+                    <div class="input-group mb-3 input-group-sm">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Item/Option:</span>
+                        </div>
+                        <input type="text" class="form-control" name="new_item" id="new_item">
+                        
+                        <div class="input-group-append">
+                            <button type="button" class="btn bg-green float-right btn-block" id="btn_add_dropdown_item">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                        <div id="new_item_feedback"></div>
+                    </div>
+
+                    {{-- <div class="form-group row">
                         <label for="dropdown_name" class="col-sm-2 control-label mt-5">Item/Option:</label>
                         <div class="col-sm-8">
                             <input type="text" class="form-control" name="new_item" id="new_item">
@@ -55,7 +70,7 @@
                                 <i class="fa fa-plus"></i>
                             </button>
                         </div>
-                    </div>
+                    </div> --}}
 
                     @csrf
                     <input type="hidden" name="dropdown_item_id" id="dropdown_item_id">

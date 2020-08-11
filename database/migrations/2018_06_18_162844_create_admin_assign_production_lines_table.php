@@ -15,7 +15,7 @@ class CreateAdminAssignProductionLinesTable extends Migration
     {
         Schema::create('admin_assign_production_lines', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('user_id');
+            $table->integer('user_id');
             $table->string('product_line');
             $table->string('create_user');
             $table->string('update_user');

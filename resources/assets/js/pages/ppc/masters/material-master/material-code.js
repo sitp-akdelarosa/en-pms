@@ -31,10 +31,10 @@ $( function() {
 		}
 	});
 
-	checkAllCheckboxesInTable('.check_all_material','.check_material_item');
-	getDatatable('tbl_material_code',matCodeListURL,material_dataColumn,[],0);
+	checkAllCheckboxesInTable('#tbl_material_code','.check_all_material','.check_material_item');
+	getDatatable('tbl_material_code',matCodeListURL,material_dataColumn,[],6);
 
-	check_permission(code_permission);
+	init();
 
 	$('#material-type').on('change', function(e) {
 		e.preventDefault();
@@ -110,7 +110,7 @@ $( function() {
 		}).done(function(data, textStatus, xhr) {
 			if (data.status == 'success') {
 				msg(data.msg,data.status);
-				getDatatable('tbl_material_code',matCodeListURL,material_dataColumn,[],0);
+				getDatatable('tbl_material_code',matCodeListURL,material_dataColumn,[],6);
 				$('#btn_save').html('<i class="fa fa-floppy-o"></i> Save');
 				clearInputs();
 				clearCode();
@@ -148,6 +148,12 @@ $( function() {
 		showDescription();
 	});
 });
+
+function init() {
+	check_permission(code_permission, function(output) {
+		if (output == 1) {}
+	});
+}
 
 function showDropdowns(mat_type) {
 	$.ajax({

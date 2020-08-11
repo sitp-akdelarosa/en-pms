@@ -114,3 +114,19 @@ input {
     padding-right: 7px;
     padding-left: 7px;
 }
+
+.row {
+    margin-right: -7px;
+    margin-left: -7px;
+}
+
+.input-group > .input-group-prepend {
+    flex: 0 0 20%;
+}
+.input-group .input-group-text {
+    width: 100%;
+}
+
+.select2-container .select2-search--inline .select2-search__field {
+    padding-left: 5px;
+}

@@ -97,16 +97,18 @@ var dataColumn = [{
   data: 'action',
   name: 'action',
   orderable: false,
-  searchable: false
+  searchable: false,
+  width: '5%'
 }, {
   data: 'dropdown_name',
-  name: 'dropdown_name'
+  name: 'dropdown_name',
+  width: '95%'
 }];
 var dropdown_item_arr = [];
 $(function () {
   dropdown_names_options(true);
   checkAllCheckboxesInTable('.check_all', '.check_item');
-  check_permission(code_permission);
+  init();
   $('#tbl_dropdown_body').on('click', '.btn_edit_dropdown_name', function (e) {
     e.preventDefault();
     getDropdownItems($(this).attr('data-id'));
@@ -242,6 +244,12 @@ $(function () {
   // });
 });
 
+function init() {
+  check_permission(code_permission, function (output) {
+    if (output == 1) {}
+  });
+}
+
 function dropdown_names_options(refresh_table) {
   var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
   var options = "";
@@ -266,7 +274,7 @@ function dropdown_names_options(refresh_table) {
     }
 
     if (refresh_table == true) {
-      getDatatable('tbl_dropdown', dropdownListURL, dataColumn, [], 0);
+      getDatatable('tbl_dropdown', dropdownListURL, dataColumn, [], 1);
     }
   }).fail(function (xhr, textStatus, errorThrown) {
     msg(errorThrown, textStatus);

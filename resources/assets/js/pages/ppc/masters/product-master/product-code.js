@@ -9,18 +9,18 @@ $( function() {
 	$('#product_code').mask('AAAAA-AAA-AAAAAA', {placeholder: '_____-___-______'});
 	$("#product-type").on('keyup', showProductType);
 	checkAllCheckboxesInTable('.check_all_process','.check_process_item');
-	checkAllCheckboxesInTable('.check_all_product','.check_product_item');
+	checkAllCheckboxesInTable('#tbl_product_code','.check_all_product','.check_product_item');
 	$('#btn_process').prop('disabled', true);
 	getProductCodes();
 	defaultSizes();
 	get_dropdown_items_by_id(1,'#process');
 	autoComplete("#standard_material_used", getStandardMaterialURL, "code_description");
 
-	$($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+	//$($.fn.dataTable.tables(true)).DataTable().columns.adjust();
 
 	get_set();
 
-	check_permission(code_permission);
+	//check_permission(code_permission);
 
 	$('#product-type').on('change', function(e) {
 		e.preventDefault();
@@ -964,10 +964,11 @@ function ProductCodesTable(arr) {
     $('#tbl_product_code').dataTable().fnDestroy();
     $('#tbl_product_code').dataTable({
         data: arr,
+        order: [[5,'desc']],
         columns: [
 		    {data: function(data) {
 		    	return '<input type="checkbox" class="table-checkbox check_product_item" value="'+data.id+'">';
-		    }, orderable: false, searchable: false},
+		    }, orderable: false, searchable: false, width: '3.66%'},
 		    {data: function(data) {
 		    	return "<button class='btn btn-sm bg-blue btn_edit_product' "+
                             "data-id='"+data.id+"' "+
@@ -991,13 +992,13 @@ function ProductCodesTable(arr) {
                             "data-product_code='"+data.product_code+"' title='Assign Process'>"+
                             "<i class='fa fa-refresh'></i>"+
                         "</button>";
-		    }, orderable: false, searchable: false},
-		    {data: 'product_type'},
-		    {data: 'product_code'},
+		    }, orderable: false, searchable: false, width: '3.66%'},
+		    {data: 'product_type', width: '24.66%'},
+		    {data: 'product_code', width: '19.66%'},
 		    {data: function(data) {
 		    	return '<span="'+data.code_description+'">'+ellipsis(data.code_description,10)+'<span>';
-		    }},
-		    {data: 'created_at'},
+		    }, width: '39.66%'},
+		    {data: 'created_at', width: '8.66%'},
 		]
     });
 }

@@ -7,13 +7,14 @@ var dataColumn = [
     {data: 'character_num', name: 'pma.character_num'},
     {data: 'character_code', name: 'pma.character_code'},
     {data: 'description', name: 'pma.description'},
+    {data: 'created_at', name: 'pma.created_at'},
 ];
 
 $( function() {
 	$('#div_cancel').hide();
 	get_dropdown_material_type_assembly()
-    checkAllCheckboxesInTable('.check_all','.check_item');
-	getDatatable('tbl_matcode_assembly',assemblyListURL,dataColumn,[],0);
+    checkAllCheckboxesInTable('#tbl_matcode_assembly','.check_all','.check_item');
+	getDatatable('tbl_matcode_assembly',assemblyListURL,dataColumn,[],6);
 
 
 	$('body').on('keydown', '.switch', function(e) {
@@ -58,7 +59,7 @@ $( function() {
 		}).done(function(data, textStatus, xhr) {
 			if (textStatus == 'success') {
 				msg("Data was successfully saved.","success");
-				getDatatable('tbl_matcode_assembly',assemblyListURL,dataColumn,[],0);
+				getDatatable('tbl_matcode_assembly',assemblyListURL,dataColumn,[],6);
 				new_assembly();
 				showDropdowns($('#mat_type').val())
 				$('#material_type').val($('#mat_type').val());
