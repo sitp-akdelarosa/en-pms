@@ -17,14 +17,15 @@ class CreateNotificationsTable extends Migration
             $table->increments('id');
             $table->string('title');
             $table->text('content');
+            $table->integer('content_id')->length(11)->default(0);
             $table->string('from');
-            $table->string('from_id');
-            $table->string('to');
-            $table->integer('read');
+            $table->integer('from_id')->length(8)->default(0);
+            $table->integer('to')->length(8)->default(0);
+            $table->integer('read')->default(0);
             $table->string('module');
-            $table->string('link');
-            $table->string('create_user');
-            $table->string('update_user');
+            $table->text('link');
+            $table->integer('create_user')->default(0);
+            $table->integer('update_user')->default(0);
             $table->timestamps();
         });
     }

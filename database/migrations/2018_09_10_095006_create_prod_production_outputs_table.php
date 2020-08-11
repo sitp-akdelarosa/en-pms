@@ -30,8 +30,8 @@ class CreateProdProductionOutputsTable extends Migration
             $table->integer('output')->default(0);
             $table->string('operator')->nullable();
             $table->string('machine_no')->nullable();
-            $table->string('create_user')->nullable();
-            $table->string('update_user')->nullable();
+            $table->integer('create_user')->default(0);
+            $table->integer('update_user')->default(0);
             $table->timestamps();
         });
     }

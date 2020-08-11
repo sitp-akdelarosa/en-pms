@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePpcJoTravelSheetsTable extends Migration
+class CreateFgStocksTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,22 +13,19 @@ class CreatePpcJoTravelSheetsTable extends Migration
      */
     public function up()
     {
-        Schema::create('ppc_jo_travel_sheets', function (Blueprint $table) {
+        Schema::create('fg_stocks', function (Blueprint $table) {
             $table->increments('id');
             $table->string('jo_no');
-            $table->string('sc_no');
             $table->string('prod_code');
             $table->string('description');
-            $table->double('order_qty',20,2);
-            $table->double('sched_qty',20,2);
-            $table->double('issued_qty',20,2);
-            $table->string('material_used');
-            $table->string('material_heat_no');
-            $table->string('lot_no');
+            $table->double('order_qty',20,2)->default(0.00);
+            $table->double('qty',20,2)->default(0.00);
             $table->integer('status')->default(0);
             $table->integer('create_user')->default(0);
             $table->integer('update_user')->default(0);
             $table->timestamps();
+
+
         });
     }
 
@@ -39,6 +36,6 @@ class CreatePpcJoTravelSheetsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ppc_jo_travel_sheets');
+        Schema::dropIfExists('fg_stocks');
     }
 }

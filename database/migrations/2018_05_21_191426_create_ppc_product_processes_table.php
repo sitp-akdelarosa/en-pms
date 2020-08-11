@@ -20,8 +20,8 @@ class CreatePpcProductProcessesTable extends Migration
             $table->string('process');
             $table->string('set');
             $table->integer('sequence')->nullable()->default(0);
-            $table->string('create_user');
-            $table->string('update_user');
+            $table->integer('create_user')->default(0);
+            $table->integer('update_user')->default(0);
             $table->timestamps();
         });
     }

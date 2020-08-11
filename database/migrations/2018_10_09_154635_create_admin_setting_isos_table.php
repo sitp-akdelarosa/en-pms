@@ -18,8 +18,8 @@ class CreateAdminSettingIsosTable extends Migration
             $table->string('iso_name');
             $table->string('iso_code');
             $table->string('photo')->nullable();
-            $table->string('create_user');
-            $table->string('update_user');
+            $table->integer('create_user')->default(0);
+            $table->integer('update_user')->default(0);
             $table->timestamps();
         });
     }

@@ -25,6 +25,7 @@ class User extends Authenticatable
         'photo',
         'div_code',
         'is_admin',
+        'is_superadmin',
         'user_category',
         'del_flag'
     ];

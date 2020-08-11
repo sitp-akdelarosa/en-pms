@@ -22,14 +22,16 @@ class CreateProdTransferItemsTable extends Migration
             $table->string('current_process')->nullable();
             $table->string('div_code')->nullable();
             $table->string('process')->nullable();
-            $table->integer('qty')->default(0);
+            $table->double('qty',20,2)->default(0.00);
             $table->string('status')->nullable();
             $table->string('remarks')->nullable();
             $table->integer('item_status')->default(0);
-            $table->integer('receive_qty')->default(0);
+            $table->double('receive_qty',20,2)->default(0.00);
             $table->text('receive_remarks')->nullable();
-            $table->string('create_user');
-            $table->string('update_user');
+            $table->dateTime('date_received');
+            $table->dateTime('date_transfered');
+            $table->integer('create_user')->default(0);
+            $table->integer('update_user')->default(0);
             $table->timestamps();
         });
     }

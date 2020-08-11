@@ -17,6 +17,7 @@ class UserTypeController extends Controller
 {
 	protected $_helper;
 	protected $_audit;
+	protected $_moduleID;
 
 	public function __construct()
 	{
@@ -24,6 +25,8 @@ class UserTypeController extends Controller
 		$this->middleware('auth');
 		$this->_helper = new HelpersController;
 		$this->_audit = new AuditTrailController;
+
+		$this->_moduleID = $this->_helper->moduleID('A0003');
 	}
 
 	public function index()
@@ -61,6 +64,7 @@ class UserTypeController extends Controller
 				$type = AdminUserType::find($req->id);
 				$type->description = strtoupper($req->description);
 				$type->category = strtoupper($req->category);
+				$type->update_user = Auth::user()->id;
 				if ($type->update()) {
 					AdminUserTypeModule::where('user_type_id',$req->id)->delete();
 
@@ -88,9 +92,10 @@ class UserTypeController extends Controller
 
 				$this->_audit->insert([
 					'user_type' => Auth::user()->user_type,
+					'module_id' => $this->_moduleID,
 					'module' => 'User Type',
 					'action' => 'Edited data ID: '.$req->id.', User Type: '.$type->description.' and Category: '.$type->category,
-					'user' => Auth::user()->user_id
+					'user' => Auth::user()->id
 				]);
 			}
 		} else {
@@ -102,6 +107,8 @@ class UserTypeController extends Controller
 			$type = new AdminUserType();
 			$type->description = strtoupper($req->description);
 			$type->category = strtoupper($req->category);
+			$type->create_user = Auth::user()->id;
+			$type->update_user = Auth::user()->id;
 
 			if ($type->save()) {
 				AdminUserTypeModule::where('user_type_id',$type->id)->delete();
@@ -130,9 +137,10 @@ class UserTypeController extends Controller
 
 			$this->_audit->insert([
 				'user_type' => Auth::user()->user_type,
+				'module_id' => $this->_moduleID,
 				'module' => 'User Type',
 				'action' => 'Inserted data User Type: '.$req->description.' and Category: '.$type->category,
-				'user' => Auth::user()->user_id
+				'user' => Auth::user()->id
 			]);
 		}
 
@@ -170,9 +178,10 @@ class UserTypeController extends Controller
 
 		$this->_audit->insert([
 			'user_type' => Auth::user()->user_type,
+			'module_id' => $this->_moduleID,
 			'module' => 'User Type',
 			'action' => 'Deleted data ID: '.$ids,
-			'user' => Auth::user()->user_id
+			'user' => Auth::user()->id
 		]);
 
 		return response()->json($data);

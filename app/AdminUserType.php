@@ -9,7 +9,9 @@ class AdminUserType extends Model
 	protected $fillable = [
 		'description',
 		'category',
-		'del_flag'
+		'del_flag',
+		'create_user',
+		'update_user'
 	];
 
 	public function users()

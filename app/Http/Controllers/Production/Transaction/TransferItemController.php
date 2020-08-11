@@ -23,6 +23,8 @@ use App\Events\Notify;
 class TransferItemController extends Controller
 {
     protected $_helper;
+    protected $_audit;
+    protected $_moduleID;
 
     public function __construct()
     {
@@ -30,6 +32,8 @@ class TransferItemController extends Controller
         $this->middleware('auth');
         $this->_helper = new HelpersController;
         $this->_audit = new AuditTrailController;
+
+        $this->_moduleID = $this->_helper->moduleID('T0008');
     }
 
     public function index()
@@ -77,15 +81,16 @@ class TransferItemController extends Controller
                 $items->item_status = 0;
                 $items->receive_remarks = "";
                 $items->receive_qty = 0;
-                $items->update_user = Auth::user()->user_id;
+                $items->update_user = Auth::user()->id;
                 $items->updated_at = date('Y-m-d h:i:s');
                 $items->update();
 
                 $this->_audit->insert([
                     'user_type' => Auth::user()->user_type,
+                    'module_id' => $this->_moduleID,
                     'module' => 'Transfer Item',
                     'action' => 'Edited Transfer Item JO: '.$req->jo_no.', Product Code: '.strtoupper($req->prod_code),
-                    'user' => Auth::user()->user_id
+                    'user' => Auth::user()->id
                 ]);
 
                 $data = [
@@ -110,8 +115,8 @@ class TransferItemController extends Controller
             $items->receive_qty = 0;
             $items->item_status = 0;
 
-            $items->create_user = Auth::user()->user_id;
-            $items->update_user = Auth::user()->user_id;
+            $items->create_user = Auth::user()->id;
+            $items->update_user = Auth::user()->id;
             $items->created_at = date('Y-m-d h:i:s');
             $items->updated_at = date('Y-m-d h:i:s');
 
@@ -119,9 +124,10 @@ class TransferItemController extends Controller
 
             $this->_audit->insert([
                 'user_type' => Auth::user()->user_type,
+                'module_id' => $this->_moduleID,
                 'module' => 'Transfer Item',
                 'action' => 'Transfered Item JO: '.$req->jo_no.', Product Code: '.strtoupper($req->prod_code),
-                'user' => Auth::user()->user_id
+                'user' => Auth::user()->id
             ]);
 
             $to_notify = DB::table('ppc_divisions as d')
@@ -148,8 +154,8 @@ class TransferItemController extends Controller
                     'module' => 'T0007',
                     'link' => '../prod/transfer-item?receive_items=true',
                     'content_id' => $items->id,
-                    'create_user' => Auth::user()->user_id,
-                    'update_user' => Auth::user()->user_id
+                    'create_user' => Auth::user()->id,
+                    'update_user' => Auth::user()->id
                 ]);
             }
 
@@ -316,9 +322,10 @@ class TransferItemController extends Controller
         $ids = implode(',', $req->id);
         $this->_audit->insert([
             'user_type' => Auth::user()->user_type,
+            'module_id' => $this->_moduleID,
             'module' => 'Transfer Item',
             'action' => 'Deleted data ID '.$ids,
-            'user' => Auth::user()->user_id
+            'user' => Auth::user()->id
         ]);
 
         return response()->json($data);
@@ -444,8 +451,8 @@ class TransferItemController extends Controller
                     'sequence' => $tsp->sequence,
                     'status' => 4,
                     strtolower($req->status) => $qtyprocess,
-                    'create_user' => Auth::user()->user_id,
-                    'update_user' => Auth::user()->user_id,
+                    'create_user' => Auth::user()->id,
+                    'update_user' => Auth::user()->id,
                 ]);
         }
 
@@ -457,7 +464,7 @@ class TransferItemController extends Controller
         $item->item_status = 1;
         $item->receive_remarks = $req->remarks;
         $item->receive_qty = $req->qty;
-        $item->update_user = Auth::user()->user_id;
+        $item->update_user = Auth::user()->id;
         $item->update();
 
         //Notification
@@ -480,8 +487,8 @@ class TransferItemController extends Controller
                 'module' => 'T0007',
                 'link' => '../prod/transfer-item',
                 'content_id' => $item->id,
-                'create_user' => Auth::user()->user_id,
-                'update_user' => Auth::user()->user_id
+                'create_user' => Auth::user()->id,
+                'update_user' => Auth::user()->id
             ]);
         }
         $noti = Notification::where('read',0)->get();
@@ -489,9 +496,10 @@ class TransferItemController extends Controller
 
         $this->_audit->insert([
             'user_type' => Auth::user()->user_type,
+            'module_id' => $this->_moduleID,
             'module' => 'Received Items',
             'action' => 'Item Received Job number '.$req->jo_no,
-            'user' => Auth::user()->user_id
+            'user' => Auth::user()->id
         ]);
 
         return response()->json($data);

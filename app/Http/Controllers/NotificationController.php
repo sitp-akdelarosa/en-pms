@@ -60,7 +60,7 @@ class NotificationController extends Controller
     {
     	$noti = Notification::find($req->id);
     	$noti->read = 1;
-    	$noti->update_user = Auth::user()->user_id;
+    	$noti->update_user = Auth::user()->id;
         $noti->updated_at = date('Y-m-d h:i:s');
         $noti->update();
         return $this->getUnreadNotification();

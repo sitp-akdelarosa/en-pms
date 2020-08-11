@@ -11,6 +11,7 @@ class PpcDivision extends Model
     				'div_name',
     				'plant',
 					'leader',
+                    'leader_id',
 					'is_disable',
     				'user_id',
     				'create_user',

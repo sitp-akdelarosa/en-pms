@@ -15,7 +15,7 @@ class CreatePpcCuttingScheduleDetailsTable extends Migration
     {
         Schema::create('ppc_cutting_schedule_details', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('cutt_id');
+            $table->integer('cutt_id')->default(0);
             $table->string('item_no');
             $table->string('alloy');
             $table->string('size');
@@ -29,7 +29,12 @@ class CreatePpcCuttingScheduleDetailsTable extends Migration
             $table->double('order_qty',20,2)->default(0.00);
             $table->double('qty_needed',20,2)->default(0.00);
             $table->double('qty_cut',20,2)->default(0.00);
-            $table->text('material_desc');
+            $table->double('plate_qty',20,2)->default(0.00);
+            $table->string('material_desc_item');
+            $table->string('material_desc_size');
+            $table->string('material_desc_heat_no');
+            $table->string('material_desc_lot_no');
+            $table->string('material_desc_supplier_heat_no');
             $table->timestamps();
         });
     }

@@ -24,6 +24,8 @@ class ProductionScheduleController extends Controller
 {
 
     protected $_helper = '';
+    protected $_audit;
+    protected $_moduleID;
 
     public function __construct()
     {
@@ -31,6 +33,8 @@ class ProductionScheduleController extends Controller
         $this->middleware('auth');
         $this->_helper = new HelpersController;
         $this->_audit = new AuditTrailController;
+
+        $this->_moduleID = $this->_helper->moduleID('T0004');
     }
 
     public function index()
@@ -47,22 +51,22 @@ class ProductionScheduleController extends Controller
 
             $from1 = PpcProductionSummary::select('id')
                 ->where('sc_no', 'like', '%' . $req->fromvalue . '%')
-                ->where('create_user', Auth::user()->user_id)
+                ->where('create_user', Auth::user()->id)
                 ->orderBy('ps.id', 'DESC')
                 ->first();
             $from2 = PpcProductionSummary::select('id')
                 ->where('prod_code', 'like', '%' . $req->fromvalue . '%')
-                ->where('create_user', Auth::user()->user_id)
+                ->where('create_user', Auth::user()->id)
                 ->orderBy('ps.id', 'DESC')
                 ->first();
             $to1 = PpcProductionSummary::select(DB::raw("Max(Id) as ids"))
                 ->where('sc_no', 'like', '%' . $req->tovalue . '%')
-                ->where('create_user', Auth::user()->user_id)
+                ->where('create_user', Auth::user()->id)
                 ->orderBy('ps.id', 'DESC')
                 ->first();
             $to2 = PpcProductionSummary::select('id')
                 ->where('prod_code', 'like', '%' . $req->tovalue . '%')
-                ->where('create_user', Auth::user()->user_id)
+                ->where('create_user', Auth::user()->id)
                 ->orderBy('ps.id', 'DESC')
                 ->first();
 
@@ -73,7 +77,7 @@ class ProductionScheduleController extends Controller
                 if ($req->tovalue == '') {
                     $toNULL = PpcProductionSummary::select(DB::raw("Max(Id) as ids"))
                         ->where('sc_no', 'like', '%' . $req->fromvalue . '%')
-                        ->where('create_user', Auth::user()->user_id)
+                        ->where('create_user', Auth::user()->id)
                         ->orderBy('ps.id', 'DESC')
                         ->first();
                     $TO = $toNULL->ids;
@@ -188,8 +192,8 @@ class ProductionScheduleController extends Controller
                 $jo_sum->jo_no = $jocode;
                 $jo_sum->total_sched_qty = $qty[$row]['sched_qty'];
                 $jo_sum->rmw_no = $req->rmw_no;
-                $jo_sum->create_user = Auth::user()->user_id;
-                $jo_sum->update_user = Auth::user()->user_id;
+                $jo_sum->create_user = Auth::user()->id;
+                $jo_sum->update_user = Auth::user()->id;
                 $jo_sum->save();
 
                 PpcJoTravelSheet::create([
@@ -204,8 +208,8 @@ class ProductionScheduleController extends Controller
                     'material_heat_no' => $req->material_heat_no[$key],
                     'lot_no' => $req->lot_no[$key],
                     'status' => 0,
-                    'create_user' => Auth::user()->user_id,
-                    'update_user' => Auth::user()->user_id,
+                    'create_user' => Auth::user()->id,
+                    'update_user' => Auth::user()->id,
                 ]);
                 $row++;
                 $jo_no_count[] = $jo_sum->id;
@@ -215,7 +219,7 @@ class ProductionScheduleController extends Controller
             //Overwrite
             // foreach ($req->id as $key => $id) {
             //     PpcRawMaterialWithdrawalDetails::where('material_heat_no',$req->material_heat_no[$key])
-            //         ->where('create_user' , Auth::user()->user_id)
+            //         ->where('create_user' , Auth::user()->id)
             //         ->update(['sc_no' =>'']);
             // }
 
@@ -225,7 +229,7 @@ class ProductionScheduleController extends Controller
                 PpcProductionSummary::where('id', $id)->increment('sched_qty', $req->sched_qty[$key]);
 
                 $rawmats = PpcRawMaterialWithdrawalDetails::where('material_heat_no', $req->material_heat_no[$key])
-                    ->where('create_user', Auth::user()->user_id)
+                    ->where('create_user', Auth::user()->id)
                     ->first();
                 if (isset($rawmats->id)) {
                     $Coma = ', ';
@@ -234,7 +238,7 @@ class ProductionScheduleController extends Controller
                     }
                     if (strpos($rawmats->sc_no, $req->sc_no[$key]) === false) {
                         PpcRawMaterialWithdrawalDetails::where('material_heat_no', $req->material_heat_no[$key])
-                            ->where('create_user', Auth::user()->user_id)
+                            ->where('create_user', Auth::user()->id)
                             ->update(['sc_no' => $req->sc_no[$key] . $Coma . $rawmats->sc_no]);
                     }
                 }
@@ -250,8 +254,8 @@ class ProductionScheduleController extends Controller
                         'material_used' => $req->material_used[$key],
                         'material_heat_no' => $req->material_heat_no[$key],
                         'lot_no' => $req->lot_no[$key],
-                        'create_user' => Auth::user()->user_id,
-                        'update_user' => Auth::user()->user_id,
+                        'create_user' => Auth::user()->id,
+                        'update_user' => Auth::user()->id,
                     ]);
 
                 } else {
@@ -266,8 +270,8 @@ class ProductionScheduleController extends Controller
                         'material_used' => $req->material_used[$key],
                         'material_heat_no' => $req->material_heat_no[$key],
                         'lot_no' => $req->lot_no[$key],
-                        'create_user' => Auth::user()->user_id,
-                        'update_user' => Auth::user()->user_id,
+                        'create_user' => Auth::user()->id,
+                        'update_user' => Auth::user()->id,
                     ]);
                 }
                 $prod_code_unique = $req->prod_code[$key];
@@ -275,9 +279,10 @@ class ProductionScheduleController extends Controller
 
             $this->_audit->insert([
                 'user_type' => Auth::user()->user_type,
+                'module_id' => $this->_moduleID,
                 'module' => 'Production Schedule',
                 'action' => 'Inserted data Jo_No:' . $jo_no,
-                'user' => Auth::user()->user_id,
+                'user' => Auth::user()->id,
             ]);
 
         } else {
@@ -305,10 +310,10 @@ class ProductionScheduleController extends Controller
             PpcJoDetails::where('jo_summary_id', $jo_summary->id)->delete();
 
             PpcJoDetailsSummary::where('jo_no', $req->jo_no)
-                ->where('create_user', Auth::user()->user_id)
+                ->where('create_user', Auth::user()->id)
                 ->update([
                     'total_sched_qty' => $req->total_sched_qty,
-                    'update_user' => Auth::user()->user_id,
+                    'update_user' => Auth::user()->id,
                     'updated_at' => date('Y-m-d h:i:s'),
                 ]);
 
@@ -328,8 +333,8 @@ class ProductionScheduleController extends Controller
                     'material_used' => $req->material_used[$key],
                     'material_heat_no' => $req->material_heat_no[$key],
                     'lot_no' => $req->lot_no[$key],
-                    'create_user' => Auth::user()->user_id,
-                    'update_user' => Auth::user()->user_id,
+                    'create_user' => Auth::user()->id,
+                    'update_user' => Auth::user()->id,
                 ]);
 
                 $back_order_qty_total += $req->quantity[$key];
@@ -346,14 +351,15 @@ class ProductionScheduleController extends Controller
                 'material_heat_no' => $req->material_heat_no[0],
                 'lot_no' => $req->lot_no[0],
                 'status' => 0,
-                'update_user' => Auth::user()->user_id,
+                'update_user' => Auth::user()->id,
             ]);
 
             $this->_audit->insert([
                 'user_type' => Auth::user()->user_type,
+                'module_id' => $this->_moduleID,
                 'module' => 'Production Schedule',
                 'action' => 'Edited data Jo_No: ' . $jo_no,
-                'user' => Auth::user()->user_id,
+                'user' => Auth::user()->id,
             ]);
         }
         return response()->json(['jocode' => $jo_no, 'result' => $result]);
@@ -483,7 +489,7 @@ class ProductionScheduleController extends Controller
             ->leftjoin('ppc_product_codes as pc', 'jt.prod_code', '=', 'pc.product_code')
             ->leftjoin('admin_assign_production_lines as pl', 'pl.product_line', '=', 'pc.product_type')
             ->where('pl.user_id', Auth::user()->id)
-            ->where('jt.create_user', Auth::user()->user_id)
+            ->where('jt.create_user', Auth::user()->id)
             ->whereIn('jt.status', array(0, 1))
             ->orderBy('jt.jo_no', 'desc')
             ->groupBy(
@@ -540,7 +546,7 @@ class ProductionScheduleController extends Controller
             ->leftjoin('ppc_product_codes as pc', 'jt.prod_code', '=', 'pc.product_code')
             ->leftjoin('admin_assign_production_lines as pl', 'pl.product_line', '=', 'pc.product_type')
             ->where('pl.user_id', Auth::user()->id)
-            ->where('jt.create_user', '!=', Auth::user()->user_id)
+            ->where('jt.create_user', '!=', Auth::user()->id)
             ->whereIn('jt.status', array(0, 1))
             ->orderBy('jt.jo_no', 'desc')
             ->groupBy(
@@ -605,11 +611,11 @@ class ProductionScheduleController extends Controller
                 ->decrement('sched_qty', (int) $dt->sched_qty);
 
             PpcRawMaterialWithdrawalDetails::where('material_heat_no', $dt->material_heat_no)
-                ->where('create_user', Auth::user()->user_id)
+                ->where('create_user', Auth::user()->id)
                 ->update(['sc_no' => DB::raw("REPLACE(sc_no, '" . $dt->sc_no . ", ', '')")]);
 
             PpcRawMaterialWithdrawalDetails::where('material_heat_no', $dt->material_heat_no)
-                ->where('create_user', Auth::user()->user_id)
+                ->where('create_user', Auth::user()->id)
                 ->update(['sc_no' => DB::raw("REPLACE(sc_no, '" . $dt->sc_no . "', '')")]);
         }
 

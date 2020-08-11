@@ -59,7 +59,7 @@ foreach ($user_accesses as $user_access){
 							</div>
 
 							<div class="col-md-5">
-								<h5>Assiged to Product Line</h5>
+								<h5>Assiged Product Line</h5>
 								<table class="table table-striped table-sm dt-responsive" id="tbl_assign_productline" style="width:100%">
 									<thead class="thead-dark">
 										<tr>

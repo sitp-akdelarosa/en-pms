@@ -13,6 +13,7 @@ class PpcCuttingSchedule extends Model
 			    	'machine_no',
 			    	'prepared_by',
 			    	'leader',
+			    	'leader_id',
 			    	'create_user',
 			    	'update_user'
     			];

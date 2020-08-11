@@ -19,6 +19,8 @@ use DB;
 class RawMaterialWithdrawalController extends Controller
 {
     protected $_helper = '';
+    protected $_audit;
+    protected $_moduleID;
 
     public function __construct()
     {
@@ -26,6 +28,8 @@ class RawMaterialWithdrawalController extends Controller
         $this->middleware('auth');
         $this->_helper = new HelpersController;
         $this->_audit = new AuditTrailController;
+
+        $this->_moduleID = $this->_helper->moduleID('T0003');
     }
 
     public function index()
@@ -37,7 +41,7 @@ class RawMaterialWithdrawalController extends Controller
     public function getScNo()
     {
         $sc_no = PpcUploadOrder::select('sc_no')
-                                ->where('create_user',Auth::user()->user_id)
+                                ->where('create_user',Auth::user()->id)
                                 ->groupBy('sc_no')
                                 ->get();
         return response()->json($sc_no);
@@ -56,7 +60,7 @@ class RawMaterialWithdrawalController extends Controller
     {
         if (empty($req->to) && !empty($req->trans_no)) {
             $info = PpcRawMaterialWithdrawalInfo::select('id','trans_no')
-                                            ->where('create_user',Auth::user()->user_id)
+                                            ->where('create_user',Auth::user()->id)
                                             ->where('trans_no',$req->trans_no)
                                             ->first();
 
@@ -118,12 +122,12 @@ class RawMaterialWithdrawalController extends Controller
                                             ->where("id", "=", function ($query) {
                                                 $query->select(DB::raw(" MIN(id)"))
                                                   ->from('ppc_raw_material_withdrawal_infos')
-                                                ->where('create_user',Auth::user()->user_id);
+                                                ->where('create_user',Auth::user()->id);
                                               })
                                             ->first();
         if (count((array)$info) > 0) {
             $details = PpcRawMaterialWithdrawalDetails::where('trans_id',$info->id)
-                        ->where('create_user',Auth::user()->user_id)->get();
+                        ->where('create_user',Auth::user()->id)->get();
 
             $data = [
                 'trans_id' => $info->id,
@@ -139,17 +143,17 @@ class RawMaterialWithdrawalController extends Controller
     {
         $latest = PpcRawMaterialWithdrawalInfo::select('id','trans_no')
                                             ->where('trans_no',$trans_no)
-                                            ->where('create_user',Auth::user()->user_id)
+                                            ->where('create_user',Auth::user()->id)
                                             ->first();
 
         $info = PpcRawMaterialWithdrawalInfo::select('id','trans_no')
                                             ->where('id','<',$latest->id)
                                             ->orderBy("id","DESC")
-                                            ->where('create_user',Auth::user()->user_id)
+                                            ->where('create_user',Auth::user()->id)
                                             ->first();
         if (count((array)$info) > 0) {
             $details = PpcRawMaterialWithdrawalDetails::where('trans_id',$info->id)
-                    ->where('create_user',Auth::user()->user_id)->get();
+                    ->where('create_user',Auth::user()->id)->get();
 
             $data = [
                 'trans_id' => $info->id,
@@ -167,17 +171,17 @@ class RawMaterialWithdrawalController extends Controller
     {
         $latest = PpcRawMaterialWithdrawalInfo::select('id','trans_no')
                                             ->where('trans_no',$trans_no)
-                                            ->where('create_user',Auth::user()->user_id)
+                                            ->where('create_user',Auth::user()->id)
                                             ->first();
 
         $info = PpcRawMaterialWithdrawalInfo::select('id','trans_no')
                                             ->where('id','>',$latest->id)
-                                            ->where('create_user',Auth::user()->user_id)
+                                            ->where('create_user',Auth::user()->id)
                                             ->orderBy("id")
                                             ->first();
         if (count((array)$info) > 0) {
             $details = PpcRawMaterialWithdrawalDetails::where('trans_id',$info->id)
-                     ->where('create_user',Auth::user()->user_id)->get();
+                     ->where('create_user',Auth::user()->id)->get();
 
             $data = [
                 'trans_id' => $info->id,
@@ -197,13 +201,13 @@ class RawMaterialWithdrawalController extends Controller
                                             ->where("id", "=", function ($query) {
                                                 $query->select(DB::raw(" MAX(id)"))
                                                   ->from('ppc_raw_material_withdrawal_infos')
-                                                ->where('create_user',Auth::user()->user_id);
+                                                ->where('create_user',Auth::user()->id);
                                               })
                                             ->first();
 
         if (count((array)$info) > 0) {                                            
             $details = PpcRawMaterialWithdrawalDetails::where('trans_id',$info->id)
-                        ->where('create_user',Auth::user()->user_id)->get();
+                        ->where('create_user',Auth::user()->id)->get();
 
             $data = [
                 'trans_id' => $info->id,
@@ -225,8 +229,8 @@ class RawMaterialWithdrawalController extends Controller
             $trans_no = $this->_helper->TransactionNo($f[0].$l[0].'-RMW');
             $info = new PpcRawMaterialWithdrawalInfo();
             $info->trans_no = $trans_no;
-            $info->create_user = Auth::user()->user_id;
-            $info->update_user = Auth::user()->user_id;
+            $info->create_user = Auth::user()->id;
+            $info->update_user = Auth::user()->id;
             $info->save();
 
             foreach ($req->ids as $key => $detailid) {
@@ -250,8 +254,8 @@ class RawMaterialWithdrawalController extends Controller
                     'issued_uom' => $req->issued_uom[$key],
                     // 'needed_uom' => $req->needed_uom[$key],
                     // 'returned_uom' => $req->returned_uom[$key],
-                    'create_user' => Auth::user()->user_id,
-                    'update_user' => Auth::user()->user_id,
+                    'create_user' => Auth::user()->id,
+                    'update_user' => Auth::user()->id,
                     'created_at' => date('Y-m-d h:i:s'),
                     'updated_at' => date('Y-m-d h:i:s'),
                 ]);
@@ -265,9 +269,10 @@ class RawMaterialWithdrawalController extends Controller
 
             $this->_audit->insert([
                 'user_type' => Auth::user()->user_type,
+                'module_id' => $this->_moduleID,
                 'module' => 'Raw Material Withdrawal',
                 'action' => 'Inserted data Transfer ID: '.$info->trans_no,
-                'user' => Auth::user()->user_id
+                'user' => Auth::user()->id
             ]);
 
         } else {
@@ -311,8 +316,8 @@ class RawMaterialWithdrawalController extends Controller
                     'issued_uom' => $req->issued_uom[$key],
                     // 'needed_uom' => $req->needed_uom[$key],
                     // 'returned_uom' => $req->returned_uom[$key],
-                    'create_user' => Auth::user()->user_id,
-                    'update_user' => Auth::user()->user_id,
+                    'create_user' => Auth::user()->id,
+                    'update_user' => Auth::user()->id,
                     'created_at' => date('Y-m-d h:i:s'),
                     'updated_at' => date('Y-m-d h:i:s'),
                 ]);
@@ -324,9 +329,10 @@ class RawMaterialWithdrawalController extends Controller
 
             $this->_audit->insert([
                 'user_type' => Auth::user()->user_type,
+                'module_id' => $this->_moduleID,
                 'module' => 'Raw Material Withdrawal',
                 'action' => 'Edited data Transfer ID: '.$req->trans_no,
-                'user' => Auth::user()->user_id
+                'user' => Auth::user()->id
             ]);
         }
         $details = PpcRawMaterialWithdrawalDetails::where('trans_id',$info->id)->get();
@@ -363,9 +369,10 @@ class RawMaterialWithdrawalController extends Controller
         }
         $this->_audit->insert([
             'user_type' => Auth::user()->user_type,
+            'module_id' => $this->_moduleID,
             'module' => 'Raw Material Withdrawal',
             'action' => 'Deleted data ID: '.$req->id,
-            'user' => Auth::user()->user_id
+            'user' => Auth::user()->id
         ]);
         return response()->json($data);
     }
@@ -407,7 +414,7 @@ class RawMaterialWithdrawalController extends Controller
 
     public function transaction_no()
     {
-        $old_trans = PpcRawMaterialWithdrawalInfo::where('create_user',Auth::user()->user_id)
+        $old_trans = PpcRawMaterialWithdrawalInfo::where('create_user',Auth::user()->id)
                                                 ->latest()->first();
     }
 

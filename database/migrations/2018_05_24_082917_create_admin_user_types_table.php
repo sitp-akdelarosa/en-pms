@@ -19,8 +19,15 @@ class CreateAdminUserTypesTable extends Migration
             $table->string('description');
             $table->string('category');
             $table->integer('del_flag')->length(1)->default(0);
+            $table->integer('create_user')->length(10)->default(0);
+            $table->integer('update_user')->length(10)->default(0);
             $table->timestamps();
         });
+
+        AdminUserType::create([
+            'description' => 'SYSTEM ADMIN',
+            'category' => 'ALL'
+        ]);
 
         AdminUserType::create([
             'description' => 'PPC',

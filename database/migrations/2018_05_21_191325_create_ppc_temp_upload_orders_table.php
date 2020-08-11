@@ -18,11 +18,12 @@ class CreatePpcTempUploadOrdersTable extends Migration
             $table->string('sc_no');
             $table->string('prod_code');
             $table->string('description');
-            $table->integer('quantity');
+            $table->double('quantity',20,2)->default(0.00);;
             $table->string('po');
+            $table->integer('uploader')->length(8)->default(0);
             $table->dateTime('date_upload');
-            $table->string('create_user');
-            $table->string('update_user');
+            $table->string('create_user')->default(0);
+            $table->string('update_user')->default(0);
             $table->timestamps();
         });
     }

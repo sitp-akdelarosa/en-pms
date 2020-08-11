@@ -18,13 +18,14 @@ class CreatePpcUploadOrdersTable extends Migration
             $table->string('sc_no');
             $table->string('prod_code');
             $table->string('description');
-            $table->integer('quantity');
+            $table->double('quantity')->default(0.00);
             $table->string('unit')->nullable();
-            $table->integer('sched_qty')->nullable();
+            $table->double('sched_qty')->default(0.00)->nullable();
             $table->string('po');
+            $table->integer('uploader')->length(8);
             $table->date('date_upload');
-            $table->string('create_user');
-            $table->string('update_user');
+            $table->integer('create_user')->default(0);
+            $table->integer('update_user')->default(0);
             $table->timestamps();
         });
     }

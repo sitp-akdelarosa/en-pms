@@ -16,9 +16,10 @@ class CreatePpcJoDetailsSummariesTable extends Migration
         Schema::create('ppc_jo_details_summaries', function (Blueprint $table) {
             $table->increments('id');
             $table->string('jo_no');
-            $table->integer('total_sched_qty');
-            $table->string('create_user');
-            $table->string('update_user');
+            $table->string('rmw_no');
+            $table->double('total_sched_qty',20,2)->default(0.00);
+            $table->integer('create_user')->default(0);
+            $table->integer('update_user')->default(0);
             $table->timestamps();
         });
     }

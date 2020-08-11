@@ -16,7 +16,7 @@ class CreatePpcDivisionProductlinesTable extends Migration
         Schema::create('ppc_division_productlines', function (Blueprint $table) {
             $table->increments('id');
             $table->string('productline');
-            $table->integer('division_id');
+            $table->integer('division_id')->default(0);
             $table->timestamps();
         });
     }
