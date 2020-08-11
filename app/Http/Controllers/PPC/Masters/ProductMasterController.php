@@ -23,6 +23,7 @@ class ProductMasterController extends Controller
 {
     protected $_helper;
     protected $_audit;
+    protected $_moduleID;
 
     public function __construct()
     {
@@ -30,6 +31,9 @@ class ProductMasterController extends Controller
         $this->middleware('auth');
         $this->_helper = new HelpersController;
         $this->_audit = new AuditTrailController;
+
+        $this->_moduleID = $this->_helper->moduleID('M0003');
+
     }
 
     public function index()
@@ -97,17 +101,18 @@ class ProductMasterController extends Controller
             $code_assembly->character_num = $req->character_num;
             $code_assembly->character_code = strtoupper($req->character_code);
             $code_assembly->description = strtoupper($req->description);
-            $code_assembly->update_user = Auth::user()->user_id;
+            $code_assembly->update_user = Auth::user()->id;
 
             $code_assembly->update();
 
             $this->_audit->insert([
                 'user_type' => Auth::user()->user_type,
+                'module_id' => $this->_moduleID,
                 'module' => 'Product Master',
                 'action' => 'Edited data ID: ' . $req->assembly_id . ',
                             Product Type: ' . $req->prod_type . ',
                             Character Code: ' . $req->character_code,
-                'user' => Auth::user()->user_id,
+                'user' => Auth::user()->id,
             ]);
         } else {
             $check = PpcProductCodeAssembly::where('prod_type', $req->prod_type)
@@ -124,17 +129,18 @@ class ProductMasterController extends Controller
             $code_assembly->character_num = $req->character_num;
             $code_assembly->character_code = strtoupper($req->character_code);
             $code_assembly->description = strtoupper($req->description);
-            $code_assembly->create_user = Auth::user()->user_id;
-            $code_assembly->update_user = Auth::user()->user_id;
+            $code_assembly->create_user = Auth::user()->id;
+            $code_assembly->update_user = Auth::user()->id;
 
             $code_assembly->save();
 
             $this->_audit->insert([
                 'user_type' => Auth::user()->user_type,
+                'module_id' => $this->_moduleID,
                 'module' => 'Product Master',
                 'action' => 'Inserted data Product Type: ' . $req->prod_type . ',
                             Character Code: ' . $req->character_code,
-                'user' => Auth::user()->user_id,
+                'user' => Auth::user()->id,
             ]);
         }
 
@@ -172,9 +178,10 @@ class ProductMasterController extends Controller
 
         $this->_audit->insert([
             'user_type' => Auth::user()->user_type,
+            'module_id' => $this->_moduleID,
             'module' => 'Product Master',
             'action' => 'Deleted data Product Code Assembly ID: ' . $ids,
-            'user' => Auth::user()->user_id,
+            'user' => Auth::user()->id,
         ]);
 
         return response()->json($data);
@@ -293,8 +300,8 @@ class ProductMasterController extends Controller
                     'process' => strtoupper($req->process[$key]),
                     'set' => strtoupper($req->sets[$key]),
                     'sequence' => $seq,
-                    'create_user' => Auth::user()->user_id,
-                    'update_user' => Auth::user()->user_id,
+                    'create_user' => Auth::user()->id,
+                    'update_user' => Auth::user()->id,
                     'created_at' => date('Y-m-d H:i:s'),
                     'updated_at' => date('Y-m-d H:i:s'),
                 ]);
@@ -311,9 +318,10 @@ class ProductMasterController extends Controller
         if ($result) {
             $this->_audit->insert([
                 'user_type' => Auth::user()->user_type,
+                'module_id' => $this->_moduleID,
                 'module' => 'Product Master',
                 'action' => 'Assigned Process in Product Code: ' . $req->prod_code, //[0],
-                'user' => Auth::user()->user_id,
+                'user' => Auth::user()->id,
             ]);
             $data = PpcProductProcess::where('prod_id', $req->prod_id)->get();
         }
@@ -390,7 +398,7 @@ class ProductMasterController extends Controller
             $prod->alloy = $req->alloy;
             $prod->size = $req->size;
             $prod->standard_material_used = strtoupper($req->standard_material_used);
-            $prod->update_user = Auth::user()->user_id;
+            $prod->update_user = Auth::user()->id;
 
             $prod->update();
 
@@ -399,10 +407,11 @@ class ProductMasterController extends Controller
 
             $this->_audit->insert([
                 'user_type' => Auth::user()->user_type,
+                'module_id' => $this->_moduleID,
                 'module' => 'Product Master',
                 'action' => 'Edited data ID: ' . $req->product_id . ',
                             Product Code: ' . $prod->product_code,
-                'user' => Auth::user()->user_id,
+                'user' => Auth::user()->id,
             ]);
 
         } else {
@@ -434,8 +443,8 @@ class ProductMasterController extends Controller
             $prod->alloy = $req->alloy;
             $prod->size = $req->size;
             $prod->standard_material_used = strtoupper($req->standard_material_used);
-            $prod->create_user = Auth::user()->user_id;
-            $prod->update_user = Auth::user()->user_id;
+            $prod->create_user = Auth::user()->id;
+            $prod->update_user = Auth::user()->id;
 
             $prod->save();
 
@@ -445,7 +454,7 @@ class ProductMasterController extends Controller
                 PpcUploadOrder::where('prod_code', $req->product_code)
                     ->update([
                         'description' => strtoupper($req->code_description),
-                        'update_user' => Auth::user()->user_id,
+                        'update_user' => Auth::user()->id,
                         'updated_at' => date("Y-m-d H:i:s"),
                     ]);
                 NotRegisteredProduct::where('prod_code', $req->product_code)->delete();
@@ -453,9 +462,10 @@ class ProductMasterController extends Controller
 
             $this->_audit->insert([
                 'user_type' => Auth::user()->user_type,
+                'module_id' => $this->_moduleID,
                 'module' => 'Product Master',
                 'action' => 'Inserted data Product Code: ' . $req->product_code,
-                'user' => Auth::user()->user_id,
+                'user' => Auth::user()->id,
             ]);
         }
 
@@ -492,9 +502,10 @@ class ProductMasterController extends Controller
         $ids = implode(',', $req->id);
         $this->_audit->insert([
             'user_type' => Auth::user()->user_type,
+            'module_id' => $this->_moduleID,
             'module' => 'Product Master',
             'action' => 'Deleted data Product Code ID: ' . $ids,
-            'user' => Auth::user()->user_id,
+            'user' => Auth::user()->id,
         ]);
 
         return response()->json($data);
@@ -529,9 +540,10 @@ class ProductMasterController extends Controller
 
         $this->_audit->insert([
             'user_type' => Auth::user()->user_type,
+            'module_id' => $this->_moduleID,
             'module' => 'Product Master',
             'action' => 'Deleted data Process ID: ' . $req->id,
-            'user' => Auth::user()->user_id,
+            'user' => Auth::user()->id,
         ]);
 
         return response()->json($data);

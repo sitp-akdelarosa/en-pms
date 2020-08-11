@@ -16,6 +16,8 @@ class CreatePpcProcessSetsTable extends Migration
         Schema::create('ppc_process_sets', function (Blueprint $table) {
             $table->increments('id');
             $table->string('set');
+            $table->integer('create_user')->default(0);
+            $table->integer('update_user')->default(0);
             $table->timestamps();
         });
     }

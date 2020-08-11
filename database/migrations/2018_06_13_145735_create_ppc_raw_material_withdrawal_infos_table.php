@@ -16,8 +16,8 @@ class CreatePpcRawMaterialWithdrawalInfosTable extends Migration
         Schema::create('ppc_raw_material_withdrawal_infos', function (Blueprint $table) {
             $table->increments('id');
             $table->string('trans_no');
-            $table->string('create_user');
-            $table->string('update_user');
+            $table->integer('create_user')->default(0);
+            $table->integer('update_user')->default(0);
             $table->timestamps();
         });
     }

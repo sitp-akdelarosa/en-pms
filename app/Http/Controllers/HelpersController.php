@@ -15,18 +15,30 @@ use App\AdminTransactionNo;
 use App\PpcDivision;
 use App\AdminSettingIso;
 use App\PpcOperator;
+use App\AdminModule;
 use DB;
 
 class HelpersController extends Controller
 {
+    public function moduleID($code)
+    {
+        $query = AdminModule::select('id')->where('code',$code)->first();
+
+        if (!is_null($query)) {
+            return $query->id;
+        }
+
+        return '';
+    }
+
     public function UserAccess()
     {
         $user_category = [];
 
         if (Auth::user()->user_category == 'ALL') {
-            $user_category = ['PRODUCTION','OFFICE','Administrator'];
+            $user_category = ['PRODUCTION','OFFICE','ALL']; //Administrator
         } else {
-            $user_category = [Auth::user()->user_category,'Administrator'];
+            $user_category = [Auth::user()->user_category,'ALL']; //Administrator
         }
 
         $user_accesses = AdminModuleAccess::select('code','title','category','user_category')
@@ -181,10 +193,10 @@ class HelpersController extends Controller
                 'nextno' => 1,
                 'nextnolength' => 4,
                 'month' => date('m'),
-                'create_user' => Auth::user()->user_id,
-                'update_user' => Auth::user()->user_id,
-                'created_at' => date('Y-m-d'),
-                'updated_at' => date('Y-m-d'),
+                'create_user' => Auth::user()->id,
+                'update_user' => Auth::user()->id,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
             ]);
 
             $code = $this->NextTransactionNo($transcode);
@@ -288,6 +300,7 @@ class HelpersController extends Controller
         
         return response()->json($iso);
     }
+    
     public function getAllOperators(Request $term){
         $res = PpcOperator::selectRaw("CONCAT(firstname,' ',lastname) AS fullname")->get();
         return response()->json($res);

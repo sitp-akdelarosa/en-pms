@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePpcUpdateInventoriesTable extends Migration
+class CreateNotRegisteredMaterialsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,28 +13,21 @@ class CreatePpcUpdateInventoriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('ppc_update_inventories', function (Blueprint $table) {
+        Schema::create('not_registered_materials', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('materials_type');
             $table->string('materials_code');
-            $table->string('description')->nullable();
-            $table->string('item')->nullable();
-            $table->string('alloy')->nullable();
-            $table->string('schedule')->nullable();
-            $table->string('size')->nullable();
-            $table->string('width')->nullable();
-            $table->string('length')->nullable();
             $table->double('quantity',20,2)->default(0.00);
-            $table->string('uom')->nullable();
-            $table->string('heat_no')->nullable();
-            $table->string('invoice_no')->nullable();
+            $table->string('uom');
+            $table->string('heat_no');
+            $table->string('invoice_no');
             $table->date('received_date');
             $table->string('supplier');
+            $table->string('width');
+            $table->string('length');
             $table->string('supplier_heat_no');
             $table->integer('create_user')->default(0);
             $table->integer('update_user')->default(0);
             $table->timestamps();
-            
         });
     }
 
@@ -45,6 +38,6 @@ class CreatePpcUpdateInventoriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ppc_update_inventories');
+        Schema::dropIfExists('not_registered_materials');
     }
 }

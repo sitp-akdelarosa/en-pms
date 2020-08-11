@@ -18,8 +18,8 @@ class CreatePpcOperatorsTable extends Migration
             $table->string('operator_id');
             $table->string('firstname');
             $table->string('lastname');
-            $table->string('create_user');
-            $table->string('update_user');
+            $table->integer('create_user')->default(0);
+            $table->integer('update_user')->default(0);
             $table->timestamps();
         });
     }

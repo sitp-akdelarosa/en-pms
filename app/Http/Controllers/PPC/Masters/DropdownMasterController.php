@@ -16,6 +16,7 @@ class DropdownMasterController extends Controller
 {
     protected $_helper;
     protected $_audit;
+    protected $_moduleID;
 
     public function __construct()
     {
@@ -23,6 +24,8 @@ class DropdownMasterController extends Controller
         $this->middleware('auth');
         $this->_helper = new HelpersController;
         $this->_audit = new AuditTrailController;
+
+        $this->_moduleID = $this->_helper->moduleID('M0002');
     }
 
     public function index()
@@ -73,17 +76,18 @@ class DropdownMasterController extends Controller
                         'dropdown_name_id' => $req->selected_dropdown_name_id,
                         'dropdown_name' => strtoupper($req->selected_dropdown_name),
                         'dropdown_item' => strtoupper($dropdown_item),
-                        'create_user' => Auth::user()->user_id,
-                        'update_user' => Auth::user()->user_id,
+                        'create_user' => Auth::user()->id,
+                        'update_user' => Auth::user()->id,
                     ]);
                 }
             }
 
             $this->_audit->insert([
                 'user_type' => Auth::user()->user_type,
+                'module_id' => $this->_moduleID,
                 'module' => 'Dropdown Master',
                 'action' => 'Edited items of : '.$req->selected_dropdown_name,
-                'user' => Auth::user()->user_id
+                'user' => Auth::user()->id
             ]);
 
         } else {
@@ -92,16 +96,17 @@ class DropdownMasterController extends Controller
                     'dropdown_name_id' => $req->selected_dropdown_name_id,
                     'dropdown_name' => strtoupper($req->selected_dropdown_name),
                     'dropdown_item' => strtoupper($dropdown_item),
-                    'create_user' => Auth::user()->user_id,
-                    'update_user' => Auth::user()->user_id,
+                    'create_user' => Auth::user()->id,
+                    'update_user' => Auth::user()->id,
                 ]);
             }
 
             $this->_audit->insert([
                 'user_type' => Auth::user()->user_type,
+                'module_id' => $this->_moduleID,
                 'module' => 'Dropdown Master',
                 'action' => 'Inserted items of : '.$req->selected_dropdown_name,
-                'user' => Auth::user()->user_id
+                'user' => Auth::user()->id
             ]);
         }
 
@@ -109,160 +114,5 @@ class DropdownMasterController extends Controller
 
         return response()->json($items);
     }
-
-    // public function save_dropdown_name(Request $req)
-    // {
-    //     if (isset($req->dropdown_name_id)) {
-    //         $this->validate($req, [
-    //             'dropdown_name' => 'required|unique:ppc_dropdown_names|max:80',
-    //         ]);
-    //         $names = PpcDropdownName::find($req->dropdown_name_id);
-    //         $names->dropdown_name = strtoupper($req->dropdown_name);
-    //         $names->update_user = Auth::user()->user_id;
-    //         $names->update();
-
-    //         PpcDropdownItem::where('dropdown_name_id', $names->id)
-    //                     ->update(['dropdown_name' => strtoupper($req->dropdown_name)]);
-
-    //         $this->_audit->insert([
-    //             'user_type' => Auth::user()->user_type,
-    //             'module' => 'Dropdown Master',
-    //             'action' => 'Edited data ID: '.$req->dropdown_name_id.', Dropdown Name: '.$names->dropdown_name,
-    //             'user' => Auth::user()->user_id
-    //         ]);
-    //     } else {
-    //         $this->validate($req, [
-    //             'dropdown_name' => 'required|unique:ppc_dropdown_names|max:80',
-    //         ]);
-    //         $names = new PpcDropdownName();
-    //         $names->dropdown_name = strtoupper($req->dropdown_name);
-    //         $names->create_user = Auth::user()->user_id;
-    //         $names->update_user = Auth::user()->user_id;
-    //         $names->save();
-
-    //         $this->_audit->insert([
-    //             'user_type' => Auth::user()->user_type,
-    //             'module' => 'Dropdown Master',
-    //             'action' => 'Inserted data Dropdown Name: '.$req->dropdown_name,
-    //             'user' => Auth::user()->user_id
-    //         ]);
-    //     }
-
-    //     return response()->json($names);
-    // }
-
-    // public function destroy_dropdown_name(Request $req)
-    // {
-    //     $data = [
-    //         'msg' => "Deleting failed",
-    //         'status' => "warning"
-    //     ];
-
-    //     if (is_array($req->id)) {
-    //         foreach ($req->id as $key => $id) {
-    //             $name = PpcDropdownName::find($id);
-    //             $items = $name->items()->count();
-    //             if ($items > 0) {
-    //                 $data = [
-    //                     'msg' => "Data has items/options.",
-    //                     'status' => "warning"
-    //                 ];
-    //             } else {
-    //                 $name->delete();
-    //                 $data = [
-    //                     'msg' => "Data was successfully deleted.",
-    //                     'status' => "success"
-    //                 ];
-    //             }
-    //         }
-    //     } else {
-    //         $name = PpcDropdownName::find($req->id);
-    //         $items = $name->items()->count();
-    //         if ($items > 0) {
-    //             $data = [
-    //                 'msg' => "Data has items/options.",
-    //                 'status' => "warning"
-    //             ];
-    //         } else {
-    //             $name->delete();
-    //             $data = [
-    //                 'msg' => "Data was successfully deleted.",
-    //                 'status' => "success"
-    //             ];
-    //         }
-    //     }
-
-    //     $ids = implode(',', $req->id);
-
-    //     $this->_audit->insert([
-    //         'user_type' => Auth::user()->user_type,
-    //         'module' => 'Dropdown Master',
-    //         'action' => 'Deleted data Dropdown Name ID: '.$req->id,
-    //         'user' => Auth::user()->user_id
-    //     ]);
-
-    //     return response()->json($data);
-    // }
-
-    // public function destroy_dropdown_items(Request $req)
-    // {
-    //     $data = [
-    //         'msg' => "Deleting failed",
-    //         'status' => "warning"
-    //     ];
-
-    //     if (is_array($req->id)) {
-    //         foreach ($req->id as $key => $id) {
-    //             $item = PpcDropdownItem::find($id);
-    //             $item->delete();
-
-    //             $data = [
-    //                 'msg' => "Data was successfully deleted.",
-    //                 'status' => "success"
-    //             ];
-    //         }
-    //     } else {
-    //         $item = PpcDropdownItem::find($req->id);
-    //         $item->delete();
-
-    //         $data = [
-    //             'msg' => "Data was successfully deleted.",
-    //             'status' => "success"
-    //         ];
-    //     }
-
-    //     $ids = implode(',', $req->id);
-
-    //     $this->_audit->insert([
-    //         'user_type' => Auth::user()->user_type,
-    //         'module' => 'Dropdown Master',
-    //         'action' => 'Deleted data Dropdown Item ID: '.$ids,
-    //         'user' => Auth::user()->user_id
-    //     ]);
-
-    //     return response()->json($data);
-    // }
-
-    // public function check_item_if_exist(Request $req)
-    // {
-    //     $data = [
-    //         'msg' => '',
-    //         'status' => '',
-    //         'value' => 0
-    //     ];
-
-    //     $check = PpcDropdownItem::where('dropdown_name_id',$req->selected_dropdown_name_id)
-    //                             ->where('dropdown_item',strtoupper($req->item))
-    //                             ->count();
-    //     if ($check > 0) {
-    //         $data = [
-    //             'msg' => 'Item already exists.',
-    //             'status' => 'failed',
-    //             'value' => 1
-    //         ];
-    //     }
-
-    //     return $data;
-    // }
 }
 

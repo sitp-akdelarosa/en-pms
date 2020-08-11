@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use App\PpcDropdownName;
 
 class CreatePpcDropdownNamesTable extends Migration
 {
@@ -16,10 +17,31 @@ class CreatePpcDropdownNamesTable extends Migration
         Schema::create('ppc_dropdown_names', function (Blueprint $table) {
             $table->increments('id');
             $table->string('dropdown_name');
-            $table->string('create_user');
-            $table->string('update_user');
+            $table->integer('create_user')->default(0);
+            $table->integer('update_user')->default(0);
             $table->timestamps();
         });
+
+        $names = [
+            'Process',
+            'Alloy',
+            'Schedule',
+            'Size',
+            'Supplier',
+            'Item Type',
+            'Production Line',
+            'Material Type'
+        ];
+
+        foreach ($names as $key => $name) {
+            PpcDropdownName::create([
+                                'dropdown_name' => $name,
+                                'create_user' => 1,
+                                'update_user' => 1,
+                            ]);
+        }
+
+        
     }
 
     /**

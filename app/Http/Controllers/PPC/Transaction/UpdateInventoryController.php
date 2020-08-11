@@ -21,12 +21,15 @@ class UpdateInventoryController extends Controller
 {
     protected $_helper;
     protected $_audit;
+    protected $_moduleID;
 
     public function __construct()
     {
         $this->middleware('auth');
         $this->_helper = new HelpersController;
         $this->_audit = new AuditTrailController;
+
+        $this->_moduleID = $this->_helper->moduleID('T0001');
     }
 
     public function index()
@@ -122,8 +125,8 @@ class UpdateInventoryController extends Controller
                         'supplier_heat_no' => strtoupper($field['supplierheatno']),
                         'created_at' => date("Y-m-d H:i:s"),
                         'updated_at' => date("Y-m-d H:i:s"),
-                        'create_user' => Auth::user()->user_id,
-                        'update_user' => Auth::user()->user_id
+                        'create_user' => Auth::user()->id,
+                        'update_user' => Auth::user()->id
                     ]);
 
                     $mat = PpcMaterialAssembly::select('mat_type')
@@ -150,8 +153,8 @@ class UpdateInventoryController extends Controller
                         'supplier_heat_no' => strtoupper($field['supplierheatno']),
                         'created_at' => date("Y-m-d H:i:s"),
                         'updated_at' => date("Y-m-d H:i:s"),
-                        'create_user' => Auth::user()->user_id,
-                        'update_user' => Auth::user()->user_id
+                        'create_user' => Auth::user()->id,
+                        'update_user' => Auth::user()->id
                     ]);
                 }else{
                     $countAdded++;
@@ -184,8 +187,8 @@ class UpdateInventoryController extends Controller
                         'supplier_heat_no' => strtoupper($field['supplierheatno']),
                         'created_at' => date("Y-m-d H:i:s"),
                         'updated_at' => date("Y-m-d H:i:s"),
-                        'create_user' => Auth::user()->user_id,
-                        'update_user' => Auth::user()->user_id
+                        'create_user' => Auth::user()->id,
+                        'update_user' => Auth::user()->id
                     ]);
                 }
             }
@@ -200,9 +203,10 @@ class UpdateInventoryController extends Controller
 
         $this->_audit->insert([
             'user_type' => Auth::user()->user_type,
+            'module_id' => $this->_moduleID,
             'module' => 'Update Inventory Module',
             'action' => 'Uploaded Inventory.',
-            'user' => Auth::user()->user_id
+            'user' => Auth::user()->id
         ]);
         if($countAdded == 0){
             $data = [
@@ -299,17 +303,18 @@ class UpdateInventoryController extends Controller
                 $UP->received_date = $req->received_date;
                 $UP->supplier = strtoupper($req->supplier);
                 $UP->supplier_heat_no = strtoupper($req->supplier_heat_no);
-                $UP->create_user =  Auth::user()->user_id;
-                $UP->update_user =  Auth::user()->user_id;
+                $UP->create_user =  Auth::user()->id;
+                $UP->update_user =  Auth::user()->id;
                 $UP->update();
                 $result = "Update";
 
                 $this->_audit->insert([
                     'user_type' => Auth::user()->user_type,
+                    'module_id' => $this->_moduleID,
                     'module' => 'Update Inventory Module',
                     'action' => 'Updated Inventory data ID: '.$req->material_id.',
                                 Material Code: '.$req->materials_code.' manually.',
-                    'user' => Auth::user()->user_id
+                    'user' => Auth::user()->id
                 ]);
         }else {
             $this->validate($req, [
@@ -344,16 +349,17 @@ class UpdateInventoryController extends Controller
             $UP->received_date = $req->received_date;
             $UP->supplier = strtoupper($req->supplier);
             $UP->supplier_heat_no = strtoupper($req->supplier_heat_no);
-            $UP->create_user =  Auth::user()->user_id;
-            $UP->update_user =  Auth::user()->user_id;
+            $UP->create_user =  Auth::user()->id;
+            $UP->update_user =  Auth::user()->id;
             $UP->save();
             $result = "Added";
 
             $this->_audit->insert([
                 'user_type' => Auth::user()->user_type,
+                'module_id' => $this->_moduleID,
                 'module' => 'Update Inventory Module',
                 'action' => 'Inserted Inventory data Material Code: '.$req->materials_code.' manually.',
-                'user' => Auth::user()->user_id
+                'user' => Auth::user()->id
             ]);
         }
            
@@ -363,10 +369,10 @@ class UpdateInventoryController extends Controller
     public function GetMaterialType()
     {
         $type = DB::table('ppc_material_codes as pmc')
-            ->leftjoin('admin_assign_production_lines as apl', 'apl.product_line', '=', 'pmc.material_type')
-            ->select(['pmc.material_type as material_type'])
-            ->where('apl.user_id' ,Auth::user()->id)
-            ->groupBy('pmc.material_type')->get();
+                    ->leftjoin('admin_assign_production_lines as apl', 'apl.product_line', '=', 'pmc.material_type')
+                    ->select(['pmc.material_type as material_type'])
+                    ->where('apl.user_id' ,Auth::user()->id)
+                    ->groupBy('pmc.material_type')->get();
 
         return $data = [
                     'type' => $type,
@@ -376,11 +382,12 @@ class UpdateInventoryController extends Controller
     public function GetMaterialCode(Request $req)
     {
         $code = DB::table('ppc_material_codes as pmc')
-            ->leftjoin('admin_assign_production_lines as apl', 'apl.product_line', '=', 'pmc.material_type')
-            ->select(['pmc.material_code as material_code'])
-            ->where('apl.user_id' ,Auth::user()->id)
-            ->where('pmc.material_type', $req->mat_type)
-             ->orderBy('pmc.id','desc')->get();
+                    ->leftjoin('admin_assign_production_lines as apl', 'apl.product_line', '=', 'pmc.material_type')
+                    ->select(['pmc.material_code as material_code'])
+                    ->where('apl.user_id' ,Auth::user()->id)
+                    ->where('pmc.material_type', $req->mat_type)
+                    ->orderBy('pmc.id','desc')
+                    ->get();
 
         return $data = [
                     'code' => $code,
@@ -414,7 +421,7 @@ class UpdateInventoryController extends Controller
                                         'supplier_heat_no',
                                         DB::raw("left(created_at,10) as created_at")
                                     )
-                                    ->where('create_user',Auth::user()->user_id)
+                                    ->where('create_user',Auth::user()->id)
                                     ->groupBy(
                                         'materials_code',
                                         'quantity',
@@ -448,7 +455,7 @@ class UpdateInventoryController extends Controller
                                         'supplier_heat_no',
                                         DB::raw("left(created_at,10) as created_at")
                                     )
-                                    ->where('create_user',Auth::user()->user_id)
+                                    ->where('create_user',Auth::user()->id)
                                     ->groupBy(
                                         'materials_code',
                                         'quantity',

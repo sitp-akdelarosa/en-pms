@@ -17,12 +17,12 @@ class CreateProdDashboardSummariesTable extends Migration
             $table->increments('id');
             $table->string('product_code');
             $table->string('description');
-            $table->string('sched_qty');
-            $table->string('unprocessed');
-            $table->string('good');
-            $table->string('rework');
-            $table->string('scrap');
-            $table->string('total_output');
+            $table->double('sched_qty',20,2)->default(0.00);
+            $table->integer('unprocessed')->length(0)->default(0);
+            $table->integer('good')->length(0)->default(0);
+            $table->integer('rework')->length(0)->default(0);
+            $table->integer('scrap')->length(0)->default(0);
+            $table->integer('total_output')->length(0)->default(0);
             $table->timestamps();
         });
     }

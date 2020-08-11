@@ -17,6 +17,7 @@ class AssignProductionLineController extends Controller
 {
 	protected $_helper;
 	protected $_audit;
+	protected $_moduleID;
 
 	public function __construct()
 	{
@@ -24,6 +25,8 @@ class AssignProductionLineController extends Controller
 		$this->middleware('auth');
 		$this->_helper = new HelpersController;
 		$this->_audit = new AuditTrailController;
+
+		$this->_moduleID = $this->_helper->moduleID('A0002');
 	}
 
 	public function index()
@@ -76,8 +79,8 @@ class AssignProductionLineController extends Controller
 					array_push($params, [
 						'user_id' => $user_id,
 						'product_line' => $product_line,
-						'create_user' => Auth::user()->user_id,
-						'update_user' => Auth::user()->user_id,
+						'create_user' => Auth::user()->id,
+						'update_user' => Auth::user()->id,
 						'created_at' => date('Y-m-d H:i:s'),
 						'updated_at' => date('Y-m-d H:i:s'),
 					]);
@@ -99,9 +102,10 @@ class AssignProductionLineController extends Controller
 
 		$this->_audit->insert([
 			'user_type' => Auth::user()->user_type,
+			'module_id' => $this->_moduleID,
 			'module' => 'Assign Production Line',
 			'action' => 'Edited data user ID '.$user_id.', Production Line: '.implode(',', $req->product_line),
-			'user' => Auth::user()->user_id
+			'user' => Auth::user()->id
 		]);
 
 		
@@ -140,9 +144,10 @@ class AssignProductionLineController extends Controller
 
 		$this->_audit->insert([
 			'user_type' => Auth::user()->user_type,
+			'module_id' => $this->_moduleID,
 			'module' => 'Assign Production Line',
 			'action' => 'Deleted data ID '.$ids,
-			'user' => Auth::user()->user_id
+			'user' => Auth::user()->id
 		]);
 
 		return response()->json($data);

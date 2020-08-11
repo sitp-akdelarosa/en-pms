@@ -18,14 +18,14 @@ class CreatePpcProductionSummariesTable extends Migration
             $table->string('sc_no');
             $table->string('prod_code');
             $table->string('description');
-            $table->integer('quantity');
+            $table->double('quantity',20,2)->default(0.00);
             $table->string('unit');
-            $table->integer('sched_qty')->default(0);
+            $table->double('sched_qty',20,2)->default(0.00);
             $table->string('po');
             $table->string('status');
             $table->dateTime('date_upload');
-            $table->string('create_user');
-            $table->string('update_user');
+            $table->integer('create_user')->default(0);
+            $table->integer('update_user')->default(0);
             $table->timestamps();
         });
     }

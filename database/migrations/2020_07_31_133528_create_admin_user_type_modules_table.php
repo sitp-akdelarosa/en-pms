@@ -15,12 +15,12 @@ class CreateAdminUserTypeModulesTable extends Migration
 	{
 		Schema::create('admin_user_type_modules', function (Blueprint $table) {
 			$table->increments('id');
-			$table->integer('user_type_id')->length(5);
-			$table->integer('module_id')->length(5);
+			$table->integer('user_type_id')->length(5)->default(0);
+			$table->integer('module_id')->length(5)->default(0);
 			$table->string('code')->length(5);
 			$table->string('user_category')->length(100);
-			$table->integer('create_user')->length(10);
-			$table->integer('update_user')->length(10);
+			$table->integer('create_user')->length(10)->default(0);
+			$table->integer('update_user')->length(10)->default(0);
 			$table->timestamps();
 		});
 	}

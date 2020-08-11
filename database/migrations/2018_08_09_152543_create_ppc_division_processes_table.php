@@ -16,7 +16,7 @@ class CreatePpcDivisionProcessesTable extends Migration
         Schema::create('ppc_division_processes', function (Blueprint $table) {
             $table->increments('id');
             $table->string('process');
-            $table->integer('division_id');
+            $table->integer('division_id')->default(0);
             $table->timestamps();
         });
     }

@@ -18,8 +18,11 @@ class PpcRawMaterialWithdrawalDetails extends Model
 		'sc_no',
 		'remarks',
 		'issued_qty',
+		'issued_uom',
 		'needed_qty',
+		'needed_uom',
 		'returned_qty',
+		'returned_uom',
 		'create_user',
 		'update_user'
     ];

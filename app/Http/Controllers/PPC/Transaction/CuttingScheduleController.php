@@ -15,12 +15,16 @@ class CuttingScheduleController extends Controller
 {
     protected $_helper;
     protected $_audit;
+    protected $_moduleID;
+
 
     public function __construct()
     {
         $this->middleware('auth');
         $this->_helper = new HelpersController;
         $this->_audit = new AuditTrailController;
+
+        $this->_moduleID = $this->_helper->moduleID('T0005');
     }
 
     public function index()
@@ -39,9 +43,9 @@ class CuttingScheduleController extends Controller
         ];
 
         $jo = DB::table('ppc_jo_details_summaries')
-            ->select('id')
-            ->where('jo_no', $jo_no)
-            ->first();
+                ->select('id')
+                ->where('jo_no', $jo_no)
+                ->first();
 
         if (count((array) $jo) > 0) {
 
@@ -64,7 +68,7 @@ class CuttingScheduleController extends Controller
             ->select(
                 DB::raw("count(*) as counter")
             )
-            ->where('user_id', Auth::id())
+            ->where('user_id', Auth::user()->id)
             ->whereIn('product_line', [
                 'S/S BUTT WELD FITTING',
                 'S/S JIS BUTT WELD FITTING',
@@ -85,7 +89,7 @@ class CuttingScheduleController extends Controller
             'iso_control_no' => 'required|string|max:255',
         ]);
 
-        $user = Auth::user()->user_id;
+        $user = Auth::user()->id;
 
         $cut_sched = new PpcCuttingSchedule;
         $cut_sched->withdrawal_slip_no = $req->withdrawal_slip;
@@ -93,6 +97,7 @@ class CuttingScheduleController extends Controller
         $cut_sched->machine_no = $req->machine_no;
         $cut_sched->prepared_by = $req->prepared_by;
         $cut_sched->leader = $req->leader;
+        //$cut_sched->leader_id = $req->leader;
         $cut_sched->create_user = $user;
         $cut_sched->update_user = $user;
         $cut_sched->iso_control_no = $req->iso_control_no;
@@ -130,7 +135,17 @@ class CuttingScheduleController extends Controller
                 'status' => 'success',
                 'msg' => 'Schedule successfully saved.',
             ];
+
+            $this->_audit->insert([
+                'user_type' => Auth::user()->user_type,
+                'module_id' => $this->_moduleID,
+                'module' => 'Cutting Schedule',
+                'action' => 'Added a new Cutting Schedule ID:'.$cut_sched->id,
+                'user' => Auth::user()->id
+            ]);
         }
+
+
         return response()->json($data);
     }
 
@@ -143,7 +158,7 @@ class CuttingScheduleController extends Controller
                             FROM ppc_cutting_schedules as cs
                             JOIN ppc_cutting_schedule_details as csd
                             ON csd.cutt_id = cs.id
-                            WHERE cs.create_user = '".Auth::user()->user_id."'
+                            WHERE cs.create_user = '".Auth::user()->id."'
                             GROUP BY cs.id,cs.created_at
                             ORDER BY cs.created_at DESC
                             ");

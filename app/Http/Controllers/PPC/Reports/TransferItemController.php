@@ -11,12 +11,17 @@ use DB;
 class TransferItemController extends Controller
 {
     protected $_helper = '';
+    protected $_audit;
+    protected $_moduleID;
 
     public function __construct()
     {
         $this->middleware('ajax-session-expired');
         $this->middleware('auth');
         $this->_helper = new HelpersController;
+        $this->_audit = new AuditTrailController;
+
+        $this->_moduleID = $this->_helper->moduleID('R0002');
     }
 
     public function index()

@@ -24,16 +24,16 @@ class CreateProdTravelSheetsTable extends Migration
             $table->string('material_heat_no');
             $table->string('lot_no');
             $table->string('type');
-            $table->integer('order_qty')->default(0);
-            $table->integer('issued_qty')->default(0);
-            $table->integer('total_issued_qty')->default(0);
-            $table->integer('status')->default(0);
+            $table->double('order_qty',20,2)->default(0.00);
+            $table->double('issued_qty',20,2)->default(0.00);
+            $table->double('total_issued_qty',20,2)->default(0.00);
+            $table->double('status',20,2)->default(0.00);
             $table->string('iso_code');
             $table->string('iso_name');
             $table->string('iso_photo');
-            $table->integer('pre_travel_sheet_id');
-            $table->string('create_user');
-            $table->string('update_user');
+            $table->integer('pre_travel_sheet_id')->default(0);
+            $table->integer('create_user')->default(0);
+            $table->integer('update_user')->default(0);
             $table->timestamps();
         });
     }

@@ -18,14 +18,14 @@ class CreateProdDashboardDetailsTable extends Migration
             $table->string('job_order_no');
             $table->string('product_code');
             $table->string('description');
-            $table->string('sched_qty');
-            $table->string('unprocessed');
-            $table->string('good');
-            $table->string('rework');
-            $table->string('scrap');
-            $table->string('total_output');
-            $table->string('requested_date');
-            $table->string('end_date');
+            $table->double('sched_qty',20,2)->default(0.00);
+            $table->integer('unprocessed')->default(0)->length(10);
+            $table->integer('good')->default(0)->length(10);
+            $table->integer('rework')->default(0)->length(10);
+            $table->integer('scrap')->default(0)->length(10);
+            $table->integer('total_output')->default(0)->length(10);
+            $table->date('requested_date');
+            $table->date('end_date');
             $table->timestamps();
         });
     }

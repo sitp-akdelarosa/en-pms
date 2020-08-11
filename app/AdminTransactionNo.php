@@ -14,6 +14,7 @@ class AdminTransactionNo extends Model
 	    			'nextno',
 	    			'nextnolength',
 	    			'month',
+	    			'assigned_user_id',
 	    			'create_user',
 	    			'update_user'
 	    		];

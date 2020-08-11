@@ -4,17 +4,16 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PpcTempUploadOrder extends Model
+class FgStock extends Model
 {
     protected $fillable = [
-    				'sc_no',
+    				'jo_no',
     				'prod_code',
     				'description',
-    				'quantity',
-    				'po',
-                    'uploader',
-    				'date_upload',
+    				'order_qty',
+    				'qty',
+    				'status',
     				'create_user',
     				'update_user'
-    			];
+    			]
 }

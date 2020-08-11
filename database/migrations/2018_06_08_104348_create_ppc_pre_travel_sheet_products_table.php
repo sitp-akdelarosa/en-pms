@@ -15,14 +15,14 @@ class CreatePpcPreTravelSheetProductsTable extends Migration
     {
         Schema::create('ppc_pre_travel_sheet_products', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('pre_travel_sheet_id');
+            $table->integer('pre_travel_sheet_id')->default(0);
             $table->string('jo_no');
             $table->string('prod_code');
-            $table->integer('issued_qty_per_sheet');
+            $table->double('issued_qty_per_sheet',20,2)->default(0.00);
             $table->string('sc_no');
-            $table->string('jo_sequence');
-            $table->string('create_user');
-            $table->string('update_user');
+            $table->integer('jo_sequence')->default(0);
+            $table->integer('create_user')->default(0);
+            $table->integer('update_user')->default(0);
             $table->timestamps();
         });
     }

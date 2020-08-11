@@ -22,6 +22,7 @@ class ProdTravelSheetProcess extends Model
         'machine_no',
     	'operator',
     	'leader',
+        'leader_id',
     	'status',
     	'create_user',
     	'update_user'

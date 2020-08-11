@@ -23,12 +23,15 @@ class ProductionOutputController extends Controller
 {
     protected $_helper;
     protected $_audit;
+    protected $_moduleID;
 
     public function __construct()
     {
         $this->middleware('auth');
         $this->_helper = new HelpersController;
         $this->_audit = new AuditTrailController;
+
+        $this->_moduleID = $this->_helper->moduleID('T0007');
     }
 
     public function index()
@@ -104,8 +107,8 @@ class ProductionOutputController extends Controller
                                         'nc' => DB::raw("`nc` + ".$prod_output->nc),
                                         'machine_no' => $prod_output->machine_no,
                                         'operator' => $prod_output->operator,
-                                        'leader' => Auth::user()->user_id,
-                                        'update_user' => Auth::user()->user_id
+                                        'leader' => Auth::user()->id,
+                                        'update_user' => Auth::user()->id
                                     ]);
 
             $next_sequence = $req->sequence + 1;
@@ -142,9 +145,10 @@ class ProductionOutputController extends Controller
 
         $this->_audit->insert([
             'user_type' => Auth::user()->user_type,
+            'module_id' => $this->_moduleID,
             'module' => 'Production Output',
             'action' => 'Inputted data for Travel Sheet JO # '.$req->jo_no.', Product Code: '.strtoupper($req->prod_code).', for Process: '.strtoupper($req->current_process),
-            'user' => Auth::user()->user_id
+            'user' => Auth::user()->id
         ]);
 
         
@@ -226,8 +230,8 @@ class ProductionOutputController extends Controller
                 $Rpt_Fg_Summary->order_qty = $jo_travel_sheet->back_order_qty;
                 $Rpt_Fg_Summary->qty = $qty;
                 $Rpt_Fg_Summary->status = 0;
-                $Rpt_Fg_Summary->create_user = Auth::user()->user_id;
-                $Rpt_Fg_Summary->update_user = Auth::user()->user_id;
+                $Rpt_Fg_Summary->create_user = Auth::user()->id;
+                $Rpt_Fg_Summary->update_user = Auth::user()->id;
                 $Rpt_Fg_Summary->save();
 
                 if($good <= 0){
@@ -318,7 +322,7 @@ class ProductionOutputController extends Controller
                                         'convert' => DB::raw("`convert` - ".$prod_output->convert),
                                         'alloy_mix' => DB::raw("`alloy_mix` - ".$prod_output->alloy_mix),
                                         'nc' => DB::raw("`nc` - ".$prod_output->nc),
-                                        'update_user' => Auth::user()->user_id
+                                        'update_user' => Auth::user()->id
                                     ]);
 
             $currenunprocessed  = $prod_output->good;
@@ -348,9 +352,10 @@ class ProductionOutputController extends Controller
 
         $this->_audit->insert([
             'user_type' => Auth::user()->user_type,
+            'module_id' => $this->_moduleID,
             'module' => 'Product Output',
             'action' => 'Deleted data ID ',
-            'user' => Auth::user()->user_id
+            'user' => Auth::user()->id
         ]);
 
         return response()->json($data);

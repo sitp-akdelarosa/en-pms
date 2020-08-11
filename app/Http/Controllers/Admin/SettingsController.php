@@ -15,12 +15,15 @@ class SettingsController extends Controller
 {
     protected $_helper;
     protected $_audit;
+    protected $_moduleID;
 
     public function __construct()
     {
         $this->middleware('auth');
         $this->_helper = new HelpersController;
         $this->_audit = new AuditTrailController;
+
+        $this->_moduleID = $this->_helper->moduleID('A0005');
     }
 
     public function index()
@@ -52,7 +55,7 @@ class SettingsController extends Controller
 
                 $AdminSettingIso->iso_name = strtoupper($req->iso_name);
                 $AdminSettingIso->iso_code = strtoupper($req->iso_code);
-                $AdminSettingIso->update_user = Auth::user()->user_id;
+                $AdminSettingIso->update_user = Auth::user()->id;
 
                 $AdminSettingIso->update();
 
@@ -62,9 +65,10 @@ class SettingsController extends Controller
 
                 $this->_audit->insert([
                     'user_type' => Auth::user()->user_type,
+                    'module_id' => $this->_moduleID,
                     'module' => 'Admin ISO Settings',
                     'action' => 'Editing ISO '.$req->iso_name,
-                    'user' => Auth::user()->user_id
+                    'user' => Auth::user()->id
                 ]);
             } else {
                  $error = ['errors' => ['iso_name' => 'The ISO Name has already been taken.']];
@@ -80,17 +84,18 @@ class SettingsController extends Controller
             $AdminSettingIso = new AdminSettingIso();
             $AdminSettingIso->iso_name = strtoupper($req->iso_name);
             $AdminSettingIso->iso_code = strtoupper($req->iso_code);
-            $AdminSettingIso->create_user = Auth::user()->user_id;
-            $AdminSettingIso->update_user = Auth::user()->user_id;
+            $AdminSettingIso->create_user = Auth::user()->id;
+            $AdminSettingIso->update_user = Auth::user()->id;
             $AdminSettingIso->save();
 
             $this->uploadPhoto($AdminSettingIso->id,$req->photo);
 
             $this->_audit->insert([
                 'user_type' => Auth::user()->user_type,
+                'module_id' => $this->_moduleID,
                 'module' => 'Admin Setting',
                 'action' => 'Inserting ID '.$req->iso_name,
-                'user' => Auth::user()->user_id
+                'user' => Auth::user()->id
             ]);
         }
 
@@ -142,9 +147,10 @@ class SettingsController extends Controller
         $ids = implode(',', $req->id);
         $this->_audit->insert([
             'user_type' => Auth::user()->user_type,
+            'module_id' => $this->_moduleID,
             'module' => 'Admin Settings',
             'action' => 'Deleted data ID '.$ids,
-            'user' => Auth::user()->user_id
+            'user' => Auth::user()->id
         ]);
 
         $data = [
