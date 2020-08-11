@@ -15,11 +15,11 @@ class CreatePpcDropdownItemsTable extends Migration
     {
         Schema::create('ppc_dropdown_items', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('dropdown_name_id');
+            $table->integer('dropdown_name_id')->default(0);
             $table->string('dropdown_name');
             $table->string('dropdown_item');
-            $table->string('create_user');
-            $table->string('update_user');
+            $table->integer('create_user')->default(0);
+            $table->integer('update_user')->default(0);
             $table->timestamps();
         });
     }

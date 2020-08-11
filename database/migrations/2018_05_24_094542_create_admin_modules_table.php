@@ -19,7 +19,7 @@ class CreateAdminModulesTable extends Migration
             $table->string('title');
             $table->string('category');
             $table->string('user_category');
-            $table->string('description')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

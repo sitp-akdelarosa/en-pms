@@ -10,12 +10,17 @@ use App\Http\Controllers\HelpersController;
 class TravelSheetStatusController extends Controller
 {
     protected $_helper = '';
+    protected $_audit;
+    protected $_moduleID;
 
     public function __construct()
     {
         $this->middleware('ajax-session-expired');
         $this->middleware('auth');
         $this->_helper = new HelpersController;
+        $this->_audit = new AuditTrailController;
+
+        $this->_moduleID = $this->_helper->moduleID('R0001');
     }
 
     public function index()

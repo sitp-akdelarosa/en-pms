@@ -16,17 +16,17 @@ class CreatePpcJoDetailsTable extends Migration
     {
         Schema::create('ppc_jo_details', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('jo_summary_id');
+            $table->integer('jo_summary_id')->default(0);
             $table->string('sc_no');
             $table->string('product_code');
             $table->string('description');
-            $table->integer('back_order_qty');
-            $table->integer('sched_qty');
+            $table->double('back_order_qty',20,2);
+            $table->double('sched_qty',20,2);
             $table->string('material_used');
             $table->string('material_heat_no');
             $table->string('lot_no');
-            $table->string('create_user');
-            $table->string('update_user');
+            $table->integer('create_user')->default(0);
+            $table->integer('update_user')->default(0);
             $table->timestamps();
         });
     }

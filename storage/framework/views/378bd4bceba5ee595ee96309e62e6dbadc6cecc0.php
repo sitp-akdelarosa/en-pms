@@ -18,12 +18,13 @@
                             <span class="input-group-text">Item/Option:</span>
                         </div>
                         <input type="text" class="form-control" name="new_item" id="new_item">
-                        <div id="new_item_feedback"></div>
+                        
                         <div class="input-group-append">
                             <button type="button" class="btn bg-green float-right btn-block" id="btn_add_dropdown_item">
                                 <i class="fa fa-plus"></i>
                             </button>
                         </div>
+                        <div id="new_item_feedback"></div>
                     </div>
 
                     

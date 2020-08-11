@@ -29,10 +29,11 @@ class CreateProdTravelSheetProcessesTable extends Migration
             $table->string('div_code');
             $table->string('operator')->nullable();
             $table->string('leader')->nullable();
+            $table->integer('leader_id')->default(0)->nullable();
             $table->string('machine_no')->nullable();
             $table->integer('status')->default(0);
-            $table->string('create_user');
-            $table->string('update_user');
+            $table->integer('create_user')->default(0);
+            $table->integer('update_user')->default(0);
             $table->timestamps();
         });
     }

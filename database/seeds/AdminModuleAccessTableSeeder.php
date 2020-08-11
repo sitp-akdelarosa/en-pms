@@ -17,10 +17,10 @@ class AdminModuleAccessTableSeeder extends Seeder
 			'title' => 'User Master',
 			'category' => 'Administrator',
 			'user_category' => 'Administrator',
-			'user_id' => '1',
-			'access' => '1',
-			'create_user' => 'Administrator',
-			'update_user' => 'Administrator',
+			'user_id' => 1,
+			'access' => 1,
+			'create_user' => 1,
+			'update_user' => 1,
         ]);
 
         AdminModuleAccess::create([
@@ -28,10 +28,10 @@ class AdminModuleAccessTableSeeder extends Seeder
 			'title' => 'Assign Production Line',
 			'category' => 'Administrator',
 			'user_category' => 'Administrator',
-			'user_id' => '1',
-			'access' => '1',
-			'create_user' => 'Administrator',
-			'update_user' => 'Administrator',
+			'user_id' => 1,
+			'access' => 1,
+			'create_user' => 1,
+			'update_user' => 1,
         ]);
 
         AdminModuleAccess::create([
@@ -39,10 +39,10 @@ class AdminModuleAccessTableSeeder extends Seeder
 			'title' => 'User Type',
 			'category' => 'Administrator',
 			'user_category' => 'Administrator',
-			'user_id' => '1',
-			'access' => '1',
-			'create_user' => 'Administrator',
-			'update_user' => 'Administrator',
+			'user_id' => 1,
+			'access' => 1,
+			'create_user' => 1,
+			'update_user' => 1,
         ]);
 
         AdminModuleAccess::create([
@@ -50,10 +50,10 @@ class AdminModuleAccessTableSeeder extends Seeder
 			'title' => 'Audit Trail',
 			'category' => 'Administrator',
 			'user_category' => 'Administrator',
-			'user_id' => '1',
-			'access' => '1',
-			'create_user' => 'Administrator',
-			'update_user' => 'Administrator',
+			'user_id' => 1,
+			'access' => 1,
+			'create_user' => 1,
+			'update_user' => 1,
         ]);
 
         AdminModuleAccess::create([
@@ -61,10 +61,10 @@ class AdminModuleAccessTableSeeder extends Seeder
 			'title' => 'Settings',
 			'category' => 'Administrator',
 			'user_category' => 'Administrator',
-			'user_id' => '1',
-			'access' => '1',
-			'create_user' => 'Administrator',
-			'update_user' => 'Administrator',
+			'user_id' => 1,
+			'access' => 1,
+			'create_user' => 1,
+			'update_user' => 1,
         ]);
     }
 }

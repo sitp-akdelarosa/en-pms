@@ -16,12 +16,17 @@ use DB;
 class ApprovalController extends Controller
 {
 	protected $_helper;
+    protected $_audit;
+    protected $_moduleID;
 
     public function __construct()
     {
         $this->middleware('auth');
         $this->_helper = new HelpersController;
         $this->_audit = new AuditTrailController;
+
+        // $query = AdminModule::select('id')->where('code','A0005')->first();
+        // $this->_moduleID = $query->id;
     }
 
     public function index()
@@ -75,13 +80,15 @@ class ApprovalController extends Controller
                         ->get();
 
         foreach ($to_notify as $key => $notis) {
+            $msg = "Items from Division Code [".$this->_helper->currentDivCodeID($item->current_process).
+                    "] and is currently in process of ".$this->_helper->currentProcessID($item->current_process).
+                    " were approved to transfer to your Division Code [".
+                    $this->_helper->getDivCodeByID($item->div_code).
+                    "] in process of ".$item->process.".";
+
             Notification::create([
                 'title' => "Accept Transferred Items",
-                'content' => "Items from Division Code [".$this->_helper->currentDivCodeID($item->current_process).
-                                "] and is currently in process of ".$this->_helper->currentProcessID($item->current_process).
-                                " were approved to transfer to your Division Code [".
-                                $this->_helper->getDivCodeByID($item->div_code).
-                                "] in process of ".$item->process.".",
+                'content' => $msg,
                 'from' => Auth::user()->firstname." ".Auth::user()->lastname,
                 'from_id' => Auth::user()->id,
                 'to' => $notis->user_id,
@@ -89,8 +96,8 @@ class ApprovalController extends Controller
                 'module' => 'T0007',
                 'link' => '../prod/transfer-item?receive_items=true',
                 'content_id' => $item->id,
-                'create_user' => Auth::user()->user_id,
-                'update_user' => Auth::user()->user_id
+                'create_user' => Auth::user()->id,
+                'update_user' => Auth::user()->id
             ]);
         }
         
@@ -98,16 +105,17 @@ class ApprovalController extends Controller
 
         Event::fire(new Notify($noti));
 
-        $this->_audit->insert([
-            'user_type' => Auth::user()->user_type,
-            'module' => 'Request Approval',
-            'action' => ($req->status == 1)? 'Approved' : '' . 'transfered items from Division : '.
-            			$this->_helper->currentDivCodeID($item->current_process).
-            			' in process of '.$this->_helper->currentProcessID($item->current_process).
-            			'to Division Code: '.$this->_helper->getDivCodeByID($item->div_code).
-            			'in process of '.$item->process,
-            'user' => Auth::user()->user_id
-        ]);
+        // $this->_audit->insert([
+        //     'user_type' => Auth::user()->user_type,
+        //     'module_id' => $this->_moduleID,
+        //     'module' => 'Request Approval',
+        //     'action' => ($req->status == 1)? 'Approved' : '' . 'transfered items from Division : '.
+        //     			$this->_helper->currentDivCodeID($item->current_process).
+        //     			' in process of '.$this->_helper->currentProcessID($item->current_process).
+        //     			'to Division Code: '.$this->_helper->getDivCodeByID($item->div_code).
+        //     			'in process of '.$item->process,
+        //     'user' => Auth::user()->id
+        // ]);
 
         return response()->json($req->status);
     }

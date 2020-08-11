@@ -38,7 +38,7 @@ class ProfileController extends Controller
     	$activity = [];
     	$data = [];
     	$skip = $req->take - 5;
-    	$dates = AdminAuditTrail::where('user',$req->user_id)
+    	$dates = AdminAuditTrail::where('user',$req->id)
     							->select(DB::raw('DATE_FORMAT(created_at, "%Y-%m-%d") as timeline'))
     							->skip($skip)->take($req->take)
     							->orderBy('id','desc')
@@ -51,7 +51,7 @@ class ProfileController extends Controller
     	array_unique($timeline);
 
     	foreach ($timeline as $key => $date) {
-    		$act = AdminAuditTrail::where('user',$req->user_id)
+    		$act = AdminAuditTrail::where('user',$req->id)
 	    						->where('created_at','like',$date.'%')
 	    						->select(
 	    							'user_type',

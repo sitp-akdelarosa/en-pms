@@ -16,8 +16,9 @@ use App\User;
 
 class DivisionMasterController extends Controller
 {
-    protected $_helper = '';
-    protected $_audit = '';
+    protected $_helper;
+    protected $_audit;
+    protected $_moduleID;
 
     public function __construct()
     {
@@ -25,6 +26,8 @@ class DivisionMasterController extends Controller
         $this->middleware('auth');
         $this->_helper = new HelpersController;
         $this->_audit = new AuditTrailController;
+
+        $this->_moduleID = $this->_helper->moduleID('M0001');
     }
 
     public function index()
@@ -83,7 +86,7 @@ class DivisionMasterController extends Controller
             $div->plant = strtoupper($req->plant);
             $div->leader = $req->leader;
             $div->user_id = $req->user_id;
-            $div->update_user = Auth::user()->user_id;
+            $div->update_user = Auth::user()->id;
 
             $div->update();
 
@@ -110,9 +113,10 @@ class DivisionMasterController extends Controller
 
             $this->_audit->insert([
                 'user_type' => Auth::user()->user_type,
+                'module_id' => $this->_moduleID,
                 'module' => 'Division Master',
                 'action' => 'Edited data ID '.$req->id.', Division Code: '.$div->div_code,
-                'user' => Auth::user()->user_id
+                'user' => Auth::user()->id
             ]);
 
         } else {
@@ -122,9 +126,10 @@ class DivisionMasterController extends Controller
             $div->div_name = strtoupper($req->div_name);
             $div->plant = strtoupper($req->plant);
             $div->leader = $req->leader;
+            //$div->leader_id = $req->leader;
             $div->user_id = $req->user_id;
-            $div->create_user = Auth::user()->user_id;
-            $div->update_user = Auth::user()->user_id;
+            $div->create_user = Auth::user()->id;
+            $div->update_user = Auth::user()->id;
 
             $div->save();
 
@@ -147,9 +152,10 @@ class DivisionMasterController extends Controller
 
             $this->_audit->insert([
                 'user_type' => Auth::user()->user_type,
+                'module_id' => $this->_moduleID,
                 'module' => 'Division Master',
                 'action' => 'Inserted data Division Code: '.$div->div_code,
-                'user' => Auth::user()->user_id
+                'user' => Auth::user()->id
             ]);
         }
 
@@ -208,9 +214,10 @@ class DivisionMasterController extends Controller
 
         $this->_audit->insert([
             'user_type' => Auth::user()->user_type,
+            'module_id' => $this->_moduleID,
             'module' => 'Division Master',
             'action' => 'Deleted data ID: '.$ids,
-            'user' => Auth::user()->user_id
+            'user' => Auth::user()->id
         ]);
 
         }else{

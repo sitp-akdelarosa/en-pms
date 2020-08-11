@@ -20,6 +20,7 @@ class MaterialMasterController extends Controller
 {
     protected $_helper;
     protected $_audit;
+    protected $_moduleID;
 
     public function __construct()
     {
@@ -27,6 +28,8 @@ class MaterialMasterController extends Controller
         $this->middleware('auth');
         $this->_helper = new HelpersController;
         $this->_audit = new AuditTrailController;
+
+        $this->_moduleID = $this->_helper->moduleID('M0004');
     }
 
     public function index()
@@ -94,17 +97,18 @@ class MaterialMasterController extends Controller
             $code_assembly->character_num = $req->character_num;
             $code_assembly->character_code = strtoupper($req->character_code);
             $code_assembly->description = strtoupper($req->description);
-            $code_assembly->update_user = Auth::user()->user_id;
+            $code_assembly->update_user = Auth::user()->id;
 
             $code_assembly->update();
 
             $this->_audit->insert([
                 'user_type' => Auth::user()->user_type,
+                'module_id' => $this->_moduleID,
                 'module' => 'Material Master',
                 'action' => 'Edited data ID: '.$req->assembly_id.', 
                             Material Type: '.$req->mat_type.', 
                             Character Code: '.$req->character_code,
-                'user' => Auth::user()->user_id
+                'user' => Auth::user()->id
             ]);
         } else {
             $check = PpcMaterialAssembly::where('mat_type',$req->mat_type)
@@ -120,17 +124,18 @@ class MaterialMasterController extends Controller
             $code_assembly->character_num = $req->character_num;
             $code_assembly->character_code = strtoupper($req->character_code);
             $code_assembly->description = strtoupper($req->description);
-            $code_assembly->create_user = Auth::user()->user_id;
-            $code_assembly->update_user = Auth::user()->user_id;
+            $code_assembly->create_user = Auth::user()->id;
+            $code_assembly->update_user = Auth::user()->id;
 
             $code_assembly->save();
 
             $this->_audit->insert([
                 'user_type' => Auth::user()->user_type,
+                'module_id' => $this->_moduleID,
                 'module' => 'Material Master',
                 'action' => 'Inserted data Material Type: '.$req->mat_type.', 
                             Character Code: '.$req->character_code,
-                'user' => Auth::user()->user_id
+                'user' => Auth::user()->id
             ]);
         }
 
@@ -168,9 +173,10 @@ class MaterialMasterController extends Controller
 
         $this->_audit->insert([
             'user_type' => Auth::user()->user_type,
+            'module_id' => $this->_moduleID,
             'module' => 'Material Master',
             'action' => 'Deleted data Material Assembly ID: '.$ids,
-            'user' => Auth::user()->user_id
+            'user' => Auth::user()->id
         ]);
 
         return response()->json($data);
@@ -309,7 +315,7 @@ class MaterialMasterController extends Controller
                 $mat->alloy = strtoupper($req->alloy);
                 $mat->schedule = strtoupper($req->schedule);
                 $mat->size = strtoupper($req->size);
-                $mat->update_user = Auth::user()->user_id;
+                $mat->update_user = Auth::user()->id;
 
                 $mat->update();
 
@@ -327,17 +333,18 @@ class MaterialMasterController extends Controller
                                             'alloy' => strtoupper($req->alloy),
                                             'schedule' => strtoupper($req->schedule),
                                             'size' => strtoupper($req->size),
-                                            'update_user' => strtoupper($req->update_user),
+                                            'update_user' => Auth::user()->id,//strtoupper($req->update_user),
                                             'updated_at' => date('Y-m-d H:i:S')
                                         ]);
                 }
 
                 $this->_audit->insert([
                     'user_type' => Auth::user()->user_type,
+                    'module_id' => $this->_moduleID,
                     'module' => 'Material Master',
                     'action' => 'Edited data ID: '.$req->material_id.', 
                                 Material Code: '.$mat->material_code,
-                    'user' => Auth::user()->user_id
+                    'user' => Auth::user()->id
                 ]);
             }else{
                 return response()->json(['msg'=>"Material Code already taken",'status' => 'failed']);
@@ -361,8 +368,8 @@ class MaterialMasterController extends Controller
             $mat->alloy = strtoupper($req->alloy);
             $mat->schedule = strtoupper($req->schedule);
             $mat->size = strtoupper($req->size);
-            $mat->create_user = Auth::user()->user_id;
-            $mat->update_user = Auth::user()->user_id;
+            $mat->create_user = Auth::user()->id;
+            $mat->update_user = Auth::user()->id;
 
             $mat->save();
 
@@ -380,16 +387,17 @@ class MaterialMasterController extends Controller
                                         'alloy' => strtoupper($req->alloy),
                                         'schedule' => strtoupper($req->schedule),
                                         'size' => strtoupper($req->size),
-                                        'update_user' => strtoupper($req->update_user),
+                                        'update_user' => Auth::user()->id,//strtoupper($req->update_user),
                                         'updated_at' => date('Y-m-d H:i:S')
                                     ]);
             }
 
             $this->_audit->insert([
                 'user_type' => Auth::user()->user_type,
+                'module_id' => $this->_moduleID,
                 'module' => 'Material Master',
                 'action' => 'Inserted data Material Code: '.$req->material_code,
-                'user' => Auth::user()->user_id
+                'user' => Auth::user()->id
             ]);
         }
         return response()->json(['msg'=>"Data was successfully saved.",'status' => 'success']);
@@ -425,9 +433,10 @@ class MaterialMasterController extends Controller
         $ids = implode(',', $req->id);
         $this->_audit->insert([
             'user_type' => Auth::user()->user_type,
+            'module_id' => $this->_moduleID,
             'module' => 'Material Master',
             'action' => 'Deleted data Material Code ID: '.$ids,
-            'user' => Auth::user()->user_id
+            'user' => Auth::user()->id
         ]);
 
         return response()->json($data);

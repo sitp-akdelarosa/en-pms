@@ -19,6 +19,7 @@ class UploadOrdersController extends Controller
 {
     protected $_helper;
     protected $_audit;
+    protected $_moduleID;
 
     public function __construct()
     {
@@ -26,6 +27,8 @@ class UploadOrdersController extends Controller
         $this->middleware('auth');
         $this->_helper = new HelpersController;
         $this->_audit = new AuditTrailController;
+
+        $this->_moduleID = $this->_helper->moduleID('T0002');
     }
 
     public function index()
@@ -80,7 +83,7 @@ class UploadOrdersController extends Controller
             $fields = $reader->toArray();
         });
 
-        PpcUploadOrder::where('create_user',Auth::user()->user_id)->delete();
+        PpcUploadOrder::where('create_user',Auth::user()->id)->delete();
 
         $for_overwrite = [];
         $Schedule = [];
@@ -104,9 +107,10 @@ class UploadOrdersController extends Controller
                         'description' => $description->code_description,
                         'quantity' => $field['quantity'],
                         'po' => $field['pono'],
+                        'uploader' => Auth::user()->id,
                         'date_upload' => date("Y-m-d H:i:s"),
-                        'create_user' => Auth::user()->user_id,
-                        'update_user' => Auth::user()->user_id,
+                        'create_user' => Auth::user()->id,
+                        'update_user' => Auth::user()->id,
                         'created_at' => date("Y-m-d H:i:s"),
                         'updated_at' => date("Y-m-d H:i:s"),
                     ]);
@@ -127,9 +131,10 @@ class UploadOrdersController extends Controller
                         'description' => $description,
                         'quantity' => $field['quantity'],
                         'po' => $field['pono'],
+                        'uploader' => Auth::user()->id,
                         'date_upload' => date("Y-m-d H:i:s"),
-                        'create_user' => Auth::user()->user_id,
-                        'update_user' => Auth::user()->user_id,
+                        'create_user' => Auth::user()->id,
+                        'update_user' => Auth::user()->id,
                         'created_at' => date("Y-m-d H:i:s"),
                         'updated_at' => date("Y-m-d H:i:s"),
                     ]);
@@ -139,8 +144,9 @@ class UploadOrdersController extends Controller
                         'prod_code' => $field['productcode'],
                         'quantity' => $field['quantity'],
                         'po' => $field['pono'],
-                        'create_user' => Auth::user()->user_id,
-                        'update_user' => Auth::user()->user_id,
+                        'uploader' => Auth::user()->id,
+                        'create_user' => Auth::user()->id,
+                        'update_user' => Auth::user()->id,
                         'created_at' => date("Y-m-d H:i:s"),
                         'updated_at' => date("Y-m-d H:i:s"),
                     ]);
@@ -156,7 +162,7 @@ class UploadOrdersController extends Controller
         }
 
         $for_prod_sum = PpcUploadOrder::groupBy('sc_no','prod_code','description','po','date_upload')
-                                ->where('create_user',Auth::user()->user_id)
+                                ->where('create_user',Auth::user()->id)
                                 ->select([
                                     'sc_no',
                                     'prod_code',
@@ -169,8 +175,9 @@ class UploadOrdersController extends Controller
 
         foreach ($for_prod_sum as $key => $field) {
             $overwrite = PpcProductionSummary::where('sc_no', $field->sc_no)
-                    ->where('prod_code',$field->prod_code)
-                    ->count();                         
+                                                ->where('prod_code',$field->prod_code)
+                                                ->count();
+
             if($overwrite == 0){
                     PpcProductionSummary::insert([
                         'sc_no' => $field->sc_no,
@@ -179,38 +186,40 @@ class UploadOrdersController extends Controller
                         'quantity' =>$field->quantity,
                         'po' =>$field->po,
                         'date_upload' => date("Y-m-d H:i:s"),
-                        'create_user' => Auth::user()->user_id,
-                        'update_user' => Auth::user()->user_id,
+                        'create_user' => Auth::user()->id,
+                        'update_user' => Auth::user()->id,
                         'created_at' => date("Y-m-d H:i:s"),
                         'updated_at' => date("Y-m-d H:i:s")
                     ]);
             }else{
                 $NotScheduled = PpcProductionSummary::where('sc_no', $field->sc_no)
-                        ->where('prod_code',$field->prod_code)
-                        ->where('po' , $field->po)
-                        ->where('sched_qty','==',0)
-                        ->count();
+                                                    ->where('prod_code',$field->prod_code)
+                                                    ->where('po' , $field->po)
+                                                    ->where('sched_qty','==',0)
+                                                    ->count();
+
                 if($NotScheduled != 0){
                     $quantity = PpcProductionSummary::select('quantity')
-                        ->where('sc_no', $field->sc_no)
-                        ->where('prod_code',$field->prod_code)
-                        ->where('quantity', '!=' , $field->quantity)
-                        ->first();
+                                                    ->where('sc_no', $field->sc_no)
+                                                    ->where('prod_code',$field->prod_code)
+                                                    ->where('quantity', '!=' , $field->quantity)
+                                                    ->first();
+
                     if(isset($quantity->quantity)){  
                          array_push($for_overwrite, [
-                        'sc_no' => $field->sc_no,
-                        'prod_code' => $field->prod_code,
-                        'oldquantity' => $quantity->quantity,
-                        'quantity' => $field->quantity,
-                        'po' =>$field->po
+                            'sc_no' => $field->sc_no,
+                            'prod_code' => $field->prod_code,
+                            'oldquantity' => $quantity->quantity,
+                            'quantity' => $field->quantity,
+                            'po' =>$field->po
                         ]);
                     }
                 }else{
                      array_push($Schedule, [
-                    'sc_no' => $field->sc_no,
-                    'prod_code' => $field->prod_code,
-                    'quantity' => $field->quantity,
-                    'po' =>$field->po
+                        'sc_no' => $field->sc_no,
+                        'prod_code' => $field->prod_code,
+                        'quantity' => $field->quantity,
+                        'po' =>$field->po
                     ]);
                 }
             }
@@ -218,9 +227,10 @@ class UploadOrdersController extends Controller
 
         $this->_audit->insert([
             'user_type' => Auth::user()->user_type,
+            'module_id' => $this->_moduleID,
             'module' => 'Upload Orders Module',
             'action' => 'Uploaded Back Orders.',
-            'user' => Auth::user()->user_id
+            'user' => Auth::user()->id
         ]);
        
         $data = [
@@ -242,7 +252,11 @@ class UploadOrdersController extends Controller
             PpcProductionSummary::where('sc_no', $up['sc_no'])
                                 ->where('prod_code',$up['prod_code'])
                                 ->where('po',$up['po'])
-                                ->update(['quantity' => $up['quantity']]);
+                                ->update([
+                                    'quantity' => $up['quantity'],
+                                    'update_user' => Auth::user()->id,
+                                    'updated_at' => date("Y-m-d H:i:s")
+                                ]);
             $updated = true;
         }
         return response()->json($updated);
@@ -265,7 +279,7 @@ class UploadOrdersController extends Controller
     public function DatatableUpload()
     {
         $Datalist = PpcUploadOrder::orderBy('id','DESC')
-                                    ->where('create_user',Auth::user()->user_id)
+                                    ->where('create_user',Auth::user()->id)
                                     ->select(
                                         'id',
                                         'sc_no',
@@ -287,7 +301,7 @@ class UploadOrdersController extends Controller
                                         "po",
                                         DB::raw("left(created_at,10) as created_at")
                                     )
-                                    ->where('create_user',Auth::user()->user_id)
+                                    ->where('create_user',Auth::user()->id)
                                     ->groupBy(
                                         "sc_no",
                                         "prod_code",
@@ -309,7 +323,7 @@ class UploadOrdersController extends Controller
                                         "po",
                                         DB::raw("left(created_at,10) as created_at")
                                     )
-                                    ->where('create_user',Auth::user()->user_id)
+                                    ->where('create_user',Auth::user()->id)
                                     ->groupBy(
                                         "sc_no",
                                         "prod_code",

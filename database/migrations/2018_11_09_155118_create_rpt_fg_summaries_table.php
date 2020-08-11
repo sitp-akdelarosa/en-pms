@@ -18,11 +18,11 @@ class CreateRptFgSummariesTable extends Migration
             $table->string('sc_no');
             $table->string('prod_code');
             $table->string('description');
-            $table->integer('order_qty');
-            $table->integer('qty');
-            $table->integer('status');
-            $table->string('create_user');
-            $table->string('update_user');
+            $table->double('order_qty',20,2);
+            $table->double('qty',20,2);
+            $table->integer('status')->default(0);
+            $table->integer('create_user')->default(0);
+            $table->integer('update_user')->default(0);
             $table->timestamps();
         });
     }

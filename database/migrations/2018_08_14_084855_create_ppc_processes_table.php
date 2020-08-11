@@ -15,12 +15,12 @@ class CreatePpcProcessesTable extends Migration
     {
         Schema::create('ppc_processes', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('set_id');
+            $table->integer('set_id')->default(0);
             $table->string('set');
             $table->string('process');
             $table->integer('sequence')->nullable()->default(0);
-            $table->string('create_user');
-            $table->string('update_user');
+            $table->integer('create_user')->default(0);
+            $table->integer('update_user')->default(0);
             $table->timestamps();
         });
     }

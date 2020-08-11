@@ -16,6 +16,7 @@ class ProcessMasterController extends Controller
 {
     protected $_helper;
     protected $_audit;
+    protected $_moduleID;
 
     public function __construct()
     {
@@ -23,6 +24,8 @@ class ProcessMasterController extends Controller
         $this->middleware('auth');
         $this->_helper = new HelpersController;
         $this->_audit = new AuditTrailController;
+
+        $this->_moduleID = $this->_helper->moduleID('M0005');
     }
 
     public function index()
@@ -69,8 +72,8 @@ class ProcessMasterController extends Controller
                         'set' => strtoupper($setname->set),
                         'sequence' => $proc['sequence'],
                         'process' => strtoupper($proc['process']),
-                        'create_user' => Auth::user()->user_id,
-                        'update_user' => Auth::user()->user_id
+                        'create_user' => Auth::user()->id,
+                        'update_user' => Auth::user()->id
                     ]);
                 }
                 $saved = true;
@@ -78,9 +81,10 @@ class ProcessMasterController extends Controller
 
             $this->_audit->insert([
                 'user_type' => Auth::user()->user_type,
+                'module_id' => $this->_moduleID,
                 'module' => 'Process Master',
                 'action' => 'Saved data Process set: '.$req->sets,
-                'user' => Auth::user()->user_id
+                'user' => Auth::user()->id
             ]);
 
 
@@ -119,7 +123,7 @@ class ProcessMasterController extends Controller
             $set = PpcProcessSet::find($req->set_id);
 
             $set->set = strtoupper($req->set);
-            $set->update_user = Auth::user()->user_id;
+            $set->update_user = Auth::user()->id;
             $set->update();
 
             $saved = true;
@@ -131,8 +135,8 @@ class ProcessMasterController extends Controller
             $set = new PpcProcessSet();
 
             $set->set = strtoupper($req->set);
-            $set->create_user = Auth::user()->user_id;
-            $set->update_user = Auth::user()->user_id;
+            $set->create_user = Auth::user()->id;
+            $set->update_user = Auth::user()->id;
             $set->save();
 
             $saved = true;
@@ -154,7 +158,7 @@ class ProcessMasterController extends Controller
                                 DB::raw('id as id'),
                                 DB::raw('`set` as `text`')
                             )
-                            ->where('create_user',Auth::user()->user_id)
+                            ->where('create_user',Auth::user()->id)
                             ->get();
 
         return response()->json($set);
@@ -194,9 +198,10 @@ class ProcessMasterController extends Controller
 
         $this->_audit->insert([
             'user_type' => Auth::user()->user_type,
+            'module_id' => $this->_moduleID,
             'module' => 'Process Master',
             'action' => 'Deleted data Process Set ID: '.$ids,
-            'user' => Auth::user()->user_id
+            'user' => Auth::user()->id
         ]);
 
         return response()->json($data);

@@ -21,8 +21,9 @@ class CreatePpcCuttingSchedulesTable extends Migration
             $table->string('machine_no');
             $table->string('prepared_by');
             $table->string('leader');
-            $table->string('create_user');
-            $table->string('update_user');
+            $table->integer('leader_id')->nullable()->default(0);
+            $table->integer('create_user')->default(0);
+            $table->integer('update_user')->default(0);
             $table->timestamps();
         });
     }

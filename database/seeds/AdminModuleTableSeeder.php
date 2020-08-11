@@ -158,9 +158,17 @@ class AdminModuleTableSeeder extends Seeder
 
         AdminModule::create([
         	'code' => 'R0005',
-			'title' => 'Summary Report',
+			'title' => 'Production Summary Report',
 			'category' => 'Reports',
 			'user_category' => 'PRODUCTION',
+			'description' => '',
+        ]);
+
+        AdminModule::create([
+        	'code' => 'R0006',
+			'title' => 'FG Summary',
+			'category' => 'Reports',
+			'user_category' => 'OFFICE',
 			'description' => '',
         ]);
 
@@ -168,7 +176,7 @@ class AdminModuleTableSeeder extends Seeder
         	'code' => 'A0001',
 			'title' => 'User Master',
 			'category' => 'Administrator',
-			'user_category' => 'Administrator',
+			'user_category' => 'ALL',
 			'description' => '',
         ]);
 
@@ -176,7 +184,7 @@ class AdminModuleTableSeeder extends Seeder
         	'code' => 'A0002',
 			'title' => 'Assign Production Line',
 			'category' => 'Administrator',
-			'user_category' => 'Administrator',
+			'user_category' => 'ALL',
 			'description' => '',
         ]);
 
@@ -184,7 +192,7 @@ class AdminModuleTableSeeder extends Seeder
         	'code' => 'A0003',
 			'title' => 'User Type',
 			'category' => 'Administrator',
-			'user_category' => 'Administrator',
+			'user_category' => 'ALL',
 			'description' => '',
         ]);
 
@@ -192,7 +200,15 @@ class AdminModuleTableSeeder extends Seeder
         	'code' => 'A0004',
 			'title' => 'Audit Trail',
 			'category' => 'Administrator',
-			'user_category' => 'Administrator',
+			'user_category' => 'ALL',
+			'description' => '',
+        ]);
+
+        AdminModule::create([
+        	'code' => 'A0005',
+			'title' => 'Settings',
+			'category' => 'Administrator',
+			'user_category' => 'ALL',
 			'description' => '',
         ]);
 

@@ -19,8 +19,8 @@ class CreatePpcMaterialAssembliesTable extends Migration
             $table->string('character_num');
             $table->string('character_code');
             $table->string('description');
-            $table->string('create_user');
-            $table->string('update_user');
+            $table->integer('create_user')->default(0);
+            $table->integer('update_user')->default(0);
             $table->timestamps();
         });
     }

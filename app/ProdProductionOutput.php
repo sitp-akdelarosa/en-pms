@@ -19,8 +19,9 @@ class ProdProductionOutput extends Model
 		'nc',
 		'previous_process',
 		'current_process',
-		'machine_no',
+		'output',
 		'operator',
+		'machine_no',
 		'create_user',
 		'update_user'
 	];

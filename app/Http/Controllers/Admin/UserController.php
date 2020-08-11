@@ -21,6 +21,7 @@ class UserController extends Controller
 {
 	protected $_helper;
 	protected $_audit;
+	protected $_moduleID;
 
 	public function __construct()
 	{
@@ -28,6 +29,8 @@ class UserController extends Controller
 		$this->middleware('auth');
 		$this->_helper = new HelpersController;
 		$this->_audit = new AuditTrailController;
+
+		$this->_moduleID = $this->_helper->moduleID('A0001');
 	}
 
 	public function index()
@@ -114,9 +117,10 @@ class UserController extends Controller
 
 				$this->_audit->insert([
 					'user_type' => Auth::user()->user_type,
+					'module_id' => $this->_moduleID,
 					'module' => 'User Master',
 					'action' => 'Inserted data User ID: '.$req->user_id,
-					'user' => Auth::user()->user_id
+					'user' => Auth::user()->id
 				]);
 
 				return response()->json($user);
@@ -187,9 +191,10 @@ class UserController extends Controller
 
 			$this->_audit->insert([
 				'user_type' => Auth::user()->user_type,
+				'module_id' => $this->_moduleID,
 				'module' => 'User Master',
 				'action' => 'Edited data ID '.$req->id.', User ID: '.$req->user_id,
-				'user' => Auth::user()->user_id
+				'user' => Auth::user()->id
 			]);
 
 			return response()->json($user);
@@ -328,9 +333,10 @@ class UserController extends Controller
 
 			$this->_audit->insert([
 				'user_type' => Auth::user()->user_type,
+				'module_id' => $this->_moduleID,
 				'module' => 'User Master',
 				'action' => 'Deleted data ID '.$req->id,
-				'user' => Auth::user()->user_id
+				'user' => Auth::user()->id
 			]);
 		}
 
@@ -430,8 +436,10 @@ class UserController extends Controller
 					'user_category' => ($module_rw->user_category == '' || $module_rw->user_category == null)? $this->user_category($req->user_type) : $module_rw->user_category,
 					'user_id' => $id,
 					'access' => 1,
-					'create_user' => Auth::user()->user_id,
-					'update_user' => Auth::user()->user_id,
+					'create_user' => Auth::user()->id,
+					'update_user' => Auth::user()->id,
+					'created_at' => date('Y-m-d H:i:s'),
+					'updated_at' => date('Y-m-d H:i:s'),
 				]);
 			}
 		}
@@ -448,8 +456,10 @@ class UserController extends Controller
 						'user_category' => ($module_ro->user_category == '' || $module_ro->user_category == null)? $this->user_category($req->user_type) : $module_ro->user_category,
 						'user_id' => $id,
 						'access' => 2,
-						'create_user' => Auth::user()->user_id,
-						'update_user' => Auth::user()->user_id,
+						'create_user' => Auth::user()->id,
+						'update_user' => Auth::user()->id,
+						'created_at' => date('Y-m-d H:i:s'),
+						'updated_at' => date('Y-m-d H:i:s'),
 					]);
 				} else {
 					if (in_array($module_ro->id, $req->rw)) {
@@ -463,8 +473,10 @@ class UserController extends Controller
 							'user_category' => ($module_ro->user_category == '' || $module_ro->user_category == null)? $this->user_category($req->user_type) : $module_ro->user_category,
 							'user_id' => $id,
 							'access' => 2,
-							'create_user' => Auth::user()->user_id,
-							'update_user' => Auth::user()->user_id,
+							'create_user' => Auth::user()->id,
+							'update_user' => Auth::user()->id,
+							'created_at' => date('Y-m-d H:i:s'),
+							'updated_at' => date('Y-m-d H:i:s'),
 						]);
 					}
 				}
@@ -487,8 +499,10 @@ class UserController extends Controller
 				'user_category' => $row['user_category'],
 				'user_id' => $row['user_id'],
 				'access' => $row['access'],
-				'create_user' => Auth::user()->user_id,
-				'update_user' => Auth::user()->user_id,
+				'create_user' => Auth::user()->id,
+				'update_user' => Auth::user()->id,
+				'created_at' => date('Y-m-d H:i:s'),
+				'updated_at' => date('Y-m-d H:i:s'),
 			]);
 		}
 
@@ -513,8 +527,10 @@ class UserController extends Controller
 				'user_category' => $module->user_category,
 				'user_id' => $id,
 				'access' => 1,
-				'create_user' => Auth::user()->user_id,
-				'update_user' => Auth::user()->user_id,
+				'create_user' => Auth::user()->id,
+				'update_user' => Auth::user()->id,
+				'created_at' => date('Y-m-d H:i:s'),
+				'updated_at' => date('Y-m-d H:i:s'),
 			]);
 		}
 

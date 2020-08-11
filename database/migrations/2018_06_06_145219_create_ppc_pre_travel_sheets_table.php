@@ -17,14 +17,14 @@ class CreatePpcPreTravelSheetsTable extends Migration
             $table->increments('id');
             $table->string('jo_no');
             $table->string('prod_code');
-            $table->integer('issued_qty');
-            $table->integer('qty_per_sheet');
-            $table->integer('status');
+            $table->double('issued_qty',20,2)->default(0.00);
+            $table->double('qty_per_sheet',20,2)->default(0.00);
+            $table->integer('status')->default(0);
             $table->string('iso_code');
             $table->string('iso_name');
             $table->string('iso_photo');
-            $table->string('create_user');
-            $table->string('update_user');
+            $table->integer('create_user')->default(0);
+            $table->integer('update_user')->default(0);
             $table->timestamps();
         });
     }

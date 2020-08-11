@@ -13,7 +13,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
         	AdminModuleTableSeeder::class,
-        	// AdminModuleAccessTableSeeder::class,
+        	AdminModuleAccessTableSeeder::class,
          //    PpcDropdownNameTableSeeder::class,
          //    PpcDropdownItemTableSeeder::class
         ]);

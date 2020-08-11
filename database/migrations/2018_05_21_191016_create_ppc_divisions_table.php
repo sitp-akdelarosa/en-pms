@@ -19,10 +19,11 @@ class CreatePpcDivisionsTable extends Migration
             $table->string('div_name');
             $table->string('plant');
             $table->string('leader');
-            $table->string('is_disable');
-            $table->integer('user_id');
-            $table->string('create_user');
-            $table->string('update_user');
+            $table->integer('leader_id')->length(10)->nullable();
+            $table->integer('is_disable')->length(1)->default(0);
+            $table->integer('user_id')->default(0);
+            $table->integer('create_user')->default(0);
+            $table->integer('update_user')->default(0);
             $table->timestamps();
         });
     }

@@ -23,8 +23,9 @@ class CreateAdminTransactionNosTable extends Migration
             $table->integer('nextno')->default(1);
             $table->integer('nextnolength')->default(5);
             $table->string('month')->default(01);
-            $table->string('create_user');
-            $table->string('update_user');
+            $table->integer('assigned_user_id')->default(0);
+            $table->integer('create_user')->default(0);
+            $table->integer('update_user')->default(0);
             $table->timestamps();
         });
 
@@ -33,11 +34,12 @@ class CreateAdminTransactionNosTable extends Migration
                             'description' => 'Raw Material Withdrawal Transaction No.',
                             'prefix' => 'RMW-YYMM-',
                             'prefixformat' => 'RMW-%y%m-',
-                            'nextno' => '1',
-                            'nextnolength' => '4',
+                            'nextno' => 1,
+                            'nextnolength' => 4,
                             'month' => '01',
-                            'create_user' => 'Administrator',
-                            'update_user' => 'Administrator',
+                            'assigned_user_id' => 1,
+                            'create_user' => 1,
+                            'update_user' => 1,
                         ]);
 
         AdminTransactionNo::create([
@@ -45,11 +47,12 @@ class CreateAdminTransactionNosTable extends Migration
                             'description' => 'Job Order No.',
                             'prefix' => 'JO-YYMM-',
                             'prefixformat' => 'JO-%y%m-',
-                            'nextno' => '1',
-                            'nextnolength' => '3',
+                            'nextno' => 1,
+                            'nextnolength' => 3,
                             'month' => '01',
-                            'create_user' => 'Administrator',
-                            'update_user' => 'Administrator',
+                            'assigned_user_id' => 1,
+                            'create_user' => 1,
+                            'update_user' => 1,
                         ]);
     }
 

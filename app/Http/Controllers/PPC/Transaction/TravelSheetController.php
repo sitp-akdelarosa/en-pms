@@ -27,12 +27,16 @@ use DB;
 class TravelSheetController extends Controller
 {
     protected $_helper = '';
+    protected $_audit;
+    protected $_moduleID;
 
     public function __construct()
     {
         $this->middleware('auth');
         $this->_helper = new HelpersController;
         $this->_audit = new AuditTrailController;
+
+        $this->_moduleID = $this->_helper->moduleID('T0006');
     }
 
     public function index()
@@ -85,7 +89,7 @@ class TravelSheetController extends Controller
                         ->leftJoin('ppc_pre_travel_sheets as ts', 'ts.jo_no','=','jt.jo_no')
                         ->leftjoin('ppc_product_codes as pc', 'jt.prod_code', '=', 'pc.product_code')
                         ->leftjoin('admin_assign_production_lines as pl', 'pl.product_line', '=', 'pc.product_type')
-                        ->where('jt.create_user' ,Auth::user()->user_id)
+                        ->where('jt.create_user' ,Auth::user()->id)
                         ->where('pl.user_id' ,Auth::user()->id)
                         ->whereRaw("1=1 ".$status)
                         ->where('jt.status' , '!=',3)
@@ -147,7 +151,7 @@ class TravelSheetController extends Controller
                         ->leftjoin('ppc_product_codes as pc', 'jt.prod_code', '=', 'pc.product_code')
                         ->leftjoin('admin_assign_production_lines as pl', 'pl.product_line', '=', 'pc.product_type')
                         ->where('pl.user_id' ,Auth::user()->id)
-                        ->where('jt.create_user', '!=', Auth::user()->user_id)
+                        ->where('jt.create_user', '!=', Auth::user()->id)
                         ->whereBetween('jt.id', [$FROM, $TO])
                         ->whereRaw("1=1 ".$status)
                         ->where('jt.status' , '!=',3)
@@ -206,7 +210,7 @@ class TravelSheetController extends Controller
                     ->leftjoin('ppc_product_codes as pc', 'jt.prod_code', '=', 'pc.product_code')
                     ->leftjoin('admin_assign_production_lines as pl', 'pl.product_line', '=', 'pc.product_type')
                     ->where('pl.user_id' ,Auth::user()->id)
-                    ->where('jt.create_user' , Auth::user()->user_id)
+                    ->where('jt.create_user' , Auth::user()->id)
                     ->whereRaw("1=1 ".$status)
                     ->where('jt.status' , '!=',3)
                     ->orderBy('jt.jo_no','desc')
@@ -268,7 +272,7 @@ class TravelSheetController extends Controller
                         ->leftjoin('ppc_product_codes as pc', 'jt.prod_code', '=', 'pc.product_code')
                         ->leftjoin('admin_assign_production_lines as pl', 'pl.product_line', '=', 'pc.product_type')
                         ->where('pl.user_id' ,Auth::user()->id)
-                        ->where('jt.create_user','!=',Auth::user()->user_id)
+                        ->where('jt.create_user','!=',Auth::user()->id)
                         ->whereRaw("1=1 ".$status)
                         ->where('jt.status' , '!=',3)
                         ->orderBy('jt.jo_no','desc')
@@ -410,7 +414,7 @@ class TravelSheetController extends Controller
             $pre_ts->iso_name = $this->getISObyCode($req->iso_no)->iso_name;
             $pre_ts->iso_photo = $this->getISObyCode($req->iso_no)->photo;
             $pre_ts->qty_per_sheet = $req->qty_per_sheet;
-            $pre_ts->update_user = Auth::user()->user_id;
+            $pre_ts->update_user = Auth::user()->id;
 
 
             if ($pre_ts->update()) {
@@ -436,8 +440,8 @@ class TravelSheetController extends Controller
                         'issued_qty_per_sheet' => $issued_qty_per_sheet,
                         'jo_sequence' => ($jo_sequence == '')? $req->jo_no : $req->jo_no.'-'.$jo_sequence,
                         'sc_no' => strtoupper(implode(',', $req->scno[$key])),
-                        'create_user' => Auth::user()->user_id,
-                        'update_user' => Auth::user()->user_id,
+                        'create_user' => Auth::user()->id,
+                        'update_user' => Auth::user()->id,
                     ]);
                 }
 
@@ -450,8 +454,8 @@ class TravelSheetController extends Controller
                         'process_name' => strtoupper($process),
                         'div_code' => strtoupper($req->div_code[$key]),
                         'sequence' => $req->sequence[$key],
-                        'create_user' => Auth::user()->user_id,
-                        'update_user' => Auth::user()->user_id,
+                        'create_user' => Auth::user()->id,
+                        'update_user' => Auth::user()->id,
                     ]);
                 }
 
@@ -460,9 +464,10 @@ class TravelSheetController extends Controller
 
             $this->_audit->insert([
                 'user_type' => Auth::user()->user_type,
+                'module_id' => $this->_moduleID,
                 'module' => 'Travel Sheet',
                 'action' => 'Edited Travel Sheet Jo_No: '.strtoupper($req->jo_no),
-                'user' => Auth::user()->user_id
+                'user' => Auth::user()->id
             ]);
         } else {
             $this->validate($req, [
@@ -481,8 +486,8 @@ class TravelSheetController extends Controller
             $pre_ts->iso_code = $req->iso_no;
             $pre_ts->iso_name = $this->getISObyCode($req->iso_no)->iso_name;
             $pre_ts->iso_photo = $this->getISObyCode($req->iso_no)->photo;
-            $pre_ts->create_user = Auth::user()->user_id;
-            $pre_ts->update_user = Auth::user()->user_id;
+            $pre_ts->create_user = Auth::user()->id;
+            $pre_ts->update_user = Auth::user()->id;
 
             if ($pre_ts->save()) {
 
@@ -502,8 +507,8 @@ class TravelSheetController extends Controller
                         'issued_qty_per_sheet' => $issued_qty_per_sheet,
                         'jo_sequence' => ($jo_sequence == '')? $req->jo_no : $req->jo_no.'-'.$jo_sequence,
                         'sc_no' => strtoupper(implode(',', $req->scno[$key])),
-                        'create_user' => Auth::user()->user_id,
-                        'update_user' => Auth::user()->user_id,
+                        'create_user' => Auth::user()->id,
+                        'update_user' => Auth::user()->id,
                     ]);
                 }
 
@@ -515,8 +520,8 @@ class TravelSheetController extends Controller
                         'process_name' => strtoupper($process),
                         'sequence' => $req->sequence[$key],
                         'div_code' => strtoupper($req->div_code[$key]),
-                        'create_user' => Auth::user()->user_id,
-                        'update_user' => Auth::user()->user_id,
+                        'create_user' => Auth::user()->id,
+                        'update_user' => Auth::user()->id,
                     ]);
                 }
 
@@ -526,9 +531,10 @@ class TravelSheetController extends Controller
             }
             $this->_audit->insert([
                 'user_type' => Auth::user()->user_type,
+                'module_id' => $this->_moduleID,
                 'module' => 'Travel Sheet',
                 'action' => 'Preparation for Travel Sheet Jo_No: '.strtoupper($req->jo_no),
-                'user' => Auth::user()->user_id
+                'user' => Auth::user()->id
             ]);
         }
             $data = [ 
@@ -587,8 +593,8 @@ class TravelSheetController extends Controller
                     'iso_name' => $this->getISObyCode($iso_code)->iso_name,
                     'iso_photo' => $this->getISObyCode($iso_code)->photo,
                     'pre_travel_sheet_id' => $ts->id,
-                    'create_user' => Auth::user()->user_id,
-                    'update_user' => Auth::user()->user_id,
+                    'create_user' => Auth::user()->id,
+                    'update_user' => Auth::user()->id,
                 ]);
 
             $processes = DB::table('ppc_pre_travel_sheet_processes')
@@ -605,8 +611,8 @@ class TravelSheetController extends Controller
                     'div_code' => $proc->div_code,
                     'sequence' => $proc->sequence,
                     'status' => 0,
-                    'create_user' => Auth::user()->user_id,
-                    'update_user' => Auth::user()->user_id,
+                    'create_user' => Auth::user()->id,
+                    'update_user' => Auth::user()->id,
                 ]);
             }
         }
@@ -623,7 +629,7 @@ class TravelSheetController extends Controller
         $users = User::select(
                         DB::raw("CONCAT(firstname,' ',lastname) as name")
                     )->where('user_type','PPC')
-                    ->where('user_id','<>',Auth::user()->user_id)->get();
+                    ->where('user_id','<>',Auth::user()->id)->get();
 
         return response()->json($users);
     }

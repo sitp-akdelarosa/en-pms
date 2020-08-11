@@ -14,6 +14,7 @@ class PpcUploadOrder extends Model
                     'unit',
                     'sched_qty',
                     'po',
+                    'uploader',
                     'date_upload',
                     'create_user',
                     'update_user',

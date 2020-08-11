@@ -20,6 +20,8 @@ class ProdTransferItem extends Model
 		'receive_qty',
 		'receive_remarks',
 		'item_status',
+		'date_received',
+		'date_transfered',
 		'create_user',
 		'update_user',
 	];

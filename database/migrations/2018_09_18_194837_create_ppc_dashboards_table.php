@@ -25,10 +25,10 @@ class CreatePpcDashboardsTable extends Migration
             $table->string('mats');
             $table->string('heat_no');
             $table->string('lot_no');
-            $table->integer('order_qty');
-            $table->integer('sched_qty');
-            $table->string('create_user');
-            $table->string('update_user');
+            $table->double('order_qty',20,2)->default(0.00);
+            $table->double('sched_qty',20,2)->default(0.00);
+            $table->integer('create_user')->default(0);
+            $table->integer('update_user')->default(0);
             $table->timestamps();
         });
     }
