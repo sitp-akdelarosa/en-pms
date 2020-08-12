@@ -17,13 +17,14 @@ foreach ($user_accesses as $user_access){
 
 <section class="content">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
+        <div class="col-lg-10">
             <div class="box">
                 <div class="box-body">
-                    <table class="table table-sm table-hover table-striped nowrap" id="tbl_audit" style="width: 100%">
+                    <table class="table table-sm table-hover table-striped" id="tbl_audit" style="width: 100%">
                         <thead class="thead-dark">
                             <tr>
                                 <th>ID</th>
+                                <th>User Type</th>
                                 <th>Module / Form</th>
                                 <th>Action</th>
                                 <th>User</th>
