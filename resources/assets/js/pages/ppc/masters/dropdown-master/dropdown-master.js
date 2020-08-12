@@ -20,6 +20,11 @@ $( function() {
 		$('#modal_dropdown_option').modal('show');
 	});
 
+	$("#frm_dropdown_items_value").on('submit', function(e) {
+		e.preventDefault();
+		$('#btn_add_dropdown_item').click();
+	});
+
 	$('#frm_dropdown_items').on('submit', function(e) {
 		$('.loadingOverlay').show();
 		e.preventDefault();

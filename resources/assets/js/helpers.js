@@ -478,16 +478,23 @@ function makeAuditTrailTable(arr) {
 	$('#tbl_audit').dataTable().fnDestroy();
 	$('#tbl_audit').dataTable({
 		data: arr,
-		bLengthChange : false,
+		//bLengthChange : false,
 		bDestroy: true,
-		order: [[ 4, "desc" ]],
+		deferRender: true,
+		lengthMenu: [
+            [10, 20, 50, 100, 150, 200, 500, -1],
+            [10, 20, 50, 100, 150, 200, 500, "All"]
+        ],
+        pageLength: 10, 
+		order: [[ 5, "desc" ]],
 		columns: [
 			{ data: 'id', orderable: false, width: '5%' },
-			{ data: 'module', orderable: false, width: '20%' },
+			{ data: 'user_type', orderable: false, width: '15%' },
+			{ data: 'module', orderable: false, width: '15%' },
 			{ data: function(data) {
 				return ellipsis(data.action,80);
-			}, orderable: false, width: '50%'},
-			{ data: 'user', orderable: false, width: '10%'},
+			}, orderable: false, width: '40%'},
+			{ data: 'fullname', orderable: false, width: '10%'},
 			{ data: 'created_at', orderable: false, width: '15%'}
 		]
 	});
