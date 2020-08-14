@@ -253,7 +253,8 @@ function getModules(id) {
 		dataType: 'JSON',
 		data: {
 			_token:token,
-			id: id
+			id: id,
+			category: $('#category').val()
 		},
 	}).done(function(data, textStatus, xhr) {
 		modulesDataTable(data);
