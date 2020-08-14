@@ -44,16 +44,19 @@ class UserController extends Controller
 		$users = DB::select("SELECT u.id as id,
 								   u.user_id as user_id,
 								   u.firstname as firstname,
+								   u.nickname as nickname,
 								   u.lastname as lastname,
 								   ifnull(u.email,'') as email,
 								   ut.description as user_type,
-								   u.div_code as div_code,
+								   ifnull(CONCAT(d.div_code,' - ',d.div_name),'') as div_code,
 								   u.actual_password as actual_password,
 								   u.del_flag as del_flag,
-								   DATE_FORMAT(u.created_at, '%Y/%m/%d %h:%i %p') as created_at
-							FROM users as u
-							INNER JOIN  admin_user_types as ut 
+								   DATE_FORMAT(u.created_at, '%Y/%m/%d %H:%i %p') as created_at
+							FROM enpms.users as u
+							INNER JOIN  enpms.admin_user_types as ut 
 							ON u.user_type =  ut.id
+							LEFT JOIN enpms.ppc_divisions as d
+							on u.div_code = d.id
 							ORDER BY u.id DESC");
 
 		return $users;
@@ -93,7 +96,8 @@ class UserController extends Controller
 			$user->actual_password = $req->password;
 			$user->user_type = $req->user_type;
 			$user->user_category = $this->user_category($req->user_type);
-			$user->div_code = "";
+			$user->div_code = $req->div_code;
+			$user->nickname = $req->nickname;
 			$user->create_user = Auth::user()->id;
 			$user->update_user = Auth::user()->id;
 
@@ -153,6 +157,7 @@ class UserController extends Controller
 		]);
 
 		$exists = User::where('user_id',$req->user_id)->where('id','!=', $req->id) ->first();
+
 		if (is_null($exists)) {
 
 			$user = User::find($req->id);
@@ -162,9 +167,10 @@ class UserController extends Controller
 			$user->lastname = $req->lastname;
 			$user->email = $req->email;
 			$user->user_type = $req->user_type;
+			$user->nickname = $req->nickname;
 			$user->user_category = $this->user_category($req->user_type);
 			$user->update_user = Auth::user()->id;
-			// $user->div_code = $req->div_code;
+			$user->div_code = $req->div_code;
 
 			if (isset($req->is_admin)) {
 				$user->is_admin = $req->is_admin;
@@ -343,74 +349,156 @@ class UserController extends Controller
 		return response()->json($data);
 	}
 
-	// public function div_code(Request $req)
-	// {
-	//     $div = PpcDivision::select('div_code')
-	//                         ->where('div_code', 'like', '%'.$req->data.'%')
-	//                         ->groupBy('div_code')
-	//                         ->get();
-	//     return response()->json($div);
-	// }
+	public function getDivCode(Request $req)
+	{
+	    $div = DB::table('ppc_divisions')
+	    			->select(
+    					'id as id', 
+    					DB::raw("CONCAT(div_code,' - ',div_name) as text")
+    				)
+    				->where('is_disable',0)
+    				->get();
+	    return response()->json($div);
+	}
+
+	public function getUsersType(Request $req)
+	{
+	    $ut = DB::table('admin_user_types')
+	    		->select('id as id', 'description as text')
+	    		->get();
+
+	    return response()->json($ut);
+	}
 
 	public function user_modules(Request $req)
 	{
 		$modules;
-		if ($req->user_type == '') {
-			$modules = AdminModule::where('user_category','<>','Administrator')->get();
-		} else {
-			if ($req->id == '') {
-				$userTypeCategory = $this->user_category($req->user_type);
+		$user_id_cond = "";
+		$user_type_cond = "";
 
-				if ($userTypeCategory == 'ALL') {
-					$modules = AdminModule::where('user_category','<>','Administrator')->get();
-				} else {
-					//$modules = AdminModule::where('user_category','<>','Administrator')->get();
-					//$modules = AdminModule::where('user_category', $userTypeCategory)->get();
-					$modules = DB::table('admin_user_type_modules as utm')
-								->join('admin_modules as m','utm.module_id','m.id')
-								->where('utm.user_type_id',$req->user_type)
-								->select(
-									DB::raw('utm.module_id as id'),
-									DB::raw('utm.code as code'),
-									DB::raw('m.title')
-								)
-								->get();
-				}
+		if (!empty($req->id)) {
+			$user_id_cond = "AND acc.user_id = '".$req->id."'";
+		}
+
+		if (!empty($req->user_type)) {
+			$user_type_cond = "AND utm.user_type_id = '".$req->user_type."'";
+		}
+
+		if (!empty($req->id)) {
+			$modules = DB::select("select `mod`.id as id,
+											`mod`.`code` as `code`,
+											`mod`.title as title,
+											IFNULL(acc.access,0) as access
+									FROM admin_modules as `mod`
+									LEFT JOIN admin_module_accesses as acc
+									ON `mod`.`code` = acc.`code`
+									 ".$user_id_cond."
+									LEFT JOIN admin_user_type_modules as utm
+									ON `mod`.`code` = utm.`code`
+									WHERE `mod`.user_category <> 'ALL'
+									 ".$user_type_cond." 
+									GROUP BY `mod`.id,
+											`mod`.`code`,
+									        `mod`.title,
+											IFNULL(acc.access,0)");
+		} else {
+			$modules = DB::select("select `mod`.id as id,
+											`mod`.`code` as `code`,
+											`mod`.title as title,
+											0 as access
+									FROM admin_modules as `mod`
+									LEFT JOIN admin_user_type_modules as utm
+									ON `mod`.`code` = utm.`code`
+									WHERE `mod`.user_category <> 'ALL'
+									 ".$user_type_cond." 
+									GROUP BY `mod`.id,
+											`mod`.`code`,
+									        `mod`.title");
+		}
+
+		
+
+		// if ($req->user_type == '') {
+		// 	$modules = AdminModule::where('user_category','<>','Administrator')->get();
+		// } else {
+			// if ($req->id == '') {
+			// 	$userTypeCategory = $this->user_category($req->user_type);
+
+			// 	if ($userTypeCategory == 'ALL') {
+			// 		// $modules = AdminModule::where('user_category','<>','Administrator')->get();
+			// 		$modules = DB::table('admin_modules as mod')
+			// 					->leftJoin('admin_module_accesses as acc', function($join) use($req) {
+			// 						$join->on('mod.code','=','acc.code')->where('acc.user_id',$req->id);
+			// 					})
+			// 					->where('mod.user_category','<>','Administrator')
+			// 					// ->where('acc.user_id',$req->id)
+			// 					->select(
+			// 						DB::raw("mod.id as id"),
+			// 						DB::raw("mod.code as code"),
+			// 						DB::raw("mod.title as title"),
+			// 						DB::raw("IFNULL(acc.access,0) as access")
+			// 					)->get();
+			// 	} else {
+			// 		//$modules = AdminModule::where('user_category','<>','Administrator')->get();
+			// 		//$modules = AdminModule::where('user_category', $userTypeCategory)->get();
+			// 		$modules = DB::table('admin_user_type_modules as utm')
+			// 					->join('admin_modules as m','utm.module_id','m.id')
+			// 					->where('utm.user_type_id',$req->user_type)
+			// 					->select(
+			// 						DB::raw('utm.module_id as id'),
+			// 						DB::raw('utm.code as code'),
+			// 						DB::raw('m.title')
+			// 					)
+			// 					->get();
+			// 	}
 				
-			} else {
-				if ($this->user_category($req->user_type) == 'ALL') {
-					$modules = DB::table('admin_modules as mod')
-								->leftJoin('admin_module_accesses as acc', function($join) use($req) {
-									$join->on('mod.code','=','acc.code')->where('acc.user_id',$req->id);
-								})
-								->where('mod.user_category','<>','Administrator')
-								// ->where('acc.user_id',$req->id)
-								->select(
-									DB::raw("mod.id as id"),
-									DB::raw("mod.code as code"),
-									DB::raw("mod.title as title"),
-									DB::raw("IFNULL(acc.access,0) as access")
-								)->get();
-				} else {
-					$modules = DB::table('admin_modules as mod')
-								->leftJoin('admin_module_accesses as acc', function($join) use($req) {
-									$join->on('mod.code','=','acc.code')->where('acc.user_id',$req->id);
-								})
-								->leftJoin('admin_user_type_modules as utm','mod.code','utm.code')
-								->where('utm.user_type_id',$req->user_type)
-								// ->where('acc.user_id',$req->id)
-								->select(
-									DB::raw("mod.id as id"),
-									DB::raw("mod.code as code"),
-									DB::raw("mod.title as title"),
-									DB::raw("IFNULL(acc.access,0) as access")
-								)->get();
-				}
+			// } else {
+			// 	$modules = DB::table('admin_modules as mod')
+			// 				->leftJoin('admin_module_accesses as acc', function($join) use($req) {
+			// 					$join->on('mod.code','=','acc.code')->where('acc.user_id',$req->id);
+			// 				})
+			// 				->leftJoin('admin_user_type_modules as utm','mod.code','utm.code')
+			// 				->where('utm.user_type_id',$req->user_type)
+			// 				// ->where('acc.user_id',$req->id)
+			// 				->select(
+			// 					DB::raw("mod.id as id"),
+			// 					DB::raw("mod.code as code"),
+			// 					DB::raw("mod.title as title"),
+			// 					DB::raw("IFNULL(acc.access,0) as access")
+			// 				)->get();
+				// if ($this->user_category($req->user_type) == 'ALL') {
+				// 	$modules = DB::table('admin_modules as mod')
+				// 				->leftJoin('admin_module_accesses as acc', function($join) use($req) {
+				// 					$join->on('mod.code','=','acc.code')->where('acc.user_id',$req->id);
+				// 				})
+				// 				->where('mod.user_category','<>','Administrator')
+				// 				// ->where('acc.user_id',$req->id)
+				// 				->select(
+				// 					DB::raw("mod.id as id"),
+				// 					DB::raw("mod.code as code"),
+				// 					DB::raw("mod.title as title"),
+				// 					DB::raw("IFNULL(acc.access,0) as access")
+				// 				)->get();
+				// } else {
+				// 	$modules = DB::table('admin_modules as mod')
+				// 				->leftJoin('admin_module_accesses as acc', function($join) use($req) {
+				// 					$join->on('mod.code','=','acc.code')->where('acc.user_id',$req->id);
+				// 				})
+				// 				->leftJoin('admin_user_type_modules as utm','mod.code','utm.code')
+				// 				->where('utm.user_type_id',$req->user_type)
+				// 				// ->where('acc.user_id',$req->id)
+				// 				->select(
+				// 					DB::raw("mod.id as id"),
+				// 					DB::raw("mod.code as code"),
+				// 					DB::raw("mod.title as title"),
+				// 					DB::raw("IFNULL(acc.access,0) as access")
+				// 				)->get();
+				// }
 				// if (count($modules) < 1) {
 				//     $modules = AdminModule::where('user_type',$req->user_type)->get();
 				// }
-			}
-		}
+			// }
+		// }
 			
 		return response()->json($modules);
 	}
@@ -553,55 +641,5 @@ class UserController extends Controller
 		}
 
 		return 'OFFICE';
-	}
-
-	public function changeStringToIntUserType()
-	{
-		$ok = 0;
-		$users = DB::table('users')->orderBy('id','desc')
-					->select([
-						'id',
-						'user_type'
-					])->get();
-
-		foreach ($users as $key => $user) {
-			$userUpd = User::find($user->id);
-
-			switch ($user->user_type) {
-				case 'SYSTEM ADMINISTRATOR':
-					$userUpd->user_type = 5;
-					break;
-				
-				case 'OPERATOR':
-					$userUpd->user_type = 4;
-					break;
-
-				case 'MANAGER':
-					$userUpd->user_type = 3;
-					break;
-
-				case 'LINE LEADER':
-					$userUpd->user_type = 2;
-					break;
-
-				case 'PPC':
-					$userUpd->user_type = 1;
-					break;
-				default:
-					# code...
-					break;
-			}
-
-			if ($userUpd->update()) {
-				$ok++;
-			}
-			
-		}
-
-		if ($ok > 0) {
-			return response()->json(['msg'=> "ok",'status' => 'success']);
-		}
-
-		return response()->json(['msg'=>"not ok",'status' => 'failed']);
 	}
 }

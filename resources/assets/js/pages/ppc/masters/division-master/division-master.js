@@ -2,13 +2,14 @@ var dataColumn = [
 	{
 		data: function (data) {
 			return '<input type="checkbox" class="table-checkbox check_item" value="' + data.id + '">';
-		}, name: 'id', orderable: false, searchable: false
+		}, name: 'id', orderable: false, searchable: false, width: '5.5%'
 	},
-	{ data: 'action', name: 'action', orderable: false, searchable: false },
-	{ data: 'div_code', name: 'div_code' },
-	{ data: 'div_name', name: 'div_name' },
-	{ data: 'plant', name: 'plant' },
-	{ data: 'leader', name: 'leader' },
+	{ data: 'action', name: 'action', orderable: false, searchable: false, width: '5.5%' },
+	{ data: 'div_code', name: 'div_code', width: '12.5%' },
+	{ data: 'div_name', name: 'div_name', width: '21.5%' },
+	{ data: 'plant', name: 'plant', width: '12.5%' },
+	{ data: 'leader', name: 'leader', width: '12.5%' },
+	{ data: 'created_at', name: 'created_at', width: '17.5%' },
 	{
 		data: function (data) {
 			var enable_disable;
@@ -21,7 +22,7 @@ var dataColumn = [
 				bg_color = "btn-primary";
 			}
 			return '<button type="button" class="btn ' + bg_color + ' btn_enable_disable" data-id="' + data.id + '">' + enable_disable + '</button>';
-		}, name: '', orderable: false, searchable: false
+		}, name: '', orderable: false, searchable: false, width: '12.5%'
 	}
 ];
 
@@ -34,23 +35,7 @@ $(function () {
 	$('#btn_cancel_div').hide();
 	get_dropdown_productline();
 
-	get_leader('#leader');
-
-	$('#leader').on('change', function () {
-		$.ajax({
-			url: getuserIDURL,
-			type: 'GET',
-			dataType: 'JSON',
-			data: {
-				_token: token,
-				leader_name: $(this).val()
-			},
-		}).done(function (data, textStatus, xhr) {
-			$('#user_id').val(data.id);
-		}).fail(function (xhr, textStatus, errorThrown) {
-			msg(errorThrown, textStatus);
-		});
-	});
+	getLeaders();
 
 	viewProcess(view_process_arr);
 
@@ -104,6 +89,7 @@ $(function () {
 				// getDatatable('tbl_division', divListURL, dataColumn, [], 0);
 				divisionTable();
 				new_div();
+				clear();
 			}
 		}).fail(function (xhr, textStatus, errorThrown) {
 			var errors = xhr.responseJSON.errors;
@@ -121,7 +107,7 @@ $(function () {
 		$('#div_name').val($(this).attr('data-div_name'));
 		$('#plant').val($(this).attr('data-plant'));
 		$('#process').val($(this).attr('data-process'));
-		$('#leader').val($(this).attr('data-leader'));
+		$('#leader').val($(this).attr('data-leader')).trigger('change');
 		$('#user_id').val($(this).attr('data-user_id'));
 		process_arr = [];
 		productline_arr = [];
@@ -147,21 +133,6 @@ $(function () {
 			console.log(errorThrown);
 		});
 	});
-	function divisionTable() {
-		$('#tbl_division').dataTable().fnClearTable();
-		$('#tbl_division').dataTable().fnDestroy();
-		$('#tbl_division').dataTable({
-			ajax: divListURL,
-			columns: dataColumn,
-			createdRow: function (row, data, dataIndex) {
-				if (data.is_disable == 1) {
-					$(row).css('background-color', '#ff6266');
-					$(row).css('color', '#fff');
-				}
-			}
-		});
-	}
-
 
 	$('#btn_delete').on('click', function (e) {
 		delete_items('.check_item', divDeleteURL);
@@ -183,6 +154,23 @@ $(function () {
 		$('#tbl_process_body').html('<tr><td colspan="3">No data displayed.</td></tr>');
 		$('#tbl_prodlines_body').html('<tr><td colspan="3">No data displayed.</td></tr>');
 
+	});
+
+	$('#leader').on('change', function () {
+		$('#user_id').val($(this).val());
+		// $.ajax({
+		// 	url: getuserIDURL,
+		// 	type: 'GET',
+		// 	dataType: 'JSON',
+		// 	data: {
+		// 		_token: token,
+		// 		leader_name: $(this).val()
+		// 	},
+		// }).done(function (data, textStatus, xhr) {
+		// 	$('#user_id').val(data.id);
+		// }).fail(function (xhr, textStatus, errorThrown) {
+		// 	msg(errorThrown, textStatus);
+		// });
 	});
 
 	$('#btn_process').on('click', function () {
@@ -233,6 +221,7 @@ $(function () {
 			msg("The Productline field is required.", "failed");
 		}
 	});
+
 	$('#tbl_prodlines_body').on('click', '.btn_remove_pline', function () {
 		var count = $(this).attr('pline-data-count');
 		$('#' + count).remove();
@@ -252,6 +241,22 @@ function init() {
     check_permission(code_permission, function(output) {
         if (output == 1) {}
     });
+}
+
+function divisionTable() {
+	$('#tbl_division').dataTable().fnClearTable();
+	$('#tbl_division').dataTable().fnDestroy();
+	$('#tbl_division').dataTable({
+		ajax: divListURL,
+		columns: dataColumn,
+		order: [[6,'desc']],
+		createdRow: function (row, data, dataIndex) {
+			if (data.is_disable == 1) {
+				$(row).css('background-color', '#ff6266');
+				$(row).css('color', '#fff');
+			}
+		}
+	});
 }
 
 async function get_dropdown_productline() {
@@ -280,6 +285,7 @@ async function get_dropdown_productline() {
 
 function clear() {
 	$('.clear').val('');
+	$('#leader').val(null).trigger('change');
 }
 
 function new_div() {
@@ -360,6 +366,7 @@ function addProcess(arr) {
 		cnt++;
 	});
 }
+
 function addProductline(arr) {
 	var tbl = '';
 	$('#tbl_prodlines_body').html(tbl);
@@ -381,7 +388,6 @@ function addProductline(arr) {
 		cnt++;
 	});
 }
-
 
 function viewProcess(arr) {
 	$('#tbl_view_process').dataTable().fnClearTable();
@@ -416,6 +422,7 @@ function getProcess(id) {
 		msg(errorThrown, textStatus);
 	});
 }
+
 function getProductline(id) {
 	$.ajax({
 		url: getProductlineURL,
@@ -432,3 +439,28 @@ function getProductline(id) {
 	});
 }
 
+
+function getLeaders() {
+	// var opt = "<option value=''></option>";
+	// $(el).html(opt);
+	$.ajax({
+		url: getLeaderURL,
+		type: 'GET',
+		dataType: 'JSON',
+		data: {_token: token},
+	}).done(function(data, textStatus, xhr) {
+		$('#leader').select2({
+			allowClear: true,
+			placeholder: 'Select a Leader',
+			data: data
+		}).val(null).trigger('change');
+
+		// $('#leader').val(null).trigger('change');
+		// $.each(data, function(i, x) {
+		// 	opt = "<option value='"+x.name+"'>"+x.name+"</option>";
+		// 	$(el).append(opt);
+		// });
+	}).fail(function(xhr, textStatus, errorThrown) {
+		console.log("error");
+	});
+}

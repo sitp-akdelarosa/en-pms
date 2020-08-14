@@ -57,6 +57,8 @@ Route::group(['middleware' => ['ppc', 'auth', 'no.back', 'deleted_user']], funct
 				->name('masters.division-master.get-process');
 			Route::get('/get-productline', 'PPC\Masters\DivisionMasterController@getProductline')
 				->name('masters.division-master.get-productline');
+			Route::get('/get-leader', 'PPC\Masters\DivisionMasterController@getLeader')
+				->name('masters.division-master.get-leader');
 			Route::post('/disableEnableDivision', 'PPC\Masters\DivisionMasterController@disableEnableDivision')
 				->name('masters.division-master.disableEnableDivision');
 		});
@@ -447,12 +449,17 @@ Route::group(['prefix' => 'admin', 'middleware' => ['admin', 'auth', 'no.back', 
 		Route::post('/destroy', 'Admin\UserController@destroy')
 			->name('admin.user-master.destroy');
 
-		Route::post('/div-code', 'Admin\UserController@div_code')
-			->name('admin.user-master.div_code');
+		// Route::post('/div-code', 'Admin\UserController@div_code')
+		// 	->name('admin.user-master.div_code');
 
-		Route::post('/update-usertype', 'Admin\UserController@changeStringToIntUserType')
-			->name('admin.user-master.update_usertype');
+		
 	});
+
+	Route::get('/users-type-users', 'Admin\UserController@getUsersType')
+		->name('admin.users-type-users');
+
+	Route::get('/div-code-users', 'Admin\UserController@getDivCode')
+		->name('admin.div-code-users');
 
 	Route::get('/user-mod', 'Admin\UserController@user_modules')
 		->name('admin.user-mod');
