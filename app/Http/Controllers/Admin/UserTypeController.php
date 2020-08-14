@@ -210,7 +210,7 @@ class UserTypeController extends Controller
 								$join->on('mod.id','=','utm.module_id')->where('utm.user_type_id',$req->id);
 							})
 							->where('mod.user_category','<>','ALL')
-							// ->where('acc.user_id',$req->id)
+							//->where('utm.user_category',$req->category)
 							->select(
 								DB::raw("mod.id as id"),
 								DB::raw("mod.code as code"),

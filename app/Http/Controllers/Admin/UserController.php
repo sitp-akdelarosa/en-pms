@@ -178,7 +178,7 @@ class UserController extends Controller
 			}  else {
 				$user->is_admin = 0;
 				AdminModuleAccess::where('user_id',$req->id)
-								->where('user_category','Administrator')
+								->where('user_category','ALL')
 								->delete();
 			}
 
@@ -506,7 +506,7 @@ class UserController extends Controller
 	private function give_user_access($id,$req)
 	{
 		AdminModuleAccess::where('user_id',$id)
-						->where('user_category','<>','Administrator')
+						->where('user_category','<>','ALL')
 						// ->where('user_category',$this->user_category($req->user_type))
 						->delete();
 
@@ -605,7 +605,7 @@ class UserController extends Controller
 
 	private function give_admin_access($id)
 	{
-		$modules = AdminModule::where('user_category','Administrator')->get();
+		$modules = AdminModule::where('user_category','ALL')->get(); // ALL
 		$user_access = [];
 		foreach ($modules as $key => $module) {
 			array_push($user_access,[
@@ -624,7 +624,7 @@ class UserController extends Controller
 
 		$allowAccess = array_chunk($user_access, 1000);
 		AdminModuleAccess::where('user_id',$id)
-						->where('user_category','Administrator')
+						->where('user_category','ALL')
 						->delete();
 
 		foreach ($allowAccess as $access) {
