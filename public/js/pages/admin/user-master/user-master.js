@@ -94,14 +94,12 @@
 /***/ (function(module, exports) {
 
 $(function () {
-  "use strict";
+  userList(); //modules(1,'');
 
-  userList(); //getDivisionCode('#div_code');
-
-  get_user_type('#user_type');
-  modules(1, '');
   init();
   checkAllCheckboxesInTable('#tbl_user', '.check_all_users', '.check_user');
+  getUserType();
+  getDivCode();
   $('.custom-file-input').on('change', function () {
     var fileName = $(this).val().split('\\').pop();
     $(this).next('.custom-file-label').addClass("selected").html(fileName);
@@ -207,10 +205,11 @@ $(function () {
         if (data.status == "failed") {
           msg(data.msg, data.status);
         } else {
+          clear();
+          userList();
           msg("User data was successfully saved.", textStatus);
-        }
+        } //userList();
 
-        userList();
       }
     }).fail(function (xhr, textStatus, errorThrown) {
       var errors = xhr.responseJSON.errors;
@@ -222,6 +221,9 @@ $(function () {
 
       $('.loadingOverlay-modal').hide();
     });
+  });
+  $('#tbl_user').on('page.dt', function () {
+    $('.check_all_users').prop('checked', false);
   });
 });
 
@@ -242,7 +244,9 @@ function show_user(id) {
     $('#user_id').val(data.user_id);
     $('#firstname').val(data.firstname);
     $('#lastname').val(data.lastname);
-    $('#user_type').val(data.user_type);
+    $('#nickname').val(data.nickname);
+    $('#user_type').val(data.user_type).trigger('change');
+    $('#div_code').val(data.div_code).trigger('change');
     $('#password').val(data.actual_password);
     $('#password_confirmation').val(data.actual_password);
     $('#email').val(data.email);
@@ -267,6 +271,8 @@ function clear() {
   hideErrors('user_type');
   hideErrors('email');
   hideErrors('password');
+  $('#user_type').val(null).trigger('change');
+  $('#div_code').val(null).trigger('change');
   $('#photo_profile').attr('src', defaultPhoto);
   $('#photo_label').html("Select a photo...");
 }
@@ -274,8 +280,8 @@ function clear() {
 function modules(user_type) {
   var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
   $('.loadingOverlay-modal').show();
-  tbl = '';
-  $('#tbl_modules_body').html(tbl);
+  tbl = ''; //$('#tbl_modules_body').html(tbl);
+
   var d = {
     user_type: user_type,
     id: id
@@ -286,25 +292,100 @@ function modules(user_type) {
     dataType: 'JSON',
     data: d
   }).done(function (data, textStatus, xhr) {
-    $('.loadingOverlay-modal').hide();
+    console.log(data);
+    var table = $('#tbl_modules');
+    table.dataTable().fnClearTable();
+    table.dataTable().fnDestroy();
+    table.dataTable({
+      data: data,
+      processing: true,
+      deferRender: true,
+      responsive: true,
+      pageLength: 10,
+      scrollX: '400px',
+      paging: false,
+      searching: false,
+      bLengthChange: false,
+      columns: [{
+        data: function data(x) {
+          return x.code + '<input type="hidden" name="code[]" value="' + x.code + '">';
+        },
+        searchable: false,
+        orderable: false,
+        width: '10%',
+        visible: true
+      }, {
+        data: function data(x) {
+          return x.title + '<input type="hidden" name="title[]" value="' + x.title + '">';
+        },
+        searchable: false,
+        orderable: false,
+        width: '40%',
+        visible: true
+      }, {
+        data: function data(x) {
+          var checked_rw = "";
 
-    if (data.length < 1) {
-      tbl = '<tr>' + '<td colspan="4">No data displayed.</td>' + '</tr>';
-      $('#tbl_modules_body').append(tbl);
-    } else {
-      $.each(data, function (i, x) {
-        if (x.access == 1) {
-          var checked_rw = 'checked';
-        }
+          if (x.access == 1) {
+            checked_rw = 'checked';
+          }
 
-        if (x.access == 2) {
-          var checked_ro = 'checked';
-        }
+          return '<input type="checkbox" class="table-checkbox access" name="rw[]" value="' + x.id + '" ' + checked_rw + '>';
+        },
+        searchable: false,
+        orderable: false,
+        width: '25%',
+        visible: true
+      }, {
+        data: function data(x) {
+          var checked_ro = "";
 
-        tbl = '<tr>' + '<td>' + x.code + '<input type="hidden" name="code[]" value="' + x.code + '">' + '</td>' + '<td>' + x.title + '<input type="hidden" name="title[]" value="' + x.title + '">' + '</td>' + '<td>' + '<input type="checkbox" class="table-checkbox access" name="rw[]" value="' + x.id + '" ' + checked_rw + '>' + '</td>' + '<td>' + '<input type="checkbox" class="table-checkbox access" name="ro[]" value="' + x.id + '" ' + checked_ro + '>' + '</td>' + '</tr>';
-        $('#tbl_modules_body').append(tbl);
-      });
-    }
+          if (x.access == 2) {
+            checked_ro = 'checked';
+          }
+
+          return '<input type="checkbox" class="table-checkbox access" name="ro[]" value="' + x.id + '" ' + checked_ro + '>';
+        },
+        searchable: false,
+        orderable: false,
+        width: '25%',
+        visible: true
+      }],
+      "initComplete": function initComplete() {
+        $('.loadingOverlay-modal').hide();
+        $('.dataTables_scrollBody').slimscroll();
+      },
+      "fnDrawCallback": function fnDrawCallback() {}
+    }); // if (data.length < 1) {
+    // 	tbl = 	'<tr>'+
+    // 				'<td colspan="4">No data displayed.</td>'+
+    // 			'</tr>';
+    // 	$('#tbl_modules_body').append(tbl);
+    // } else {
+    // $.each(data, function(i, x) {
+    // 	if (x.access == 1) {
+    // 		var checked_rw = 'checked';
+    // 	}
+    // 	if (x.access == 2) {
+    // 		var checked_ro = 'checked';
+    // 	}
+    // 	tbl = 	'<tr>'+
+    // 				'<td>'+x.code+
+    // 					'<input type="hidden" name="code[]" value="'+x.code+'">'+
+    // 				'</td>'+
+    // 				'<td>'+x.title+
+    // 					'<input type="hidden" name="title[]" value="'+x.title+'">'+
+    // 				'</td>'+
+    // 				'<td>'+
+    // 					'<input type="checkbox" class="table-checkbox access" name="rw[]" value="'+x.id+'" '+checked_rw+'>'+
+    // 				'</td>'+
+    // 				'<td>'+
+    // 					'<input type="checkbox" class="table-checkbox access" name="ro[]" value="'+x.id+'" '+checked_ro+'>'+
+    // 				'</td>'+
+    // 			'</tr>';
+    // 	$('#tbl_modules_body').append(tbl);
+    // });
+    // }
   }).fail(function (xhr, textStatus, errorThrown) {
     msg(errorThrown, textStatus);
   });
@@ -348,7 +429,7 @@ function userList() {
         }
       },
       pageLength: 10,
-      order: [[8, "desc"]],
+      order: [[10, "desc"]],
       columns: [{
         data: function data(x) {
           return '<input type="checkbox" class="table-checkbox check_user" value="' + x.id + '">';
@@ -356,7 +437,7 @@ function userList() {
         name: 'id',
         searchable: false,
         orderable: false,
-        width: '3.11%'
+        width: '3.09%'
       }, {
         data: function data(x) {
           return '<button type="button" class="btn btn-sm bg-blue btn_edit_user" data-id="' + x.id + '">' + '<i class="fa fa-edit"></i>' + '</button>'; // '<button type="button" class="btn btn-sm bg-red btn_delete_user permission-button" data-id="'+x.id+'">'+
@@ -366,35 +447,43 @@ function userList() {
         name: 'action',
         orderable: false,
         searchable: false,
-        width: '3.11%'
+        width: '3.09%'
       }, {
         data: 'user_id',
         name: 'user_id',
-        width: '13.11%'
+        width: '9.09%'
       }, {
         data: 'firstname',
         name: 'firstname',
-        width: '15.11%'
+        width: '12.09%'
+      }, {
+        data: 'nickname',
+        name: 'nickname',
+        width: '12.09%'
       }, {
         data: 'lastname',
         name: 'lastname',
-        width: '15.11%'
+        width: '12.09%'
       }, {
         data: 'email',
         name: 'email',
-        width: '14.11%'
+        width: '9.09%'
+      }, {
+        data: 'div_code',
+        name: 'div_code',
+        width: '12.09%'
       }, {
         data: 'user_type',
         name: 'user_type',
-        width: '14.11%'
+        width: '9.09%'
       }, {
         data: 'actual_password',
         name: 'actual_password',
-        width: '13.11%'
+        width: '9.09%'
       }, {
         data: 'created_at',
         name: 'created_at',
-        width: '11.11%'
+        width: '9.09%'
       }],
       createdRow: function createdRow(row, data, dataIndex) {
         if (data.del_flag === 1) {
@@ -413,36 +502,47 @@ function userList() {
   }).always(function () {
     console.log("complete");
   });
-} // function getdivisionsuggest(){
-//     var options = '';
-//     var datas = $("#div_code").val();
-//     $.ajax({
-//         url: divCodeURL,
-//         type: 'POST',
-//         datatype: "json",
-//         loadonce: true,
-//         data: {_token: token, data:datas},
-//         rowNum: 1000,
-//         success: function (returnData) {
-//             options = "";
-//             if (returnData.length > 20) {
-//                 l = 10;
-//             }
-//             else {
-//                 l = returnData.length;
-//             }
-//             for (var i = 0; i < l; i++) {
-//                 options += '<option value="' + returnData[i].div_code + '" />';
-//             }
-//             $("#divcode").empty().append(options);
-//             document.getElementById('divcode').innerHTML = options;
-//         },
-//         error: function (xhr, ajaxOptions, thrownError) {
-//             alert(xhr.status);
-//             alert(thrownError);
-//         }
-//     });
-// }
+}
+
+function getUserType() {
+  $.ajax({
+    url: UserTypeURL,
+    type: 'GET',
+    dataType: 'JSON',
+    data: {
+      _token: token
+    }
+  }).done(function (data, textStatus, xhr) {
+    $('#user_type').select2({
+      //dropdownParent: "#modal_user_access",
+      allowClear: true,
+      placeholder: 'Select User Type',
+      data: data
+    }).val(null).trigger('change');
+  }).fail(function (xhr, textStatus, errorThrown) {
+    msg(errorThrown, textStatus);
+  });
+}
+
+function getDivCode() {
+  $.ajax({
+    url: DivCodeURL,
+    type: 'GET',
+    dataType: 'JSON',
+    data: {
+      _token: token
+    }
+  }).done(function (data, textStatus, xhr) {
+    $('#div_code').select2({
+      //dropdownParent: "#modal_user_access",
+      allowClear: true,
+      placeholder: 'Select Division Code',
+      data: data
+    }).val(null).trigger('change');
+  }).fail(function (xhr, textStatus, errorThrown) {
+    msg(errorThrown, textStatus);
+  });
+}
 
 /***/ }),
 

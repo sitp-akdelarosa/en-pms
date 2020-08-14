@@ -901,24 +901,34 @@ var dataColumn = [{
   },
   name: 'id',
   orderable: false,
-  searchable: false
+  searchable: false,
+  width: '5.5%'
 }, {
   data: 'action',
   name: 'action',
   orderable: false,
-  searchable: false
+  searchable: false,
+  width: '5.5%'
 }, {
   data: 'div_code',
-  name: 'div_code'
+  name: 'div_code',
+  width: '12.5%'
 }, {
   data: 'div_name',
-  name: 'div_name'
+  name: 'div_name',
+  width: '21.5%'
 }, {
   data: 'plant',
-  name: 'plant'
+  name: 'plant',
+  width: '12.5%'
 }, {
   data: 'leader',
-  name: 'leader'
+  name: 'leader',
+  width: '12.5%'
+}, {
+  data: 'created_at',
+  name: 'created_at',
+  width: '17.5%'
 }, {
   data: function data(_data2) {
     var enable_disable;
@@ -936,7 +946,8 @@ var dataColumn = [{
   },
   name: '',
   orderable: false,
-  searchable: false
+  searchable: false,
+  width: '12.5%'
 }];
 var process_arr = [];
 var view_process_arr = [];
@@ -945,22 +956,7 @@ $(function () {
   $('#btn_cancel').hide();
   $('#btn_cancel_div').hide();
   get_dropdown_productline();
-  get_leader('#leader');
-  $('#leader').on('change', function () {
-    $.ajax({
-      url: getuserIDURL,
-      type: 'GET',
-      dataType: 'JSON',
-      data: {
-        _token: token,
-        leader_name: $(this).val()
-      }
-    }).done(function (data, textStatus, xhr) {
-      $('#user_id').val(data.id);
-    }).fail(function (xhr, textStatus, errorThrown) {
-      msg(errorThrown, textStatus);
-    });
-  });
+  getLeaders();
   viewProcess(view_process_arr); // getDatatable('tbl_division', divListURL, dataColumn, [], 0);
 
   divisionTable();
@@ -1013,6 +1009,7 @@ $(function () {
 
         divisionTable();
         new_div();
+        clear();
       }
     }).fail(function (xhr, textStatus, errorThrown) {
       var errors = xhr.responseJSON.errors;
@@ -1029,7 +1026,7 @@ $(function () {
     $('#div_name').val($(this).attr('data-div_name'));
     $('#plant').val($(this).attr('data-plant'));
     $('#process').val($(this).attr('data-process'));
-    $('#leader').val($(this).attr('data-leader'));
+    $('#leader').val($(this).attr('data-leader')).trigger('change');
     $('#user_id').val($(this).attr('data-user_id'));
     process_arr = [];
     productline_arr = [];
@@ -1055,22 +1052,6 @@ $(function () {
       console.log(errorThrown);
     });
   });
-
-  function divisionTable() {
-    $('#tbl_division').dataTable().fnClearTable();
-    $('#tbl_division').dataTable().fnDestroy();
-    $('#tbl_division').dataTable({
-      ajax: divListURL,
-      columns: dataColumn,
-      createdRow: function createdRow(row, data, dataIndex) {
-        if (data.is_disable == 1) {
-          $(row).css('background-color', '#ff6266');
-          $(row).css('color', '#fff');
-        }
-      }
-    });
-  }
-
   $('#btn_delete').on('click', function (e) {
     delete_items('.check_item', divDeleteURL);
   });
@@ -1088,6 +1069,21 @@ $(function () {
     viewProcess(process_arr);
     $('#tbl_process_body').html('<tr><td colspan="3">No data displayed.</td></tr>');
     $('#tbl_prodlines_body').html('<tr><td colspan="3">No data displayed.</td></tr>');
+  });
+  $('#leader').on('change', function () {
+    $('#user_id').val($(this).val()); // $.ajax({
+    // 	url: getuserIDURL,
+    // 	type: 'GET',
+    // 	dataType: 'JSON',
+    // 	data: {
+    // 		_token: token,
+    // 		leader_name: $(this).val()
+    // 	},
+    // }).done(function (data, textStatus, xhr) {
+    // 	$('#user_id').val(data.id);
+    // }).fail(function (xhr, textStatus, errorThrown) {
+    // 	msg(errorThrown, textStatus);
+    // });
   });
   $('#btn_process').on('click', function () {
     $('#modal_process').modal('show');
@@ -1150,6 +1146,22 @@ function init() {
   });
 }
 
+function divisionTable() {
+  $('#tbl_division').dataTable().fnClearTable();
+  $('#tbl_division').dataTable().fnDestroy();
+  $('#tbl_division').dataTable({
+    ajax: divListURL,
+    columns: dataColumn,
+    order: [[6, 'desc']],
+    createdRow: function createdRow(row, data, dataIndex) {
+      if (data.is_disable == 1) {
+        $(row).css('background-color', '#ff6266');
+        $(row).css('color', '#fff');
+      }
+    }
+  });
+}
+
 function get_dropdown_productline() {
   return _get_dropdown_productline.apply(this, arguments);
 }
@@ -1201,6 +1213,7 @@ function _get_dropdown_productline() {
 
 function clear() {
   $('.clear').val('');
+  $('#leader').val(null).trigger('change');
 }
 
 function new_div() {
@@ -1331,6 +1344,31 @@ function getProductline(id) {
     addProductline(productline_arr);
   }).fail(function (xhr, textStatus, errorThrown) {
     msg(errorThrown, textStatus);
+  });
+}
+
+function getLeaders() {
+  // var opt = "<option value=''></option>";
+  // $(el).html(opt);
+  $.ajax({
+    url: getLeaderURL,
+    type: 'GET',
+    dataType: 'JSON',
+    data: {
+      _token: token
+    }
+  }).done(function (data, textStatus, xhr) {
+    $('#leader').select2({
+      allowClear: true,
+      placeholder: 'Select a Leader',
+      data: data
+    }).val(null).trigger('change'); // $('#leader').val(null).trigger('change');
+    // $.each(data, function(i, x) {
+    // 	opt = "<option value='"+x.name+"'>"+x.name+"</option>";
+    // 	$(el).append(opt);
+    // });
+  }).fail(function (xhr, textStatus, errorThrown) {
+    console.log("error");
   });
 }
 
