@@ -99,7 +99,7 @@ $(function () {
   getTransferEntry();
   getReceiveItems();
   checkAllCheckboxesInTable('.check_all_transfer_item', '.check_item');
-  check_permission(code_permission);
+  init();
   $('#jo_no').on('change', function () {
     getJOdetails($(this).val());
   });
@@ -233,6 +233,12 @@ $(function () {
   });
 });
 
+function init() {
+  check_permission(code_permission, function (output) {
+    if (output == 1) {}
+  });
+}
+
 function getTransferEntry() {
   transfer_item_arr = [];
   $.ajax({
@@ -258,9 +264,22 @@ function makeTransferItemTable(arr) {
     bLengthChange: false,
     searching: true,
     paging: false,
+    order: [[2, 'asc']],
     columns: [{
       data: function data(x) {
         return "<input type='checkbox' class='table-checkbox check_item' value='" + x.id + "'>";
+      },
+      searchable: false,
+      orderable: false
+    }, {
+      data: function data(x) {
+        var disabled = '';
+
+        if (x.item_status != 0) {
+          disabled = 'disabled';
+        }
+
+        return "<button class='btn btn-sm btn-primary btn_edit'" + "data-id='" + x.id + "'" + "data-jo_no='" + x.jo_no + "'" + "data-prod_order_no='" + x.prod_order_no + "'" + "data-prod_code='" + x.prod_code + "'" + "data-description='" + x.description + "'" + "data-current_process='" + x.current_process + "'" + "data-div_code='" + x.div_code + "'" + "data-div_code_code='" + x.div_code_code + "'" + "data-process='" + x.process + "'" + "data-qty='" + x.qty + "'" + "data-status='" + x.status + "'" + "data-remarks='" + x.remarks + "'" + "data-create_user='" + x.create_user + "'" + "data-created_at='" + x.created_at + "'" + "data-update_user='" + x.update_user + "'" + "data-updated_at='" + x.updated_at + "'" + disabled + ">" + '<i class="fa fa-edit"></i>' + '</button>';
       },
       searchable: false,
       orderable: false
@@ -290,18 +309,6 @@ function makeTransferItemTable(arr) {
           return "READY FOR RECEIVE";
         }
       }
-    }, {
-      data: function data(x) {
-        var disabled = '';
-
-        if (x.item_status != 0) {
-          disabled = 'disabled';
-        }
-
-        return "<button class='btn btn-sm btn-primary btn_edit'" + "data-id='" + x.id + "'" + "data-jo_no='" + x.jo_no + "'" + "data-prod_order_no='" + x.prod_order_no + "'" + "data-prod_code='" + x.prod_code + "'" + "data-description='" + x.description + "'" + "data-current_process='" + x.current_process + "'" + "data-div_code='" + x.div_code + "'" + "data-div_code_code='" + x.div_code_code + "'" + "data-process='" + x.process + "'" + "data-qty='" + x.qty + "'" + "data-status='" + x.status + "'" + "data-remarks='" + x.remarks + "'" + "data-create_user='" + x.create_user + "'" + "data-created_at='" + x.created_at + "'" + "data-update_user='" + x.update_user + "'" + "data-updated_at='" + x.updated_at + "'" + disabled + ">" + '<i class="fa fa-edit"></i>' + '</button>';
-      },
-      searchable: false,
-      orderable: false
     }],
     fnInitComplete: function fnInitComplete() {
       $('.dataTables_scrollBody').slimscroll();
@@ -334,9 +341,16 @@ function makeReceiveItemsTable(arr) {
     bLengthChange: false,
     searching: true,
     paging: false,
+    order: [[11, 'asc']],
     columns: [{
       data: function data(x) {
         return "<input type='checkbox' class='table-checkbox check_receive_item' value='" + x.id + "'>";
+      },
+      searchable: false,
+      orderable: false
+    }, {
+      data: function data(x) {
+        return "<button class='btn btn-sm btn-primary btn_receive'" + "data-id='" + x.id + "'" + "data-jo_no='" + x.jo_no + "'" + "data-current_process_name='" + x.current_process_name + "'" + "data-div_code_code='" + x.div_code_code + "'" + "data-current_process='" + x.current_process + "'" + "data-qty='" + x.qty + "'" + "data-process='" + x.process + "'" + "data-current_div_code='" + x.current_div_code + "'" + "data-prod_order_no='" + x.prod_order_no + "'" + "data-prod_code='" + x.prod_code + "'" + "data-description='" + x.description + "'" + "data-div_code='" + x.div_code + "'" + "data-status='" + x.status + "'" + "data-remarks='" + x.remarks + "'" + "data-create_user='" + x.create_user + "'" + "data-created_at='" + x.created_at + "'" + "data-update_user='" + x.update_user + "'" + "data-updated_at='" + x.updated_at + "'>" + '<i class="fa fa-edit"></i> Receive' + '</button>';
       },
       searchable: false,
       orderable: false
@@ -360,12 +374,6 @@ function makeReceiveItemsTable(arr) {
       data: 'remarks'
     }, {
       data: 'created_at'
-    }, {
-      data: function data(x) {
-        return "<button class='btn btn-sm btn-primary btn_receive'" + "data-id='" + x.id + "'" + "data-jo_no='" + x.jo_no + "'" + "data-current_process_name='" + x.current_process_name + "'" + "data-div_code_code='" + x.div_code_code + "'" + "data-current_process='" + x.current_process + "'" + "data-qty='" + x.qty + "'" + "data-process='" + x.process + "'" + "data-current_div_code='" + x.current_div_code + "'" + "data-prod_order_no='" + x.prod_order_no + "'" + "data-prod_code='" + x.prod_code + "'" + "data-description='" + x.description + "'" + "data-div_code='" + x.div_code + "'" + "data-status='" + x.status + "'" + "data-remarks='" + x.remarks + "'" + "data-create_user='" + x.create_user + "'" + "data-created_at='" + x.created_at + "'" + "data-update_user='" + x.update_user + "'" + "data-updated_at='" + x.updated_at + "'>" + '<i class="fa fa-edit"></i> Receive' + '</button>';
-      },
-      searchable: false,
-      orderable: false
     }],
     fnInitComplete: function fnInitComplete() {
       $('.dataTables_scrollBody').slimscroll();

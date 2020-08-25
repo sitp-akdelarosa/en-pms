@@ -3,7 +3,7 @@ var rawMaterial = [];
 $(function () {
 	getRawMaterialList();
 	checkAllCheckboxesInTable('.check_all', '.check_item');
-	check_permission(code_permission);
+	init();
 	
 	$('#material_heat_no').on('change', function () {
 		var current_stock = 0;
@@ -366,6 +366,12 @@ $(function () {
 
 });
 
+function init() {
+    check_permission(code_permission, function(output) {
+        if (output == 1) {}
+    });
+}
+
 function viewState(data = []) {
 	clear();
 	$('#btn_edit_item').hide();
@@ -509,6 +515,7 @@ function RawMaterialList(data) {
 		data: data,
 		bLengthChange: false,
 		paging: false,
+		order: [[2,'asc']],
 		columns: [
 			{
 				data: function (x) {
@@ -540,6 +547,12 @@ function RawMaterialList(data) {
 						"data-updated_at='" + x.updated_at + "' disabled>" +
 						"<i class='fa fa-edit'></i>" +
 						"</button>";
+				}, searchable: false, orderable: false
+			},
+			{
+				data: function (x) {
+					return "<span class='btn_remove_item' data-row='" + row + "' data-issued_qty='" + x.issued_qty + "'><i class='text-red fa fa-times'></i></span>" +
+						"<input type='hidden' name='ids[]' value='" + x.id + "'>";
 				}, searchable: false, orderable: false
 			},
 			{
@@ -622,13 +635,7 @@ function RawMaterialList(data) {
 						return ellipsis(x.remarks, 15) + "<input type='hidden' name='remarks[]' value='" + x.remarks + "'>";
 					}
 				}
-			},
-			{
-				data: function (x) {
-					return "<span class='btn_remove_item' data-row='" + row + "' data-issued_qty='" + x.issued_qty + "'><i class='text-red fa fa-times'></i></span>" +
-						"<input type='hidden' name='ids[]' value='" + x.id + "'>";
-				}, searchable: false, orderable: false
-			},
+			}
 		]
 	});
 }

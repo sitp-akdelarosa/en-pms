@@ -30,8 +30,8 @@ var msg_non_standard;
 
 $(function () {
     initializePage();
-    check_permission(code_permission);
     autoComplete("#jono", getjosuggest, "jo_no");
+
     $('#tbl_prod_sum_body').on('change', '.check_item_prod_sum', function(e) {
         e.preventDefault();
         if (schedmode == false) {
@@ -465,6 +465,10 @@ $(function () {
 });
 
 function initializePage() {
+    check_permission(code_permission, function(output) {
+        if (output == 1) {}
+    });
+
     ProdSummaries();
     $('#searchPS').on('click', getDatatablesearch)
     checkAllCheckboxesInTable('.check-all_prod_sum','.check_item');
@@ -525,7 +529,7 @@ function ProdSummariesTable(arr) {
         data: arr,
         processing: true,
         deferRender: true,
-        columns: dataColumn,
+        order: [[1,'asc']],
         responsive: true,
         language: {
             aria: {
@@ -546,6 +550,8 @@ function ProdSummariesTable(arr) {
                 "first": "First"
             }
         },
+
+
         columns: [
             { data: function(data) {
                 return "<input type='checkbox' class='table-checkbox check_item_prod_sum'"+
@@ -592,6 +598,7 @@ function makeJODetailsList(arr) {
         data: data,
         bLengthChange : false,
         paging: false,
+        order: [[1,'asc']],
         columns: [
 
             { data: function(x) {
@@ -1005,6 +1012,7 @@ function makeTravelSheet(arr) {
     $('#tbl_travel_sheet').dataTable().fnDestroy();
     $('#tbl_travel_sheet').dataTable({
         data: arr,
+        order: [[1,'asc']],
         columns: [ 
             { data: function(data) {
                  return '<span class="cancel_travel_sheet"'+

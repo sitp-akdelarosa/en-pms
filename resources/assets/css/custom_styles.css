@@ -142,3 +142,13 @@ input {
 .select2-container--default .select2-selection--single .select2-selection__arrow {
     top: -2px;
 }
+
+.custom-file-input, .custom-file-label {
+    height: 30px;
+    line-height: 1.8;
+}
+
+.custom-file-label::after {
+    height: 28px;
+    line-height: 1.8;
+}

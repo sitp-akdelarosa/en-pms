@@ -5,7 +5,7 @@ $( function() {
 
     makeSearchTable(searched_jo_arr);
     checkAllCheckboxesInTable('.check_all','.check_item');
-	check_permission(code_permission);
+	init();
 
 	$('#tbl_searched_jo_body').on('click', '.btn_edit_travel_sheet',function() {
         $('#travel_sheet_process_id').val($(this).attr('data-id'));
@@ -79,13 +79,15 @@ $( function() {
             $('.loadingOverlay').hide();
         });      
     });
+
     $('#search_jo').on('keyup',function() {
         if ($(this).val().trim() == "") {
             makeSearchTable([]);
         } 
     })
 
-    $("#frm_prod_output").on('submit',function(e){ e.preventDefault();
+    $("#frm_prod_output").on('submit',function(e){ 
+        e.preventDefault();
         var unprocessed = parseInt($('#unprocessed').val());
         var qtyTransfer = parseInt($('#total_qty_transfer').val());
         var qty = (qtyTransfer == 0)? unprocessed:( unprocessed - qtyTransfer);
@@ -159,6 +161,12 @@ $( function() {
     });
 
 });
+
+function init() {
+    check_permission(code_permission, function(output) {
+        if (output == 1) {}
+    });
+}
 
 function deductUnprocessed(el_name,value) {
     if (isNaN(value)) {
@@ -271,6 +279,7 @@ function makeSearchTable(arr) {
         bLengthChange : false,
         searching: false,
         paging: false,
+        order: [[1,'asc']],
         columns: [ 
             { data: function(x) {
                 var disabled = 'disabled';

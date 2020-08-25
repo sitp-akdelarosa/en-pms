@@ -180,26 +180,26 @@ class TransferItemController extends Controller
                     ->join('ppc_divisions as d','d.div_code','=','tsp.div_code')
                     ->where('d.user_id',Auth::user()->id)
                     ->select(
-                        DB::raw('t.id as id'),
-                        DB::raw('t.jo_no as jo_no'),
-                        DB::raw('t.prod_order_no as prod_order_no'),
-                        DB::raw('t.prod_code as prod_code'),
-                        DB::raw('t.description as description'),
-                        DB::raw('t.current_process as current_process'),
-                        DB::raw('t.div_code as div_code'),
+                        DB::raw("t.id as id"),
+                        DB::raw("t.jo_no as jo_no"),
+                        DB::raw("t.prod_order_no as prod_order_no"),
+                        DB::raw("t.prod_code as prod_code"),
+                        DB::raw("t.description as description"),
+                        DB::raw("t.current_process as current_process"),
+                        DB::raw("t.div_code as div_code"),
                         DB::raw("(SELECT process FROM prod_travel_sheet_processes as p
                                     WHERE p.id = t.current_process) as current_process_name"),
-                        DB::raw('(SELECT div_code FROM ppc_divisions as d
-                                    where d.id = t.div_code) as div_code_code'),
-                        DB::raw('t.process as process'),
-                        DB::raw('t.qty as qty'),
-                        DB::raw('t.status as status'),
-                        DB::raw('t.remarks as remarks'),
-                        DB::raw('t.item_status as item_status'),
-                        DB::raw('t.create_user as create_user'),
-                        DB::raw('t.created_at as created_at'),
-                        DB::raw('t.update_user as update_user'),
-                        DB::raw('t.updated_at as updated_at')
+                        DB::raw("(SELECT div_code FROM ppc_divisions as d
+                                    where d.id = t.div_code) as div_code_code"),
+                        DB::raw("t.process as process"),
+                        DB::raw("t.qty as qty"),
+                        DB::raw("t.status as status"),
+                        DB::raw("t.remarks as remarks"),
+                        DB::raw("t.item_status as item_status"),
+                        DB::raw("t.create_user as create_user"),
+                        DB::raw("DATE_FORMAT(t.created_at, '%Y-%m-%d') as created_at"),
+                        DB::raw("t.update_user as update_user"),
+                        DB::raw("DATE_FORMAT(t.updated_at, '%Y-%m-%d') as updated_at")
                     )->get();
         if (count((array)$entry) > 0) {
             return $entry;
@@ -265,9 +265,9 @@ class TransferItemController extends Controller
                         'i.status as status',
                         'i.remarks as remarks',
                         'i.create_user as create_user',
-                        'i.created_at as created_at',
+                        DB::raw("DATE_FORMAT(i.created_at, '%Y-%m-%d') as created_at"),
                         'i.update_user as update_user',
-                        'i.updated_at as updated_at'
+                        DB::raw("DATE_FORMAT(i.updated_at, '%Y-%m-%d') as updated_at")
                     )->get();
         if (count((array)$receive) > 0) {
             return $receive;

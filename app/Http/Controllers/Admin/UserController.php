@@ -51,7 +51,7 @@ class UserController extends Controller
 								   ifnull(CONCAT(d.div_code,' - ',d.div_name),'') as div_code,
 								   u.actual_password as actual_password,
 								   u.del_flag as del_flag,
-								   DATE_FORMAT(u.created_at, '%Y/%m/%d %H:%i %p') as created_at
+								   DATE_FORMAT(u.created_at, '%Y-%m-%d %H:%i %p') as created_at
 							FROM enpms.users as u
 							INNER JOIN  enpms.admin_user_types as ut 
 							ON u.user_type =  ut.id

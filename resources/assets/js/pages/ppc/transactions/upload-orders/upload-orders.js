@@ -1,24 +1,11 @@
-var dataColumn = [
-	{ data: 'sc_no', name: 'sc_no' },
-	{ data: 'prod_code', name: 'prod_code' },
-	{ data: function(data){
-		if (data.description == "Please register this code in Product Master.") {
-            return '<span style="color: ##f95454 !important;">'+data.description+'</span>';
-        } else {
-            return data.description;
-        }
-	}, name: 'description' },
-	{ data: 'quantity', name: 'quantity' },
-	{ data: 'po', name: 'po' },
-	{ data: 'date_upload', name: 'date_upload' },
- ];
 var for_overwrite_arr = [];
 var primaryOverwrite = [];
+
 $(function () {
     initializePage();
     getUploadedProducts();
 
-    check_permission(code_permission);
+    init();
 
     $('#btn_yes').on('click', function() {
     	var table = $("#tbl_overwrite");
@@ -82,6 +69,12 @@ $(function () {
     	
     });
 });
+
+function init() {
+    check_permission(code_permission, function(output) {
+        if (output == 1) {}
+    });
+}
 
 function initializePage(){
 	$("#btn_delete").on('click', removeUploadByID);

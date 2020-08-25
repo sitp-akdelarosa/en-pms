@@ -185,56 +185,149 @@ $(function () {
             contentType: false,
             cache: false,
             processData: false,
-            data: formData,
-            success: function success(returns) {
-              var return_datas = jQuery.parseJSON(returns);
+            data: formData
+          }).done(function (returns, textStatus, xhr) {
+            var return_datas = jQuery.parseJSON(returns);
 
-              if (return_datas.status == "success") {
-                $.ajax({
-                  url: uploadInventory,
-                  type: 'POST',
-                  data: formData,
-                  mimeType: "multipart/form-data",
-                  contentType: false,
-                  cache: false,
-                  processData: false,
-                  success: function success(returnData) {
-                    $('.loadingOverlay').hide();
-                    var return_data = jQuery.parseJSON(returnData);
-                    msg(return_data.msg, return_data.status);
-                    document.getElementById('file_inventory_label').innerHTML = fileN;
-                    getInventory(_with_zero);
-                    var not_registedred = return_data.Material;
+            if (return_datas.status == "success") {
+              $.ajax({
+                url: uploadInventory,
+                type: 'POST',
+                data: formData,
+                mimeType: "multipart/form-data",
+                contentType: false,
+                cache: false,
+                processData: false
+              }).done(function (returnData, textStatus, xhr) {
+                $('.loadingOverlay').hide();
+                var return_data = jQuery.parseJSON(returnData);
+                msg(return_data.msg, return_data.status);
+                document.getElementById('file_inventory_label').innerHTML = fileN;
+                getInventory(_with_zero);
+                var not_registedred = return_data.Material;
 
-                    if (not_registedred.length > 0) {
-                      GetMateriialTypeNotExisting(not_registedred);
-                    }
-                  }
-                });
-              } else if (return_datas.status == "validateRequired") {
+                if (not_registedred.length > 0) {
+                  GetMateriialTypeNotExisting(not_registedred);
+                }
+              }).fail(function (xhr, textStatus, errorThrown) {
                 $('.loadingOverlay').hide();
-                msg("Fill up correctly the record in line " + return_datas.line, "warning");
-                document.getElementById('file_inventory_label').innerHTML = "Select file...";
-              } else if (return_datas.status == "heatnumber error") {
-                $('.loadingOverlay').hide();
-                msg(return_datas.msg, "warning");
-                document.getElementById('file_inventory_label').innerHTML = "Select file...";
-              } else if (return_datas.status == "not num") {
-                $('.loadingOverlay').hide();
-                msg("Invalid input of Quantity", "warning");
-                document.getElementById('file_inventory_label').innerHTML = "Select file...";
-              } else if (return_datas.status == "failed") {
-                $('.loadingOverlay').hide();
-                console.log(return_datas.fields);
-                msg("Please maintain data as 1 sheet only.", "warning");
-                document.getElementById('file_inventory_label').innerHTML = "Select file...";
-              } else {
-                $('.loadingOverlay').hide();
-                msg("Upload failed", "warning");
-                document.getElementById('file_inventory_label').innerHTML = "Select file...";
-              }
+                var responseError = jQuery.parseJSON(xhr.responseText);
+                msg("Message: " + responseError.message + "\n" + "Line: " + responseError.line + "\n" + "File: " + responseError.file, "error");
+              }); // $.ajax({
+              // 	url: uploadInventory,
+              // 	type: 'POST',
+              // 	data: formData,
+              // 	mimeType: "multipart/form-data",
+              // 	contentType: false,
+              // 	cache: false,
+              // 	processData: false,
+              // 	success: function (returnData) {
+              // 		$('.loadingOverlay').hide();
+              // 		var return_data = jQuery.parseJSON(returnData);
+              // 		msg(return_data.msg, return_data.status);
+              // 		document.getElementById('file_inventory_label').innerHTML = fileN;
+              // 		getInventory(_with_zero);
+              // 		var not_registedred = return_data.Material;
+              // 		if (not_registedred.length > 0) {
+              // 			GetMateriialTypeNotExisting(not_registedred);
+              // 		}
+              // 	}
+              // });
+            } else if (return_datas.status == "validateRequired") {
+              $('.loadingOverlay').hide();
+              msg("Fill up correctly the record in line " + return_datas.line, "warning");
+              document.getElementById('file_inventory_label').innerHTML = "Select file...";
+            } else if (return_datas.status == "heatnumber error") {
+              $('.loadingOverlay').hide();
+              msg(return_datas.msg, "warning");
+              document.getElementById('file_inventory_label').innerHTML = "Select file...";
+            } else if (return_datas.status == "not num") {
+              $('.loadingOverlay').hide();
+              msg("Invalid input of Quantity", "warning");
+              document.getElementById('file_inventory_label').innerHTML = "Select file...";
+            } else if (return_datas.status == "failed") {
+              $('.loadingOverlay').hide();
+              console.log(return_datas.fields);
+              msg("Please maintain data as 1 sheet only.", "warning");
+              document.getElementById('file_inventory_label').innerHTML = "Select file...";
+            } else {
+              $('.loadingOverlay').hide();
+              msg("Upload failed", "warning");
+              document.getElementById('file_inventory_label').innerHTML = "Select file...";
             }
-          });
+          }).fail(function (xhr, textStatus, errorThrown) {
+            var responseError = jQuery.parseJSON(xhr.responseText);
+            msg("Message: " + responseError.message + "\n" + "Line: " + responseError.line + "\n" + "File: " + responseError.file, "error");
+          }); // $.ajax({
+          // 	url: checkfile,
+          // 	type: 'POST',
+          // 	mimeType: "multipart/form-data",
+          // 	contentType: false,
+          // 	cache: false,
+          // 	processData: false,
+          // 	data: formData,
+          // 	success: function (returns) {
+          // 		var return_datas = jQuery.parseJSON(returns);
+          // 		if (return_datas.status == "success") {
+          // 			$.ajax({
+          // 				url: uploadInventory,
+          // 				type: 'POST',
+          // 				data: formData,
+          // 				mimeType: "multipart/form-data",
+          // 				contentType: false,
+          // 				cache: false,
+          // 				processData: false,
+          // 				success: function (returnData) {
+          // 					$('.loadingOverlay').hide();
+          // 					var return_data = jQuery.parseJSON(returnData);
+          // 					msg(return_data.msg, return_data.status);
+          // 					document.getElementById('file_inventory_label').innerHTML = fileN;
+          // 					getInventory(_with_zero);
+          // 					var not_registedred = return_data.Material;
+          // 					if (not_registedred.length > 0) {
+          // 						GetMateriialTypeNotExisting(not_registedred);
+          // 					}
+          // 				}
+          // 			});
+          // 		}
+          // 		else if (return_datas.status == "validateRequired") {
+          // 			$('.loadingOverlay').hide();
+          // 			msg("Fill up correctly the record in line " + return_datas.line, "warning");
+          // 			document.getElementById('file_inventory_label').innerHTML = "Select file...";
+          // 		}
+          // 		else if (return_datas.status == "heatnumber error") {
+          // 			$('.loadingOverlay').hide();
+          // 			msg(return_datas.msg, "warning");
+          // 			document.getElementById('file_inventory_label').innerHTML = "Select file...";
+          // 		}
+          // 		else if (return_datas.status == "not num") {
+          // 			$('.loadingOverlay').hide();
+          // 			msg("Invalid input of Quantity", "warning");
+          // 			document.getElementById('file_inventory_label').innerHTML = "Select file...";
+          // 		}
+          // 		else if (return_datas.status == "failed") {
+          // 			$('.loadingOverlay').hide();
+          // 			console.log(return_datas.fields);
+          // 			msg("Please maintain data as 1 sheet only.", "warning");
+          // 			document.getElementById('file_inventory_label').innerHTML = "Select file...";
+          // 		}
+          // 		else {
+          // 			$('.loadingOverlay').hide();
+          // 			msg("Upload failed", "warning");
+          // 			document.getElementById('file_inventory_label').innerHTML = "Select file...";
+          // 		}
+          // 	},
+          // 	statusCode: {
+          // 		500: function(data) {
+          // 			$('.loadingOverlay').hide();
+          // 			console.log(data);
+          // 			//msg('','error');
+          // 		}
+          // 	}
+          // 	// error: function() {
+          // 	// 	$('.loadingOverlay').hide();
+          // 	// }
+          // });
         } else {
           $('.loadingOverlay').hide();
           msg("File Format not supported.", "warning");
@@ -246,7 +339,9 @@ $(function () {
     e.preventDefault();
 
     if ($('#quantity').val() < 0 || $('#quantity').val() == 0) {
-      msg('Please Input valid number', 'warning');
+      showErrors({
+        quantity: ["Please Input numbers greater than 0."]
+      });
     } else {
       $.ajax({
         url: $(this).attr('action'),
@@ -258,12 +353,21 @@ $(function () {
         getInventory(_with_zero);
       }).fail(function (xhr, textStatus, errorThrown) {
         var errors = xhr.responseJSON.errors;
+        console.log(errors);
         showErrors(errors);
       });
     }
   });
+  $('#quantity').on('change', function () {
+    if ($(this).val() !== '') {
+      hideErrors($(this).attr('id'));
+    }
+  });
   $('#btn_excel').on('click', function () {
     window.location.href = downloadNonexistingURL;
+  });
+  $('#btn_download_format').on('click', function () {
+    window.location.href = downloadFormatURL;
   });
   $('#btn_check_unregistered').on('click', function (event) {
     $.ajax({
@@ -307,20 +411,30 @@ function getMaterials() {
 function getMaterialCode(mat_code) {
   var code = "<option value=''></option>";
   $('#materials_code').html(code);
+  hideErrors('materials_code');
+  var material_type = $('#materials_type').val();
   $.ajax({
     url: GetMaterialCode,
     type: 'GET',
     dataType: 'JSON',
     data: {
       _token: token,
-      mat_type: $('#materials_type').val()
+      mat_type: material_type
     }
   }).done(function (data, textStatus, xhr) {
-    $.each(data.code, function (i, x) {
-      code = "<option value='" + x.material_code + "'>" + x.material_code + "</option>";
-      $('#materials_code').append(code);
-    });
-    $('#materials_code').val(mat_code);
+    if (data.length > 0) {
+      $.each(data.code, function (i, x) {
+        code = "<option value='" + x.material_code + "'>" + x.material_code + "</option>";
+        $('#materials_code').append(code);
+      });
+      $('#materials_code').val(mat_code);
+    } else {
+      if (material_type !== '') {
+        showErrors({
+          materials_code: ["No Materials registered to " + material_type]
+        });
+      }
+    }
   }).fail(function (xhr, textStatus, errorThrown) {
     msg(errorThrown, textStatus);
   });
@@ -357,6 +471,7 @@ function GetMateriialTypeNotExisting(arr) {
     data: arr,
     bLengthChange: false,
     paging: true,
+    order: [[5, 'asc']],
     columns: [{
       data: 'materials_code',
       name: 'materials_code'
@@ -406,6 +521,7 @@ function InventoryTable(arr) {
   $('#tbl_materials').dataTable().fnDestroy();
   $('#tbl_materials').dataTable({
     data: arr,
+    order: [[14, 'asc']],
     columns: [{
       data: function data(_data) {
         return "<button type='button' name='edit-mainEdit' class='btn btn-sm btn-primary edit-mainEdit'" + "id='editinventory'" + "data-id= '" + _data.id + "' " + "data-materials_type='" + _data.materials_type + "' " + "data-materials_code='" + _data.materials_code + "'" + "data-description='" + _data.description + "'" + "data-item='" + _data.item + "'" + "data-alloy='" + _data.alloy + "'" + "data-schedule='" + _data.schedule + "'" + "data-size='" + _data.size + "'" + "data-quantity='" + _data.quantity + "'" + "data-uom='" + _data.uom + "'" + "data-heat_no='" + _data.heat_no + "' " + "data-invoice_no='" + _data.invoice_no + "'" + "data-received_date='" + _data.received_date + "'" + "data-width='" + _data.width + "' " + "data-length='" + _data.length + "' " + "data-supplier_heat_no='" + _data.supplier_heat_no + "' " + "data-supplier='" + _data.supplier + "'>" + "<i class='fa fa-edit'></i> " + "</button>";
