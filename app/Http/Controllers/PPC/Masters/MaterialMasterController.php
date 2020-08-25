@@ -249,7 +249,7 @@ class MaterialMasterController extends Controller
     }
 
     public function mat_code_list()
-    {        
+    {
         $mat = DB::table('ppc_material_codes as pmc')
                         ->leftjoin('admin_assign_production_lines as apl', 'apl.product_line', '=', 'pmc.material_type')
                         ->select([
