@@ -209,6 +209,9 @@ Route::group(['middleware' => ['ppc', 'auth', 'no.back', 'deleted_user']], funct
 
 			Route::get('/get-unregistered-materials', 'PPC\Transaction\UpdateInventoryController@unRegisteredMaterials')
 				->name('transaction.update-inventory.get-unregistered-materials');
+
+			Route::get('/download-update-inventory-format', 'PPC\Transaction\UpdateInventoryController@downloadExcelFormat')
+				->name('transaction.update-inventory.download-update-inventory-format');
 		});
 
 		Route::group(['prefix' => 'upload-orders'], function () {

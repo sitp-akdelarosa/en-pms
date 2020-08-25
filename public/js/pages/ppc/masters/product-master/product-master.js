@@ -1158,8 +1158,9 @@ function get_set() {
 		dataType: 'JSON',
 		data: {_token: token},
 	}).done(function(data, textStatus, xhr) {
+		console.log(data);
 		$.each(data, function(i, x) {
-			set = '<option value="'+x.id+'">'+x.set+'</option>';
+			set = '<option value="'+x.id+'">'+x.text+'</option>';
 			$('#set').append(set);
 		});
 	}).fail(function(xhr, textStatus, errorThrown) {

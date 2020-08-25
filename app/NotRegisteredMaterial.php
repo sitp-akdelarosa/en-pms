@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class NotRegisteredMaterial extends Model
 {
     protected $fillable = [
+                    'materials_type',
     				'materials_code',
     				'quantity',
     				'uom',

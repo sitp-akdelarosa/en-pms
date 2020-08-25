@@ -97,7 +97,7 @@ var rawMaterial = [];
 $(function () {
   getRawMaterialList();
   checkAllCheckboxesInTable('.check_all', '.check_item');
-  check_permission(code_permission);
+  init();
   $('#material_heat_no').on('change', function () {
     var current_stock = 0;
     var count = $(this).attr('data-row');
@@ -434,6 +434,12 @@ $(function () {
   });
 });
 
+function init() {
+  check_permission(code_permission, function (output) {
+    if (output == 1) {}
+  });
+}
+
 function viewState() {
   var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
   clear();
@@ -578,6 +584,7 @@ function RawMaterialList(data) {
     data: data,
     bLengthChange: false,
     paging: false,
+    order: [[2, 'asc']],
     columns: [{
       data: function data(x) {
         row++;
@@ -588,6 +595,12 @@ function RawMaterialList(data) {
         // "data-needed_uom='" + x.needed_uom + "'" +
         // "data-returned_uom='" + x.returned_uom + "'" +
         "data-create_user='" + x.create_user + "'" + "data-update_user='" + x.update_user + "'" + "data-created_at='" + x.created_at + "'" + "data-updated_at='" + x.updated_at + "' disabled>" + "<i class='fa fa-edit'></i>" + "</button>";
+      },
+      searchable: false,
+      orderable: false
+    }, {
+      data: function data(x) {
+        return "<span class='btn_remove_item' data-row='" + row + "' data-issued_qty='" + x.issued_qty + "'><i class='text-red fa fa-times'></i></span>" + "<input type='hidden' name='ids[]' value='" + x.id + "'>";
       },
       searchable: false,
       orderable: false
@@ -663,12 +676,6 @@ function RawMaterialList(data) {
           return ellipsis(x.remarks, 15) + "<input type='hidden' name='remarks[]' value='" + x.remarks + "'>";
         }
       }
-    }, {
-      data: function data(x) {
-        return "<span class='btn_remove_item' data-row='" + row + "' data-issued_qty='" + x.issued_qty + "'><i class='text-red fa fa-times'></i></span>" + "<input type='hidden' name='ids[]' value='" + x.id + "'>";
-      },
-      searchable: false,
-      orderable: false
     }]
   });
 }

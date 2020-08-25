@@ -1,5 +1,5 @@
 <div id="modal_transfer_entry" class="modal fade " data-backdrop="static">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog " role="document">
         <form id="frm_transfer_items" role="form" method="POST"  action="{{ url('/prod/transfer-item/save') }}">
             <div class="modal-content">
                 <div class="modal-header">
@@ -13,7 +13,7 @@
                     <div class="loadingOverlay"></div>
 
                     <div class="row mb-10">
-                        <div class="col-md-6">
+                        <div class="col-md-7">
 							@csrf
                             <input type="hidden" id="id" name="id" class="clear">
                             <input type="hidden" id="userDivCode" name="userDivCode" class="clear">
@@ -92,29 +92,29 @@
 			                </div>
 			            </div>
 
-			            <div class="col-md-6">
-						<div id="hide_create">
-                            <div class="form-group row">
-                                <div class="col-sm-12">
-                                    <div class="input-group input-group-sm">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">Created By:</span>
-                                        </div>
-                                        <input type="text" class="form-control" name="create_user" id="create_user" value="{{Auth::user()->user_id}}" readonly>
-                                    </div>
-                                </div>
-                            </div>
+			            <div class="col-md-5">
+							<div id="hide_create">
+	                            <div class="form-group row">
+	                                <div class="col-sm-12">
+	                                    <div class="input-group input-group-sm">
+	                                        <div class="input-group-prepend">
+	                                            <span class="input-group-text">Created By:</span>
+	                                        </div>
+	                                        <input type="text" class="form-control" name="create_user" id="create_user" value="{{Auth::user()->user_id}}" readonly>
+	                                    </div>
+	                                </div>
+	                            </div>
 
-                            <div class="form-group row">
-                                <div class="col-sm-12">
-                                    <div class="input-group input-group-sm">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">Created Date:</span>
-                                        </div>
-                                        <input type="text" class="form-control" name="created_date" id="created_date" value="{{date('m/d/Y')}}" readonly>
-                                    </div>
-                                </div>
-                            </div>
+	                            <div class="form-group row">
+	                                <div class="col-sm-12">
+	                                    <div class="input-group input-group-sm">
+	                                        <div class="input-group-prepend">
+	                                            <span class="input-group-text">Created Date:</span>
+	                                        </div>
+	                                        <input type="text" class="form-control" name="created_date" id="created_date" value="{{date('m/d/Y')}}" readonly>
+	                                    </div>
+	                                </div>
+	                            </div>
 							</div>
                             <div class="form-group row">
                                 <div class="col-sm-12">

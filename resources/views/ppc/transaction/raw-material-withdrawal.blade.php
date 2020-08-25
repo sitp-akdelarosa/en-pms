@@ -250,6 +250,7 @@ foreach ($user_accesses as $user_access){
 	                        <thead class="thead-dark">
 	                            <tr>
 	                                <th width="5%"></th>
+                                    <th width="5%"></th>
 	                                <th>Material Code</th>
 	                                <th>Alloy</th>
 	                                <th>Item / Description</th>
@@ -261,8 +262,6 @@ foreach ($user_accesses as $user_access){
 	                                <th>Material Heat No.</th>
 	                                {{-- <th>SC No.</th> --}}
 	                                <th>Remarks</th>
-                                    <th width="5%">
-                                    </th>
 	                            </tr>
 	                        </thead>
 	                        <tbody id="tbl_raw_material_body"></tbody>

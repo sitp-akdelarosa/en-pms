@@ -110,7 +110,7 @@ $(function () {
   getCutSchedDetails();
   autoComplete("#leader", getAllOperatorsURL, "fullname");
   getISO('#iso_control_no');
-  check_permission(code_permission);
+  init();
   checkAllCheckboxesInTable('.check_all_items', '.check_items');
   $('#btn_save').on('click', function () {
     saveCutSched();
@@ -404,6 +404,12 @@ $(function () {
     window.open(pdfCuttingScheduleReprintURL + '?id=' + $(this).attr('data-id'), '_tab');
   });
 });
+
+function init() {
+  check_permission(code_permission, function (output) {
+    if (output == 1) {}
+  });
+}
 
 function getMaterialsForCuttingSched(trans_no) {
   $.ajax({

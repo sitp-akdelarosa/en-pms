@@ -5,7 +5,7 @@ $( function() {
     getTransferEntry();
     getReceiveItems();
     checkAllCheckboxesInTable('.check_all_transfer_item','.check_item');
-    check_permission(code_permission);
+    init();
 
     $('#jo_no').on('change', function() {
         getJOdetails($(this).val());
@@ -146,6 +146,12 @@ $( function() {
     });
 });
 
+function init() {
+    check_permission(code_permission, function(output) {
+        if (output == 1) {}
+    });
+}
+
 function getTransferEntry() {
     transfer_item_arr = [];
     $.ajax({
@@ -171,28 +177,13 @@ function makeTransferItemTable(arr) {
         bLengthChange : false,
         searching: true,
         paging: false,
+        order: [[2,'asc']],
         columns: [ 
             { data: function(x) {
                 return "<input type='checkbox' class='table-checkbox check_item' value='"+x.id+"'>";
             }, searchable: false, orderable: false },
-            { data: 'jo_no' }, 
-            { data: 'prod_code' },
-            { data: 'current_process_name' },
-            { data: 'div_code_code' },
-            { data: 'process' },
-            { data: 'qty' },
-            { data: 'status' },
-            { data: 'remarks' },
-            { data: 'created_at' },
             { data: function(x) {
-                if(x.item_status == 1){
-                    return "RECEIVED";
-                }else{
-                    return "READY FOR RECEIVE";
-                }
-            }},
-            { data: function(x) {
-                 var disabled ='';
+                var disabled ='';
                 if(x.item_status != 0){
                     disabled = 'disabled';
                 }
@@ -216,6 +207,22 @@ function makeTransferItemTable(arr) {
                             '<i class="fa fa-edit"></i>'+
                         '</button>';
             }, searchable: false, orderable: false },
+            { data: 'jo_no' }, 
+            { data: 'prod_code' },
+            { data: 'current_process_name' },
+            { data: 'div_code_code' },
+            { data: 'process' },
+            { data: 'qty' },
+            { data: 'status' },
+            { data: 'remarks' },
+            { data: 'created_at' },
+            { data: function(x) {
+                if(x.item_status == 1){
+                    return "RECEIVED";
+                }else{
+                    return "READY FOR RECEIVE";
+                }
+            }}
         ],
         fnInitComplete: function() {
             $('.dataTables_scrollBody').slimscroll();
@@ -248,20 +255,11 @@ function makeReceiveItemsTable(arr) {
         bLengthChange : false,
         searching: true,
         paging: false,
+        order: [[11,'asc']],
         columns: [ 
             { data: function(x) {
                 return "<input type='checkbox' class='table-checkbox check_receive_item' value='"+x.id+"'>";
             }, searchable: false, orderable: false },
-            { data: 'jo_no' },
-            { data: 'prod_code' },
-            { data: 'current_div_code' },
-            { data: 'current_process_name' },
-            { data: 'div_code_code' },
-            { data: 'process' },
-            { data: 'qty' },
-            { data: 'status' },
-            { data: 'remarks' },
-            { data: 'created_at' },
             { data: function(x) {
                 return "<button class='btn btn-sm btn-primary btn_receive'"+
                             "data-id='"+x.id+"'"+
@@ -285,6 +283,16 @@ function makeReceiveItemsTable(arr) {
                             '<i class="fa fa-edit"></i> Receive'+
                         '</button>';
             }, searchable: false, orderable: false },
+            { data: 'jo_no' },
+            { data: 'prod_code' },
+            { data: 'current_div_code' },
+            { data: 'current_process_name' },
+            { data: 'div_code_code' },
+            { data: 'process' },
+            { data: 'qty' },
+            { data: 'status' },
+            { data: 'remarks' },
+            { data: 'created_at' }
         ],
         fnInitComplete: function() {
             $('.dataTables_scrollBody').slimscroll();

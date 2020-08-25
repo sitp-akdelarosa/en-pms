@@ -10,20 +10,26 @@ var allowed_issued_qty = 0;
 var total_issued_qty = 0;
 var qty_needed_inbox = false;
 var jo_items = [];
+
 $(function () {
 	getProdline();
 	getCutSchedDetails();
 	autoComplete("#leader", getAllOperatorsURL, "fullname");
 	getISO('#iso_control_no');
-	check_permission(code_permission);
+
+	init();
+	
 	checkAllCheckboxesInTable('.check_all_items', '.check_items');
+
 	$('#btn_save').on('click', function () {
 		saveCutSched();
 	})
+
 	$('#btn_cancel').on('click', function () {
 		console.log(operators);
 		clear();
 	})
+
 	$('#date_issued').val(date);
 	// $('#withdrawal_slip').prop('readonly', true);
 
@@ -32,6 +38,7 @@ $(function () {
 			getMaterialsForCuttingSched($(this).val());
 		}
 	});
+
 	$("#trans_no").on('keyup', function () {
 		if ($.trim($(this).val()) == "") {
 			$('#tbl_cut_sched_body').html('<tr><td colspan="11" class="text-center">No data displayed.</td></tr>');
@@ -307,6 +314,12 @@ $(function () {
 		window.open(pdfCuttingScheduleReprintURL+ '?id='+$(this).attr('data-id'), '_tab');
 	});
 });
+
+function init() {
+	check_permission(code_permission, function(output) {
+		if (output == 1) {}
+	});
+}
 
 
 function getMaterialsForCuttingSched(trans_no) {
