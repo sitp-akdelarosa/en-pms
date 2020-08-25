@@ -3,7 +3,7 @@ var _with_zero = 0;
 $(function () {
 	getMaterials();
 	getInventory(_with_zero);
-	check_permission(code_permission);
+	init();
 
 
 	$("#materials_type").on('change', function () {
@@ -198,6 +198,13 @@ $(function () {
 
 	});
 });
+
+function init() {
+	check_permission(code_permission, function(output) {
+		if (output == 1) {}
+	});
+}
+
 
 function getMaterials() {
 	$.ajax({

@@ -41,7 +41,7 @@
 										<div class="input-group-prepend">
 											<span class="input-group-text">User ID:</span>
 										</div>
-										<input type="text" class="form-control input-sm validate clear" name="user_id" id="user_id">
+										<input type="text" class="form-control input-sm validate clear" name="user_id" id="user_id" autocomplete="false">
 										<div id="user_id_feedback"></div>
 									</div>
 								</div>
@@ -62,11 +62,17 @@
 								<div class="input-group-prepend">
 									<span class="input-group-text">First Name:</span>
 								</div>
-								<input type="text" class="form-control input-sm validate clear" name="firstname" id="firstname" >
+								<input type="text" class="form-control input-sm validate clear" name="firstname" id="firstname" autocomplete="false">
 								<span id="firstname_feedback"></span>
 							</div>
 
-							
+							<div class="input-group mb-3 input-group-sm">
+								<div class="input-group-prepend">
+									<span class="input-group-text">Nick Name:</span>
+								</div>
+								<input type="text" class="form-control input-sm validate clear" name="nickname" id="nickname" autocomplete="false">
+								<span id="nickname_feedback"></span>
+							</div>
 							
 							{{-- <div class="form-group row">
 								<label for="user_id" class="col-sm-3 control-label">User ID:</label>
@@ -92,7 +98,7 @@
 								<div class="input-group-prepend">
 									<span class="input-group-text">Last Name:</span>
 								</div>
-								<input type="text" class="form-control input-sm validate clear" name="lastname" id="lastname" >
+								<input type="text" class="form-control input-sm validate clear" name="lastname" id="lastname" autocomplete="false">
 								<span id="lastname_feedback"></span>
 							</div>
 
@@ -104,13 +110,35 @@
 								</div>
 							</div> --}}
 
-							<div class="input-group mb-3 input-group-sm">
+							<div class="form-group row">
+								<div class="col-sm-12">
+									<select class="form-control select-validate input-sm clear" name="user_type" id="user_type" style="width: 100%"></select>
+									<span id="user_type_feedback"></span>
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<div class="col-sm-12">
+									<select class="form-control select-validate input-sm clear" name="div_code" id="div_code" style="width: 100%"></select>
+									<span id="div_code_feedback"></span>
+								</div>
+							</div>
+
+							{{-- <div class="input-group mb-3 input-group-sm">
 								<div class="input-group-prepend">
 									<span class="input-group-text">User Type:</span>
 								</div>
 								<select class="form-control select-validate input-sm clear" name="user_type" id="user_type"></select>
 								<span id="user_type_feedback"></span>
 							</div>
+
+							<div class="input-group mb-3 input-group-sm">
+								<div class="input-group-prepend">
+									<span class="input-group-text">Division:</span>
+								</div>
+								<select class="form-control select-validate input-sm clear" name="div_code" id="div_code"></select>
+								<span id="div_code_feedback"></span>
+							</div> --}}
 
 							{{-- <div class="form-group row">
 								<label for="user_type" class="col-sm-3 control-label">User Type:</label>
@@ -132,7 +160,7 @@
 								<div class="input-group-prepend">
 									<span class="input-group-text">Email:</span>
 								</div>
-								<input type="email" class="form-control input-sm validate clear" name="email" id="email" >
+								<input type="email" class="form-control input-sm validate clear" name="email" id="email" autocomplete="false">
 								<span id="email_feedback"></span>
 							</div>
 
@@ -187,11 +215,7 @@
 										<th>Read Only</th>
 									</tr>
 								</thead>
-								<tbody id="tbl_modules_body">
-									<tr>
-										<td colspan="3">Please select user's user type.</td>
-									</tr>
-								</tbody>
+								<tbody id="tbl_modules_body"></tbody>
 							</table>
 						</div>
 					</div>

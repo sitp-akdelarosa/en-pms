@@ -48,8 +48,10 @@ foreach ($user_accesses as $user_access){
 							<th></th>
 							<th>User ID</th>
 							<th>First Name</th>
+							<th>Nick Name</th>
 							<th>Last Name</th>
 							<th>Email</th>
+							<th>Division</th>
 							<th>User Type</th>
 							<th>Password</th>
 							<th>Date Joined</th>
@@ -73,7 +75,8 @@ foreach ($user_accesses as $user_access){
 		var defaultPhoto = "<?php echo e(asset('images/default-profile.png')); ?>";
 		var divCodeURL = "<?php echo e(url('admin/user-master/div-code')); ?>";
 		var userModuleURL = "<?php echo e(url('admin/user-master/user-access')); ?>";
-		var userUpdTypeURL = "<?php echo e(url('admin/user-master/update-usertype')); ?>";
+		var UserTypeURL = "<?php echo e(route('admin.users-type-users')); ?>";
+		var DivCodeURL = "<?php echo e(route('admin.div-code-users')); ?>";
 		var code_module = "A0001";
 	</script>
 	<script type="text/javascript" src="<?php echo e(mix('/js/pages/admin/user-master/user-master.js')); ?>"></script>

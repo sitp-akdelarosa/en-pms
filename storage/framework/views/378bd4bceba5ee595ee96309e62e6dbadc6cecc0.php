@@ -1,34 +1,41 @@
 
 <div id="modal_dropdown_option" class="modal fade " data-backdrop="static">
     <div class="modal-dialog" role="document">
-        <form method="POST" action="<?php echo e(url('/masters/dropdown-master/save/dropdown-item')); ?>" id="frm_dropdown_items">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modal_dropdown_option_title"></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                
-                <div class="modal-body">
-                    <div class="loadingOverlay"></div>
+        
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal_dropdown_option_title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="loadingOverlay"></div>
 
-                    <div class="input-group mb-3 input-group-sm">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">Item/Option:</span>
+                <form method="POST" id="frm_dropdown_items_value">
+                    <div class="form-group row">
+                        <div class="col-md-9 col-sm-7 col-xs-7">
+                            <div class="input-group mb-3 input-group-sm">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Item/Option:</span>
+                                </div>
+                                <input type="text" class="form-control" name="new_item" id="new_item" autocomplete="false">
+                                <div id="new_item_feedback"></div>
+                            </div>
                         </div>
-                        <input type="text" class="form-control" name="new_item" id="new_item">
-                        
-                        <div class="input-group-append">
+
+                        <div class="col-md-3 col-sm-5 col-xs-5">
                             <button type="button" class="btn bg-green float-right btn-block" id="btn_add_dropdown_item">
-                                <i class="fa fa-plus"></i>
+                                <i class="fa fa-plus"></i> Add Option
                             </button>
                         </div>
-                        <div id="new_item_feedback"></div>
                     </div>
-
                     
+                </form>
 
+                
+                <form method="POST" action="<?php echo e(url('/masters/dropdown-master/save/dropdown-item')); ?>" id="frm_dropdown_items">
                     <?php echo csrf_field(); ?>
                     <input type="hidden" name="dropdown_item_id" id="dropdown_item_id">
                     <input type="hidden" name="selected_dropdown_name_id" id="selected_dropdown_name_id">
@@ -51,13 +58,19 @@
                         </div>
                     </div>
 
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn bg-red" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn bg-blue float-right permission-button">Save</button>
-                </div>
-                
+                    <div class="row justify-content-center">
+                        <div class="col-md-2">
+                            <button type="submit" class="btn bg-blue float-right permission-button">
+                                <i class="fa fa-floppy-o"></i> Save
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
-        </form>
+            <div class="modal-footer">
+                <button type="button" class="btn bg-red pull-right" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        
     </div>
 </div>

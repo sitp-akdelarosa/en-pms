@@ -116,9 +116,9 @@ $(function () {
     }).done(function (data, textStatus, xhr) {
       if (textStatus == 'success') {
         msg("User Type was successfully added.", textStatus);
-        getUserType();
       }
 
+      getUserType();
       GuiState('view');
     }).fail(function (xhr, textStatus, errorThrown) {
       var errors = xhr.responseJSON.errors;
@@ -344,7 +344,8 @@ function getModules(id) {
     dataType: 'JSON',
     data: {
       _token: token,
-      id: id
+      id: id,
+      category: $('#category').val()
     }
   }).done(function (data, textStatus, xhr) {
     modulesDataTable(data);

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HelpersController;
 use App\AdminAuditTrail;
 use App\Events\AuditTrail;
+use DB;
 
 
 class AuditTrailController extends Controller
@@ -29,7 +30,24 @@ class AuditTrailController extends Controller
 
     public function getAllAuditTrail()
     {
-        $audit = AdminAuditTrail::orderBy('id','desc')->get();
+        $audit = DB::select(
+                            "SELECT a.id as id,
+                                    ut.description as user_type,
+                                    a.module as module,
+                                    a.`action` as `action`,
+                                    CONCAT(u.firstname,' ',u.lastname) as fullname,
+                                    a.created_at as created_at,
+                                    a.updated_at as updated_at
+                            FROM enpms.admin_audit_trails as a
+                            inner join users as u
+                            on u.id = a.`user`
+                            inner join admin_user_types as ut
+                            on ut.id = a.user_type
+                            order by a.id desc"
+                        );
+                        // ->join('')
+                        // ->orderBy('a.id','desc')
+                        // ->get();
         return response()->json($audit);
     }
 

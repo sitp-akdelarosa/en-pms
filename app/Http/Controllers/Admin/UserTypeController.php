@@ -66,28 +66,32 @@ class UserTypeController extends Controller
 				$type->category = strtoupper($req->category);
 				$type->update_user = Auth::user()->id;
 				if ($type->update()) {
-					AdminUserTypeModule::where('user_type_id',$req->id)->delete();
 
-					$modules = AdminModule::whereIn('id',$req->modules)
-											->select([
-												'id',
-												'code',
-												'title',
-												'user_category'
-											])->get();
+					if (count((array)$req->modules) > 0) {
+						AdminUserTypeModule::where('user_type_id',$req->id)->delete();
 
-					foreach ($modules as $key => $mod) {
-						AdminUserTypeModule::insert([
-												'user_type_id' => $req->id,
-												'module_id' => $mod->id,
-												'code' => $mod->code,
-												'user_category' => $mod->user_category,
-												'create_user' => Auth::user()->id,
-												'update_user' => Auth::user()->id,
-												'created_at' => date('Y-m-d H:i:s'),
-												'updated_at' => date('Y-m-d H:i:s'),
-											]);
+						$modules = AdminModule::whereIn('id',$req->modules)
+												->select([
+													'id',
+													'code',
+													'title',
+													'user_category'
+												])->get();
+
+						foreach ($modules as $key => $mod) {
+							AdminUserTypeModule::insert([
+													'user_type_id' => $req->id,
+													'module_id' => $mod->id,
+													'code' => $mod->code,
+													'user_category' => $mod->user_category,
+													'create_user' => Auth::user()->id,
+													'update_user' => Auth::user()->id,
+													'created_at' => date('Y-m-d H:i:s'),
+													'updated_at' => date('Y-m-d H:i:s'),
+												]);
+						}
 					}
+						
 				}
 
 				$this->_audit->insert([
@@ -111,27 +115,29 @@ class UserTypeController extends Controller
 			$type->update_user = Auth::user()->id;
 
 			if ($type->save()) {
-				AdminUserTypeModule::where('user_type_id',$type->id)->delete();
+				if (count((array)$req->modules) > 0) {
+					AdminUserTypeModule::where('user_type_id',$type->id)->delete();
 
-				$modules = AdminModule::whereIn('id',$req->modules)
-										->select([
-											'id',
-											'code',
-											'title',
-											'user_category'
-										])->get();
+					$modules = AdminModule::whereIn('id',$req->modules)
+											->select([
+												'id',
+												'code',
+												'title',
+												'user_category'
+											])->get();
 
-				foreach ($modules as $key => $mod) {
-					AdminUserTypeModule::insert([
-											'user_type_id' => $type->id,
-											'module_id' => $mod->id,
-											'code' => $mod->code,
-											'user_category' => $mod->user_category,
-											'create_user' => Auth::user()->id,
-											'update_user' => Auth::user()->id,
-											'created_at' => date('Y-m-d H:i:s'),
-											'updated_at' => date('Y-m-d H:i:s'),
-										]);
+					foreach ($modules as $key => $mod) {
+						AdminUserTypeModule::insert([
+												'user_type_id' => $type->id,
+												'module_id' => $mod->id,
+												'code' => $mod->code,
+												'user_category' => $mod->user_category,
+												'create_user' => Auth::user()->id,
+												'update_user' => Auth::user()->id,
+												'created_at' => date('Y-m-d H:i:s'),
+												'updated_at' => date('Y-m-d H:i:s'),
+											]);
+					}
 				}
 			}
 
@@ -191,7 +197,7 @@ class UserTypeController extends Controller
 	{
 		$modules;
 		if (empty($req->id)) {
-			$modules = AdminModule::where('user_category','<>','Administrator')
+			$modules = AdminModule::where('user_category','<>','ALL')
 									->select(
 										'id',
 										'code',
@@ -203,8 +209,8 @@ class UserTypeController extends Controller
 							->leftJoin('admin_user_type_modules as utm', function($join) use($req) {
 								$join->on('mod.id','=','utm.module_id')->where('utm.user_type_id',$req->id);
 							})
-							->where('mod.user_category','<>','Administrator')
-							// ->where('acc.user_id',$req->id)
+							->where('mod.user_category','<>','ALL')
+							//->where('utm.user_category',$req->category)
 							->select(
 								DB::raw("mod.id as id"),
 								DB::raw("mod.code as code"),
