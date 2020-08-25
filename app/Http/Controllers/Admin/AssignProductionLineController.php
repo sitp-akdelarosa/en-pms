@@ -163,7 +163,7 @@ class AssignProductionLineController extends Controller
 
 	public function productline_selection()
 	{
-		$items = PpcDropdownItem::whereIn('dropdown_name_id',[8,9])
+		$items = PpcDropdownItem::whereIn('dropdown_name_id',[7,8])
 								->select('dropdown_item')
 								->groupBy('dropdown_item')
 								->orderby('dropdown_item','ASC')->get();
