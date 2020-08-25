@@ -581,7 +581,7 @@ class ProductMasterController extends Controller
             ->select([
                 'apl.product_line as product_line',
             ])
-            ->where('pdt.dropdown_name_id', 8)
+            ->where('pdt.dropdown_name_id', 7) // Product line
             ->where('apl.user_id', Auth::user()->id)
             ->groupBy('apl.product_line')
             ->get();

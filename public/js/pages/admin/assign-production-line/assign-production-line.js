@@ -290,7 +290,7 @@ function assignedProdlineTale(arr) {
     bLengthChange: false,
     paging: true,
     pageLength: 10,
-    searching: false,
+    // searching: false,
     order: [[2, 'desc']],
     columns: [{
       data: function data(_data) {
@@ -344,7 +344,7 @@ function selectProdlineTable(arr) {
     deferRender: true,
     bLengthChange: false,
     pageLength: 10,
-    searching: false,
+    // searching: false,
     order: [[1, 'asc']],
     columns: [{
       data: function data(_data2) {
@@ -391,7 +391,7 @@ function usersTable(arr) {
     deferRender: true,
     bLengthChange: false,
     pageLength: 10,
-    searching: false,
+    // searching: false,
     order: [[1, 'asc']],
     columns: [{
       data: function data(_data3) {
