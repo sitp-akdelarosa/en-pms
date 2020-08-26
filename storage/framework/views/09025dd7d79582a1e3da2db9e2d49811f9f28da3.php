@@ -30,8 +30,8 @@ foreach ($user_accesses as $user_access){
                         </label>
                     </div>
 
-                    <div class="col-md-3 mb-3">
-                        <button class="btn btn-block btn-lg bg-blue">
+                    <div class="col-md-2 mb-3">
+                        <button class="btn btn-block bg-blue">
                             <i class="fa fa-upload"></i> Upload
                         </button>
                     </div>
@@ -72,19 +72,26 @@ foreach ($user_accesses as $user_access){
                         </table>
                     </div>
                     
-                    <div class="row justify-content-center">
+                    <div class="row justify-content-center mb-5">
                         <div class="col-md-2">
-                            <button id="btn_zero" class="btn btn-lg btn-block bg-blue mb-3">Include 0 quantity</button>
+                            <button id="btn_zero" class="btn btn-sm btn-block bg-blue mb-3">Include 0 quantity</button>
                         </div>
+
                         <div class="col-md-2">
-                            <button id="btn_add" class="btn btn-lg btn-block bg-green mb-3 permission-button">
+                            <button id="btn_add" class="btn btn-sm btn-block bg-green mb-3 permission-button">
                                 <i class="fa fa-plus"></i> Add Materials
                             </button>
                         </div>
 
-                        <div class="col-md-2">
-                            <button id="btn_check_unregistered" class="btn btn-lg btn-block bg-purple mb-3 permission-button">
+                        <div class="col-md-3">
+                            <button id="btn_check_unregistered" class="btn btn-sm btn-block bg-purple mb-3 permission-button">
                                 <i class="fa fa-check"></i> Check Unregistered Materials
+                            </button>
+                        </div>
+
+                        <div class="col-md-2">
+                            <button id="btn_download_format" class="btn btn-sm btn-block bg-navy mb-3">
+                                <i class="fa fa-file-excel-o"></i> Download Format
                             </button>
                         </div>
                     </div>
@@ -109,6 +116,7 @@ foreach ($user_accesses as $user_access){
         var code_permission = 'T0001';
         var downloadNonexistingURL = "<?php echo e(url('/transaction/update-inventory/download-unregistered-materials')); ?>";
         var getNonexistingURL = "<?php echo e(url('/transaction/update-inventory/get-unregistered-materials')); ?>";
+        var downloadFormatURL = "<?php echo e(url('/transaction/update-inventory/download-update-inventory-format')); ?>";
     </script>
     <script type="text/javascript" src="<?php echo e(mix('/js/pages/ppc/transactions/update-inventory/update-inventory.js')); ?>"></script>
 

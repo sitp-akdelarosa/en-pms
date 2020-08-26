@@ -162,7 +162,7 @@
 </div>
 
 <div id="modal_material_not_existing" class="modal fade " data-backdrop="static">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <form>
             <div class="modal-content">
                 <div class="modal-header">

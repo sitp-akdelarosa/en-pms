@@ -621,6 +621,7 @@ function getISO(elem) {
 		msg(errorThrown,textStatus);
 	});
 }
+
 function autoComplete(id,url,text) {
 	$.ajax({
 		url: url,

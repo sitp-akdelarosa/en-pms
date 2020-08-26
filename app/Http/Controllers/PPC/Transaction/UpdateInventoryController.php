@@ -71,6 +71,7 @@ class UpdateInventoryController extends Controller
                     $heatnumber[] =  $field['heatnumber'];
 
                     $num = $field['quantity'];
+
                     if(filter_var($num, FILTER_VALIDATE_INT) === false){
                         $data = ['status' => 'not num'];
                         return response()->json($data);
@@ -105,14 +106,29 @@ class UpdateInventoryController extends Controller
         $materialeArr = [];
         $countAdded = 0;
         foreach ($fields as $key => $field) {
-            if($field['materialscode'] == '' || $field['quantity'] == ''||$field['uom'] == ''||$field['heatnumber'] == '' ||$field['receiveddate'] == ''||$field['invoiceno'] == ''||$field['supplier'] == ''){
+            if($field['materialscode'] !== '' || $field['quantity'] !== ''||$field['uom'] !== ''||$field['heatnumber'] !== '' ||$field['receiveddate'] !== ''||$field['invoiceno'] !== ''||$field['supplier'] !== '') {
 
                 $uom = preg_replace('/[0-9]+/', '', strtoupper($field['uom']));
 
                 $checkMatCode = PpcMaterialCode::where('material_code',$field['materialscode'])->count();  
                 if ($checkMatCode == 0) {
 
-                    array_push($materialeArr, [
+                    $mat =  DB::table('ppc_dropdown_items')
+                                ->select([
+                                    'dropdown_item as material_type',
+                                ])
+                                ->where([
+                                    ['dropdown_name_id', 8],
+                                    ['dropdown_item', strtoupper($field['materialstype'])]
+                                ]) 
+                                ->first();
+
+                    NotRegisteredMaterial::where('materials_code',$field['materialscode'])
+                                        ->where('heat_no',$field['heatnumber'])
+                                        ->delete();
+
+                    NotRegisteredMaterial::insert([
+                        'materials_type' => (isset($mat->mat_type))? $mat->mat_type: strtoupper($field['materialstype']),
                         'materials_code' => strtoupper($field['materialscode']),
                         'quantity' => $field['quantity'],
                         'uom' => $uom,
@@ -120,42 +136,42 @@ class UpdateInventoryController extends Controller
                         'invoice_no' => strtoupper($field['invoiceno']),
                         'received_date' => DATE_FORMAT($field['receiveddate'], 'Y-m-d'),
                         'supplier' => strtoupper($field['supplier']),
-                        'width' => strtoupper($field['width']),
-                        'length' => strtoupper($field['length']),
-                        'supplier_heat_no' => strtoupper($field['supplierheatno']),
+                        'width' => (isset($field['width']))? strtoupper($field['width']): 'N/A',
+                        'length' => (isset($field['length']))? strtoupper($field['length']): 'N/A',
+                        'supplier_heat_no' => (isset($field['supplierheatno']))? strtoupper($field['supplierheatno']): 'N/A',
                         'created_at' => date("Y-m-d H:i:s"),
                         'updated_at' => date("Y-m-d H:i:s"),
                         'create_user' => Auth::user()->id,
                         'update_user' => Auth::user()->id
                     ]);
 
-                    $mat = PpcMaterialAssembly::select('mat_type')
-                                                ->where('character_num',7)
-                                                ->where('character_code',substr(strtoupper($field['materialscode']),6,3))
-                                                ->first();
+                    // $mat = PpcMaterialAssembly::select('mat_type')
+                    //                             ->where('character_num',7)
+                    //                             ->where('character_code',substr(strtoupper($field['materialscode']),6,3))
+                    //                             ->first();
 
-                    PpcUpdateInventory::insert([
-                        'materials_type' =>  (isset($mat->mat_type))? $mat->mat_type: 'N/A',
-                        'materials_code' => strtoupper($field['materialscode']),
-                        'description' =>  'N/A',
-                        'item' =>  'N/A',
-                        'alloy' =>  'N/A',
-                        'schedule' => 'N/A',
-                        'size' =>  'N/A',
-                        'quantity' => $field['quantity'],
-                        'uom' => $uom,
-                        'heat_no' => strtoupper($field['heatnumber']),
-                        'invoice_no' => strtoupper($field['invoiceno']),
-                        'received_date' => $field['receiveddate'],
-                        'supplier' => strtoupper($field['supplier']),
-                        'width' => strtoupper($field['width']),
-                        'length' => strtoupper($field['length']),
-                        'supplier_heat_no' => strtoupper($field['supplierheatno']),
-                        'created_at' => date("Y-m-d H:i:s"),
-                        'updated_at' => date("Y-m-d H:i:s"),
-                        'create_user' => Auth::user()->id,
-                        'update_user' => Auth::user()->id
-                    ]);
+                    // PpcUpdateInventory::insert([
+                    //     'materials_type' =>  (isset($mat->material_type))? $mat->material_type: strtoupper($field['materialstype']),
+                    //     'materials_code' => strtoupper($field['materialscode']),
+                    //     'description' =>  'N/A',
+                    //     'item' =>  'N/A',
+                    //     'alloy' =>  'N/A',
+                    //     'schedule' => 'N/A',
+                    //     'size' =>  'N/A',
+                    //     'quantity' => $field['quantity'],
+                    //     'uom' => $uom,
+                    //     'heat_no' => strtoupper($field['heatnumber']),
+                    //     'invoice_no' => strtoupper($field['invoiceno']),
+                    //     'received_date' => DATE_FORMAT($field['receiveddate'], 'Y-m-d'),
+                    //     'supplier' => strtoupper($field['supplier']),
+                    //     'width' => (isset($field['width']))? strtoupper($field['width']): 'N/A',
+                    //     'length' => (isset($field['length']))? strtoupper($field['length']): 'N/A',
+                    //     'supplier_heat_no' => (isset($field['supplierheatno']))? strtoupper($field['supplierheatno']): 'N/A',
+                    //     'created_at' => date("Y-m-d H:i:s"),
+                    //     'updated_at' => date("Y-m-d H:i:s"),
+                    //     'create_user' => Auth::user()->id,
+                    //     'update_user' => Auth::user()->id
+                    // ]);
                 }else{
                     $countAdded++;
                     PpcUpdateInventory::where('materials_code',$field['materialscode'])
@@ -180,11 +196,11 @@ class UpdateInventoryController extends Controller
                         'uom' => $uom,
                         'heat_no' => strtoupper($field['heatnumber']),
                         'invoice_no' => strtoupper($field['invoiceno']),
-                        'received_date' => $field['receiveddate'],
+                        'received_date' => DATE_FORMAT($field['receiveddate'], 'Y-m-d'),
                         'supplier' => strtoupper($field['supplier']),
-                        'width' => strtoupper($field['width']),
-                        'length' => strtoupper($field['length']),
-                        'supplier_heat_no' => strtoupper($field['supplierheatno']),
+                        'width' => (isset($field['width']))? strtoupper($field['width']): 'N/A',
+                        'length' => (isset($field['length']))? strtoupper($field['length']): 'N/A',
+                        'supplier_heat_no' => (isset($field['supplierheatno']))? strtoupper($field['supplierheatno']): 'N/A',
                         'created_at' => date("Y-m-d H:i:s"),
                         'updated_at' => date("Y-m-d H:i:s"),
                         'create_user' => Auth::user()->id,
@@ -195,26 +211,27 @@ class UpdateInventoryController extends Controller
                 
         }
 
-        $params = array_chunk($materialeArr, 1000);
+        // $params = array_chunk($materialeArr, 1000);
 
-        foreach ($params as $param) {
-            NotRegisteredMaterial::insert($param);
-        }
-
-        $this->_audit->insert([
-            'user_type' => Auth::user()->user_type,
-            'module_id' => $this->_moduleID,
-            'module' => 'Update Inventory Module',
-            'action' => 'Uploaded Inventory.',
-            'user' => Auth::user()->id
-        ]);
+        // foreach ($params as $param) {
+        //     NotRegisteredMaterial::insert($param);
+        // }
+        
         if($countAdded == 0){
+            
             $data = [
                 'msg' => "All of the Material code is not yet registered.",
                 'status' => 'warning',
                 'Material' => $materialeArr,
             ];  
         }else{
+            $this->_audit->insert([
+                'user_type' => Auth::user()->user_type,
+                'module_id' => $this->_moduleID,
+                'module' => 'Update Inventory Module',
+                'action' => 'Uploaded Inventory.',
+                'user' => Auth::user()->id
+            ]);
             $data = [
                 'msg' => "Upload Successful.",
                 'status' => 'success',
@@ -368,11 +385,21 @@ class UpdateInventoryController extends Controller
 
     public function GetMaterialType()
     {
-        $type = DB::table('ppc_material_codes as pmc')
-                    ->leftjoin('admin_assign_production_lines as apl', 'apl.product_line', '=', 'pmc.material_type')
-                    ->select(['pmc.material_type as material_type'])
-                    ->where('apl.user_id' ,Auth::user()->id)
-                    ->groupBy('pmc.material_type')->get();
+        $type = DB::table('ppc_dropdown_items as pdt')
+                    ->leftjoin('admin_assign_production_lines as apl', 'apl.product_line', '=', 'pdt.dropdown_item')
+                    ->select([
+                        'apl.product_line as material_type',
+                    ])
+                    ->where('pdt.dropdown_name_id', 8) // material type
+                    ->where('apl.user_id' , Auth::user()->id)
+                    ->groupBy('apl.product_line')
+                    ->get();
+
+                    // DB::table('ppc_material_codes as pmc')
+                    // ->leftjoin('admin_assign_production_lines as apl', 'apl.product_line', '=', 'pmc.material_type')
+                    // ->select(['pmc.material_type as material_type'])
+                    // ->where('apl.user_id' ,Auth::user()->id)
+                    // ->groupBy('pmc.material_type')->get();
 
         return $data = [
                     'type' => $type,
@@ -409,6 +436,7 @@ class UpdateInventoryController extends Controller
     public function unRegisteredMaterials()
     {
         $none = NotRegisteredMaterial::select(
+                                        'materials_type',
                                         'materials_code',
                                         'quantity',
                                         'uom',
@@ -423,6 +451,7 @@ class UpdateInventoryController extends Controller
                                     )
                                     ->where('create_user',Auth::user()->id)
                                     ->groupBy(
+                                        'materials_type',
                                         'materials_code',
                                         'quantity',
                                         'uom',
@@ -549,6 +578,41 @@ class UpdateInventoryController extends Controller
                 $sheet->cells('A6:K'.$row, function($cells) {
                     $cells->setBorder('solid', 'solid', 'solid', 'solid');
                 });
+            });
+        })->download('xlsx');
+    }
+
+    public function downloadExcelFormat()
+    {
+        $date = date('Ymd');
+        Excel::create('UPDATE_INVENTORY_FORMAT_'.$date, function($excel)
+        {
+            $excel->sheet('materials', function($sheet)
+            {
+                $sheet->setHeight(6, 15);
+                $sheet->cells('A1:P1', function($cells) {
+                    $cells->setFont([
+                        'family'     => 'Calibri',
+                        'size'       => '11',
+                        'bold'       =>  true,
+                    ]);
+                });
+                $sheet->cell('A1', "materialstype");
+                $sheet->cell('B1', "materialscode");
+                $sheet->cell('C1', "description");
+                $sheet->cell('D1', "item");
+                $sheet->cell('E1', "alloy");
+                $sheet->cell('F1', "schedule");
+                $sheet->cell('G1', "size");
+                $sheet->cell('H1', "quantity");
+                $sheet->cell('I1', "uom");
+                $sheet->cell('J1', "heatnumber");
+                $sheet->cell('K1', "invoiceno");
+                $sheet->cell('L1', "receiveddate");
+                $sheet->cell('M1', "supplier");
+                $sheet->cell('N1', "width");
+                $sheet->cell('O1', "length");
+                $sheet->cell('P1', "supplierheatno");
             });
         })->download('xlsx');
     }

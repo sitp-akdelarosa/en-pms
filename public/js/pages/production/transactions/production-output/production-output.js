@@ -98,7 +98,7 @@ var searched_jo_arr = [];
 $(function () {
   makeSearchTable(searched_jo_arr);
   checkAllCheckboxesInTable('.check_all', '.check_item');
-  check_permission(code_permission);
+  init();
   $('#tbl_searched_jo_body').on('click', '.btn_edit_travel_sheet', function () {
     $('#travel_sheet_process_id').val($(this).attr('data-id'));
     $('#travel_sheet_id').val($(this).attr('data-travel_sheet_id'));
@@ -250,6 +250,12 @@ $(function () {
   });
 });
 
+function init() {
+  check_permission(code_permission, function (output) {
+    if (output == 1) {}
+  });
+}
+
 function deductUnprocessed(el_name, value) {
   if (isNaN(value)) {
     $('#' + el_name).addClass('is-invalid');
@@ -375,6 +381,7 @@ function makeSearchTable(arr) {
     bLengthChange: false,
     searching: false,
     paging: false,
+    order: [[1, 'asc']],
     columns: [{
       data: function data(x) {
         var disabled = 'disabled';

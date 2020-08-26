@@ -366,12 +366,12 @@ function selectedProcessTable(arr) {
         columns: [
         	{ data: function() {
         		return '<i class="text-blue fa fa-arrows"></i>';
-        	} },
+        	}, searchable: false, orderable: false },
             { data: 'sequence' },
             { data: 'process' },
             { data: function(x) {
         		return '<i class="text-red fa fa-times delete" data-count="'+x.count+'"></i>';
-        	} },
+        	}, searchable: false, orderable: false },
         ],
         rowReorder: {
             dataSrc: 'process'

@@ -433,7 +433,9 @@ function selectedProcessTable(arr) {
     columns: [{
       data: function data() {
         return '<i class="text-blue fa fa-arrows"></i>';
-      }
+      },
+      searchable: false,
+      orderable: false
     }, {
       data: 'sequence'
     }, {
@@ -441,7 +443,9 @@ function selectedProcessTable(arr) {
     }, {
       data: function data(x) {
         return '<i class="text-red fa fa-times delete" data-count="' + x.count + '"></i>';
-      }
+      },
+      searchable: false,
+      orderable: false
     }],
     rowReorder: {
       dataSrc: 'process'

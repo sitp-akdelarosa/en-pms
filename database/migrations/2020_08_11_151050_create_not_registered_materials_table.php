@@ -15,6 +15,7 @@ class CreateNotRegisteredMaterialsTable extends Migration
     {
         Schema::create('not_registered_materials', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('materials_type');
             $table->string('materials_code');
             $table->double('quantity',20,2)->default(0.00);
             $table->string('uom');

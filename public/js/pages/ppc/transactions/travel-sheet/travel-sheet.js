@@ -102,7 +102,7 @@ $(function () {
   get_set();
   getISO('#iso_no');
   joDetailsList();
-  check_permission(code_permission);
+  init();
   $('#btn_cutting_schedule').on('click', function () {
     $('#prepared_by').val(auth_user);
     $('#modal_cutting_schedule').modal('show');
@@ -348,6 +348,12 @@ $(function () {
   });
 });
 
+function init() {
+  check_permission(code_permission, function (output) {
+    if (output == 1) {}
+  });
+}
+
 function getTotalIssuedQty() {
   var totalIssued = 0;
   var rows = $('#tbl_product')["0"].rows.length - 1;
@@ -548,6 +554,7 @@ function makeJODetailsTable(arr) {
   $('#tbl_jo_details').dataTable().fnDestroy();
   $('#tbl_jo_details').dataTable({
     data: arr,
+    order: [[2, 'asc']],
     columns: [{
       data: function data(_data) {
         return '<input type="checkbox" value="' + _data.jo_no + '"  data-status="' + _data.status + '" class="table-checkbox jo_check">';
