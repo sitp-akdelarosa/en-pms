@@ -83,6 +83,11 @@ $(function () {
 								needed_qty = $(this).val();
 							});
 						}
+
+						if (typeof($(this).attr('data-supplier_heat_no')) === undefined) {
+							alert('undefined');
+						}
+
 						details.push({
 							trans_no: $(this).attr('data-trans_no'),
 							no: $(this).attr('data-trans_no'),
@@ -446,6 +451,7 @@ function getMaterialsForCuttingSched(trans_no) {
 							"data-p_size='" + x.p_size + "' " +
 							"data-p_class='" + x.p_class + "' " +
 							"data-product_code='" + x.product_code + "' " +
+							"data-supplier_heat_no='' " +
 							"data-mat_heat_no='" + mat_heat_no + "'>" +
 
 							"</td>" +
@@ -796,11 +802,12 @@ function saveCutSched() {
 			dataType: 'JSON',
 			data: $("#frm_cut_sched").serialize()
 		}).done(function (data, txtStatus, xhr) {
+			console.log(data);
 			msg(data.msg, data.status);
 			clear();
 			getCutSchedDetails();
 		}).fail(function (xhr, txtStatus, errorThrown) {
-			console.log(errorThrown);
+			console.log(xhr);
 			var errors = xhr.responseJSON.errors;
 			showErrors(errors);
 		}).always(function () {
