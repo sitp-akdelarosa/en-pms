@@ -49,7 +49,7 @@ class CuttingScheduleController extends Controller
 
         if (count((array) $jo) > 0) {
 
-            $data = DB::select(" SELECT * FROM vCuttingSched where jo_summary_id = " . $jo->id);
+            $data = DB::select(" SELECT * FROM vcuttingsched where jo_summary_id = " . $jo->id);
 
             if (count((array) $data) > 0) {
                 return response()->json($data);
