@@ -212,11 +212,17 @@ if ($exist == 0) {
             </div>
             <div id="cutting_sched_reprint" class="tab-pane">
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-12">
                         <table class="table table-sm table-bordered dt-responsive nowrap mb-5" width="100%" id="tbl_cut_sched_reprint">
                             <thead>
                                 <th></th>
                                 <th>J.O Number/s</th>
+                                <th>Withdrawal Slip #</th>
+                                <th>ISO Ctrl #</th>
+                                <th>Date Issued</th>
+                                <th>Machine #</th>
+                                <th>Leader</th>
+                                <th>Prepared By</th>
                                 <th>Date Created</th>
                             </thead>
                             <tbody id="tbl_cut_sched_reprint_body">

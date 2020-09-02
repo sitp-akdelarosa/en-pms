@@ -741,6 +741,7 @@ function getCutSchedDetails() {
     $('#tbl_cut_sched_reprint').dataTable().fnDestroy();
     $('#tbl_cut_sched_reprint').dataTable({
       data: data,
+      order: [[8, 'desc']],
       columns: [{
         data: function data(x) {
           return "<button class='btn btn-primary btn_reprint' data-id=" + x.id + "> Reprint </button>";
@@ -756,6 +757,18 @@ function getCutSchedDetails() {
           });
           return jo;
         }
+      }, {
+        data: 'withdrawal_slip_no'
+      }, {
+        data: 'iso_control_no'
+      }, {
+        data: 'date_issued'
+      }, {
+        data: 'machine_no'
+      }, {
+        data: 'leader'
+      }, {
+        data: 'prepared_by'
       }, {
         data: 'created_at'
       }]
