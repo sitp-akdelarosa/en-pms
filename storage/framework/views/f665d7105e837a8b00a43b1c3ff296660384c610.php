@@ -52,7 +52,7 @@
 								<table class="table table-bordered text-center table-sm" style="font-size:11px;width:100%;">
 									<thead>
 										<tr>
-											<td rowspan="2" colspan="4"><img src="<?php echo e(asset('/barcode.php').'?codetype=CODE39&size=30&text='.$header->jo_sequence.'&print=true'); ?>" class="img-fluid" alt="<?php echo e($header->jo_sequence); ?>"></td>
+											<td rowspan="2" colspan="4"><img src="<?php echo e(asset('/barcode.php').'?codetype=CODE39&size=30&text='.$header->jo_no.'&print=true'); ?>" class="img-fluid" alt="<?php echo e($header->jo_no); ?>"></td> 
 											<td colspan="2">Type:</td>
 											<td colspan="2"><?php echo e($header->type); ?></td>
 											<td rowspan="2">Material Heat #:</td>

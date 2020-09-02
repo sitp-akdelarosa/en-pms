@@ -272,9 +272,9 @@ class PDFController extends Controller
                     )
                     ->get(),
                 'process' => DB::table('ppc_pre_travel_sheet_processes')
-                    ->where('pre_travel_sheet_id', $ts->id)
-                    ->select('pre_travel_sheet_id', 'process_name')
-                    ->get(),
+                                ->where('pre_travel_sheet_id', $ts->id)
+                                ->select('pre_travel_sheet_id', 'process_name')
+                                ->get(),
                 'iso' => $iso,
             ]);
         }
