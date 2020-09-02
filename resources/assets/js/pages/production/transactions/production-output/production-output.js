@@ -312,6 +312,7 @@ function makeSearchTable(arr) {
                         '</button>';
             }, searchable: false, orderable: false },
             {data:'jo_no'},
+            {data:'jo_sequence'},
             {data:'prod_code'},
             {data:'div_code'},
             {data:'issued_qty'},

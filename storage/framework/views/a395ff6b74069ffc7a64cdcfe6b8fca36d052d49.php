@@ -69,6 +69,7 @@ foreach ($user_accesses as $user_access){
                     <tr>
                         <th width="5%"></th>
                         <th>J.O. No.</th>
+                        <th>Barcode</th>
                         <th>Product Code</th>
                         <th>Division</th>
                         <th>Total Qty</th>

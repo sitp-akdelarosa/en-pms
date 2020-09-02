@@ -129,7 +129,7 @@ class ProductionOutputController extends Controller
 
             $unprocessed = $this->deductUnprocessed($req->unprocessed,$req->good,$req->rework,$req->scrap);
 
-            $travel_sheet = $this->getTravelSheetData('ts.jo_sequence',$req->jo_sequence);
+            $travel_sheet = $this->getTravelSheetData($req->jo_sequence);
 
             $data = [
                 'msg' => 'Successfully saved.',
@@ -347,7 +347,7 @@ class ProductionOutputController extends Controller
         }
 
         $ProdTravelSheet = ProdTravelSheet::where('id',$req->chkArray[0]['travel_sheet_id'])->first();
-        $travel_sheet = $this->getTravelSheetData('ts.jo_sequence',$ProdTravelSheet->jo_sequence);
+        $travel_sheet = $this->getTravelSheetData($ProdTravelSheet->jo_sequence);
         $data = [ 'unprocessed' => $unprocessed , 'travel_sheet' => $travel_sheet ];
 
         $this->_audit->insert([
@@ -369,7 +369,7 @@ class ProductionOutputController extends Controller
             'jo' => ''
         ];
 
-        $travel_sheet = $this->getTravelSheetData('ts.jo_no',$req->search_jo);
+        $travel_sheet = $this->getTravelSheetData($req->search_jo);
 
         if (count($travel_sheet) > 0) {
             $data = [
@@ -429,13 +429,13 @@ class ProductionOutputController extends Controller
         }
     }
 
-    private function getTravelSheetData($field,$value)
+    private function getTravelSheetData($jo_sequence)
     {
         $div_codes = $this->getDivCode();
 
         $travel_sheet = DB::table('prod_travel_sheets as ts')
                             ->join('prod_travel_sheet_processes as p','ts.id','=','p.travel_sheet_id')
-                            ->where($field,$value) // 'ts.jo_sequence'
+                            ->where('ts.jo_sequence','like',$jo_sequence.'%')
                             ->where('ts.status','!=', 3)
                             // ->whereIn('p.div_code',$div_codes)
                             ->select(
