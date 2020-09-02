@@ -54,7 +54,7 @@
 								<table class="table table-bordered text-center table-sm" style="font-size:11px;width:100%;">
 									<thead>
 										<tr>
-											<td rowspan="2" colspan="4"><img src="{{ asset('/barcode.php').'?codetype=CODE39&size=30&text='.$header->jo_sequence.'&print=true' }}" class="img-fluid" alt="{{ $header->jo_sequence }}"></td>
+											<td rowspan="2" colspan="4"><img src="{{ asset('/barcode.php').'?codetype=CODE39&size=30&text='.$header->jo_no.'&print=true' }}" class="img-fluid" alt="{{ $header->jo_no }}"></td> {{-- $header->jo_sequence --}}
 											<td colspan="2">Type:</td>
 											<td colspan="2">{{ $header->type }}</td>
 											<td rowspan="2">Material Heat #:</td>
