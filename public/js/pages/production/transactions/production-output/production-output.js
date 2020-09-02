@@ -397,6 +397,8 @@ function makeSearchTable(arr) {
     }, {
       data: 'jo_no'
     }, {
+      data: 'jo_sequence'
+    }, {
       data: 'prod_code'
     }, {
       data: 'div_code'

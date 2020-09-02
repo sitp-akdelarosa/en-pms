@@ -435,7 +435,7 @@ class ProductionOutputController extends Controller
 
         $travel_sheet = DB::table('prod_travel_sheets as ts')
                             ->join('prod_travel_sheet_processes as p','ts.id','=','p.travel_sheet_id')
-                            ->where('ts.jo_sequence',$jo_sequence)
+                            ->where('ts.jo_sequence','like',$jo_sequence.'%')
                             ->where('ts.status','!=', 3)
                             // ->whereIn('p.div_code',$div_codes)
                             ->select(
