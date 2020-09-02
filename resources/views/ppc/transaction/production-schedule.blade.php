@@ -21,7 +21,7 @@ foreach ($user_accesses as $user_access){
         <ul class="nav nav-tabs">
             <li><a class="active" href="#production_summary" data-toggle="tab">Production Summary</a></li>
             <li><a href="#jo_details" data-toggle="tab">JO Details</a></li>
-            <li><a href="#travel_sheet" data-toggle="tab">Cancel JO Details</a></li>
+            <li><a href="#travel_sheet" data-toggle="tab">JO Details List</a></li>
         </ul>
         <div class="tab-content">
 
