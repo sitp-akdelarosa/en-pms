@@ -357,6 +357,8 @@ function getJOdetails(jo_no,edit) {
             jo_no: jo_no
         },
     }).done(function(data, textStatus, xhr) {
+
+        console.log(data);
         $('#unprocessed').val(0);
         var jo = data.jo;
         if( jo.status == 3){
@@ -416,6 +418,7 @@ function getDivCodeProcess(jo_no,process) {
             }
             $('#process').append(options);
         });
+        $('#process').trigger('change');
     }).fail(function(xhr, textStatus, errorThrown) {
         console.log("error");
     });

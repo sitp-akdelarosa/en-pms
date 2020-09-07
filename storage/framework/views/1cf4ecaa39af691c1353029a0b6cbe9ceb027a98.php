@@ -160,16 +160,10 @@ if ($exist == 0) {
                                         <div id="prepared_by_feedback"></div>
                                     </div>
                                 </div>
-
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-sm mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">Leader:</span>
-                                        </div>
-                                        <input type="text" class="form-control validate clear" name="leader"
-                                            id="leader">
-                                        <div id="leader_feedback"></div>
-                                    </div>
+                                <div class="col-md-6 mb-3">
+                                    <select type="text" class="form-control select-validate clear" style="width:100%" name="leader"
+                                        id="leader"></select>
+                                    <div id="leader_feedback"></div>
                                 </div>
                             </div>
 
@@ -250,6 +244,7 @@ var pdfCuttingScheduleURL = "<?php echo e(url('/pdf/cutting-schedule')); ?>";
 var getAllOperatorsURL = "<?php echo e(url('/helpers/getall-operators')); ?>";
 var getCutSchedDetailsURL = "<?php echo e(url('/transaction/cutting-schedule/cut-sched-details')); ?>";
 var pdfCuttingScheduleReprintURL = "<?php echo e(url('/pdf/cutting-schedule-reprint')); ?>";
+var getLeaderURL = "<?php echo e(url('/transaction/cutting-schedule/cut-sched-leader')); ?>";
 </script>
 <script type="text/javascript" src="<?php echo e(asset('/js/pages/ppc/transactions/cutting-schedule/cutting-schedule.js')); ?>">
 </script>

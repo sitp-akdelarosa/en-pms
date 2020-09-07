@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\HelpersController;
 use App\PpcCuttingSchedule;
 use App\PpcCuttingScheduleDetail;
+use App\User;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -96,8 +97,8 @@ class CuttingScheduleController extends Controller
 		$cut_sched->date_issued = $req->date_issued;
 		$cut_sched->machine_no = $req->machine_no;
 		$cut_sched->prepared_by = $req->prepared_by;
-		$cut_sched->leader = $req->leader;
-		//$cut_sched->leader_id = $req->leader;
+		$cut_sched->leader = $this->LeaderName($req->leader);
+		$cut_sched->leader_id = $req->leader;
 		$cut_sched->create_user = $user;
 		$cut_sched->update_user = $user;
 		$cut_sched->iso_control_no = $req->iso_control_no;
@@ -178,5 +179,30 @@ class CuttingScheduleController extends Controller
 							ORDER BY cs.created_at DESC
 							");
 	   return response()->json($data);
+	}
+
+	public function getLeader()
+	{
+		$leader = User::select(
+						'id as id',
+						DB::raw("CONCAT(user_id,' | ',nickname, ' - ',firstname,' ',lastname) as text"),
+						DB::raw("CONCAT(firstname,' ',lastname) as leader_name")
+					)->get();
+
+        return response()->json($leader);
+	}
+
+	private function LeaderName($id)
+	{
+		$leader = User::select(
+						DB::raw("CONCAT(firstname,' ',lastname) as leader_name")
+					)
+					->where('id',$id)
+					->first();
+		if (count((array)$leader) > 0) {
+			return $leader->leader_name;
+		}
+
+        return '';
 	}
 }

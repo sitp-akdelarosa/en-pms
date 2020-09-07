@@ -280,7 +280,7 @@ foreach ($user_accesses as $user_access){
 @push('scripts')
     <script type="text/javascript">
         var token = $('meta[name="csrf-token"]').attr('content');
-        var datatableUpload = "{{ url('/transaction/production-schedule/get-production-list') }}";
+        var prodSummariesURL = "{{ url('/transaction/production-schedule/get-production-list') }}";
         var getMaterialUsedURL = "{{ url('/transaction/production-schedule/get-material-used') }}";
         var getStandardMaterialUsedURL = "{{ url('/transaction/production-schedule/get-standard-material-used') }}";
         var getMaterialHeatNoURL = "{{ url('/transaction/production-schedule/get-material-heat-no') }}";

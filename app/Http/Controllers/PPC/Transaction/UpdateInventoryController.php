@@ -408,17 +408,27 @@ class UpdateInventoryController extends Controller
 
     public function GetMaterialCode(Request $req)
     {
-        $code = DB::table('ppc_material_codes as pmc')
-                    ->leftjoin('admin_assign_production_lines as apl', 'apl.product_line', '=', 'pmc.material_type')
-                    ->select(['pmc.material_code as material_code'])
-                    ->where('apl.user_id' ,Auth::user()->id)
-                    ->where('pmc.material_type', $req->mat_type)
-                    ->orderBy('pmc.id','desc')
-                    ->get();
+        $code = DB::select("select pmc.material_code as material_code,
+                                    pmc.material_type as material_type,
+                                    apl.user_id
+                            from ppc_material_codes as pmc
+                            left join admin_assign_production_lines as apl
+                            on apl.product_line = pmc.material_type
+                            where apl.user_id = '".Auth::user()->id."'
+                            and pmc.material_type = '".$req->mat_type."'
+                            order by pmc.id desc");
+        // $code = DB::table('ppc_material_codes as pmc')
+        //             ->leftjoin('admin_assign_production_lines as apl', 'apl.product_line', '=', 'pmc.material_type')
+        //             ->select(['pmc.material_code as material_code'])
+        //             ->where('apl.user_id' ,Auth::user()->id)
+        //             ->where('pmc.material_type', $req->mat_type)
+        //             ->orderBy('pmc.id','desc')
+        //             ->get();
 
-        return $data = [
-                    'code' => $code,
-                ];
+        return $code;
+        // return $data = [
+        //             'code' => $code,
+        //         ];
     }
 
     public function GetMaterialCodeDetails(Request $req)

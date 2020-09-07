@@ -278,7 +278,7 @@ foreach ($user_accesses as $user_access){
 <?php $__env->startPush('scripts'); ?>
     <script type="text/javascript">
         var token = $('meta[name="csrf-token"]').attr('content');
-        var datatableUpload = "<?php echo e(url('/transaction/production-schedule/get-production-list')); ?>";
+        var prodSummariesURL = "<?php echo e(url('/transaction/production-schedule/get-production-list')); ?>";
         var getMaterialUsedURL = "<?php echo e(url('/transaction/production-schedule/get-material-used')); ?>";
         var getStandardMaterialUsedURL = "<?php echo e(url('/transaction/production-schedule/get-standard-material-used')); ?>";
         var getMaterialHeatNoURL = "<?php echo e(url('/transaction/production-schedule/get-material-heat-no')); ?>";

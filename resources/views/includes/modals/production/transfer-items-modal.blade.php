@@ -12,12 +12,16 @@
                 <div class="modal-body table-responsive">
                     <div class="loadingOverlay"></div>
 
+                    <h5>FROM</h5>
+                    <hr/>
                     <div class="row mb-10">
                         <div class="col-md-7">
 							@csrf
                             <input type="hidden" id="id" name="id" class="clear">
                             <input type="hidden" id="userDivCode" name="userDivCode" class="clear">
                             <input type="hidden" id="UnprocessTransfer" name="UnprocessTransfer" class="clear" value='0'>
+
+                            
 				            <div class="form-group row">
 			                    <div class="col-sm-10">
 			                        <div class="input-group input-group-sm">
@@ -139,6 +143,9 @@
                             </div>
                         </div>
                     </div>
+
+                    <h5>TO</h5>
+                    <hr/>
 
                     <div class="row">
                     	<div class="col-md-6">

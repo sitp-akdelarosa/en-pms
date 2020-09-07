@@ -93,7 +93,7 @@ $( function() {
         var qty = (qtyTransfer == 0)? unprocessed:( unprocessed - qtyTransfer);
         unprocessed = unprocessed - (parseInt($('#rework').val()) + parseInt($('#scrap').val()) + parseInt($('#good').val()));
         qty = qty - (parseInt($('#rework').val()) + parseInt($('#scrap').val()) + parseInt($('#good').val()));
-        alert(qty);
+        //alert(qty);
         if(parseInt($('#unprocessed').val()) == unprocessed){
             msg('Please put some value on good , rework or scrap' , 'warning');
         }else if(unprocessed < 0){

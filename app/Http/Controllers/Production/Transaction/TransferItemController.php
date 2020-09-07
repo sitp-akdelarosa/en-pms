@@ -360,12 +360,22 @@ class TransferItemController extends Controller
         return response()->json($data);
     }
 
-    private function getDivCode()
+    private function getDivCode($travel_sheet_id)
     {
         $div_codes = [];
-        $divs = PpcDivision::where('user_id',Auth::user()->id)
-                            ->select('div_code')
-                            ->get();
+        // $divs = PpcDivision::where('user_id',Auth::user()->id)
+        //                     ->select('div_code')
+        //                     ->get();
+
+        $divs = DB::table('prod_travel_sheet_processes')
+                        ->where('travel_sheet_id',$travel_sheet_id)
+                        ->select('div_code')
+                        ->get();
+
+        $divs = DB::select("SELECT d.div_code,p.process FROM enpms.ppc_divisions as d
+                            inner join enpms.ppc_division_processes as p
+                            on d.id = p.division_id");
+
         if (count((array)$divs)) {
             foreach ($divs as $key => $div) {
                 array_push($div_codes, $div->div_code);
@@ -377,7 +387,7 @@ class TransferItemController extends Controller
 
     private function getCurrentProcesses($id)
     {
-        $div_codes = $this->getDivCode();
+        $div_codes = $this->getDivCode($id);
 
         $current_processes = DB::table('prod_travel_sheet_processes')
                         ->whereIn('div_code',$div_codes)
