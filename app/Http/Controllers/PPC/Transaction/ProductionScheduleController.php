@@ -52,22 +52,22 @@ class ProductionScheduleController extends Controller
             $from1 = PpcProductionSummary::select('id')
                 ->where('sc_no', 'like', '%' . $req->fromvalue . '%')
                 ->where('create_user', Auth::user()->id)
-                ->orderBy('ps.id', 'DESC')
+                ->orderBy('id', 'DESC')
                 ->first();
             $from2 = PpcProductionSummary::select('id')
                 ->where('prod_code', 'like', '%' . $req->fromvalue . '%')
                 ->where('create_user', Auth::user()->id)
-                ->orderBy('ps.id', 'DESC')
+                ->orderBy('id', 'DESC')
                 ->first();
-            $to1 = PpcProductionSummary::select(DB::raw("Max(Id) as ids"))
+            $to1 = PpcProductionSummary::select(DB::raw("Max(id) as ids"))
                 ->where('sc_no', 'like', '%' . $req->tovalue . '%')
                 ->where('create_user', Auth::user()->id)
-                ->orderBy('ps.id', 'DESC')
+                ->orderBy('id', 'DESC')
                 ->first();
             $to2 = PpcProductionSummary::select('id')
                 ->where('prod_code', 'like', '%' . $req->tovalue . '%')
                 ->where('create_user', Auth::user()->id)
-                ->orderBy('ps.id', 'DESC')
+                ->orderBy('id', 'DESC')
                 ->first();
 
             if (isset($from1) && isset($to1)) {
@@ -75,10 +75,10 @@ class ProductionScheduleController extends Controller
                 $TO = $to1->ids;
 
                 if ($req->tovalue == '') {
-                    $toNULL = PpcProductionSummary::select(DB::raw("Max(Id) as ids"))
+                    $toNULL = PpcProductionSummary::select(DB::raw("Max(id) as ids"))
                         ->where('sc_no', 'like', '%' . $req->fromvalue . '%')
                         ->where('create_user', Auth::user()->id)
-                        ->orderBy('ps.id', 'DESC')
+                        ->orderBy('id', 'DESC')
                         ->first();
                     $TO = $toNULL->ids;
                 }
@@ -124,12 +124,12 @@ class ProductionScheduleController extends Controller
             $Datalist = DB::select("SELECT ps.id as id,
                                             ps.sc_no as sc_no,
                                             ps.prod_code as prod_code,
-                                            ps.description as description,
+                                            ifnull(pc.code_description,ps.description) as description,
                                             ps.sched_qty as sched_qty,
                                             ps.quantity as quantity,
                                             ps.po as po,
                                             ps.status as status,
-                                            DATE_FORMAT(ps.date_upload, '%m/%d/%Y') as date_upload
+                                            DATE_FORMAT(ps.date_upload, '%Y-%m-%d') as date_upload
                                     from ppc_production_summaries as ps
                                     left join ppc_product_codes as pc on ps.prod_code = pc.product_code
                                     left join admin_assign_production_lines as pl on pl.product_line = pc.product_type
@@ -143,7 +143,7 @@ class ProductionScheduleController extends Controller
                                             ps.quantity,
                                             ps.po,
                                             ps.status,
-                                            DATE_FORMAT(ps.date_upload, '%m/%d/%Y')");
+                                            DATE_FORMAT(ps.date_upload, '%m/%d/%Y')"); //and ps.sched_qty < ps.quantity
             return response()->json($Datalist);
         }
     }
@@ -191,7 +191,7 @@ class ProductionScheduleController extends Controller
                 $jo_sum = new PpcJoDetailsSummary();
                 $jo_sum->jo_no = $jocode;
                 $jo_sum->total_sched_qty = $qty[$row]['sched_qty'];
-                $jo_sum->rmw_no = $req->rmw_no;
+                $jo_sum->rmw_no = (isset($req->rmw_no))? $req->rmw_no : '';
                 $jo_sum->create_user = Auth::user()->id;
                 $jo_sum->update_user = Auth::user()->id;
                 $jo_sum->save();
@@ -446,8 +446,8 @@ class ProductionScheduleController extends Controller
     public function getMaterialUsed(Request $req)
     {
         $inv = PpcUpdateInventory::groupBy('description')
-            ->where('heat_no', $req->heat_no)
-            ->select('description')->get();
+                                    ->where('heat_no', $req->heat_no)
+                                    ->select('description','size','schedule')->get();
         return response()->json($inv);
     }
 
@@ -513,7 +513,7 @@ class ProductionScheduleController extends Controller
                 DB::raw("jt.jo_no as jo_no"),
                 DB::raw("jt.sc_no as sc_no"),
                 DB::raw("jt.prod_code as product_code"),
-                DB::raw("jt.description as description"),
+                DB::raw("ifnull(pc.code_description,jt.description) as description"),
                 DB::raw("SUM(jt.order_qty) as back_order_qty"),
                 DB::raw("SUM(jt.sched_qty) as sched_qty"),
                 DB::raw("IFNULL(ts.issued_qty,0) as issued_qty"),

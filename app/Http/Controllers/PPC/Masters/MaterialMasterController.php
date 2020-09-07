@@ -252,12 +252,13 @@ class MaterialMasterController extends Controller
 	{
 		$mat = DB::table('ppc_material_codes as pmc')
 						->leftjoin('admin_assign_production_lines as apl', 'apl.product_line', '=', 'pmc.material_type')
+						->leftjoin('users as u','u.id','pmc.create_user')
 						->select([
 							'pmc.id as id',
 							'pmc.material_type as material_type',
 							'pmc.material_code as material_code',
 							'pmc.code_description as code_description',
-							'pmc.create_user as create_user',
+							'u.nickname as create_user',
 							'pmc.item as item',
 							'pmc.alloy as alloy',
 							'pmc.schedule as schedule',

@@ -16,6 +16,7 @@ $(function () {
 	getCutSchedDetails();
 	autoComplete("#leader", getAllOperatorsURL, "fullname");
 	getISO('#iso_control_no');
+	getLeaders();
 
 	init();
 	
@@ -326,7 +327,6 @@ function init() {
 	});
 }
 
-
 function getMaterialsForCuttingSched(trans_no) {
 
 	$.ajax({
@@ -623,7 +623,6 @@ function getMaterialsForCuttingSched(trans_no) {
 	});
 }
 
-
 function makeCutDetailsTable(arr) {
 	if (arr.length > 0) {
 		var tbl_cut_details_body = '';
@@ -864,6 +863,7 @@ function getCutSchedDetails() {
 function clear() {
 	$('.clear').val('');
 	$('.clear').removeAttr('readonly');
+	$('#leader').val('').trigger('change');
 	$('#tbl_cut_details_body').html('<tr><td colspan="11" class="text-center">No data displayed.</td></tr>');
 	$('#tbl_cut_sched_body').html('<tr><td colspan="11" class="text-center">No data displayed.</td></tr>');
 	$('.check_all_items').prop("checked", false);
@@ -873,5 +873,22 @@ function clear() {
 	total_issued_qty = 0;
 	jo_items = [];
 	details = [];
+}
+
+function getLeaders() {
+	$.ajax({
+		url: getLeaderURL,
+		type: 'GET',
+		dataType: 'JSON',
+		data: {_token: token},
+	}).done(function(data, textStatus, xhr) {
+		$('#leader').select2({
+			allowClear: true,
+			placeholder: 'Select a Leader',
+			data: data
+		}).val(null).trigger('change');
+	}).fail(function(xhr, textStatus, errorThrown) {
+		console.log("error");
+	});
 }
 

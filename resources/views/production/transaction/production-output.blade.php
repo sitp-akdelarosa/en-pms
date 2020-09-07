@@ -77,7 +77,7 @@ foreach ($user_accesses as $user_access){
                         <th>Process</th>
                         <th>Unprocessed</th>
                         <th>Good</th>
-                        <th>Reworked</th>
+                        <th>Rework</th>
                         <th>Scrap</th>
                         <th>Status</th>
                     </tr>

@@ -9,7 +9,7 @@ var dataColumn = [
                     "data-quantity='"+data.quantity+"'"+
                     "data-status='"+data.status+"'"+
                     "data-sched_qty='"+data.sched_qty+"'>";
-    }, name: 'ps.id', 'searchable': false, 'orderable': false },
+    }, name: 'id', 'searchable': false, 'orderable': false },
     { data: 'sc_no', name: 'ps.sc_no' },
     { data: 'prod_code', name: 'ps.prod_code' },
     { data: 'description', name: 'ps.description' },
@@ -443,7 +443,7 @@ $(function () {
                 }).done(function(data, textStatus, xhr) {
                     if(data.status == 'success'){
                         swal("Successful", "The travel sheet has been cancelled.");
-                        ProdSummaries();
+                        ProdSummaries(prodSummariesURL);
                         travel_Sheet = [];
                         getTravelSheet();
                     }else{ 
@@ -469,7 +469,7 @@ function initializePage() {
         if (output == 1) {}
     });
 
-    ProdSummaries();
+    ProdSummaries(prodSummariesURL);
     $('#searchPS').on('click', getDatatablesearch)
     checkAllCheckboxesInTable('.check-all_prod_sum','.check_item');
     makeJODetailsList(joDetails_arr);
@@ -507,10 +507,10 @@ function changestatus() {
     }
 }
 
-function ProdSummaries() {
+function ProdSummaries(PRODURL) {
     $('.loadingOverlay').show();
     $.ajax({
-        url: datatableUpload,
+        url: PRODURL,
         type: 'GET',
         dataType: 'JSON',
     }).done(function(data, textStatus, xhr) {
@@ -563,7 +563,7 @@ function ProdSummariesTable(arr) {
                             "data-quantity='"+data.quantity+"'"+
                             "data-status='"+data.status+"'"+
                             "data-sched_qty='"+data.sched_qty+"'>";
-            }, name: 'ps.id', 'searchable': false, 'orderable': false },
+            }, name: 'id', 'searchable': false, 'orderable': false },
             { data: 'sc_no', name: 'ps.sc_no' },
             { data: 'prod_code', name: 'ps.prod_code' },
             { data: 'description', name: 'ps.description' },
@@ -578,10 +578,12 @@ function ProdSummariesTable(arr) {
 
 function getDatatablesearch() {
     if($('#from').val() != "" && $('#to').val() != ""){
-        getDatatable('tbl_prod_sum',datatableUpload + '?fromvalue='+ $('#from').val()+'&tovalue='+ $('#to').val(),dataColumn,[],0);
+        ProdSummaries(prodSummariesURL + '?fromvalue='+ $('#from').val()+'&tovalue='+ $('#to').val());
+        // getDatatable('tbl_prod_sum',prodSummariesURL + '?fromvalue='+ $('#from').val()+'&tovalue='+ $('#to').val(),dataColumn,[],0);
     }
     else if($('#from').val() != ""){
-        getDatatable('tbl_prod_sum',datatableUpload + '?fromvalue='+ $('#from').val(),dataColumn,[],0);
+        ProdSummaries(prodSummariesURL + '?fromvalue='+ $('#from').val());
+        // getDatatable('tbl_prod_sum',prodSummariesURL + '?fromvalue='+ $('#from').val(),dataColumn,[],0);
     }
     else{
         msg("From Input is required","warning");
@@ -745,7 +747,7 @@ function getMaterialused(heat_no,count) {
                 // });
                 // $.each(joDetails_arr, function(index, val) {
                     $.each(data, function(i, x) {
-                        compareStandardMaterialUsed(count,p_pcode,x.description);
+                        compareStandardMaterialUsed(count,p_pcode,x); //x = description,schedule,size
                         op = "<option value='"+x.description+"' selected>"+x.description+"</option>";
                         $('#material_used_'+count).append(op);
 
@@ -756,7 +758,7 @@ function getMaterialused(heat_no,count) {
                     $('#material_used_'+count).html(op);
                 });
                 $.each(data, function(i, x) {
-                    compareStandardMaterialUsed(count,p_pcode,x.description);
+                    compareStandardMaterialUsed(count,p_pcode,x); //x = description,schedule,size
                     op = "<option value='"+x.description+"' selected>"+x.description+"</option>";
                     $('#material_used_'+count).append(op);
                 });
@@ -765,7 +767,7 @@ function getMaterialused(heat_no,count) {
         } else {
             $('#material_used_'+count).html(op);
             $.each(data, function(i, x) {
-                compareStandardMaterialUsed(count,p_pcode,x.description);
+                compareStandardMaterialUsed(count,p_pcode,x); //x = description,schedule,size
                 op = "<option value='"+x.description+"' selected>"+x.description+"</option>";
                 $('#material_used_'+count).append(op);
             });
@@ -786,7 +788,7 @@ function getMaterialusedEdit(heat_no,count = 0) {
             for(var x = 0; x < returnData.length; x++){
                 op = "<option value='"+returnData[x].description+"'>"+returnData[x].description+"</option>";
                 $('#material_used_'+$(this).attr('data-count')).append(op);
-                compareStandardMaterialUsed($(this).attr('data-count'),$(this).attr('data-p_code'),x.description);
+                compareStandardMaterialUsed($(this).attr('data-count'),$(this).attr('data-p_code'),x); //x = description,schedule,size
             }
         },
     });
@@ -803,10 +805,23 @@ function compareStandardMaterialUsed(count,product_code,material_used) {
         },
     }).done(function(data, textStatus, xhr) {
         var standard_material_used = data.standard_material_used;
-        console.log(standard_material_used +" = "+material_used);
+        var selected_mat_used = "";
+        //console.log(standard_material_used +" = "+material_used);
 
-        if (standard_material_used != null) {
-            if (standard_material_used != material_used) {
+        if ((typeof material_used) == 'string') {
+            selected_mat_used = material_used;
+        } else {
+            if (standard_material_used == material_used.size) {
+                selected_mat_used = material_used.size
+            } else if (standard_material_used = material_used.schedule) {
+                selected_mat_used = material_used.schedule
+            } else {
+                selected_mat_used = material_used.description
+            }
+        }
+
+        if (selected_mat_used !== null || selected_mat_used !== '') {
+            if (standard_material_used != selected_mat_used) {
                 var error = "This is not the Product's Standard Material";
 
                 $('#material_used_'+count).addClass('is-invalid');
@@ -880,7 +895,7 @@ function SaveJODetails() {
         $('#btn_save').hide();
         $('#btn_edit').show();
         $('#btn_cancel').hide();
-        ProdSummaries();
+        ProdSummaries(prodSummariesURL);
         joDetails_arr = [];
         makeJODetailsList(joDetails_arr);
         getTravelSheet();
