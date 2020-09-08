@@ -435,6 +435,7 @@ class ProductionOutputController extends Controller
 
         $travel_sheet = DB::table('prod_travel_sheets as ts')
                             ->join('prod_travel_sheet_processes as p','ts.id','=','p.travel_sheet_id')
+                            ->leftJoin('ppc_product_codes as pc','pc.product_code','=','ts.prod_code')
                             ->where('ts.jo_sequence','like',$jo_sequence.'%')
                             ->where('ts.status','!=', 3)
                             // ->whereIn('p.div_code',$div_codes)
@@ -444,7 +445,7 @@ class ProductionOutputController extends Controller
                                 DB::raw("ts.status as pts_status"),
                                 DB::raw("ts.prod_code as prod_code"),
                                 DB::raw("ts.prod_order_no as prod_order_no"),
-                                DB::raw("ts.description as description"),
+                                DB::raw("ifnull(pc.code_description,ts.description) as description"),
                                 DB::raw("ts.material_used as material_used"),
                                 DB::raw("ts.material_heat_no as material_heat_no"),
                                 DB::raw("ts.lot_no as lot_no"),

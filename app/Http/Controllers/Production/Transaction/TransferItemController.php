@@ -338,14 +338,18 @@ class TransferItemController extends Controller
             'current_processes' => ''
         ];
 
-        $jo = ProdTravelSheet::where('jo_no',$req->jo_no)
-                            ->orWhere('jo_sequence',$req->jo_no)
-                            ->select('id',
-                                'prod_order_no',
-                                'prod_code',
-                                'description',
-                                'status'
-                            )->first();
+        $jo = DB::table('prod_travel_sheets as ts')
+                ->leftJoin('ppc_product_codes as pc','ts.prod_code','=','pc.product_code')
+                // ->where('ts.jo_no',$req->jo_no)
+                ->Where('ts.jo_sequence',$req->jo_no)
+                ->select(
+                    DB::raw("ts.id as id"),
+                    DB::raw("ts.prod_order_no as prod_order_no"),
+                    DB::raw("ts.prod_code as prod_code"),
+                    DB::raw("ifnull(pc.code_description,ts.description) as description"),
+                    DB::raw("`status` as `status`")
+                )->first();
+
         if(isset($jo->id)){
             if (count((array)$data) > 0) {
                 $data = [
