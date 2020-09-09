@@ -26,12 +26,15 @@ class CreateProdTransferItemsTable extends Migration
             $table->string('status')->nullable();
             $table->string('remarks')->nullable();
             $table->integer('item_status')->default(0);
+            $table->integer('deleted')->default(0)->length(1);
             $table->double('receive_qty',20,2)->default(0.00);
             $table->text('receive_remarks')->nullable();
             $table->dateTime('date_received');
             $table->dateTime('date_transfered');
             $table->integer('create_user')->default(0);
             $table->integer('update_user')->default(0);
+            $table->integer('delete_user')->default(0);
+            $table->dateTime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

@@ -25,6 +25,7 @@ class CreateProdProductionOutputsTable extends Migration
             $table->integer('convert')->default(0);
             $table->integer('alloy_mix')->default(0);
             $table->integer('nc')->default(0);
+            $table->integer('deleted')->default(0)->length(1);
             $table->string('previous_process')->nullable();
             $table->string('current_process')->nullable();
             $table->integer('output')->default(0);
@@ -32,6 +33,8 @@ class CreateProdProductionOutputsTable extends Migration
             $table->string('machine_no')->nullable();
             $table->integer('create_user')->default(0);
             $table->integer('update_user')->default(0);
+            $table->integer('delete_user')->default(0);
+            $table->dateTime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

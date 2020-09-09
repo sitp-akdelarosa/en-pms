@@ -179,6 +179,7 @@ class TransferItemController extends Controller
                     ->join('prod_travel_sheet_processes as tsp', 'tsp.id', '=', 't.current_process')
                     ->join('ppc_divisions as d','d.div_code','=','tsp.div_code')
                     ->where('d.user_id',Auth::user()->id)
+                    ->where('t.deleted','<>',0)
                     ->select(
                         DB::raw("t.id as id"),
                         DB::raw("t.jo_no as jo_no"),
@@ -310,7 +311,11 @@ class TransferItemController extends Controller
             }
         }else {
             $set = ProdTransferItem::find($req->id);
-            $set->delete();
+            $set->deleted = 1;
+            $set->deleted_at = date('Y-m-d H:i:s');
+            $set->delete_user = Auth::user()->id;
+            $set->update();
+
             if($set->item_status == 0){
                 Notification::where('content_id',$req->id)->delete();
             }
