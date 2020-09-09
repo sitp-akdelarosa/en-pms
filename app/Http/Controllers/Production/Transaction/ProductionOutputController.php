@@ -284,7 +284,8 @@ class ProductionOutputController extends Controller
 
     public function get_outputs(Request $req)
     {
-        $data = ProdProductionOutput::where('travel_sheet_process_id',$req->id)->get();
+        $data = ProdProductionOutput::where('travel_sheet_process_id',$req->id)
+                                    ->where('deleted',0)->get();
         return response()->json($data);
     }
 
@@ -296,7 +297,7 @@ class ProductionOutputController extends Controller
         $prod_travelnext = ProdTravelSheetProcess::where('travel_sheet_id',$prod_travel->travel_sheet_id)
                                         ->where('sequence',$next_sequence)->first();
         if(isset($prod_travelnext->id)){
-            $prod_output = ProdProductionOutput::where('travel_sheet_process_id',$prod_travelnext->id)->count();            
+            $prod_output = ProdProductionOutput::where('travel_sheet_process_id',$prod_travelnext->id)->where('deleted',0)->count();            
             if($prod_output == 0){
                 $data = [ 'status' => 'success' ]; 
             }else{
@@ -312,7 +313,7 @@ class ProductionOutputController extends Controller
         $unprocessed = 0;
         foreach ($req->chkArray as $key => $value) {
 
-            $prod_output = ProdProductionOutput::where('id',$value["id"])->first();
+            $prod_output = ProdProductionOutput::where('id',$value["id"])->where('deleted',0)->first();
             ProdTravelSheetProcess::where('id',$value["travel_sheet_process_id"])
                                     ->update([
                                         'unprocessed' => DB::raw("`unprocessed` + ".$prod_output->good." + ".$prod_output->rework." + ".$prod_output->scrap),
@@ -343,12 +344,22 @@ class ProductionOutputController extends Controller
                 $this->destroyFGSummary($prod_travel->travel_sheet_id,$prod_output->good);
             }
 
-            ProdProductionOutput::where('id',$value["id"])->delete();
+            ProdProductionOutput::where('id',$value["id"])
+                                    ->update([
+                                        'deleted' => 1,
+                                        'delete_user' => Auth::user()->id,
+                                        'deleted_at' => date('Y-m-d H:i:s')
+                                    ]);
         }
 
         $ProdTravelSheet = ProdTravelSheet::where('id',$req->chkArray[0]['travel_sheet_id'])->first();
+
         $travel_sheet = $this->getTravelSheetData($ProdTravelSheet->jo_sequence);
-        $data = [ 'unprocessed' => $unprocessed , 'travel_sheet' => $travel_sheet ];
+
+        $data = [ 
+            'unprocessed' => $unprocessed, 
+            'travel_sheet' => $travel_sheet 
+        ];
 
         $this->_audit->insert([
             'user_type' => Auth::user()->user_type,
@@ -436,7 +447,8 @@ class ProductionOutputController extends Controller
         $travel_sheet = DB::table('prod_travel_sheets as ts')
                             ->join('prod_travel_sheet_processes as p','ts.id','=','p.travel_sheet_id')
                             ->leftJoin('ppc_product_codes as pc','pc.product_code','=','ts.prod_code')
-                            ->where('ts.jo_sequence','like',$jo_sequence.'%')
+                            ->where('ts.jo_sequence','=',$jo_sequence)
+                            // ->where('ts.jo_sequence','like',$jo_sequence.'%')
                             ->where('ts.status','!=', 3)
                             // ->whereIn('p.div_code',$div_codes)
                             ->select(

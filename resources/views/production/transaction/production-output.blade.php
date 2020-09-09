@@ -47,7 +47,7 @@ foreach ($user_accesses as $user_access){
                                 <div class="col-sm-12">
                                     <div class="input-group input-group-sm">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text">J.O. No.:</span>
+                                            <span class="input-group-text">J.O. No. (Barcode):</span>
                                         </div>
                                         <input class="form-control input-sm validate clear" name="search_jo" id="search_jo">
                                         <div id="search_jo_feedback"></div>

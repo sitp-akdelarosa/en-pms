@@ -24,5 +24,8 @@ class ProdTransferItem extends Model
 		'date_transfered',
 		'create_user',
 		'update_user',
+		'deleted',
+		'delete_user',
+		'deleted_at'
 	];
 }
