@@ -25,7 +25,8 @@ class ProdTravelSheetProcess extends Model
         'leader_id',
     	'status',
     	'create_user',
-    	'update_user'
+    	'update_user',
+        'end_date'
     ];
 
     public function travel_sheet()

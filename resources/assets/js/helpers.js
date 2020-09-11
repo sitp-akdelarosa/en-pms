@@ -526,7 +526,8 @@ function check_permission(code,handleData) {
 
 		handleData(data.access);
 	}).fail(function(xhr, textStatus, errorThrown) {
-		msg(errorThrown,textStatus);
+		console.log(xhr);
+		//msg(errorThrown,textStatus);
 	}).always(function() {
 		console.log("complete");
 	});
@@ -545,7 +546,8 @@ function getUnreadNotification() {
 		}
 		notiList(data.noti_list);
 	}).fail(function(xhr, textStatus, errorThrown) {
-		//msg(errorThrown,textStatus);
+		var response = xhr.responseJSON;
+		ErrorMsg(response);
 	});
 }
 
@@ -639,4 +641,13 @@ function autoComplete(id,url,text) {
 	}).fail(function (xhr, txtStatus, errorThrown) {
 		console.log(errorThrown);
 	});
+}
+
+function ErrorMsg(data) {
+	var msg = "File: " + data.file + "</br>" + "Line: " + data.line + "</br>" + "Message: " + data.message;
+	var file = data.file;
+	var line = data.line;
+
+	$('#msg_content').html(msg);
+	$('#modalMsg').modal('show');
 }

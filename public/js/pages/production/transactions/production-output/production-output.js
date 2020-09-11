@@ -304,6 +304,7 @@ function makeProdOutputTable(arr) {
     bLengthChange: false,
     searching: false,
     paging: false,
+    order: [[9, 'asc']],
     columns: [{
       data: function data(x) {
         return "<input type='checkbox' class='table-checkbox check_item' data-travel_sheet_id='" + x.travel_sheet_id + "' data-travel_sheet_process_id='" + x.travel_sheet_process_id + "' value='" + x.id + "'>";
@@ -326,7 +327,7 @@ function makeProdOutputTable(arr) {
       data: 'nc'
     }, {
       data: function data(x) {
-        return x.good + x.rework + x.scrap + x.unprocessed;
+        return x.good + x.rework + x.scrap + x.convert + x.alloy_mix + x.nc;
       }
     }, {
       data: 'created_at'
@@ -478,7 +479,7 @@ function getTransferQty(id) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\laragon\www\en-pms\resources\assets\js\pages\production\transactions\production-output\production-output.js */"./resources/assets/js/pages/production/transactions/production-output/production-output.js");
+module.exports = __webpack_require__(/*! C:\xampp\htdocs\en-pms\resources\assets\js\pages\production\transactions\production-output\production-output.js */"./resources/assets/js/pages/production/transactions/production-output/production-output.js");
 
 
 /***/ })

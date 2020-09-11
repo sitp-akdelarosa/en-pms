@@ -216,6 +216,7 @@ function makeProdOutputTable(arr) {
         bLengthChange : false,
         searching: false,
 	    paging: false,
+        order: [[9,'asc']],
         columns: [ 
         	{ data: function(x) {
                 return "<input type='checkbox' class='table-checkbox check_item' data-travel_sheet_id='"+x.travel_sheet_id+"' data-travel_sheet_process_id='"+x.travel_sheet_process_id+"' value='"+x.id+"'>";
@@ -228,7 +229,7 @@ function makeProdOutputTable(arr) {
             {data:'alloy_mix'},
             {data:'nc'},
             {data: function(x) {
-            	return x.good + x.rework + x.scrap + x.unprocessed;
+            	return x.good + x.rework + x.scrap + x.convert + x.alloy_mix + x.nc;
             }},
             {data:'created_at'},
         ],

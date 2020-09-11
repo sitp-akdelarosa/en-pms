@@ -196,7 +196,7 @@ function makeTransferItemTable(arr) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\laragon\www\en-pms\resources\assets\js\pages\ppc\reports\transfer-item-report.js */"./resources/assets/js/pages/ppc/reports/transfer-item-report.js");
+module.exports = __webpack_require__(/*! C:\xampp\htdocs\en-pms\resources\assets\js\pages\ppc\reports\transfer-item-report.js */"./resources/assets/js/pages/ppc/reports/transfer-item-report.js");
 
 
 /***/ })

@@ -52,19 +52,47 @@ class UpdateInventoryController extends Controller
                 ];
         $heatnumber = [];
         $line =1;
-        if(isset($fields[0]['materialscode']) and isset($fields[0]['quantity']) and isset($fields[0]['uom']) and isset($fields[0]['heatnumber']) && isset($fields[0]['receiveddate'])){
-            foreach ($fields as $key => $field) {
-                    $line++;
-                    if($field['materialscode'] == '' || $field['quantity'] == ''||$field['uom'] == ''||$field['heatnumber'] == '' ||$field['receiveddate'] == ''||$field['invoiceno'] == ''||$field['supplier'] == ''){
-                        // $data = ['status' => 'validateRequired','line' => $line];
-                        // return response()->json($data);
-                    }
-                    if (DateTime::createFromFormat('Y-m-d G:i:s', $field['receiveddate']) === FALSE) {
-                        $data = ['status' => 'heatnumber error','msg' => 'The '.$field['receiveddate'].' format from receive date is wrong'];
+        $failed = 0;
+
+        $msg = [];
+
+        foreach ($fields as $key => $field) {
+            $line++;
+            if($this->checkExcessSpace($field)) {
+
+            } else {
+                if (empty($field['materialscode']) && is_null($field['materialscode'])) {
+                    $failed++;
+                    array_push($msg, 'Please provide Material Code for Line '.$line.'.');
+                }
+
+                if (empty($field['quantity']) && is_null($field['quantity'])) {
+                    $failed++;
+                    array_push($msg, 'Please provide Quantity for Line '.$line.'.');
+                }
+
+                if (empty($field['uom']) && is_null($field['uom'])) {
+                    $failed++;
+                    array_push($msg, 'Please provide Unit of Measurement(UoM) for Line '.$line.'.');
+                }
+
+                if (empty($field['heatnumber']) && is_null($field['heatnumber'])) {
+                    $failed++;
+                    array_push($msg, 'Please provide Heat Number for Line '.$line.'.');
+                }
+
+                if (empty($field['receiveddate']) && is_null($field['receiveddate'])) {
+                    $failed++;
+                    array_push($msg, 'Please provide Received Date for Line '.$line.'.');
+                }
+
+                if ($failed == 0) {
+                    if ((!empty($field['receiveddate']) && !is_null($field['receiveddate'])) && DateTime::createFromFormat('Y-m-d G:i:s', $field['receiveddate']) === FALSE) {
+                        $data = ['status' => 'heatnumber error','msg' => 'The '.$field['receiveddate'].' format of receive date is wrong', 'excel' => $fields];
                         return response()->json($data);
                     }
 
-                    if (in_array($field['heatnumber'], $heatnumber)){
+                    if ((!empty($field['heatnumber']) && !is_null($field['heatnumber'])) && in_array($field['heatnumber'], $heatnumber)) {
                         $data = ['status' => 'heatnumber error','msg' => 'The '.$field['heatnumber'].' Heat Number is same in Excel File'];
                         return response()->json($data);
                     }
@@ -72,27 +100,63 @@ class UpdateInventoryController extends Controller
 
                     $num = $field['quantity'];
 
-                    if(filter_var($num, FILTER_VALIDATE_INT) === false){
+                    if(filter_var($num, FILTER_VALIDATE_INT) === false) {
                         $data = ['status' => 'not num'];
                         return response()->json($data);
                     }
+                }
+                
+            }
+                
 
-                    // $check = PpcUpdateInventory::where('heat_no',$field['heatnumber'])
-                    //                             ->where('materials_code','!=',$field['materialscode'])
-                    //                             ->count();
-                    // if ($check > 0) {
-                    //     $data = ['status' => 'heatnumber error','msg' => 'The '.$field['heatnumber'].' Heat Number is already in the Upload Inventory'];
-                    //     return response()->json($data);
-                    // }
+            // $check = PpcUpdateInventory::where('heat_no',$field['heatnumber'])
+            //                             ->where('materials_code','!=',$field['materialscode'])
+            //                             ->count();
+            // if ($check > 0) {
+            //     $data = ['status' => 'heatnumber error','msg' => 'The '.$field['heatnumber'].' Heat Number is already in the Upload Inventory'];
+            //     return response()->json($data);
+            // }
 
-            }  
-        }else{
+        }
+
+        if ($failed > 0) {
+            $message = '';
+            foreach ($msg as $key => $m) {
+                $message.= $m."\r\n";
+            }
+
             $data = [
                 'status' => 'failed',
-                'fields' => $fields
+                'msg' => $message
             ];
-        }         
+        }
+
+        // if($failed == 0){
+              
+        // } else {
+        //     $data = [
+        //         'status' => 'failed',
+        //         'fields' => $fields,
+        //     ];
+        // }         
         return response()->json($data);
+    }
+
+    private function checkExcessSpace($field) 
+    {
+        $error = false;
+        if ((empty($field['materialscode']) && is_null($field['materialscode'])) &&
+            (empty($field['quantity']) && is_null($field['quantity'])) &&
+            (empty($field['uom']) && is_null($field['uom'])) && 
+            (empty($field['heatnumber']) && is_null($field['heatnumber'])) && 
+            (empty($field['receiveddate']) && is_null($field['receiveddate'])) &&
+            (empty($field['invoiceno']) && is_null($field['invoiceno'])) &&
+            (empty($field['supplier']) && is_null($field['supplier']))
+        ) {
+            $error = true;
+        }
+
+        return $error;
     }
 
     public function UploadInventory(Request $req)
@@ -106,7 +170,13 @@ class UpdateInventoryController extends Controller
         $materialeArr = [];
         $countAdded = 0;
         foreach ($fields as $key => $field) {
-            if($field['materialscode'] !== '' || $field['quantity'] !== ''||$field['uom'] !== ''||$field['heatnumber'] !== '' ||$field['receiveddate'] !== ''||$field['invoiceno'] !== ''||$field['supplier'] !== '') {
+            if((!empty($field['materialscode']) && !is_null($field['materialscode'])) || 
+                (!empty($field['quantity']) && !is_null($field['quantity'])) || 
+                (!empty($field['uom']) && !is_null($field['uom'])) ||
+                (!empty($field['heatnumber']) && !is_null($field['heatnumber'])) ||
+                (!empty($field['receiveddate']) && !is_null($field['receiveddate'])) ||
+                (!empty($field['invoiceno']) && !is_null($field['invoiceno'])) ||
+                (!empty($field['supplier']) && !is_null($field['supplier'])) ) {
 
                 $uom = preg_replace('/[0-9]+/', '', strtoupper($field['uom']));
 
@@ -172,7 +242,7 @@ class UpdateInventoryController extends Controller
                     //     'create_user' => Auth::user()->id,
                     //     'update_user' => Auth::user()->id
                     // ]);
-                }else{
+                } else {
                     $countAdded++;
                     PpcUpdateInventory::where('materials_code',$field['materialscode'])
                                         ->where('heat_no',$field['heatnumber'])

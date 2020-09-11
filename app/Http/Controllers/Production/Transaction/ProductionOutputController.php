@@ -92,10 +92,16 @@ class ProductionOutputController extends Controller
         $prod_output->current_process = strtoupper($req->current_process);
         $prod_output->machine_no = strtoupper($req->machine_no);
         $prod_output->operator = strtoupper($req->operator);
-        $prod_output->create_user = $req->create_user;
-        $prod_output->update_user = $req->update_user;
+        $prod_output->create_user = Auth::user()->id;
+        $prod_output->update_user = Auth::user()->id;
 
         if ($prod_output->save()) {
+            $status = 0;
+            $end_date = null;
+            if ($this->deductUnprocessed($req->unprocessed,$req->good,$req->rework,$req->scrap) == 0) {
+                $end_date = date('Y-m-d H:i:s');
+            }
+
             ProdTravelSheetProcess::where('id',$req->travel_sheet_process_id)
                                     ->update([
                                         'unprocessed' => $this->deductUnprocessed($req->unprocessed,$req->good,$req->rework,$req->scrap),
@@ -108,6 +114,7 @@ class ProductionOutputController extends Controller
                                         'machine_no' => $prod_output->machine_no,
                                         'operator' => $prod_output->operator,
                                         'leader' => Auth::user()->id,
+                                        'end_date' => $end_date,
                                         'update_user' => Auth::user()->id
                                     ]);
 

@@ -19,12 +19,12 @@ foreach ($user_accesses as $user_access){
         <ul class="nav nav-tabs">
             <li><a class="active" href="#production_summary" data-toggle="tab">Production Summary</a></li>
             <li><a href="#jo_details" data-toggle="tab">JO Details</a></li>
-            <li><a href="#travel_sheet" data-toggle="tab">Cancel JO Details</a></li>
+            <li><a href="#travel_sheet" data-toggle="tab">JO Details List</a></li>
         </ul>
         <div class="tab-content">
 
             <div class="tab-pane active" id="production_summary">
-                <div class=".loadingOverlay"></div>
+                
                 <div class="row justify-content-center">
                     <div class="col-md-8">
                         <div class="form-group row">
@@ -278,7 +278,7 @@ foreach ($user_accesses as $user_access){
 <?php $__env->startPush('scripts'); ?>
     <script type="text/javascript">
         var token = $('meta[name="csrf-token"]').attr('content');
-        var datatableUpload = "<?php echo e(url('/transaction/production-schedule/get-production-list')); ?>";
+        var prodSummariesURL = "<?php echo e(url('/transaction/production-schedule/get-production-list')); ?>";
         var getMaterialUsedURL = "<?php echo e(url('/transaction/production-schedule/get-material-used')); ?>";
         var getStandardMaterialUsedURL = "<?php echo e(url('/transaction/production-schedule/get-standard-material-used')); ?>";
         var getMaterialHeatNoURL = "<?php echo e(url('/transaction/production-schedule/get-material-heat-no')); ?>";
