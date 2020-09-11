@@ -23,6 +23,9 @@ class ProdProductionOutput extends Model
 		'operator',
 		'machine_no',
 		'create_user',
-		'update_user'
+		'update_user',
+		'deleted',
+		'delete_user',
+		'deleted_at'
 	];
 }

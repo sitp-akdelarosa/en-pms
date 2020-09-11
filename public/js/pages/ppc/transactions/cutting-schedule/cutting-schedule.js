@@ -93,6 +93,8 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 var details = [];
 var operators = [];
 var d = new Date();
@@ -110,6 +112,7 @@ $(function () {
   getCutSchedDetails();
   autoComplete("#leader", getAllOperatorsURL, "fullname");
   getISO('#iso_control_no');
+  getLeaders();
   init();
   checkAllCheckboxesInTable('.check_all_items', '.check_items');
   $('#btn_save').on('click', function () {
@@ -174,6 +177,10 @@ $(function () {
               $('#tbl_cut_sched').find('input[data-id="' + id + '"]').each(function () {
                 needed_qty = $(this).val();
               });
+            }
+
+            if (_typeof($(this).attr('data-supplier_heat_no')) === undefined) {
+              alert('undefined');
             }
 
             details.push({
@@ -479,7 +486,7 @@ function getMaterialsForCuttingSched(trans_no) {
           } else {
             plate_qty = x.needed_qty;
             needed_qty = "<td></td>";
-            tbl_cut_sched_body = "<tr>" + "<td rowspan='2'>" + "<input type='checkbox' class='table-checkbox check_items' data-trans_no='" + trans_no + "' " + "data-id='" + x.id + "' " + "data-alloy='" + x.alloy + "' " + "data-code_description='" + x.code_description + "' " + "data-sc_no='" + x.sc_no + "' " + "data-order_qty='" + x.order_qty + "' " + "data-needed_qty='" + x.needed_qty + "' " + "data-cut_weight='" + x.cut_weight + "' " + "data-cut_length='" + x.cut_length + "' " + "data-size='" + x.size + "' " + "data-item='" + x.item + "' " + "data-schedule='" + x.schedule + "' " + "data-lot_no='" + x.lot_no + "' " + "data-p_item='" + x.p_item + "' " + "data-p_alloy='" + x.p_alloy + "' " + "data-p_size='" + x.p_size + "' " + "data-p_class='" + x.p_class + "' " + "data-product_code='" + x.product_code + "' " + "data-mat_heat_no='" + mat_heat_no + "'>" + "</td>" + "<td rowspan='2'>" + x.p_alloy + "</td>" + "<td rowspan='2'>" + x.p_size + "</td>" + "<td rowspan='2'>" + x.p_item + "</td>" + "<td rowspan='2'>" + x.p_class + "</td>" + "<td rowspan='2'>" + x.sc_no + "</td>" + "<td rowspan='2'>" + x.order_qty + "</td>" + "<td rowspan='2'>" + plate_qty + "</td>" + "<td rowspan='2'></td>" + //"<td class='text-center'>"+x.cut_weight+" x "+x.cut_length+"</td>"+
+            tbl_cut_sched_body = "<tr>" + "<td rowspan='2'>" + "<input type='checkbox' class='table-checkbox check_items' data-trans_no='" + trans_no + "' " + "data-id='" + x.id + "' " + "data-alloy='" + x.alloy + "' " + "data-code_description='" + x.code_description + "' " + "data-sc_no='" + x.sc_no + "' " + "data-order_qty='" + x.order_qty + "' " + "data-needed_qty='" + x.needed_qty + "' " + "data-cut_weight='" + x.cut_weight + "' " + "data-cut_length='" + x.cut_length + "' " + "data-size='" + x.size + "' " + "data-item='" + x.item + "' " + "data-schedule='" + x.schedule + "' " + "data-lot_no='" + x.lot_no + "' " + "data-p_item='" + x.p_item + "' " + "data-p_alloy='" + x.p_alloy + "' " + "data-p_size='" + x.p_size + "' " + "data-p_class='" + x.p_class + "' " + "data-product_code='" + x.product_code + "' " + "data-supplier_heat_no='' " + "data-mat_heat_no='" + mat_heat_no + "'>" + "</td>" + "<td rowspan='2'>" + x.p_alloy + "</td>" + "<td rowspan='2'>" + x.p_size + "</td>" + "<td rowspan='2'>" + x.p_item + "</td>" + "<td rowspan='2'>" + x.p_class + "</td>" + "<td rowspan='2'>" + x.sc_no + "</td>" + "<td rowspan='2'>" + x.order_qty + "</td>" + "<td rowspan='2'>" + plate_qty + "</td>" + "<td rowspan='2'></td>" + //"<td class='text-center'>"+x.cut_weight+" x "+x.cut_length+"</td>"+
             "<td class='text-center'>" + schedOrSize + cut + "</td>" + "</tr>" + "<tr>" + "<td><span class='pull-left'>-------</span><span class='pull-right'>" + x.lot_no + "</span></td>" + "</tr>";
             $('#tbl_cut_sched_body').append(tbl_cut_sched_body);
           } // tbl_cut_sched_body = "<tr>" +
@@ -707,11 +714,12 @@ function saveCutSched() {
       dataType: 'JSON',
       data: $("#frm_cut_sched").serialize()
     }).done(function (data, txtStatus, xhr) {
+      console.log(data);
       msg(data.msg, data.status);
       clear();
       getCutSchedDetails();
     }).fail(function (xhr, txtStatus, errorThrown) {
-      console.log(errorThrown);
+      console.log(xhr);
       var errors = xhr.responseJSON.errors;
       showErrors(errors);
     }).always(function () {
@@ -734,6 +742,7 @@ function getCutSchedDetails() {
     $('#tbl_cut_sched_reprint').dataTable().fnDestroy();
     $('#tbl_cut_sched_reprint').dataTable({
       data: data,
+      order: [[8, 'desc']],
       columns: [{
         data: function data(x) {
           return "<button class='btn btn-primary btn_reprint' data-id=" + x.id + "> Reprint </button>";
@@ -750,6 +759,18 @@ function getCutSchedDetails() {
           return jo;
         }
       }, {
+        data: 'withdrawal_slip_no'
+      }, {
+        data: 'iso_control_no'
+      }, {
+        data: 'date_issued'
+      }, {
+        data: 'machine_no'
+      }, {
+        data: 'leader'
+      }, {
+        data: 'prepared_by'
+      }, {
         data: 'created_at'
       }]
     });
@@ -761,6 +782,7 @@ function getCutSchedDetails() {
 function clear() {
   $('.clear').val('');
   $('.clear').removeAttr('readonly');
+  $('#leader').val('').trigger('change');
   $('#tbl_cut_details_body').html('<tr><td colspan="11" class="text-center">No data displayed.</td></tr>');
   $('#tbl_cut_sched_body').html('<tr><td colspan="11" class="text-center">No data displayed.</td></tr>');
   $('.check_all_items').prop("checked", false);
@@ -770,6 +792,25 @@ function clear() {
   total_issued_qty = 0;
   jo_items = [];
   details = [];
+}
+
+function getLeaders() {
+  $.ajax({
+    url: getLeaderURL,
+    type: 'GET',
+    dataType: 'JSON',
+    data: {
+      _token: token
+    }
+  }).done(function (data, textStatus, xhr) {
+    $('#leader').select2({
+      allowClear: true,
+      placeholder: 'Select a Leader',
+      data: data
+    }).val(null).trigger('change');
+  }).fail(function (xhr, textStatus, errorThrown) {
+    console.log("error");
+  });
 }
 
 /***/ }),

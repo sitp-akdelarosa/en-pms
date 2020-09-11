@@ -309,6 +309,8 @@ Route::group(['middleware' => ['ppc', 'auth', 'no.back', 'deleted_user']], funct
 				->name('transaction.cutting-schedule.cut-sched-details');
 			Route::post('/save', 'PPC\Transaction\CuttingScheduleController@save')
 				->name('transaction.cutting-schedule.save');
+			Route::get('/cut-sched-leader', 'PPC\Transaction\CuttingScheduleController@getLeader')
+				->name('transaction.cutting-schedule.cut-sched-leader');
 		});
 	});
 

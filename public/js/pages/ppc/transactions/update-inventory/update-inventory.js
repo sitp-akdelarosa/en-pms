@@ -423,7 +423,7 @@ function getMaterialCode(mat_code) {
     }
   }).done(function (data, textStatus, xhr) {
     if (data.length > 0) {
-      $.each(data.code, function (i, x) {
+      $.each(data, function (i, x) {
         code = "<option value='" + x.material_code + "'>" + x.material_code + "</option>";
         $('#materials_code').append(code);
       });

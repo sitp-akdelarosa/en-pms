@@ -20,7 +20,7 @@ class CreatePpcPreTravelSheetProductsTable extends Migration
             $table->string('prod_code');
             $table->double('issued_qty_per_sheet',20,2)->default(0.00);
             $table->string('sc_no');
-            $table->integer('jo_sequence')->default(0);
+            $table->string('jo_sequence')->default('');
             $table->integer('create_user')->default(0);
             $table->integer('update_user')->default(0);
             $table->timestamps();

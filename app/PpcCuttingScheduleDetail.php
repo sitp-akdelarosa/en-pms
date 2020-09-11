@@ -26,6 +26,8 @@ class PpcCuttingScheduleDetail extends Model
                     'material_desc_size',
                     'material_desc_heat_no',
                     'material_desc_lot_no',
-                    'material_desc_supplier_heat_no'
+                    'material_desc_supplier_heat_no',
+                    'create_user',
+                    'update_user'
     			];
 }

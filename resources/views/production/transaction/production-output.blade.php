@@ -47,7 +47,7 @@ foreach ($user_accesses as $user_access){
                                 <div class="col-sm-12">
                                     <div class="input-group input-group-sm">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text">J.O. No.:</span>
+                                            <span class="input-group-text">J.O. No. (Barcode):</span>
                                         </div>
                                         <input class="form-control input-sm validate clear" name="search_jo" id="search_jo">
                                         <div id="search_jo_feedback"></div>
@@ -70,13 +70,14 @@ foreach ($user_accesses as $user_access){
                     <tr>
                         <th width="5%"></th>
                         <th>J.O. No.</th>
+                        <th>Barcode</th>
                         <th>Product Code</th>
                         <th>Division</th>
                         <th>Total Qty</th>
                         <th>Process</th>
                         <th>Unprocessed</th>
                         <th>Good</th>
-                        <th>Reworked</th>
+                        <th>Rework</th>
                         <th>Scrap</th>
                         <th>Status</th>
                     </tr>

@@ -129,7 +129,7 @@ class DashboardController extends Controller
                                 ->select(
                                     DB::raw("ts.jo_sequence as jo_sequence"),
                                     DB::raw("ts.prod_code as prod_code"),
-                                    DB::raw("ts.description as description"),
+                                    DB::raw("ifnull(pc.code_description,ts.description) as description"),
                                     DB::raw("d.plant as plant"),
                                     DB::raw("p.process as process"),
                                     DB::raw("ts.material_used as material_used"),
@@ -155,7 +155,7 @@ class DashboardController extends Controller
                                 ->select(
                                     DB::raw("ts.jo_sequence as jo_sequence"),
                                     DB::raw("ts.prod_code as prod_code"),
-                                    DB::raw("ts.description as description"),
+                                    DB::raw("ifnull(pc.code_description,ts.description) as description"),
                                     DB::raw("d.plant as plant"),
                                     DB::raw("p.process as process"),
                                     DB::raw("ts.material_used as material_used"),

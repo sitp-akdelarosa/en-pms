@@ -179,6 +179,7 @@ class TransferItemController extends Controller
                     ->join('prod_travel_sheet_processes as tsp', 'tsp.id', '=', 't.current_process')
                     ->join('ppc_divisions as d','d.div_code','=','tsp.div_code')
                     ->where('d.user_id',Auth::user()->id)
+                    ->where('t.deleted','<>',0)
                     ->select(
                         DB::raw("t.id as id"),
                         DB::raw("t.jo_no as jo_no"),
@@ -310,7 +311,11 @@ class TransferItemController extends Controller
             }
         }else {
             $set = ProdTransferItem::find($req->id);
-            $set->delete();
+            $set->deleted = 1;
+            $set->deleted_at = date('Y-m-d H:i:s');
+            $set->delete_user = Auth::user()->id;
+            $set->update();
+
             if($set->item_status == 0){
                 Notification::where('content_id',$req->id)->delete();
             }
@@ -338,14 +343,18 @@ class TransferItemController extends Controller
             'current_processes' => ''
         ];
 
-        $jo = ProdTravelSheet::where('jo_no',$req->jo_no)
-                            ->orWhere('jo_sequence',$req->jo_no)
-                            ->select('id',
-                                'prod_order_no',
-                                'prod_code',
-                                'description',
-                                'status'
-                            )->first();
+        $jo = DB::table('prod_travel_sheets as ts')
+                ->leftJoin('ppc_product_codes as pc','ts.prod_code','=','pc.product_code')
+                // ->where('ts.jo_no',$req->jo_no)
+                ->Where('ts.jo_sequence',$req->jo_no)
+                ->select(
+                    DB::raw("ts.id as id"),
+                    DB::raw("ts.prod_order_no as prod_order_no"),
+                    DB::raw("ts.prod_code as prod_code"),
+                    DB::raw("ifnull(pc.code_description,ts.description) as description"),
+                    DB::raw("`status` as `status`")
+                )->first();
+
         if(isset($jo->id)){
             if (count((array)$data) > 0) {
                 $data = [
@@ -360,12 +369,22 @@ class TransferItemController extends Controller
         return response()->json($data);
     }
 
-    private function getDivCode()
+    private function getDivCode($travel_sheet_id)
     {
         $div_codes = [];
-        $divs = PpcDivision::where('user_id',Auth::user()->id)
-                            ->select('div_code')
-                            ->get();
+        // $divs = PpcDivision::where('user_id',Auth::user()->id)
+        //                     ->select('div_code')
+        //                     ->get();
+
+        $divs = DB::table('prod_travel_sheet_processes')
+                        ->where('travel_sheet_id',$travel_sheet_id)
+                        ->select('div_code')
+                        ->get();
+
+        $divs = DB::select("SELECT d.div_code,p.process FROM enpms.ppc_divisions as d
+                            inner join enpms.ppc_division_processes as p
+                            on d.id = p.division_id");
+
         if (count((array)$divs)) {
             foreach ($divs as $key => $div) {
                 array_push($div_codes, $div->div_code);
@@ -377,7 +396,7 @@ class TransferItemController extends Controller
 
     private function getCurrentProcesses($id)
     {
-        $div_codes = $this->getDivCode();
+        $div_codes = $this->getDivCode($id);
 
         $current_processes = DB::table('prod_travel_sheet_processes')
                         ->whereIn('div_code',$div_codes)

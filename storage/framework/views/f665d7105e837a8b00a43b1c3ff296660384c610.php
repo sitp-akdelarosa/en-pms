@@ -1,6 +1,4 @@
-@extends('pdf.layout')
-
-@push('css')
+<?php $__env->startPush('css'); ?>
 	<style>
         .header, .footer {
             width: 100%;
@@ -31,9 +29,9 @@
 	        page-break-inside: avoid;
 	    }
 	</style>
-@endpush
+<?php $__env->stopPush(); ?>
 
-@section('body')
+<?php $__env->startSection('body'); ?>
 	<?php
 		foreach ($data as $key => $pages) {
 			foreach ($pages['header'] as $key => $header) {
@@ -42,7 +40,7 @@
 					<div class="container page">
 						<div class="row">
 							<div class="col-xs-2">
-								<img src="{{ asset($header->iso_photo) }}" alt="" height="80px" width="200px">
+								<img src="<?php echo e(asset($header->iso_photo)); ?>" alt="" height="80px" width="200px">
 							</div>
 							<div class="col-xs-10 text-center">
 								<h3 style="margin-left:55px">TRAVEL SHEET</h3>
@@ -54,36 +52,36 @@
 								<table class="table table-bordered text-center table-sm" style="font-size:11px;width:100%;">
 									<thead>
 										<tr>
-											<td rowspan="2" colspan="4"><img src="{{ asset('/barcode.php').'?codetype=CODE39&size=30&text='.$header->jo_sequence.'&print=true' }}" class="img-fluid" alt="{{ $header->jo_sequence }}"></td> 
+											<td rowspan="2" colspan="4"><img src="<?php echo e(asset('/barcode.php').'?codetype=CODE39&size=30&text='.$header->jo_no.'&print=true'); ?>" class="img-fluid" alt="<?php echo e($header->jo_no); ?>"></td> 
 											<td colspan="2">Type:</td>
-											<td colspan="2">{{ $header->type }}</td>
+											<td colspan="2"><?php echo e($header->type); ?></td>
 											<td rowspan="2">Material Heat #:</td>
-											<td colspan="2" rowspan="2">{{ $header->material_heat_no }}</td>
+											<td colspan="2" rowspan="2"><?php echo e($header->material_heat_no); ?></td>
 										</tr>
 										<tr>
 											<td colspan="2">Material Used:</td>
-											<td>{{ $header->material_used }}</td>
-											<td>{{ $header->bar_size.' x '.$header->cut_weight }}</td>
+											<td><?php echo e($header->material_used); ?></td>
+											<td><?php echo e($header->bar_size.' x '.$header->cut_weight); ?></td>
 										</tr>
 										<tr>
 											<td colspan="4">Production Order Number</td>
 											<td colspan="2">Issued Qty:</td>
-											<td colspan="2">{{ $header->issued_qty }}</td>
+											<td colspan="2"><?php echo e($header->issued_qty); ?></td>
 											
 											<td>Part Code:</td>
-											<td colspan="2">{{ $header->prod_code }}</td>
+											<td colspan="2"><?php echo e($header->prod_code); ?></td>
 										</tr>
 										<tr>
-											<td colspan="4">{{ $header->sc_no }}</td>
+											<td colspan="4"><?php echo e($header->sc_no); ?></td>
 											<td colspan="2" rowspan="2">Lot No.</td>
-											<td colspan="2" rowspan="2">{{ $header->prod_heat_no }}</td>
+											<td colspan="2" rowspan="2"><?php echo e($header->prod_heat_no); ?></td>
 											<td rowspan="2">Description</td>
-											<td colspan="2" rowspan="2">{{ $header->description }}</td>
+											<td colspan="2" rowspan="2"><?php echo e($header->description); ?></td>
 										</tr>
 										<tr>
 											<td>Job Order Qty.</td>
 											<!-- $header->order_qty -->
-											<td colspan="2">{{ $header->sched_qty }}</td>
+											<td colspan="2"><?php echo e($header->sched_qty); ?></td>
 											<td>PCS.</td>
 										</tr>
 										<tr>
@@ -109,7 +107,7 @@
 												if ($pages['id'] == $proc->pre_travel_sheet_id) {
 										?>
 													<tr>
-														<td>{{ $proc->process_name }}</td>
+														<td><?php echo e($proc->process_name); ?></td>
 														<td></td>
 														<td></td>
 														<td></td>
@@ -138,7 +136,8 @@
 												<b>Legend:</b> A - for Rework | B - for Scrap | C - Alloy Mix | NC - Non-Conformance
 											</td>
 											<td colspan="3">
-												Date Released: {{ $pages['date'] }}
+												Date Released: <?php echo e($pages['date']); ?>
+
 											</td>
 										</tr>
 									</tfoot>
@@ -149,7 +148,7 @@
 
 						<div class="row">
 							<div class="col-xs-1" style="text-align:right">
-								<span class="small">{{ $header->iso_code }}</span>
+								<span class="small"><?php echo e($header->iso_code); ?></span>
 							</div>
 						</div>
 					</div>
@@ -158,4 +157,5 @@
 			}
 		}
 	?>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('pdf.layout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
