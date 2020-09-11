@@ -38,26 +38,36 @@
         </div>
 
         <div class="box-body">
-            <table class="table table-sm table-hover table-striped dt-responsive nowrap" id="tbl_dashboard" style="width: 100%">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>JO No.</th>
-                        <th>Item Code</th>
-                        <th>Description</th>
-                        <th>Divison</th>
-                        <th>Plant</th>
-                        <th>Process</th>
-                        <th>Material</th>
-                        <th>Heat No.</th>
-                        <th>Lot No.</th>
-                        <th>Order Qty.</th>
-                        <th>Sched Qty.</th>                        
-                        <th>Status</th>
+            {{-- <div class="table-responsive"> --}}
+                <table class="table table-sm table-hover table-bordered table-striped nowrap" id="tbl_dashboard" style="width: 100%">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>JO No.</th>
+                            <th>Item Code</th>
+                            <th>Description</th>
+                            <th>Divison</th>
+                            <th>Plant</th>
+                            <th>Process</th>
+                            <th>Material</th>
+                            <th>Heat No.</th>
+                            <th>Lot No.</th>
+                            <th>Sched Qty.</th> 
+                            <th>Unprocess</th>
+                            <th>Good</th>
+                            <th>Scrap</th>
+                            <th>Total Ouput</th>
+                            <th>Order Qty.</th>
+                            <th>Total Issued Qty</th>
+                            <th>Issued Qty</th> 
+                            <th>End Date</th>                      
+                            <th>Status</th>
 
-                    </tr>
-                </thead>
-                <tbody id="tbl_dashboard_body"></tbody>
-            </table>
+                        </tr>
+                    </thead>
+                    <tbody id="tbl_dashboard_body"></tbody>
+                </table>
+            {{-- </div> --}}
+            
         </div>
     </div>
 
@@ -76,6 +86,7 @@
 
     <div class="row" id="chart"></div>
 </section>
+@include('includes.modals.system-modals')
 @endsection
 
 @push('scripts')

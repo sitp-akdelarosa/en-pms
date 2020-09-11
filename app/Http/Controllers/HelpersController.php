@@ -253,11 +253,14 @@ class HelpersController extends Controller
 
     public function check_permission(Request $req)
     {
-        $access = AdminModuleAccess::where('user_id',Auth::user()->id)
-                        ->where('code',$req->code)
-                        ->select('access')->first();
+        if (isset(Auth::user()->id)) {
+            $access = AdminModuleAccess::where('user_id',Auth::user()->id)
+                            ->where('code',$req->code)
+                            ->select('access')->first();
 
-        return response()->json($access);
+            return response()->json($access);
+        }
+        
     }
 
     public function getDivCodeByID($id)

@@ -177,7 +177,8 @@ $(function () {
         if (ext == 'xls' || ext == 'xlsx' || ext == 'XLS' || ext == 'XLSX') {
           $('.myprogress').css('width', '0%');
           $('#progress-msg').html('Uploading in progress...');
-          var percent = 0;
+          var percent = 0; // check file
+
           $.ajax({
             url: checkfile,
             type: 'POST',
@@ -190,6 +191,7 @@ $(function () {
             var return_datas = jQuery.parseJSON(returns);
 
             if (return_datas.status == "success") {
+              // upload file
               $.ajax({
                 url: uploadInventory,
                 type: 'POST',
@@ -207,12 +209,12 @@ $(function () {
                 var not_registedred = return_data.Material;
 
                 if (not_registedred.length > 0) {
-                  GetMateriialTypeNotExisting(not_registedred);
+                  GetMateriialsNotExisting(not_registedred);
                 }
               }).fail(function (xhr, textStatus, errorThrown) {
                 $('.loadingOverlay').hide();
-                var responseError = jQuery.parseJSON(xhr.responseText);
-                msg("Message: " + responseError.message + "\n" + "Line: " + responseError.line + "\n" + "File: " + responseError.file, "error");
+                var response = jQuery.parseJSON(xhr.responseText);
+                ErrorMsg(response);
               }); // $.ajax({
               // 	url: uploadInventory,
               // 	type: 'POST',
@@ -229,7 +231,7 @@ $(function () {
               // 		getInventory(_with_zero);
               // 		var not_registedred = return_data.Material;
               // 		if (not_registedred.length > 0) {
-              // 			GetMateriialTypeNotExisting(not_registedred);
+              // 			GetMateriialsNotExisting(not_registedred);
               // 		}
               // 	}
               // });
@@ -247,8 +249,8 @@ $(function () {
               document.getElementById('file_inventory_label').innerHTML = "Select file...";
             } else if (return_datas.status == "failed") {
               $('.loadingOverlay').hide();
-              console.log(return_datas.fields);
-              msg("Please maintain data as 1 sheet only.", "warning");
+              msg(return_datas.msg, return_datas.status); //msg("Please maintain data as 1 sheet only.", "warning");
+
               document.getElementById('file_inventory_label').innerHTML = "Select file...";
             } else {
               $('.loadingOverlay').hide();
@@ -256,8 +258,11 @@ $(function () {
               document.getElementById('file_inventory_label').innerHTML = "Select file...";
             }
           }).fail(function (xhr, textStatus, errorThrown) {
-            var responseError = jQuery.parseJSON(xhr.responseText);
-            msg("Message: " + responseError.message + "\n" + "Line: " + responseError.line + "\n" + "File: " + responseError.file, "error");
+            $('.loadingOverlay').hide();
+            var response = jQuery.parseJSON(xhr.responseText);
+            ErrorMsg(response);
+          }).always(function () {
+            $('.loadingOverlay').hide();
           }); // $.ajax({
           // 	url: checkfile,
           // 	type: 'POST',
@@ -285,7 +290,7 @@ $(function () {
           // 					getInventory(_with_zero);
           // 					var not_registedred = return_data.Material;
           // 					if (not_registedred.length > 0) {
-          // 						GetMateriialTypeNotExisting(not_registedred);
+          // 						GetMateriialsNotExisting(not_registedred);
           // 					}
           // 				}
           // 			});
@@ -375,7 +380,7 @@ $(function () {
       type: 'GET',
       dataType: 'JSON'
     }).done(function (data, textStatus, xhr) {
-      GetMateriialTypeNotExisting(data);
+      GetMateriialsNotExisting(data);
     }).fail(function (xhr, textStatus, errorThrown) {
       msg('Unregistered Products: ' + errorThrown);
     });
@@ -463,7 +468,7 @@ function GetMaterialCodeDetails() {
   });
 }
 
-function GetMateriialTypeNotExisting(arr) {
+function GetMateriialsNotExisting(arr) {
   $('#modal_material_not_existing').modal('show');
   $('#tbl_material_not_existing').dataTable().fnClearTable();
   $('#tbl_material_not_existing').dataTable().fnDestroy();
@@ -473,6 +478,9 @@ function GetMateriialTypeNotExisting(arr) {
     paging: true,
     order: [[5, 'asc']],
     columns: [{
+      data: 'materials_type',
+      name: 'materials_type'
+    }, {
       data: 'materials_code',
       name: 'materials_code'
     }, {

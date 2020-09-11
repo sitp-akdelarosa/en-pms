@@ -34,6 +34,7 @@ class CreateProdTravelSheetProcessesTable extends Migration
             $table->integer('status')->default(0);
             $table->integer('create_user')->default(0);
             $table->integer('update_user')->default(0);
+            $table->dateTime('end_date')->nullable();
             $table->timestamps();
         });
     }

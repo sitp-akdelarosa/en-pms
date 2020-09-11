@@ -177,13 +177,14 @@
                     <br>
                     <table class="table table-sm table-striped dt-responsive nowrap" id="tbl_material_not_existing" style="width:100%">
                         <thead class="thead-dark">
-                                <th>Material Code</th>
-                                <th>Qty</th>
-                                <th>UOM</th>
-                                <th>Heat No.</th>
-                                <th>Invoice No.</th>
-                                <th>Received Date</th>
-                                <th>Supplier</th>
+                            <th>Material Type</th>
+                            <th>Material Code</th>
+                            <th>Qty</th>
+                            <th>UOM</th>
+                            <th>Heat No.</th>
+                            <th>Invoice No.</th>
+                            <th>Received Date</th>
+                            <th>Supplier</th>
                         </thead>
                     </table>
                 </div>
