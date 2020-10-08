@@ -36,26 +36,36 @@
         </div>
 
         <div class="box-body">
-            <table class="table table-sm table-hover table-striped dt-responsive nowrap" id="tbl_dashboard" style="width: 100%">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>JO No.</th>
-                        <th>Item Code</th>
-                        <th>Description</th>
-                        <th>Divison</th>
-                        <th>Plant</th>
-                        <th>Process</th>
-                        <th>Material</th>
-                        <th>Heat No.</th>
-                        <th>Lot No.</th>
-                        <th>Order Qty.</th>
-                        <th>Sched Qty.</th>                        
-                        <th>Status</th>
+            
+                <table class="table table-sm table-hover table-bordered table-striped nowrap" id="tbl_dashboard" style="width: 100%">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>JO No.</th>
+                            <th>Item Code</th>
+                            <th>Description</th>
+                            <th>Divison</th>
+                            <th>Plant</th>
+                            <th>Process</th>
+                            <th>Material</th>
+                            <th>Heat No.</th>
+                            <th>Lot No.</th>
+                            <th>Sched Qty.</th> 
+                            <th>Unprocess</th>
+                            <th>Good</th>
+                            <th>Scrap</th>
+                            <th>Total Ouput</th>
+                            <th>Order Qty.</th>
+                            <th>Total Issued Qty</th>
+                            <th>Issued Qty</th> 
+                            <th>End Date</th>                      
+                            <th>Status</th>
 
-                    </tr>
-                </thead>
-                <tbody id="tbl_dashboard_body"></tbody>
-            </table>
+                        </tr>
+                    </thead>
+                    <tbody id="tbl_dashboard_body"></tbody>
+                </table>
+            
+            
         </div>
     </div>
 
@@ -74,6 +84,7 @@
 
     <div class="row" id="chart"></div>
 </section>
+<?php echo $__env->make('includes.modals.system-modals', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startPush('scripts'); ?>
