@@ -59,6 +59,7 @@ foreach ($user_accesses as $user_access){
                             <label for="material_heat_no" class="col-sm-4 control-label mt-5">Material Heat No:</label>
                             <div class="col-sm-8">
                                 <input type="text" class="form-control form-control-sm validate clear input" id="material_heat_no" name="material_heat_no">
+                                <input type="hidden" class="clear input" id="inv_id" name="inv_id">
                                 <div id="material_heat_no_feedback"></div>
                             </div>
                         </div>

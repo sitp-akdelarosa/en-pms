@@ -170,6 +170,7 @@ $(function () {
             totalsched_qty: $(this).attr('data-sched_qty'),
             material_used: "",
             material_heat_no: "",
+            uom: "",
             lot_no: ""
           });
         } else {
@@ -201,6 +202,7 @@ $(function () {
             totalsched_qty: x.totalsched_qty,
             material_used: x.material_used,
             material_heat_no: x.material_heat_no,
+            uom: x.uom,
             lot_no: x.lot_no
           });
           counts++;
@@ -223,7 +225,7 @@ $(function () {
       }
 
       makeJODetailsList(joDetails_arr);
-      getMaterialHeatNo();
+      getMaterialHeatNo($('#rmw_no').val());
     } else {
       msg("Not Allowed!!!", "warning");
       $('.check_item_prod_sum').prop('checked', false);
@@ -276,7 +278,7 @@ $(function () {
       counts--;
     }
 
-    getMaterialHeatNo();
+    getMaterialHeatNo($('#rmw_no').val());
     makeJODetailsList(joDetails_arr);
 
     if ($('#tbl_jo_details_body > tr').length < 1) {
@@ -290,14 +292,17 @@ $(function () {
     }
   });
   $('#tbl_jo_details_body').on('change', '.material_heat_no', function () {
+    $('.loadingOverlay').show();
     p_pcode = $(this).attr('data-pcode');
     var rmw_issued_qty = $(this).find('option:selected').attr('data-rmw_issued_qty');
+    var uom = $(this).find('option:selected').attr('data-uom');
     var material_heat_no = $(this).val();
 
     if ($('#is_same').is(':checked')) {
       $.each(joDetails_arr, function (i, x) {
         $('#material_heat_no_' + x.count).val(material_heat_no);
         $('#rmw_issued_qty_' + x.count).val(rmw_issued_qty);
+        $('#uom_' + x.count).val(uom);
         getMaterialused(material_heat_no, x.count);
 
         if ($('#sched_qty_' + x.count).val() > rmw_issued_qty) {
@@ -351,6 +356,7 @@ $(function () {
     $('#btn_save').show();
     $('#btn_edit').hide();
     $('#btn_cancel').show();
+    $('.loadingOverlay').hide();
   });
   $('#tbl_jo_details_body').on('change', '.material_used', function () {
     var standard_material_used;
@@ -544,8 +550,8 @@ $(function () {
       }
     });
   });
-  $('#rmw_no').on('change', function () {
-    getMaterialHeatNo();
+  $('#btn_search_withdrawal').on('click', function () {
+    getMaterialHeatNo($('#rmw_no').val());
   });
 });
 
@@ -558,6 +564,7 @@ function initializePage() {
   checkAllCheckboxesInTable('.check-all_prod_sum', '.check_item');
   makeJODetailsList(joDetails_arr);
   getTravelSheet();
+  $('.material_heat_no').prop('disabled', true);
   $('#btn_save').hide();
   $('#btn_edit').show();
   $('#btn_cancel').hide();
@@ -725,6 +732,12 @@ function makeJODetailsList(arr) {
       orderable: false
     }, {
       data: function data(x) {
+        return "<input type='text' id='uom_" + x.count + "' class='form-control form-control-sm' style='width:50%;' name='uom[]' value='" + x.uom + "' readonly>";
+      },
+      searchable: true,
+      orderable: false
+    }, {
+      data: function data(x) {
         return "<select id='material_used_" + x.count + "' data-count='" + x.count + "' data-pcode='" + x.prod_code + "' class='form-control form-control-sm material_used' name='material_used[]'>" + "<option class='" + x.material_used + "'>" + x.material_used + "</option>" + "</select><div id='material_used_" + x.count + "_feedback'></div>";
       },
       searchable: false,
@@ -753,28 +766,34 @@ function makeJODetailsList(arr) {
       "width": "10%",
       "targets": 2
     }, {
-      "width": "10%",
+      "width": "15%",
       "targets": 3
     }, {
-      "width": "3%",
+      "width": "10%",
       "targets": 4
     }, {
-      "width": "3%",
+      "width": "15%",
       "targets": 5
     }, {
-      "width": "5%",
+      "width": "8%",
       "targets": 6
     }, {
-      "width": "25%",
+      "width": "17%",
       "targets": 7
     }, {
       "width": "10%",
       "targets": 8
-    }]
+    }, {
+      "width": "10%",
+      "targets": 9
+    }],
+    initCompelete: function initCompelete() {
+      $('.material_heat_no').prop('disabled', true);
+    }
   });
 }
 
-function getMaterialHeatNo() {
+function getMaterialHeatNo(withdrawal_slip_no) {
   var op = "<option value=''></option>";
   $.each(joDetails_arr, function (i, x) {
     $('.material_heat_no').html(op);
@@ -785,18 +804,42 @@ function getMaterialHeatNo() {
     dataType: 'JSON',
     data: {
       _token: token,
-      rmw_no: $('#rmw_no').val()
+      rmw_no: withdrawal_slip_no
     },
     success: function success(returnData) {
-      for (var y = 0; y < joDetails_arr.length; y++) {
-        for (var x = 0; x < returnData.length; x++) {
-          op = "<option value='" + returnData[x].heat_no + "' data-rmw_issued_qty='" + returnData[x].rmw_issued_qty + "'>" + returnData[x].heat_no + "</option>";
-          $('#material_heat_no_' + y).append(op);
+      var materials = returnData.materials;
+
+      if (materials.length > 0) {
+        if ($('#rmw_no').val() == "" && returnData.msg == "") {
+          $('.material_heat_no').prop('disabled', true);
+          $('#rmw_no').prop('readonly', false);
         }
 
+        if ($('#rmw_no').val() !== "" && returnData.msg == "") {
+          $('#rmw_no').prop('readonly', true);
+          $('.material_heat_no').prop('disabled', false);
+        }
+      } else {
+        $('.material_heat_no').prop('disabled', true);
+        $('#rmw_no').prop('readonly', false);
+
+        if ($('#rmw_no').val() !== "" && returnData.msg !== "") {
+          $('#rmw_no').prop('readonly', false);
+          $('.material_heat_no').prop('disabled', true);
+          msg(returnData.msg, returnData.status);
+        }
+      }
+
+      for (var y = 0; y < joDetails_arr.length; y++) {
+        for (var x = 0; x < materials.length; x++) {
+          op += "<option value='" + materials[x].heat_no + "' data-rmw_issued_qty='" + materials[x].rmw_issued_qty + "' data-uom='" + materials[x].uom + "'>" + materials[x].heat_no + "</option>";
+        }
+
+        $('#material_heat_no_' + y).html(op);
         var materialval = joDetails_arr[y].material_heat_no != "" ? joDetails_arr[y].material_heat_no : "";
         $('#material_heat_no_' + y).val(materialval);
         getMaterialused(materialval, y);
+        op = "<option value=''></option>";
       }
     },
     error: function error(xhr, textStatus, thrownError) {
@@ -819,22 +862,25 @@ function getMaterialHeatNoEdit() {
       // $.each(MainData, function(i, x) {
       //     console.log(x);
       // });
+      var materials = returnData.materials;
       console.log(MainData);
 
       for (var y = 0; y < MainData.length; y++) {
         //op = "<option value=''></option>";
         //$('#material_heat_no_'+y).val(MainData[y].material_heat_no);
-        for (var x = 0; x < returnData.length; x++) {
-          if (MainData[y].material_heat_no == returnData[x].heat_no) {
-            op += "<option value='" + returnData[x].heat_no + "' data-rmw_issued_qty='" + returnData[x].rmw_issued_qty + "' selected>" + returnData[x].heat_no + "</option>";
+        for (var x = 0; x < materials.length; x++) {
+          if (MainData[y].material_heat_no == materials[x].heat_no) {
+            op += "<option value='" + materials[x].heat_no + "' data-uom='" + materials[x].uom + "' data-rmw_issued_qty='" + materials[x].rmw_issued_qty + "' selected>" + materials[x].heat_no + "</option>";
           } else {
-            op += "<option value='" + returnData[x].heat_no + "' data-rmw_issued_qty='" + returnData[x].rmw_issued_qty + "'>" + returnData[x].heat_no + "</option>";
+            op += "<option value='" + materials[x].heat_no + "' data-uom='" + materials[x].uom + "' data-rmw_issued_qty='" + materials[x].rmw_issued_qty + "'>" + materials[x].heat_no + "</option>";
           }
         }
 
         $('#material_heat_no_' + y).html(op);
         var rmw_issued_qty = $('#material_heat_no_' + y).find('option:selected').attr('data-rmw_issued_qty');
+        var uom = $('#material_heat_no_' + y).find('option:selected').attr('data-uom');
         $('#rmw_issued_qty_' + y).val(rmw_issued_qty);
+        $('#uom' + y).val(uom);
         getMaterialusedEdit(MainData[y].material_heat_no, y);
       }
     },
@@ -1008,6 +1054,9 @@ function SaveJODetails() {
       material_heat_no: $('.material_heat_no').map(function () {
         return $(this).val();
       }).get(),
+      uom: $('.uom').map(function () {
+        return $(this).val();
+      }).get(),
       lot_no: $('input[name="lot_no[]"]').map(function () {
         return $(this).val();
       }).get(),
@@ -1040,6 +1089,7 @@ function SaveJODetails() {
   }).fail(function (xhr, textStatus, errorThrown) {
     msg(errorThrown, textStatus);
   }).always(function (xhr, textStatus) {
+    $('#rmw_no').prop('readonly', false);
     $('.loadingOverlay').hide();
   });
 }
@@ -1116,6 +1166,7 @@ function getTables() {
           totalsched_qty: 0,
           material_used: returnData[x].material_used,
           material_heat_no: returnData[x].material_heat_no,
+          uom: returnData[x].uom,
           lot_no: returnData[x].lot_no
         });
         totalsched += returnData[x].sched_qty;
@@ -1158,6 +1209,7 @@ function getTablesAll() {
           sched_qty: returnData[x].sched_qty,
           material_used: returnData[x].material_used,
           material_heat_no: returnData[x].material_heat_no,
+          uom: returnData[x].uom,
           lot_no: returnData[x].lot_no
         });
       }
@@ -1276,7 +1328,7 @@ function clear() {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\xampp\htdocs\en-pms\resources\assets\js\pages\ppc\transactions\production-schedule\production-schedule.js */"./resources/assets/js/pages/ppc/transactions/production-schedule/production-schedule.js");
+module.exports = __webpack_require__(/*! C:\laragon\www\en-pms\resources\assets\js\pages\ppc\transactions\production-schedule\production-schedule.js */"./resources/assets/js/pages/ppc/transactions/production-schedule/production-schedule.js");
 
 
 /***/ })

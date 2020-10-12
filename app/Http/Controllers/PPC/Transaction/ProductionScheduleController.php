@@ -206,6 +206,7 @@ class ProductionScheduleController extends Controller
                     'issued_qty' => 0,
                     'material_used' => $req->material_used[$key],
                     'material_heat_no' => $req->material_heat_no[$key],
+                    'uom' => $req->uom[$key],
                     'lot_no' => $req->lot_no[$key],
                     'status' => 0,
                     'create_user' => Auth::user()->id,
@@ -253,6 +254,7 @@ class ProductionScheduleController extends Controller
                         'sched_qty' => $req->sched_qty[$key],
                         'material_used' => $req->material_used[$key],
                         'material_heat_no' => $req->material_heat_no[$key],
+                        'uom' => $req->uom[$key],
                         'lot_no' => $req->lot_no[$key],
                         'create_user' => Auth::user()->id,
                         'update_user' => Auth::user()->id,
@@ -269,6 +271,7 @@ class ProductionScheduleController extends Controller
                         'sched_qty' => $req->sched_qty[$key],
                         'material_used' => $req->material_used[$key],
                         'material_heat_no' => $req->material_heat_no[$key],
+                        'uom' => $req->uom[$key],
                         'lot_no' => $req->lot_no[$key],
                         'create_user' => Auth::user()->id,
                         'update_user' => Auth::user()->id,
@@ -332,6 +335,7 @@ class ProductionScheduleController extends Controller
                     'sched_qty' => $req->sched_qty[$key],
                     'material_used' => $req->material_used[$key],
                     'material_heat_no' => $req->material_heat_no[$key],
+                    'uom' => $req->uom[$key],
                     'lot_no' => $req->lot_no[$key],
                     'create_user' => Auth::user()->id,
                     'update_user' => Auth::user()->id,
@@ -349,6 +353,7 @@ class ProductionScheduleController extends Controller
                 'issued_qty' => 0,
                 'material_used' => $req->material_used[0],
                 'material_heat_no' => $req->material_heat_no[0],
+                'uom' => $req->uom[0],
                 'lot_no' => $req->lot_no[0],
                 'status' => 0,
                 'update_user' => Auth::user()->id,
@@ -383,6 +388,7 @@ class ProductionScheduleController extends Controller
                                     d.sched_qty as sched_qty,
                                     d.material_used as material_used,
                                     d.material_heat_no as material_heat_no,
+                                    d.uom,
                                     d.lot_no as lot_no,
                                     d.create_user as create_user,
                                     d.created_at as created_at,
@@ -404,6 +410,7 @@ class ProductionScheduleController extends Controller
                                     d.sched_qty,
                                     d.material_used,
                                     d.material_heat_no,
+                                    d.uom,
                                     d.lot_no,
                                     d.create_user,
                                     d.created_at,
@@ -428,6 +435,7 @@ class ProductionScheduleController extends Controller
                 DB::raw('d.sched_qty as sched_qty'),
                 DB::raw('d.material_used as material_used'),
                 DB::raw('d.material_heat_no as material_heat_no'),
+                DB::raw('d.uom as uom'),
                 DB::raw('d.lot_no as lot_no'))
             ->where('pl.user_id', Auth::user()->id)
             ->whereIn('ts.status', array(1, 0))
@@ -438,6 +446,7 @@ class ProductionScheduleController extends Controller
                 'd.sched_qty',
                 'd.material_used',
                 'd.material_heat_no',
+                'd.uom',
                 'd.lot_no')
             ->get();
         return response()->json($details);
@@ -460,6 +469,12 @@ class ProductionScheduleController extends Controller
 
     public function getMaterialHeatNo(Request $req)
     {
+        $data = [
+            'msg' => 'No items withdrawed for Withdrawal Slip # '.$req->rmw_no.'.',
+            'status' => 'failed',
+            'materials' => []
+        ];
+
         $rmw = DB::table('ppc_raw_material_withdrawal_infos')
                     ->select('id')->where('trans_no',$req->rmw_no)->first();
 
@@ -469,7 +484,10 @@ class ProductionScheduleController extends Controller
             $with_rmw = " AND rmw.trans_id = ".$rmw->id;
         }
 
-        $inv = DB::select("SELECT pui.heat_no as heat_no,
+        $heat_no = [];
+
+        $materials = DB::select("SELECT pui.heat_no as heat_no,
+                                    ifnull(rmw.issued_uom,'') as uom,
                                     ifnull(rmw.issued_qty,0) as rmw_issued_qty
                             FROM ppc_update_inventories as pui
                             left join admin_assign_production_lines as apl on apl.product_line = pui.materials_type
@@ -478,7 +496,38 @@ class ProductionScheduleController extends Controller
                             group by pui.heat_no,
                                     rmw.issued_qty
                             ORDER BY pui.id desc");
-        return response()->json($inv);
+
+        if ($this->_helper->check_if_exists($materials) > 0) {
+            foreach ($materials as $key => $material) {
+                $exists = PpcJoDetails::where('material_heat_no', $material->heat_no)
+                                        ->count();
+                if ($exists < 1) {
+                    array_push($heat_no,[
+                        'heat_no' => $material->heat_no,
+                        'uom' => $material->uom, 
+                        'rmw_issued_qty' => $material->rmw_issued_qty
+                    ]);
+                }
+            }
+
+            $data = [
+                'msg' => '',
+                'status' => '',
+                'materials' => $heat_no
+            ];
+
+            if (count($heat_no) < 1) {
+                $data = [
+                    'msg' => 'All of Heat Number in Withdrawal Slip # '.$req->rmw_no.' is already scheduled.',
+                    'status' => 'failed',
+                    'materials' => $heat_no
+                ];
+            }
+
+            
+        }
+        
+        return response()->json($data);
     }
 
     public function getTravel_sheet(Request $req)

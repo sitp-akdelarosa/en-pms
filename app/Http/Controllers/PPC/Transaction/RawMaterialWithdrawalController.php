@@ -13,6 +13,7 @@ use App\PpcRawMaterialWithdrawalInfo;
 use App\PpcRawMaterialWithdrawalDetails;
 use App\PpcMaterialCode;
 use App\PpcJoDetails;
+use App\Inventory;
 use DataTables;
 use DB;
 
@@ -234,8 +235,11 @@ class RawMaterialWithdrawalController extends Controller
             $info->save();
 
             foreach ($req->ids as $key => $detailid) {
-                PpcUpdateInventory::where('heat_no',$req->material_heat_no[$key])
-                                    ->decrement('quantity',(int)$req->issued_qty[$key]);
+                // PpcUpdateInventory::where('heat_no',$req->material_heat_no[$key])
+                //                     ->decrement('quantity',(int)$req->issued_qty[$key]);
+
+                Inventory::where('id',$req->inv_id[$key])
+                        ->decrement('quantity',(int)$req->issued_qty[$key]);
 
                 array_push($params, [
                     'trans_id' => $info->id,
@@ -292,8 +296,12 @@ class RawMaterialWithdrawalController extends Controller
             $inv_qty = 0;
             foreach ($req->ids as $key => $detailid) {
                 
-                PpcUpdateInventory::where('heat_no' , $req->material_heat_no[$key])
-                                ->decrement('quantity',(int)$req->issued_qty[$key]);
+                // PpcUpdateInventory::where('heat_no' , $req->material_heat_no[$key])
+                //                 ->decrement('quantity',(int)$req->issued_qty[$key]);
+
+                Inventory::where('id',$req->inv_id[$key])
+                        ->decrement('quantity',(int)$req->issued_qty[$key]);
+
                 $sc_no = $req->sc_no[$key];
                 if($req->sc_no[$key] == null || $req->sc_no[$key] == 'null'){
                     $sc_no = '';
@@ -396,17 +404,20 @@ class RawMaterialWithdrawalController extends Controller
     public function material_details(Request $req)
     {
         $materials = DB::table('ppc_update_inventories as pui')
-                        ->leftjoin('admin_assign_production_lines as apl', 'apl.product_line', '=', 'pui.materials_type')
+                        ->leftJoin('admin_assign_production_lines as apl', 'apl.product_line', '=', 'pui.materials_type')
+                        ->leftJoin('inventories as i','pui.id','=','i.received_id')
                         ->select([
+                            'i.id as inv_id',
                             'pui.materials_code as materials_code',
                             'pui.item as item',
                             'pui.alloy as alloy',
                             'pui.schedule as schedule',
                             'pui.size as size',
+                            'i.quantity as current_stock',
                             DB::raw("pui.quantity + '".$req->issued_qty."' as quantity ")
                         ])
                         ->where('apl.user_id' ,Auth::user()->id)
-                        ->where('heat_no',$req->material_heat_no)
+                        ->where('pui.heat_no',$req->material_heat_no)
                         ->first();
 
         return response()->json($materials);

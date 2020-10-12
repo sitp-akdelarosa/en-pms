@@ -506,6 +506,7 @@ function GetMateriialsNotExisting(arr) {
 }
 
 function getInventory(with_zero) {
+  $('.loadingOverlay').show();
   $.ajax({
     url: materialDataTable,
     type: 'GET',
@@ -517,6 +518,8 @@ function getInventory(with_zero) {
     InventoryTable(data);
   }).fail(function (xhr, textStatus, errorThrown) {
     console.log("error");
+  }).always(function () {
+    $('.loadingOverlay').hide();
   });
 }
 
@@ -530,9 +533,10 @@ function InventoryTable(arr) {
   $('#tbl_materials').dataTable({
     data: arr,
     order: [[14, 'asc']],
+    scrollX: true,
     columns: [{
       data: function data(_data) {
-        return "<button type='button' name='edit-mainEdit' class='btn btn-sm btn-primary edit-mainEdit'" + "id='editinventory'" + "data-id= '" + _data.id + "' " + "data-materials_type='" + _data.materials_type + "' " + "data-materials_code='" + _data.materials_code + "'" + "data-description='" + _data.description + "'" + "data-item='" + _data.item + "'" + "data-alloy='" + _data.alloy + "'" + "data-schedule='" + _data.schedule + "'" + "data-size='" + _data.size + "'" + "data-quantity='" + _data.quantity + "'" + "data-uom='" + _data.uom + "'" + "data-heat_no='" + _data.heat_no + "' " + "data-invoice_no='" + _data.invoice_no + "'" + "data-received_date='" + _data.received_date + "'" + "data-width='" + _data.width + "' " + "data-length='" + _data.length + "' " + "data-supplier_heat_no='" + _data.supplier_heat_no + "' " + "data-supplier='" + _data.supplier + "'>" + "<i class='fa fa-edit'></i> " + "</button>";
+        return "<button type='button' name='edit-mainEdit' class='btn btn-sm btn-primary edit-mainEdit'" + "id='editinventory'" + "data-id= '" + _data.id + "' " + "data-materials_type='" + _data.materials_type + "' " + "data-materials_code='" + _data.materials_code + "'" + "data-description='" + _data.description + "'" + "data-item='" + _data.item + "'" + "data-alloy='" + _data.alloy + "'" + "data-schedule='" + _data.schedule + "'" + "data-size='" + _data.size + "'" + "data-quantity='" + _data.quantity + "'" + "data-current_stock='" + _data.current_stock + "'" + "data-uom='" + _data.uom + "'" + "data-heat_no='" + _data.heat_no + "' " + "data-invoice_no='" + _data.invoice_no + "'" + "data-received_date='" + _data.received_date + "'" + "data-width='" + _data.width + "' " + "data-length='" + _data.length + "' " + "data-supplier_heat_no='" + _data.supplier_heat_no + "' " + "data-supplier='" + _data.supplier + "'>" + "<i class='fa fa-edit'></i> " + "</button>";
       },
       searchable: false,
       orderable: false
@@ -575,6 +579,8 @@ function InventoryTable(arr) {
     {
       data: 'quantity'
     }, {
+      data: 'current_stock'
+    }, {
       data: 'uom'
     }, {
       data: 'heat_no'
@@ -592,6 +598,9 @@ function InventoryTable(arr) {
         $(row).css('background-color', '#ff6266');
         $(row).css('color', '#fff');
       }
+    },
+    initComplete: function initComplete() {
+      $('.loadingOverlay').hide();
     }
   });
 }
@@ -605,7 +614,7 @@ function InventoryTable(arr) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\xampp\htdocs\en-pms\resources\assets\js\pages\ppc\transactions\update-inventory\update-inventory.js */"./resources/assets/js/pages/ppc/transactions/update-inventory/update-inventory.js");
+module.exports = __webpack_require__(/*! C:\laragon\www\en-pms\resources\assets\js\pages\ppc\transactions\update-inventory\update-inventory.js */"./resources/assets/js/pages/ppc/transactions/update-inventory/update-inventory.js");
 
 
 /***/ })

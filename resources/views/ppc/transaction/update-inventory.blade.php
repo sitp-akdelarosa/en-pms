@@ -48,7 +48,7 @@ foreach ($user_accesses as $user_access){
             <div class="box">
                 <div class="box-body">
                     <div class="table-responsive">
-                        <table class="table table-sm table-hover table-striped dt-responsive nowrap mb-10" id="tbl_materials" style="width: 100%">
+                        <table class="table table-sm table-hover table-striped nowrap mb-10" id="tbl_materials" style="width: 100%">
                             <thead class="thead-dark">
                                 <tr>
                                     <th></th>
@@ -62,6 +62,7 @@ foreach ($user_accesses as $user_access){
                                     <th>Width</th>
                                     <th>Length</th>
                                     <th>Qty</th>
+                                    <th>Current Stock</th>
                                     <th>UOM</th>
                                     <th>Heat No.</th>
                                     <th>Invoice No.</th>

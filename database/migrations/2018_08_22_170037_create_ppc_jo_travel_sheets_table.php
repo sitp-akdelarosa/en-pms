@@ -24,6 +24,7 @@ class CreatePpcJoTravelSheetsTable extends Migration
             $table->double('issued_qty',20,2);
             $table->string('material_used');
             $table->string('material_heat_no');
+            $table->string('uom');
             $table->string('lot_no');
             $table->integer('status')->default(0);
             $table->integer('create_user')->default(0);

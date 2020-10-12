@@ -427,6 +427,7 @@ function GetMateriialsNotExisting(arr) {
 }
 
 function getInventory(with_zero) {
+	$('.loadingOverlay').show();
 	$.ajax({
 		url: materialDataTable,
 		type: 'GET',
@@ -438,6 +439,8 @@ function getInventory(with_zero) {
 		InventoryTable(data);
 	}).fail(function (xhr, textStatus, errorThrown) {
 		console.log("error");
+	}).always( function() {
+		$('.loadingOverlay').hide();
 	});
 }
 
@@ -451,6 +454,7 @@ function InventoryTable(arr) {
 	$('#tbl_materials').dataTable({
 		data: arr,
 		order: [[14,'asc']],
+		scrollX: true,
 		columns: [
 			{
 				data: function (data) {
@@ -465,6 +469,7 @@ function InventoryTable(arr) {
 						"data-schedule='" + data.schedule + "'" +
 						"data-size='" + data.size + "'" +
 						"data-quantity='" + data.quantity + "'" +
+						"data-current_stock='" + data.current_stock + "'" +
 						"data-uom='" + data.uom + "'" +
 						"data-heat_no='" + data.heat_no + "' " +
 						"data-invoice_no='" + data.invoice_no + "'" +
@@ -505,6 +510,7 @@ function InventoryTable(arr) {
 			// 	}
 			// },
 			{ data: 'quantity' },
+			{ data: 'current_stock' },
 			{ data: 'uom' },
 			{ data: 'heat_no' },
 			{ data: 'invoice_no' },
@@ -517,6 +523,9 @@ function InventoryTable(arr) {
 				$(row).css('background-color', '#ff6266');
 				$(row).css('color', '#fff');
 			}
+		},
+		initComplete: function() {
+			$('.loadingOverlay').hide();
 		}
 	});
 }

@@ -101,6 +101,11 @@ foreach ($user_accesses as $user_access){
                                 <span class="input-group-text">Withdrawal Number</span>
                             </div>
                             <input type="text" class="form-control clear" name="rmw_no" id="rmw_no">
+                            <div class="input-group-append">
+                                <button class="btn btn-sm bg-blue" id="btn_search_withdrawal">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -113,12 +118,13 @@ foreach ($user_accesses as $user_access){
                                 <thead class="thead-dark">
                                     <tr>
                                         <th width="5%"></th>
-                                        <th width="10%">SC No.</th>
+                                        <th width="5%">SC No.</th>
                                         <th width="10%">Product Code</th>
                                         <th width="15%">Description</th>
-                                        <th width="15%">Back Order Qty.</th>
+                                        <th width="10%">Back Order Qty.</th>
                                         <th width="15%">Material Heat No.</th>
-                                        <th width="10%">Material Used</th>
+                                        <th width="8%">UoM</th>
+                                        <th width="17%">Material Used</th>
                                         <th width="10%">Lot No.</th>
                                         <th width="10%">Sched. Qty.</th>
                                     </tr>

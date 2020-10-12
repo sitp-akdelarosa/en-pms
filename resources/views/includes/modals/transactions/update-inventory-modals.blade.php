@@ -47,7 +47,7 @@
 
                             <div class="form-group row">
                                 <div class="col-sm-12">
-                                    <textarea class="form-control validate" name="description" id="description" style="resize: none" placeholder="Description" readonly></textarea>
+                                    <textarea class="form-control validate clear" name="description" id="description" style="resize: none" placeholder="Description" readonly></textarea>
                                     <div id="description_feedback"></div>
                                 </div>
                             </div>

@@ -245,63 +245,118 @@ class UpdateInventoryController extends Controller
                     // ]);
                 } else {
                     $countAdded++;
-                    PpcUpdateInventory::where('materials_code',$field['materialscode'])
-                                        ->where('heat_no',$field['heatnumber'])
-                                        ->delete();
+                    $received_id = 0;
+
+                    $received_items = PpcUpdateInventory::where('materials_code',$field['materialscode'])
+                                                        ->where('heat_no',$field['heatnumber'])
+                                                        ->select('id')
+                                                        ->first();
+
                     $PpcMaterialCode = PpcMaterialCode::select('material_type',
                                                                'code_description',
                                                                'item',
                                                                'alloy',
                                                                'schedule',
                                                                'size' )
-                                                        ->where('material_code',$field['materialscode'])->first();
-                    $received = PpcUpdateInventory::insertGetId([
-                                    'materials_type' =>   $PpcMaterialCode->material_type,
+                                                        ->where('material_code',$field['materialscode'])
+                                                        ->first();
+                    
+                    if ($this->_helper->check_if_exists($received_items) > 0) {
+                        PpcUpdateInventory::where('id', $received_items->id)
+                                        ->update([
+                                            'materials_type' =>   $PpcMaterialCode->material_type,
+                                            'materials_code' => strtoupper($field['materialscode']),
+                                            'description' =>  $PpcMaterialCode->code_description,
+                                            'item' =>  $PpcMaterialCode->item,
+                                            'alloy' =>  $PpcMaterialCode->alloy,
+                                            'schedule' => $PpcMaterialCode->schedule,
+                                            'size' =>  $PpcMaterialCode->size,
+                                            'quantity' => $field['quantity'],
+                                            'uom' => $uom,
+                                            'heat_no' => strtoupper($field['heatnumber']),
+                                            'invoice_no' => strtoupper($field['invoiceno']),
+                                            'received_date' => DATE_FORMAT($field['receiveddate'], 'Y-m-d'),
+                                            'supplier' => strtoupper($field['supplier']),
+                                            'width' => (isset($field['width']))? strtoupper($field['width']): 'N/A',
+                                            'length' => (isset($field['length']))? strtoupper($field['length']): 'N/A',
+                                            'supplier_heat_no' => (isset($field['supplierheatno']))? strtoupper($field['supplierheatno']): 'N/A',
+                                            'updated_at' => date("Y-m-d H:i:s"),
+                                            'update_user' => Auth::user()->id
+                                        ]);
+                        Inventory::where('received_id',$received_items->id)
+                                ->update([
+                                    'materials_type' => $PpcMaterialCode->material_type,
                                     'materials_code' => strtoupper($field['materialscode']),
                                     'description' =>  $PpcMaterialCode->code_description,
                                     'item' =>  $PpcMaterialCode->item,
                                     'alloy' =>  $PpcMaterialCode->alloy,
                                     'schedule' => $PpcMaterialCode->schedule,
                                     'size' =>  $PpcMaterialCode->size,
-                                    'quantity' => $field['quantity'],
+                                    'width' => (isset($field['width']))? strtoupper($field['width']): 'N/A',
+                                    'length' => (isset($field['length']))? strtoupper($field['length']): 'N/A',
+                                    'orig_quantity' => $field['quantity'],
                                     'uom' => $uom,
                                     'heat_no' => strtoupper($field['heatnumber']),
                                     'invoice_no' => strtoupper($field['invoiceno']),
                                     'received_date' => DATE_FORMAT($field['receiveddate'], 'Y-m-d'),
                                     'supplier' => strtoupper($field['supplier']),
-                                    'width' => (isset($field['width']))? strtoupper($field['width']): 'N/A',
-                                    'length' => (isset($field['length']))? strtoupper($field['length']): 'N/A',
                                     'supplier_heat_no' => (isset($field['supplierheatno']))? strtoupper($field['supplierheatno']): 'N/A',
-                                    'created_at' => date("Y-m-d H:i:s"),
                                     'updated_at' => date("Y-m-d H:i:s"),
-                                    'create_user' => Auth::user()->id,
                                     'update_user' => Auth::user()->id
                                 ]);
+                    } else {
+                        
 
-                    Inventory::insert([
-                        'materials_type' =>   $PpcMaterialCode->material_type,
-                        'materials_code' => strtoupper($field['materialscode']),
-                        'description' =>  $PpcMaterialCode->code_description,
-                        'item' =>  $PpcMaterialCode->item,
-                        'alloy' =>  $PpcMaterialCode->alloy,
-                        'schedule' => $PpcMaterialCode->schedule,
-                        'size' =>  $PpcMaterialCode->size,
-                        'width' => (isset($field['width']))? strtoupper($field['width']): 'N/A',
-                        'length' => (isset($field['length']))? strtoupper($field['length']): 'N/A',
-                        'orig_quantity' => $field['quantity'],
-                        'quantity' => $field['quantity'],
-                        'uom' => $uom,
-                        'heat_no' => strtoupper($field['heatnumber']),
-                        'invoice_no' => strtoupper($field['invoiceno']),
-                        'received_date' => DATE_FORMAT($field['receiveddate'], 'Y-m-d'),
-                        'supplier' => strtoupper($field['supplier']),
-                        'supplier_heat_no' => (isset($field['supplierheatno']))? strtoupper($field['supplierheatno']): 'N/A',
-                        'received_id' => $received->id,
-                        'created_at' => date("Y-m-d H:i:s"),
-                        'updated_at' => date("Y-m-d H:i:s"),
-                        'create_user' => Auth::user()->id,
-                        'update_user' => Auth::user()->id
-                    ]);
+                        $received_id = PpcUpdateInventory::insertGetId([
+                                        'materials_type' =>   $PpcMaterialCode->material_type,
+                                        'materials_code' => strtoupper($field['materialscode']),
+                                        'description' =>  $PpcMaterialCode->code_description,
+                                        'item' =>  $PpcMaterialCode->item,
+                                        'alloy' =>  $PpcMaterialCode->alloy,
+                                        'schedule' => $PpcMaterialCode->schedule,
+                                        'size' =>  $PpcMaterialCode->size,
+                                        'quantity' => $field['quantity'],
+                                        'uom' => $uom,
+                                        'heat_no' => strtoupper($field['heatnumber']),
+                                        'invoice_no' => strtoupper($field['invoiceno']),
+                                        'received_date' => DATE_FORMAT($field['receiveddate'], 'Y-m-d'),
+                                        'supplier' => strtoupper($field['supplier']),
+                                        'width' => (isset($field['width']))? strtoupper($field['width']): 'N/A',
+                                        'length' => (isset($field['length']))? strtoupper($field['length']): 'N/A',
+                                        'supplier_heat_no' => (isset($field['supplierheatno']))? strtoupper($field['supplierheatno']): 'N/A',
+                                        'created_at' => date("Y-m-d H:i:s"),
+                                        'updated_at' => date("Y-m-d H:i:s"),
+                                        'create_user' => Auth::user()->id,
+                                        'update_user' => Auth::user()->id
+                                    ]);
+
+                        Inventory::insert([
+                            'materials_type' => $PpcMaterialCode->material_type,
+                            'materials_code' => strtoupper($field['materialscode']),
+                            'description' =>  $PpcMaterialCode->code_description,
+                            'item' =>  $PpcMaterialCode->item,
+                            'alloy' =>  $PpcMaterialCode->alloy,
+                            'schedule' => $PpcMaterialCode->schedule,
+                            'size' =>  $PpcMaterialCode->size,
+                            'width' => (isset($field['width']))? strtoupper($field['width']): 'N/A',
+                            'length' => (isset($field['length']))? strtoupper($field['length']): 'N/A',
+                            'orig_quantity' => $field['quantity'],
+                            'quantity' => $field['quantity'],
+                            'uom' => $uom,
+                            'heat_no' => strtoupper($field['heatnumber']),
+                            'invoice_no' => strtoupper($field['invoiceno']),
+                            'received_date' => DATE_FORMAT($field['receiveddate'], 'Y-m-d'),
+                            'supplier' => strtoupper($field['supplier']),
+                            'supplier_heat_no' => (isset($field['supplierheatno']))? strtoupper($field['supplierheatno']): 'N/A',
+                            'received_id' => $received_id,
+                            'created_at' => date("Y-m-d H:i:s"),
+                            'updated_at' => date("Y-m-d H:i:s"),
+                            'create_user' => Auth::user()->id,
+                            'update_user' => Auth::user()->id
+                        ]);
+                    }
+
+                    
                 }
             }
                 
@@ -340,14 +395,15 @@ class UpdateInventoryController extends Controller
 
     public function materialDataTable(Request $req)
     {
-        $with_zero = "and quantity > 0";
+        $with_zero = "and i.quantity > 0";
 
         if ($req->with_zero > 0) {
             $with_zero = "";
         }
 
         $Datalist = DB::table('ppc_update_inventories as pui')
-                        ->leftjoin('admin_assign_production_lines as apl', 'apl.product_line', '=', 'pui.materials_type')
+                        ->leftJoin('admin_assign_production_lines as apl', 'apl.product_line', '=', 'pui.materials_type')
+                        ->leftJoin('inventories as i','pui.id','=','i.received_id')
                         ->select(
                             'pui.id as id',
                             'pui.materials_type as materials_type',
@@ -358,6 +414,7 @@ class UpdateInventoryController extends Controller
                             'pui.schedule as schedule',
                             'pui.size as size',
                             'pui.quantity as quantity',
+                            DB::raw("IFNULL(i.quantity,0) as current_stock"),
                             'pui.uom as uom',
                             'pui.heat_no as heat_no',
                             'pui.invoice_no as invoice_no',
@@ -370,6 +427,25 @@ class UpdateInventoryController extends Controller
                         )
                         ->whereRaw('1=1 '.$with_zero)
                         ->where('apl.user_id' ,Auth::user()->id)
+                        ->groupBy('pui.id',
+                                'pui.materials_type',
+                                'pui.materials_code',
+                                'pui.description',
+                                'pui.item',
+                                'pui.alloy',
+                                'pui.schedule',
+                                'pui.size',
+                                'pui.quantity',
+                                'i.quantity',
+                                'pui.uom',
+                                'pui.heat_no',
+                                'pui.invoice_no',
+                                'pui.received_date',
+                                'pui.supplier',
+                                DB::raw("IFNULL(pui.length,'')"),
+                                DB::raw("IFNULL(pui.width,'')"),
+                                DB::raw("CONCAT(pui.width,' ','x',' ',pui.length)"),
+                                DB::raw("IFNULL(pui.supplier_heat_no,'')"))
                         ->orderBy('pui.id','desc')->get();
                         
         return response()->json($Datalist);
@@ -416,7 +492,6 @@ class UpdateInventoryController extends Controller
                 $UP->received_date = $req->received_date;
                 $UP->supplier = strtoupper($req->supplier);
                 $UP->supplier_heat_no = strtoupper($req->supplier_heat_no);
-                $UP->create_user =  Auth::user()->id;
                 $UP->update_user =  Auth::user()->id;
 
                 if ($UP->update()) {
@@ -439,8 +514,8 @@ class UpdateInventoryController extends Controller
                                 'received_date' => $req->received_date,
                                 'supplier' => strtoupper($req->supplier),
                                 'supplier_heat_no' => strtoupper($req->supplier_heat_no),
-                                'create_user' =>  Auth::user()->id,
-                                'update_user' =>  Auth::user()->id
+                                'update_user' =>  Auth::user()->id,
+                                'updated_at' => date('Y-m-d H:i:s')
                             ]);
                 }
                 
@@ -471,26 +546,30 @@ class UpdateInventoryController extends Controller
 
             $UP = new PpcUpdateInventory();
 
-            $UP->materials_type = strtoupper($req->materials_type);
-            $UP->materials_code = strtoupper($req->materials_code);
-            $UP->description = strtoupper($req->description);
-            $UP->item = strtoupper($req->item);
-            $UP->alloy = strtoupper($req->alloy);
-            $UP->schedule = strtoupper($req->schedule);
-            $UP->size = strtoupper($req->size);
-            $UP->width = strtoupper($req->width);
-            $UP->length = strtoupper($req->length);
-            $UP->quantity = $req->quantity;
-            $UP->uom = strtoupper($req->uom);
-            $UP->heat_no = strtoupper($req->heat_no);
-            $UP->invoice_no = strtoupper($req->invoice_no);
-            $UP->received_date = $req->received_date;
-            $UP->supplier = strtoupper($req->supplier);
-            $UP->supplier_heat_no = strtoupper($req->supplier_heat_no);
-            $UP->create_user =  Auth::user()->id;
-            $UP->update_user =  Auth::user()->id;
+            $received = PpcUpdateInventory::insertGetId([
+                            'materials_type' => strtoupper($req->materials_type),
+                            'materials_code' => strtoupper($req->materials_code),
+                            'description' => strtoupper($req->description),
+                            'item' => strtoupper($req->item),
+                            'alloy' => strtoupper($req->alloy),
+                            'schedule' => strtoupper($req->schedule),
+                            'size' => strtoupper($req->size),
+                            'width' => strtoupper($req->width),
+                            'length' => strtoupper($req->length),
+                            'quantity' => $req->quantity,
+                            'uom' => strtoupper($req->uom),
+                            'heat_no' => strtoupper($req->heat_no),
+                            'invoice_no' => strtoupper($req->invoice_no),
+                            'received_date' => $req->received_date,
+                            'supplier' => strtoupper($req->supplier),
+                            'supplier_heat_no' => strtoupper($req->supplier_heat_no),
+                            'create_user' =>  Auth::user()->id,
+                            'update_user' =>  Auth::user()->id,
+                            'created_at' => date('Y-m-d H:i:s'),
+                            'updated_at' => date('Y-m-d H:i:s'),
+                        ]);
 
-            if ($UP->save()) {
+            if ($received) {
                 $inv = new Inventory();
 
                 $inv->materials_type = strtoupper($req->materials_type);
@@ -503,12 +582,14 @@ class UpdateInventoryController extends Controller
                 $inv->width = strtoupper($req->width);
                 $inv->length = strtoupper($req->length);
                 $inv->quantity = $req->quantity;
+                $inv->orig_quantity = $req->quantity;
                 $inv->uom = strtoupper($req->uom);
                 $inv->heat_no = strtoupper($req->heat_no);
                 $inv->invoice_no = strtoupper($req->invoice_no);
                 $inv->received_date = $req->received_date;
                 $inv->supplier = strtoupper($req->supplier);
                 $inv->supplier_heat_no = strtoupper($req->supplier_heat_no);
+                $inv->received_id = $received;
                 $inv->create_user =  Auth::user()->id;
                 $inv->update_user =  Auth::user()->id;
 

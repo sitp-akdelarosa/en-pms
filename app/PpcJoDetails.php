@@ -15,6 +15,7 @@ class PpcJoDetails extends Model
 					'sched_qty',
 					'material_used',
 					'material_heat_no',
+					'uom',
 					'lot_no',
 					'create_user',
 					'update_user',

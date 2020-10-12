@@ -24,6 +24,7 @@ class CreatePpcJoDetailsTable extends Migration
             $table->double('sched_qty',20,2);
             $table->string('material_used');
             $table->string('material_heat_no');
+            $table->string('uom');
             $table->string('lot_no');
             $table->integer('create_user')->default(0);
             $table->integer('update_user')->default(0);

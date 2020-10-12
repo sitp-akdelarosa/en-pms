@@ -304,7 +304,8 @@ class HelpersController extends Controller
         return response()->json($iso);
     }
     
-    public function getAllOperators(Request $term){
+    public function getAllOperators(Request $term)
+    {
         $res = PpcOperator::selectRaw("CONCAT(firstname,' ',lastname) AS fullname")->get();
         return response()->json($res);
     }

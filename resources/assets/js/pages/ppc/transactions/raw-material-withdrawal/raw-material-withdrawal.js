@@ -19,7 +19,7 @@ $(function () {
 		} else {
 			getMaterialDetails($(this).val(), 0);
 		}
-		getscnosuggest(undefined, $(this).val());
+		//getscnosuggest(undefined, $(this).val());
 	});
 
 	$('#btn_new').on('click', function () {
@@ -85,10 +85,13 @@ $(function () {
 		var current_stock = parseInt($('#inv_qty').val());
 		var issued_qty = parseInt($('#issued_qty').val());
 		var ExistHeat_NO = 1;
+
 		if (rawMaterial.length == limit) {
 			msg('Material already reach the limit of 20 item', 'failed');
 		} else if (issued_qty > current_stock) {
 			msg('Issued Quantity is greater than stocks', 'failed');
+		} else if ($('#issued_uom').val() == "") {
+			msg('Please provide an Unit of Measurement.', 'failed');
 		} else {
 			if ($('#material_heat_no').val() == '' || $('#mat_code').val() == '') {
 				msg('Please comply some other fields.', 'failed');
@@ -120,6 +123,7 @@ $(function () {
 										issued_qty: $('#issued_qty').val(),
 										issued_uom: $('#issued_uom').val(),
 										saveIssued_qty: $('#save_issued_qty').val(),
+										inv_id: $('#inv_id').val(),
 										// needed_qty: $('#needed_qty').val(),
 										// returned_uom: $('#returned_uom').val(),
 										// needed_uom: $('#needed_uom').val(),
@@ -159,6 +163,7 @@ $(function () {
 									issued_qty: $('#issued_qty').val(),
 									issued_uom: $('#issued_uom').val(),
 									saveIssued_qty: $('#save_issued_qty').val(),
+									inv_id: $('#inv_id').val(),
 									// needed_qty: $('#needed_qty').val(),
 									// returned_qty: $('#returned_qty').val(),
 									// needed_uom: $('#needed_uom').val(),
@@ -271,7 +276,7 @@ $(function () {
 		) ? '' : $(this).attr('data-remarks');
 		var sc_no = ($(this).attr('data-sc_no') == 'null') ? '' : $(this).attr('data-sc_no');
 		//$('#sc_no').val(sc_no);
-		getscnosuggest(sc_no, $(this).attr('data-material_heat_no'));
+		//getscnosuggest(sc_no, $(this).attr('data-material_heat_no'));
 		$('#remarks').val(remarks);
 		$('#issued_qty').val($(this).attr('data-issued_qty'));
 		// $('#needed_qty').val($(this).attr('data-needed_qty'));
@@ -446,6 +451,7 @@ function navigate(to) {
 }
 
 function getRawMaterialList(trans_no, to = '') {
+	$('.loadingOverlay').show();
 	$.ajax({
 		url: searchTransNoURL,
 		type: 'GET',
@@ -504,6 +510,8 @@ function getRawMaterialList(trans_no, to = '') {
 	}).fail(function (xhr, textStatus, errorThrown) {
 		viewState();
 		msg("There was an error while searching for Transaction No.");
+	}).always( function() {
+		$('.loadingOverlay').hide();
 	});
 }
 
@@ -537,6 +545,7 @@ function RawMaterialList(data) {
 						"data-issued_qty='" + x.issued_qty + "'" +
 						"data-issued_uom='" + x.issued_uom + "'" +
 						"data-save-issued_qty='" + x.saveIssued_qty + "'" +
+						"data-inv_id='" + x.inv_id + "'" +
 						// "data-needed_qty='" + x.needed_qty + "'" +
 						// "data-returned_qty='" + x.returned_qty + "'" +
 						// "data-needed_uom='" + x.needed_uom + "'" +
@@ -552,7 +561,8 @@ function RawMaterialList(data) {
 			{
 				data: function (x) {
 					return "<span class='btn_remove_item' data-row='" + row + "' data-issued_qty='" + x.issued_qty + "'><i class='text-red fa fa-times'></i></span>" +
-						"<input type='hidden' name='ids[]' value='" + x.id + "'>";
+						"<input type='hidden' name='ids[]' value='" + x.id + "'>"+
+						"<input type='hidden' name='inv_id[]' value='" + x.inv_id + "'>";
 				}, searchable: false, orderable: false
 			},
 			{
@@ -647,7 +657,7 @@ function clear() {
 	$('.clear').val('');
 	$("#sc_no").val([]);
 	$('#sc_no').select2();
-	getscnosuggest();
+	//getscnosuggest();
 }
 
 function getscnosuggest(scno, heat_no) {
@@ -686,6 +696,7 @@ function getscnosuggest(scno, heat_no) {
 }
 
 function getMaterialDetails(material_heat_no, issued_qty) {
+	$('.loadingOverlay').show();
 	$.ajax({
 		url: getMaterialDetailsURL,
 		type: 'GET',
@@ -702,6 +713,7 @@ function getMaterialDetails(material_heat_no, issued_qty) {
 			$('#size').val("");
 			$('#mat_code').val("");
 			$('#inv_qty').val("");
+			$('#inv_id').val("");
 			$('#issued_qty').prop('readonly', true);
 			msg("Material Heat Number is not in the list.", "failed");
 		} else if (data.quantity == 0 && $('#item_id').val() == '') {
@@ -711,6 +723,7 @@ function getMaterialDetails(material_heat_no, issued_qty) {
 			$('#size').val("");
 			$('#mat_code').val("");
 			$('#inv_qty').val("");
+			$('#inv_id').val("");
 			$('#issued_qty').prop('readonly', true);
 			msg("Material Heat Number have no qty inventory.", "failed");
 		} else {
@@ -718,16 +731,19 @@ function getMaterialDetails(material_heat_no, issued_qty) {
 			$('#alloy').val(data.alloy);
 			$('#size').val(data.size);
 			$('#mat_code').val(data.materials_code);
-			$('#inv_qty').val(data.quantity);
+			$('#inv_qty').val(data.current_stock);
 			$('#issued_qty').prop('readonly', false);
 			if ($('#hide_schedule').val() == "") {
 				$('#schedule').val(data.schedule);
 			} else {
 				$('#hide_schedule').val("");
 			}
+			$('#inv_id').val(data.inv_id);
 		}
 
 	}).fail(function (xhr, textStatus, errorThrown) {
 		msg(errorThrown, textStatus);
+	}).always( function() {
+		$('.loadingOverlay').hide();
 	});
 }
