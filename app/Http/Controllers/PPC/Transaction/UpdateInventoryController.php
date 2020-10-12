@@ -12,6 +12,7 @@ use App\PpcMaterialCode;
 use App\PpcDropdownItem;
 use App\NotRegisteredMaterial;
 use App\PpcMaterialAssembly;
+use App\Inventory;
 use Excel;
 use DB;
 use DataTables;
@@ -254,7 +255,30 @@ class UpdateInventoryController extends Controller
                                                                'schedule',
                                                                'size' )
                                                         ->where('material_code',$field['materialscode'])->first();
-                    PpcUpdateInventory::insert([
+                    $received = PpcUpdateInventory::insertGetId([
+                                    'materials_type' =>   $PpcMaterialCode->material_type,
+                                    'materials_code' => strtoupper($field['materialscode']),
+                                    'description' =>  $PpcMaterialCode->code_description,
+                                    'item' =>  $PpcMaterialCode->item,
+                                    'alloy' =>  $PpcMaterialCode->alloy,
+                                    'schedule' => $PpcMaterialCode->schedule,
+                                    'size' =>  $PpcMaterialCode->size,
+                                    'quantity' => $field['quantity'],
+                                    'uom' => $uom,
+                                    'heat_no' => strtoupper($field['heatnumber']),
+                                    'invoice_no' => strtoupper($field['invoiceno']),
+                                    'received_date' => DATE_FORMAT($field['receiveddate'], 'Y-m-d'),
+                                    'supplier' => strtoupper($field['supplier']),
+                                    'width' => (isset($field['width']))? strtoupper($field['width']): 'N/A',
+                                    'length' => (isset($field['length']))? strtoupper($field['length']): 'N/A',
+                                    'supplier_heat_no' => (isset($field['supplierheatno']))? strtoupper($field['supplierheatno']): 'N/A',
+                                    'created_at' => date("Y-m-d H:i:s"),
+                                    'updated_at' => date("Y-m-d H:i:s"),
+                                    'create_user' => Auth::user()->id,
+                                    'update_user' => Auth::user()->id
+                                ]);
+
+                    Inventory::insert([
                         'materials_type' =>   $PpcMaterialCode->material_type,
                         'materials_code' => strtoupper($field['materialscode']),
                         'description' =>  $PpcMaterialCode->code_description,
@@ -262,15 +286,17 @@ class UpdateInventoryController extends Controller
                         'alloy' =>  $PpcMaterialCode->alloy,
                         'schedule' => $PpcMaterialCode->schedule,
                         'size' =>  $PpcMaterialCode->size,
+                        'width' => (isset($field['width']))? strtoupper($field['width']): 'N/A',
+                        'length' => (isset($field['length']))? strtoupper($field['length']): 'N/A',
+                        'orig_quantity' => $field['quantity'],
                         'quantity' => $field['quantity'],
                         'uom' => $uom,
                         'heat_no' => strtoupper($field['heatnumber']),
                         'invoice_no' => strtoupper($field['invoiceno']),
                         'received_date' => DATE_FORMAT($field['receiveddate'], 'Y-m-d'),
                         'supplier' => strtoupper($field['supplier']),
-                        'width' => (isset($field['width']))? strtoupper($field['width']): 'N/A',
-                        'length' => (isset($field['length']))? strtoupper($field['length']): 'N/A',
                         'supplier_heat_no' => (isset($field['supplierheatno']))? strtoupper($field['supplierheatno']): 'N/A',
+                        'received_id' => $received->id,
                         'created_at' => date("Y-m-d H:i:s"),
                         'updated_at' => date("Y-m-d H:i:s"),
                         'create_user' => Auth::user()->id,
@@ -392,7 +418,32 @@ class UpdateInventoryController extends Controller
                 $UP->supplier_heat_no = strtoupper($req->supplier_heat_no);
                 $UP->create_user =  Auth::user()->id;
                 $UP->update_user =  Auth::user()->id;
-                $UP->update();
+
+                if ($UP->update()) {
+                    Inventory::where('received_id',$req->material_id)
+                            ->update([
+                                'materials_type' => strtoupper($req->materials_type),
+                                'materials_code' => strtoupper($req->materials_code),
+                                'description' => strtoupper($req->description),
+                                'item' => strtoupper($req->item),
+                                'alloy' => strtoupper($req->alloy),
+                                'schedule' => strtoupper($req->schedule),
+                                'size' => strtoupper($req->size),
+                                'width' => strtoupper($req->width),
+                                'length' => strtoupper($req->length),
+                                'orig_quantity' => $req->quantity,
+                                'quantity' => $req->quantity,
+                                'uom' => strtoupper($req->uom),
+                                'heat_no' => strtoupper($req->heat_no),
+                                'invoice_no' => strtoupper($req->invoice_no),
+                                'received_date' => $req->received_date,
+                                'supplier' => strtoupper($req->supplier),
+                                'supplier_heat_no' => strtoupper($req->supplier_heat_no),
+                                'create_user' =>  Auth::user()->id,
+                                'update_user' =>  Auth::user()->id
+                            ]);
+                }
+                
                 $result = "Update";
 
                 $this->_audit->insert([
@@ -438,7 +489,32 @@ class UpdateInventoryController extends Controller
             $UP->supplier_heat_no = strtoupper($req->supplier_heat_no);
             $UP->create_user =  Auth::user()->id;
             $UP->update_user =  Auth::user()->id;
-            $UP->save();
+
+            if ($UP->save()) {
+                $inv = new Inventory();
+
+                $inv->materials_type = strtoupper($req->materials_type);
+                $inv->materials_code = strtoupper($req->materials_code);
+                $inv->description = strtoupper($req->description);
+                $inv->item = strtoupper($req->item);
+                $inv->alloy = strtoupper($req->alloy);
+                $inv->schedule = strtoupper($req->schedule);
+                $inv->size = strtoupper($req->size);
+                $inv->width = strtoupper($req->width);
+                $inv->length = strtoupper($req->length);
+                $inv->quantity = $req->quantity;
+                $inv->uom = strtoupper($req->uom);
+                $inv->heat_no = strtoupper($req->heat_no);
+                $inv->invoice_no = strtoupper($req->invoice_no);
+                $inv->received_date = $req->received_date;
+                $inv->supplier = strtoupper($req->supplier);
+                $inv->supplier_heat_no = strtoupper($req->supplier_heat_no);
+                $inv->create_user =  Auth::user()->id;
+                $inv->update_user =  Auth::user()->id;
+
+                $inv->save();
+            }
+            
             $result = "Added";
 
             $this->_audit->insert([
