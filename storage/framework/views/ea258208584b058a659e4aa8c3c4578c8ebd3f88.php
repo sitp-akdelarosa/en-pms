@@ -16,7 +16,7 @@
                     <?php endif; ?>
                 </p>
                 <a href="#">
-                    <i class="fa fa-circle text-success"></i>
+                    
                     <?php if(Auth::check()): ?>
 
                         <?php echo e(Auth::user()->user_types->description); ?>

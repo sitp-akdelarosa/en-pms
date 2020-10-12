@@ -52,7 +52,7 @@
 								<table class="table table-bordered text-center table-sm" style="font-size:11px;width:100%;">
 									<thead>
 										<tr>
-											<td rowspan="2" colspan="4"><img src="<?php echo e(asset('/barcode.php').'?codetype=CODE39&size=30&text='.$header->jo_sequence.'&print=true'); ?>" class="img-fluid" alt="<?php echo e($header->jo_sequence); ?>"></td>
+											<td rowspan="2" colspan="4"><img src="<?php echo e(asset('/barcode.php').'?codetype=CODE39&size=30&text='.$header->jo_sequence.'&print=true'); ?>" class="img-fluid" alt="<?php echo e($header->jo_sequence); ?>"></td> 
 											<td colspan="2">Type:</td>
 											<td colspan="2"><?php echo e($header->type); ?></td>
 											<td rowspan="2">Material Heat #:</td>
@@ -60,7 +60,8 @@
 										</tr>
 										<tr>
 											<td colspan="2">Material Used:</td>
-											<td colspan="2"><?php echo e($header->material_used); ?></td>
+											<td><?php echo e($header->material_used); ?></td>
+											<td><?php echo e($header->bar_size.' x '.$header->cut_weight); ?></td>
 										</tr>
 										<tr>
 											<td colspan="4">Production Order Number</td>
@@ -72,14 +73,15 @@
 										</tr>
 										<tr>
 											<td colspan="4"><?php echo e($header->sc_no); ?></td>
-											<td colspan="2" rowspan="2">Product Heat #</td>
+											<td colspan="2" rowspan="2">Lot No.</td>
 											<td colspan="2" rowspan="2"><?php echo e($header->prod_heat_no); ?></td>
 											<td rowspan="2">Description</td>
 											<td colspan="2" rowspan="2"><?php echo e($header->description); ?></td>
 										</tr>
 										<tr>
-											<td>Order Qty.</td>
-											<td colspan="2"><?php echo e($header->order_qty); ?></td>
+											<td>Job Order Qty.</td>
+											<!-- $header->order_qty -->
+											<td colspan="2"><?php echo e($header->sched_qty); ?></td>
 											<td>PCS.</td>
 										</tr>
 										<tr>

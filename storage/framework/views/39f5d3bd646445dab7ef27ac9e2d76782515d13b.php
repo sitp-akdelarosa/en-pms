@@ -1,5 +1,3 @@
-
-
 <?php $__env->startPush('styles'); ?>
     <style>
         .stuck {
@@ -25,8 +23,9 @@
                     </div>
                     <div class="fx-card-content text-center">
                         <h5 class="box-title"><?php echo e($user->firstname.' '.$user->lastname); ?></h5>
-                        <span><?php echo e($user->user_type); ?></span>
-                        <input type="hidden" id="user_id" value="<?php echo e($user->user_id); ?>">
+                        
+                        <input type="hidden" id="user_id" value="<?php echo e($user->id); ?>">
+
                         <br> 
                     </div>
                 </div>

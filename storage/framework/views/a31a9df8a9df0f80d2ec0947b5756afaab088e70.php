@@ -53,7 +53,6 @@ foreach ($user_accesses as $user_access){
 
                 <div class="row mb-10">
                 	<div class="col-md-3">
-                        <div class="loadingOverlay"></div>
                 		<input class="clear" type="hidden" name="item_id" id="item_id">
                         <input class="clear" type="hidden" name="save_issued_qty" id="save_issued_qty">
                         <div class="form-group row">
@@ -108,25 +107,12 @@ foreach ($user_accesses as $user_access){
                             </div>
                         </div>
 
-                		<div class="form-group row">
-                            <label for="lot_no" class="col-sm-3 control-label mt-5">Lot No:</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control form-control-sm validate clear input" id="lot_no" maxlength="15">
-		                        <div id="lot_no_feedback"></div>
-                            </div>
-                        </div>
+                		
 
-                        <div class="form-group row">
-                            <label for="sc_no" class="col-sm-3 control-label mt-5">SC No:</label>
-                            <div class="col-sm-9">
+                        
+                            
 
-
-                                <select class="form-control form-control-sm select-validate clear input" name="scno[]" id="sc_no" multiple="multiple">
-                                </select>
-
-	                            <div id="sc_no_feedback"></div>
-                            </div>
-                        </div>
+                                
 
 			            <div class="form-group row">
 		                    <div class="col-sm-12">
@@ -141,36 +127,27 @@ foreach ($user_accesses as $user_access){
                 		
 
                         <div class="form-group row">
-                            <label for="issued_qty" class="col-sm-3 control-label mt-5">Current Stock:</label>
-                            <div class="col-sm-9">
+                            <label for="issued_qty" class="col-sm-4 control-label mt-5">Current Stock:</label>
+                            <div class="col-sm-8">
                                 <input type="number" class="form-control form-control-sm validate clear input" id="inv_qty" maxlength="5" readonly>
                                 <div id="inv_qty_feedback"></div>
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label for="issued_qty" class="col-sm-3 control-label mt-5">Issued Qty:</label>
-                            <div class="col-sm-9">
+                            <label for="issued_qty" class="col-sm-4 control-label mt-5">Issued Qty:</label>
+                            <div class="col-sm-3">
                                 <input type="number" step='1' class="form-control form-control-sm validate clear input" id="issued_qty" maxlength="5" readonly>
 		                        <div id="issued_qty_feedback"></div>
                             </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="needed_qty" class="col-sm-3 control-label mt-5">Needed Qty:</label>
-                            <div class="col-sm-9">
-                                <input type="number" step='1' class="form-control form-control-sm validate clear input" id="needed_qty" maxlength="5">
-		                        <div id="needed_qty_feedback"></div>
+                            <label for="issued_uom" class="col-sm-2 control-label mt-5">UoM:</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control form-control-sm validate clear input" id="issued_uom" maxlength="5" readonly>
+                                <div id="issued_uom_feedback"></div>
                             </div>
                         </div>
 
-                        <div class="form-group row">
-                            <label for="returned_qty" class="col-sm-3 control-label mt-5">Returned Qty:</label>
-                            <div class="col-sm-9">
-                                <input type="number" step='1' class="form-control form-control-sm validate clear input" id="returned_qty" maxlength="5">
-		                        <div id="returned_qty_feedback"></div>
-                            </div>
-                        </div>
+                        
 
                 	</div>
 
@@ -220,27 +197,22 @@ foreach ($user_accesses as $user_access){
                         </button>
                     </div>
                 </div>
-            
-
 	            <div class="row">
 	                <div class="col-12">
 	                    <table class="table table-sm table-hover table-striped dt-responsive nowrap" id="tbl_raw_material" style="width:100%">
 	                        <thead class="thead-dark">
 	                            <tr>
 	                                <th width="5%"></th>
+                                    <th width="5%"></th>
 	                                <th>Material Code</th>
 	                                <th>Alloy</th>
 	                                <th>Item / Description</th>
 	                                <th>Size / Sched</th>
 	                                <th>Issued Qty</th>
-	                                <th>Needed Qty</th>
-	                                <th>Returned Qty</th>
-	                                <th>Lot No.</th>
+	                                
 	                                <th>Material Heat No.</th>
-	                                <th>SC No.</th>
+	                                
 	                                <th>Remarks</th>
-                                    <th width="5%">
-                                    </th>
 	                            </tr>
 	                        </thead>
 	                        <tbody id="tbl_raw_material_body"></tbody>

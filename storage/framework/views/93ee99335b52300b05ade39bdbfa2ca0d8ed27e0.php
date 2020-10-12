@@ -24,6 +24,8 @@
 <body class="hold-transition skin-blue sidebar-mini">
     <div id="app" class="wrapper">
 
+        <div class="loadingOverlay"></div>
+        
         <?php echo $__env->make('includes.layout.header', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
 
         <?php echo $__env->make('includes.layout.sidebar', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

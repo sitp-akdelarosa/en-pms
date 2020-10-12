@@ -44,7 +44,7 @@ foreach ($user_accesses as $user_access){
         <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
             <div class="box">
                 <div class="box-body">
-                    <div class="loadingOverlay"></div>
+                    
                     <div class="table-responsive">
                         <table class="table table-sm table-hover table-striped dt-responsive nowrap mb-10" id="tbl_Upload" style="width: 100%">
                             <thead class="thead-dark">
@@ -65,10 +65,11 @@ foreach ($user_accesses as $user_access){
                     </div>
 
                     <div class="row justify-content-center">
-                      
-                       
-
-                        
+                        <div class="col-md-3">
+                            <button id="btn_check_unregistered" class="btn btn-lg btn-block bg-blue">
+                                <i class="fa fa-check"></i> Check Unregistered Products
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -89,6 +90,8 @@ foreach ($user_accesses as $user_access){
         var deleteselected = "<?php echo e(url('/transaction/upload-orders/deletefromtemp')); ?>";
         var overwriteURL = "<?php echo e(url('/transaction/upload-orders/overwrite')); ?>";
         var code_permission = 'T0002';
+        var downloadNonexistingURL = "<?php echo e(url('/transaction/upload-orders/download-unregistered-products')); ?>";
+        var getNonexistingURL = "<?php echo e(url('/transaction/upload-orders/get-unregistered-products')); ?>";
     </script>
     <script type="text/javascript" src="<?php echo e(mix('/js/pages/ppc/transactions/upload-orders/upload-orders.js')); ?>"></script>
 <?php $__env->stopPush(); ?>
