@@ -388,7 +388,7 @@ class ProductionScheduleController extends Controller
                                     d.sched_qty as sched_qty,
                                     d.material_used as material_used,
                                     d.material_heat_no as material_heat_no,
-                                    d.uom,
+                                    ifnull(d.uom,'') as uom,
                                     d.lot_no as lot_no,
                                     d.create_user as create_user,
                                     d.created_at as created_at,
