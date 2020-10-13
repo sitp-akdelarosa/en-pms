@@ -10,6 +10,8 @@
                 </div>
                 
                 <div class="modal-body">
+                    <div class="loadingOverlay-modal"></div>
+
                     <?php echo csrf_field(); ?>
                     <input type="hidden" class="clear" name="material_id" id="material_id">
 
@@ -27,6 +29,14 @@
 
                     <div class="row">
                         <div class="col-md-4">
+                            <div class="form-group row">
+                                <label for="receiving_no" class="col-sm-4 control-label mt-5">Receiving No.:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control validate clear" name="receiving_no" id="receiving_no">
+                                    <div id="receiving_no_feedback"></div>
+                                </div>
+                            </div>
+
                             <div class="form-group row">
                                 <label for="materials_type" class="col-sm-4 control-label mt-5">Material Type:</label>
                                 <div class="col-sm-8">
@@ -47,7 +57,7 @@
 
                             <div class="form-group row">
                                 <div class="col-sm-12">
-                                    <textarea class="form-control validate clear" name="description" id="description" style="resize: none" placeholder="Description" readonly></textarea>
+                                    <textarea class="form-control validate clear" name="description" id="description" style="height:100px;resize: none" placeholder="Description" readonly></textarea>
                                     <div id="description_feedback"></div>
                                 </div>
                             </div>
@@ -58,7 +68,7 @@
                             <div class="form-group row">
                                 <label for="item" class="col-sm-3 control-label mt-5">Item:</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control validate clear" name="item" id="item">
+                                    <input type="text" class="form-control validate clear" name="item" id="item" readonly>
                                     <div id="item_feedback"></div>
                                 </div>
                             </div>
@@ -66,7 +76,7 @@
                             <div class="form-group row">
                                 <label for="alloy" class="col-sm-3 control-label mt-5">Alloy:</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control validate clear" name="alloy" id="alloy">
+                                    <input type="text" class="form-control validate clear" name="alloy" id="alloy" readonly>
                                     <div id="alloy_feedback"></div>
                                 </div>
                             </div>
@@ -74,7 +84,7 @@
                             <div class="form-group row">
                                 <label for="schedule" class="col-sm-3 control-label mt-5">Schedule:</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control validate clear" name="schedule" id="schedule">
+                                    <input type="text" class="form-control validate clear" name="schedule" id="schedule" readonly>
                                     <div id="schedule_feedback"></div>
                                 </div>
                             </div>
@@ -82,7 +92,7 @@
                             <div class="form-group row">
                                 <label for="size" class="col-sm-3 control-label mt-5">Size:</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control validate clear" name="size" id="size">
+                                    <input type="text" class="form-control validate clear" name="size" id="size" readonly>
                                     <div id="size_feedback"></div>
                                 </div>
                             </div>
@@ -103,21 +113,33 @@
                         </div>
 
                         <div class="col-md-4">
-                            <div class="form-group row">
-                                <label for="quantity" class="col-sm-3 control-label mt-5">Qty:</label>
-                                <div class="col-sm-3">
-                                    <input type="number" class="form-control validate clear" name="quantity" id="quantity" step="any">
-                                    <div id="quantity_feedback"></div>
-                                </div>
+                            
 
-                                <label for="uom" class="col-sm-2 control-label mt-5">UOM:</label>
-                                <div class="col-sm-4">
-                                    <input type="text" class="form-control validate clear" name="uom" id="uom">
-                                    <div id="uom_feedback"></div>
+                            <div class="form-group row">
+                                <label for="qty_weight" class="col-sm-3 control-label mt-5">Qty/Weight:</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group mb-3 input-group-sm">
+										<input type="number" class="form-control validate clear " name="qty_weight" id="qty_weight">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">KGS</span>
+                                        </div>
+                                        <div id="qty_weight_feedback"></div>
+									</div>
                                 </div>
                             </div>
 
-                            
+                            <div class="form-group row">
+                                <label for="qty_pcs" class="col-sm-3 control-label mt-5">Qty/Pcs:</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group mb-3 input-group-sm">
+										<input type="number" class="form-control validate clear " name="qty_pcs" id="qty_pcs">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">PCS</span>
+                                        </div>
+                                        <div id="qty_pcs_feedback"></div>
+									</div>
+                                </div>
+                            </div>
 
                             <div class="form-group row">
                                 <label for="heat_no" class="col-sm-3 control-label mt-5">Heat #:</label>
@@ -181,8 +203,8 @@
                         <thead class="thead-dark">
                             <th>Material Type</th>
                             <th>Material Code</th>
-                            <th>Qty</th>
-                            <th>UOM</th>
+                            <th>Qty(KGS)</th>
+                            <th>Qty(PCS)</th>
                             <th>Heat No.</th>
                             <th>Invoice No.</th>
                             <th>Received Date</th>
@@ -195,6 +217,41 @@
                     <button type="button" class="btn bg-green float-right permission-button" id="btn_excel">
                          <i class="fa fa-download"></i> Download excel file
                     </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="modal_same_material" class="modal fade " data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document">
+        <form>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">These Materials were already uploaded.</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    <table class="table table-sm table-striped nowrap" id="tbl_same_material" style="width:100%">
+                        <thead class="thead-dark">
+                            <th>Receiving No.</th>
+                            <th>Material Type</th>
+                            <th>Material Code</th>
+                            <th>Qty(KGS)</th>
+                            <th>Qty(PCS)</th>
+                            <th>Heat No.</th>
+                            <th>Length</th>
+                            <th>Invoice No.</th>
+                            <th>Received Date</th>
+                            <th>Supplier</th>
+                        </thead>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn bg-red" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </form>

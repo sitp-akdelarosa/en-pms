@@ -50,6 +50,7 @@ foreach ($user_accesses as $user_access){
                             <thead class="thead-dark">
                                 <tr>
                                     <th></th>
+                                    <th>Receiving No.</th>
                                     <th>Material Type</th>
                                     <th>Material Code</th>
                                     <th>Description</th>
@@ -59,9 +60,9 @@ foreach ($user_accesses as $user_access){
                                     <th>Size</th>
                                     <th>Width</th>
                                     <th>Length</th>
-                                    <th>Qty</th>
-                                    <th>Current Stock</th>
-                                    <th>UOM</th>
+                                    <th>Qty(KGS)</th>
+                                    <th>Qty(PCS)</th>
+                                    <th>Stock(PCS)</th>
                                     <th>Heat No.</th>
                                     <th>Invoice No.</th>
                                     <th>Received Date</th>

@@ -16,16 +16,22 @@ class PpcUpdateInventory extends Model
 					'size',
 					'width',
 					'length',
-					'quantity',
 					'qty_weight',
+					'weight_uom',
 					'qty_pcs',
-					'uom',
+					'pcs_uom',
 					'heat_no',
 					'invoice_no',
 					'received_date',
 					'supplier',	
 					'supplier_heat_no',
+					'create_user',
+					'update_user',
 					'created_at',
-					'updated_at'
+					'updated_at',
+					'deleted',
+					'delete_user',
+					'deleted_at',
+					'mode'
 			    ];
 }

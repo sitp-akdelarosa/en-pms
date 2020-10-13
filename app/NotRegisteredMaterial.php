@@ -9,8 +9,8 @@ class NotRegisteredMaterial extends Model
     protected $fillable = [
                     'materials_type',
     				'materials_code',
-    				'quantity',
-    				'uom',
+    				'qty_weight',
+    				'qty_pcs',
     				'heat_no',
     				'invoice_no',
     				'received_date',

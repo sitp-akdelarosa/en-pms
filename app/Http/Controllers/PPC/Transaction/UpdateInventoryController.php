@@ -56,26 +56,37 @@ class UpdateInventoryController extends Controller
         $failed = 0;
 
         $msg = [];
+        $sameItem = [];
 
         foreach ($fields as $key => $field) {
             $line++;
             if($this->checkExcessSpace($field)) {
 
             } else {
+                if (empty($field['receiving_no']) && is_null($field['receiving_no'])) {
+                    $failed++;
+                    array_push($msg, 'Please provide Receiving No. for Line '.$line.'.');
+                }
+
                 if (empty($field['materialscode']) && is_null($field['materialscode'])) {
                     $failed++;
                     array_push($msg, 'Please provide Material Code for Line '.$line.'.');
                 }
 
-                if (empty($field['quantity']) && is_null($field['quantity'])) {
+                if (empty($field['qty_weight']) && is_null($field['qty_weight'])) {
                     $failed++;
-                    array_push($msg, 'Please provide Quantity for Line '.$line.'.');
+                    array_push($msg, 'Please provide Quantity Weight for Line '.$line.'.');
                 }
 
-                if (empty($field['uom']) && is_null($field['uom'])) {
+                if (empty($field['qty_pcs']) && is_null($field['qty_pcs'])) {
                     $failed++;
-                    array_push($msg, 'Please provide Unit of Measurement(UoM) for Line '.$line.'.');
+                    array_push($msg, 'Please provide Quantity PCS for Line '.$line.'.');
                 }
+
+                // if (empty($field['uom']) && is_null($field['uom'])) {
+                //     $failed++;
+                //     array_push($msg, 'Please provide Unit of Measurement(UoM) for Line '.$line.'.');
+                // }
 
                 if (empty($field['heatnumber']) && is_null($field['heatnumber'])) {
                     $failed++;
@@ -99,11 +110,34 @@ class UpdateInventoryController extends Controller
                     }
                     $heatnumber[] =  $field['heatnumber'];
 
-                    $num = $field['quantity'];
+                    $weight = $field['qty_weight'];
 
-                    if(filter_var($num, FILTER_VALIDATE_INT) === false) {
+                    if(filter_var($weight, FILTER_VALIDATE_INT) === false) {
                         $data = ['status' => 'not num'];
                         return response()->json($data);
+                    }
+
+                    $pcs = $field['qty_pcs'];
+
+                    if(filter_var($pcs, FILTER_VALIDATE_INT) === false) {
+                        $data = ['status' => 'not num'];
+                        return response()->json($data);
+                    }
+
+                    $length = (isset($field['length']))? $field['length'] : 'N/A';
+
+                    $received_items = DB::table('ppc_update_inventories')
+                                        ->Where('materials_code',$field['materialscode'])
+                                        ->where('heat_no',$field['heatnumber'])
+                                        ->where('length', $length)
+                                        ->where('qty_weight', $field['qty_weight'])
+                                        ->where('qty_pcs', $field['qty_pcs'])
+                                        ->where('receiving_no', $field['receiving_no'])
+                                        ->where('create_user',Auth::user()->id)
+                                        ->first();
+
+                    if ($this->_helper->check_if_exists($received_items) > 0) {
+                        array_push($sameItem,$received_items);
                     }
                 }
                 
@@ -132,6 +166,14 @@ class UpdateInventoryController extends Controller
             ];
         }
 
+        if (count($sameItem) > 0) {
+            $data = [
+                'status' => 'same_items',
+                'msg' => 'These items were already uploaded.',
+                'same_items' => $sameItem
+            ];
+        }
+
         // if($failed == 0){
               
         // } else {
@@ -147,12 +189,13 @@ class UpdateInventoryController extends Controller
     {
         $error = false;
         if ((empty($field['materialscode']) && is_null($field['materialscode'])) &&
-            (empty($field['quantity']) && is_null($field['quantity'])) &&
-            (empty($field['uom']) && is_null($field['uom'])) && 
+            (empty($field['qty_weight']) && is_null($field['qty_weight'])) &&
+            (empty($field['qty_pcs']) && is_null($field['qty_pcs'])) && 
             (empty($field['heatnumber']) && is_null($field['heatnumber'])) && 
             (empty($field['receiveddate']) && is_null($field['receiveddate'])) &&
             (empty($field['invoiceno']) && is_null($field['invoiceno'])) &&
-            (empty($field['supplier']) && is_null($field['supplier']))
+            (empty($field['supplier']) && is_null($field['supplier'])) &&
+            (empty($field['receiving_no']) && is_null($field['receiving_no']))
         ) {
             $error = true;
         }
@@ -172,14 +215,15 @@ class UpdateInventoryController extends Controller
         $countAdded = 0;
         foreach ($fields as $key => $field) {
             if((!empty($field['materialscode']) && !is_null($field['materialscode'])) || 
-                (!empty($field['quantity']) && !is_null($field['quantity'])) || 
-                (!empty($field['uom']) && !is_null($field['uom'])) ||
+                (!empty($field['qty_weight']) && !is_null($field['qty_weight'])) || 
+                (!empty($field['qty_pcs']) && !is_null($field['qty_pcs'])) ||
                 (!empty($field['heatnumber']) && !is_null($field['heatnumber'])) ||
                 (!empty($field['receiveddate']) && !is_null($field['receiveddate'])) ||
+                (!empty($field['receiving_no']) && !is_null($field['receiving_no'])) ||
                 (!empty($field['invoiceno']) && !is_null($field['invoiceno'])) ||
                 (!empty($field['supplier']) && !is_null($field['supplier'])) ) {
 
-                $uom = preg_replace('/[0-9]+/', '', strtoupper($field['uom']));
+                //$uom = preg_replace('/[0-9]+/', '', strtoupper($field['uom']));
 
                 $checkMatCode = PpcMaterialCode::where('material_code',$field['materialscode'])->count();  
                 if ($checkMatCode == 0) {
@@ -199,10 +243,11 @@ class UpdateInventoryController extends Controller
                                         ->delete();
 
                     NotRegisteredMaterial::insert([
+                        'receiving_no' => strtoupper($field['receiving_no']),
                         'materials_type' => (isset($mat->mat_type))? $mat->mat_type: strtoupper($field['materialstype']),
                         'materials_code' => strtoupper($field['materialscode']),
-                        'quantity' => $field['quantity'],
-                        'uom' => $uom,
+                        'qty_weight' => $field['qty_weight'],
+                        'qty_pcs' => $field['qty_pcs'],
                         'heat_no' => strtoupper($field['heatnumber']),
                         'invoice_no' => strtoupper($field['invoiceno']),
                         'received_date' => DATE_FORMAT($field['receiveddate'], 'Y-m-d'),
@@ -247,10 +292,10 @@ class UpdateInventoryController extends Controller
                     $countAdded++;
                     $received_id = 0;
 
-                    $received_items = PpcUpdateInventory::where('materials_code',$field['materialscode'])
-                                                        ->where('heat_no',$field['heatnumber'])
-                                                        ->select('id')
-                                                        ->first();
+                    // $received_items = PpcUpdateInventory::where('materials_code',$field['materialscode'])
+                    //                                     ->where('heat_no',$field['heatnumber'])
+                    //                                     ->select('id')
+                    //                                     ->first();
 
                     $PpcMaterialCode = PpcMaterialCode::select('material_type',
                                                                'code_description',
@@ -261,57 +306,64 @@ class UpdateInventoryController extends Controller
                                                         ->where('material_code',$field['materialscode'])
                                                         ->first();
                     
-                    if ($this->_helper->check_if_exists($received_items) > 0) {
-                        PpcUpdateInventory::where('id', $received_items->id)
-                                        ->update([
-                                            'materials_type' =>   $PpcMaterialCode->material_type,
-                                            'materials_code' => strtoupper($field['materialscode']),
-                                            'description' =>  $PpcMaterialCode->code_description,
-                                            'item' =>  $PpcMaterialCode->item,
-                                            'alloy' =>  $PpcMaterialCode->alloy,
-                                            'schedule' => $PpcMaterialCode->schedule,
-                                            'size' =>  $PpcMaterialCode->size,
-                                            'quantity' => $field['quantity'],
-                                            // 'qty_weight' => $field['qty_weight'],
-                                            // 'qty_pcs' => $field['qty_pcs'],
-                                            'uom' => $uom,
-                                            'heat_no' => strtoupper($field['heatnumber']),
-                                            'invoice_no' => strtoupper($field['invoiceno']),
-                                            'received_date' => DATE_FORMAT($field['receiveddate'], 'Y-m-d'),
-                                            'supplier' => strtoupper($field['supplier']),
-                                            'width' => (isset($field['width']))? strtoupper($field['width']): 'N/A',
-                                            'length' => (isset($field['length']))? strtoupper($field['length']): 'N/A',
-                                            'supplier_heat_no' => (isset($field['supplierheatno']))? strtoupper($field['supplierheatno']): 'N/A',
-                                            'updated_at' => date("Y-m-d H:i:s"),
-                                            'update_user' => Auth::user()->id
-                                        ]);
-                        Inventory::where('received_id',$received_items->id)
-                                ->update([
-                                    'materials_type' => $PpcMaterialCode->material_type,
-                                    'materials_code' => strtoupper($field['materialscode']),
-                                    'description' =>  $PpcMaterialCode->code_description,
-                                    'item' =>  $PpcMaterialCode->item,
-                                    'alloy' =>  $PpcMaterialCode->alloy,
-                                    'schedule' => $PpcMaterialCode->schedule,
-                                    'size' =>  $PpcMaterialCode->size,
-                                    'width' => (isset($field['width']))? strtoupper($field['width']): 'N/A',
-                                    'length' => (isset($field['length']))? strtoupper($field['length']): 'N/A',
-                                    'orig_quantity' => $field['quantity'],
-                                    // 'qty_weight' => $field['qty_weight'],
-                                    // 'qty_pcs' => $field['qty_pcs'],
-                                    'uom' => $uom,
-                                    'heat_no' => strtoupper($field['heatnumber']),
-                                    'invoice_no' => strtoupper($field['invoiceno']),
-                                    'received_date' => DATE_FORMAT($field['receiveddate'], 'Y-m-d'),
-                                    'supplier' => strtoupper($field['supplier']),
-                                    'supplier_heat_no' => (isset($field['supplierheatno']))? strtoupper($field['supplierheatno']): 'N/A',
-                                    'updated_at' => date("Y-m-d H:i:s"),
-                                    'update_user' => Auth::user()->id
-                                ]);
-                    } else {
+                    // if ($this->_helper->check_if_exists($received_items) > 0) {
+                    //     PpcUpdateInventory::where('id', $received_items->id)
+                    //                     ->update([
+                    //                         'materials_type' =>   $PpcMaterialCode->material_type,
+                    //                         'materials_code' => strtoupper($field['materialscode']),
+                    //                         'description' =>  $PpcMaterialCode->code_description,
+                    //                         'item' =>  $PpcMaterialCode->item,
+                    //                         'alloy' =>  $PpcMaterialCode->alloy,
+                    //                         'schedule' => $PpcMaterialCode->schedule,
+                    //                         'size' =>  $PpcMaterialCode->size,
+                    //                         //'quantity' => $field['quantity'],
+                    //                         'qty_weight' => $field['qty_weight'],
+                    //                         'qty_pcs' => $field['qty_pcs'],
+                    //                         'weight_uom' => 'KGS',
+                    //                         'pcs_uom' => 'PCS',
+                    //                         //'uom' => $uom,
+                    //                         'heat_no' => strtoupper($field['heatnumber']),
+                    //                         'invoice_no' => strtoupper($field['invoiceno']),
+                    //                         'received_date' => DATE_FORMAT($field['receiveddate'], 'Y-m-d').' '.date('H:i:s'),
+                    //                         'supplier' => strtoupper($field['supplier']),
+                    //                         'width' => (isset($field['width']))? strtoupper($field['width']): 'N/A',
+                    //                         'length' => (isset($field['length']))? strtoupper($field['length']): 'N/A',
+                    //                         'supplier_heat_no' => (isset($field['supplierheatno']))? strtoupper($field['supplierheatno']): 'N/A',
+                    //                         'updated_at' => date("Y-m-d H:i:s"),
+                    //                         'update_user' => Auth::user()->id,
+                    //                         'mode' => 'Updated from Upload'
+                    //                     ]);
+                    //     Inventory::where('received_id',$received_items->id)
+                    //             ->update([
+                    //                 'materials_type' => $PpcMaterialCode->material_type,
+                    //                 'materials_code' => strtoupper($field['materialscode']),
+                    //                 'description' =>  $PpcMaterialCode->code_description,
+                    //                 'item' =>  $PpcMaterialCode->item,
+                    //                 'alloy' =>  $PpcMaterialCode->alloy,
+                    //                 'schedule' => $PpcMaterialCode->schedule,
+                    //                 'size' =>  $PpcMaterialCode->size,
+                    //                 'width' => (isset($field['width']))? strtoupper($field['width']): 'N/A',
+                    //                 'length' => (isset($field['length']))? strtoupper($field['length']): 'N/A',
+                    //                 'orig_quantity' => $field['qty_pcs'],
+                    //                 'qty_weight' => $field['qty_weight'],
+                    //                 'qty_pcs' => $field['qty_pcs'],
+                    //                 'weight_uom' => 'KGS',
+                    //                 'pcs_uom' => 'PCS',
+                    //                 //'uom' => $uom,
+                    //                 'heat_no' => strtoupper($field['heatnumber']),
+                    //                 'invoice_no' => strtoupper($field['invoiceno']),
+                    //                 'received_date' => DATE_FORMAT($field['receiveddate'], 'Y-m-d').' '.date('H:i:s'),
+                    //                 'supplier' => strtoupper($field['supplier']),
+                    //                 'supplier_heat_no' => (isset($field['supplierheatno']))? strtoupper($field['supplierheatno']): 'N/A',
+                    //                 'updated_at' => date("Y-m-d H:i:s"),
+                    //                 'update_user' => Auth::user()->id,
+                    //                 'mode' => 'Updated from Upload'
+                    //             ]);
+                    // } else {
                         
 
                         $received_id = PpcUpdateInventory::insertGetId([
+                                        'receiving_no' => strtoupper($field['receiving_no']),
                                         'materials_type' =>   $PpcMaterialCode->material_type,
                                         'materials_code' => strtoupper($field['materialscode']),
                                         'description' =>  $PpcMaterialCode->code_description,
@@ -319,13 +371,15 @@ class UpdateInventoryController extends Controller
                                         'alloy' =>  $PpcMaterialCode->alloy,
                                         'schedule' => $PpcMaterialCode->schedule,
                                         'size' =>  $PpcMaterialCode->size,
-                                        'quantity' => $field['quantity'],
-                                        // 'qty_weight' => $field['qty_weight'],
-                                        // 'qty_pcs' => $field['qty_pcs'],
-                                        'uom' => $uom,
+                                        //'quantity' => $field['quantity'],
+                                        'qty_weight' => $field['qty_weight'],
+                                        'qty_pcs' => $field['qty_pcs'],
+                                        'weight_uom' => 'KGS',
+                                        'pcs_uom' => 'PCS',
+                                        //'uom' => $uom,
                                         'heat_no' => strtoupper($field['heatnumber']),
                                         'invoice_no' => strtoupper($field['invoiceno']),
-                                        'received_date' => DATE_FORMAT($field['receiveddate'], 'Y-m-d'),
+                                        'received_date' => DATE_FORMAT($field['receiveddate'], 'Y-m-d').' '.date('H:i:s'),
                                         'supplier' => strtoupper($field['supplier']),
                                         'width' => (isset($field['width']))? strtoupper($field['width']): 'N/A',
                                         'length' => (isset($field['length']))? strtoupper($field['length']): 'N/A',
@@ -333,10 +387,12 @@ class UpdateInventoryController extends Controller
                                         'created_at' => date("Y-m-d H:i:s"),
                                         'updated_at' => date("Y-m-d H:i:s"),
                                         'create_user' => Auth::user()->id,
-                                        'update_user' => Auth::user()->id
+                                        'update_user' => Auth::user()->id,
+                                        'mode' => 'Inserted from Upload'
                                     ]);
 
                         Inventory::insert([
+                            'receiving_no' => strtoupper($field['receiving_no']),
                             'materials_type' => $PpcMaterialCode->material_type,
                             'materials_code' => strtoupper($field['materialscode']),
                             'description' =>  $PpcMaterialCode->code_description,
@@ -346,23 +402,26 @@ class UpdateInventoryController extends Controller
                             'size' =>  $PpcMaterialCode->size,
                             'width' => (isset($field['width']))? strtoupper($field['width']): 'N/A',
                             'length' => (isset($field['length']))? strtoupper($field['length']): 'N/A',
-                            'orig_quantity' => $field['quantity'],
-                            'quantity' => $field['quantity'],
-                            // 'qty_weight' => $field['qty_weight'],
-                            // 'qty_pcs' => $field['qty_pcs'],
-                            'uom' => $uom,
+                            'orig_quantity' => $field['qty_pcs'],
+                            //'quantity' => $field['quantity'],
+                            'qty_weight' => $field['qty_weight'],
+                            'qty_pcs' => $field['qty_pcs'],
+                            'weight_uom' => 'KGS',
+                            'pcs_uom' => 'PCS',
+                            //'uom' => $uom,
                             'heat_no' => strtoupper($field['heatnumber']),
                             'invoice_no' => strtoupper($field['invoiceno']),
-                            'received_date' => DATE_FORMAT($field['receiveddate'], 'Y-m-d'),
+                            'received_date' => DATE_FORMAT($field['receiveddate'], 'Y-m-d').' '.date('H:i:s'),
                             'supplier' => strtoupper($field['supplier']),
                             'supplier_heat_no' => (isset($field['supplierheatno']))? strtoupper($field['supplierheatno']): 'N/A',
                             'received_id' => $received_id,
                             'created_at' => date("Y-m-d H:i:s"),
                             'updated_at' => date("Y-m-d H:i:s"),
                             'create_user' => Auth::user()->id,
-                            'update_user' => Auth::user()->id
+                            'update_user' => Auth::user()->id,
+                            'mode' => 'Inserted from Upload'
                         ]);
-                    }
+                    //}
 
                     
                 }
@@ -403,7 +462,7 @@ class UpdateInventoryController extends Controller
 
     public function materialDataTable(Request $req)
     {
-        $with_zero = "and i.quantity > 0";
+        $with_zero = "and i.qty_pcs > 0";
 
         if ($req->with_zero > 0) {
             $with_zero = "";
@@ -414,6 +473,7 @@ class UpdateInventoryController extends Controller
                         ->leftJoin('inventories as i','pui.id','=','i.received_id')
                         ->select(
                             'pui.id as id',
+                            DB::raw("ifnull(pui.receiving_no,'') as receiving_no"),
                             'pui.materials_type as materials_type',
                             'pui.materials_code as materials_code',
                             'pui.description as description',
@@ -421,9 +481,10 @@ class UpdateInventoryController extends Controller
                             'pui.alloy as alloy',
                             'pui.schedule as schedule',
                             'pui.size as size',
-                            'pui.quantity as quantity',
-                            DB::raw("IFNULL(i.quantity,0) as current_stock"),
-                            'pui.uom as uom',
+                            'pui.qty_weight as qty_weight',
+                            'pui.qty_pcs as qty_pcs',
+                            DB::raw("IFNULL(i.qty_pcs,0) as current_stock"),
+                            //'pui.uom as uom',
                             'pui.heat_no as heat_no',
                             'pui.invoice_no as invoice_no',
                             'pui.received_date as received_date',
@@ -435,7 +496,9 @@ class UpdateInventoryController extends Controller
                         )
                         ->whereRaw('1=1 '.$with_zero)
                         ->where('apl.user_id' ,Auth::user()->id)
+                        ->where('i.deleted','<>','1')
                         ->groupBy('pui.id',
+                                'pui.receiving_no',
                                 'pui.materials_type',
                                 'pui.materials_code',
                                 'pui.description',
@@ -443,9 +506,10 @@ class UpdateInventoryController extends Controller
                                 'pui.alloy',
                                 'pui.schedule',
                                 'pui.size',
-                                'pui.quantity',
-                                'i.quantity',
-                                'pui.uom',
+                                'pui.qty_weight',
+                                'pui.qty_pcs',
+                                'i.qty_pcs',
+                                //'pui.uom',
                                 'pui.heat_no',
                                 'pui.invoice_no',
                                 'pui.received_date',
@@ -464,15 +528,15 @@ class UpdateInventoryController extends Controller
         $result = "";
         if (isset($req->material_id)) {
             $this->validate($req, [
+                'receiving_no' => 'required',
                 'materials_type' => 'required',
                 'materials_code' => 'required',
-                'heat_no' => 'required',
-                'quantity' => 'required|numeric',
-                // 'qty_weight' => 'required|numeric',
-                // 'qty_pcs' => 'required|numeric',
-                'item' => 'required',
+                //'quantity' => 'required|numeric',
+                'qty_weight' => 'required|numeric',
+                'qty_pcs' => 'required|numeric',
+                // 'item' => 'required',
                 // 'size' => 'required',
-                'alloy' => 'required',
+                // 'alloy' => 'required',
                 'heat_no' => 'required',
                 'invoice_no' => 'required',
                 'received_date' => 'required',
@@ -486,6 +550,7 @@ class UpdateInventoryController extends Controller
 
                 $UP = PpcUpdateInventory::find($req->material_id);
 
+                $UP->receiving_no = strtoupper($req->receiving_no);
                 $UP->materials_type = strtoupper($req->materials_type);
                 $UP->materials_code = strtoupper($req->materials_code);
                 $UP->description = strtoupper($req->description);
@@ -493,22 +558,26 @@ class UpdateInventoryController extends Controller
                 $UP->alloy = strtoupper($req->alloy);
                 $UP->schedule = strtoupper($req->schedule);
                 $UP->size = strtoupper($req->size);
-                $UP->width = strtoupper($req->width);
-                $UP->length = strtoupper($req->length);
-                $UP->quantity = $req->quantity;
-                // $UP->qty_weight = $req->qty_weight;
-                // $UP->qty_pcs = $req->qty_pcs;
-                $UP->uom = strtoupper($req->uom);
+                $UP->width = (!is_null($req->width))? strtoupper($req->width): 'N/A';
+                $UP->length = (!is_null($req->length))? strtoupper($req->length): 'N/A';
+                // $UP->quantity = $req->quantity;
+                $UP->qty_weight = $req->qty_weight;
+                $UP->qty_pcs = $req->qty_pcs;
+                $UP->weight_uom = 'KGS';
+                $UP->pcs_uom = 'PCS';
+                // $UP->uom = strtoupper($req->uom);
                 $UP->heat_no = strtoupper($req->heat_no);
                 $UP->invoice_no = strtoupper($req->invoice_no);
-                $UP->received_date = $req->received_date;
-                $UP->supplier = strtoupper($req->supplier);
-                $UP->supplier_heat_no = strtoupper($req->supplier_heat_no);
+                $UP->received_date = $req->received_date.' '.date('H:i:s');
+                $UP->supplier = (!is_null($req->supplier))? strtoupper($req->supplier): 'N/A';
+                $UP->supplier_heat_no = (!is_null($req->supplier_heat_no))? strtoupper($req->supplier_heat_no): 'N/A';
                 $UP->update_user =  Auth::user()->id;
+                $UP->mode = 'Updated from Manual';
 
                 if ($UP->update()) {
                     Inventory::where('received_id',$req->material_id)
                             ->update([
+                                'receiving_no' => strtoupper($req->receiving_no),
                                 'materials_type' => strtoupper($req->materials_type),
                                 'materials_code' => strtoupper($req->materials_code),
                                 'description' => strtoupper($req->description),
@@ -516,20 +585,23 @@ class UpdateInventoryController extends Controller
                                 'alloy' => strtoupper($req->alloy),
                                 'schedule' => strtoupper($req->schedule),
                                 'size' => strtoupper($req->size),
-                                'width' => strtoupper($req->width),
-                                'length' => strtoupper($req->length),
-                                'orig_quantity' => $req->quantity,
-                                'quantity' => $req->quantity,
-                                // 'qty_weight' => $req->qty_weight,
-                                // 'qty_pcs' => $req->qty_pcs,
-                                'uom' => strtoupper($req->uom),
+                                'width' => (!is_null($req->width))? strtoupper($req->width): 'N/A',
+                                'length' => (!is_null($req->length))? strtoupper($req->length): 'N/A',
+                                // 'orig_quantity' => $req->qty_pcs,
+                                // 'quantity' => $req->quantity,
+                                'qty_weight' => $req->qty_weight,
+                                'qty_pcs' => $req->qty_pcs,
+                                'weight_uom' => 'KGS',
+                                'pcs_uom' => 'PCS',
+                                // 'uom' => strtoupper($req->uom),
                                 'heat_no' => strtoupper($req->heat_no),
                                 'invoice_no' => strtoupper($req->invoice_no),
-                                'received_date' => $req->received_date,
-                                'supplier' => strtoupper($req->supplier),
-                                'supplier_heat_no' => strtoupper($req->supplier_heat_no),
+                                'received_date' => $req->received_date.' '.date('H:i:s'),
+                                'supplier' => (!is_null($req->supplier))? strtoupper($req->supplier): 'N/A',
+                                'supplier_heat_no' => (!is_null($req->supplier_heat_no))? strtoupper($req->supplier_heat_no): 'N/A',
                                 'update_user' =>  Auth::user()->id,
-                                'updated_at' => date('Y-m-d H:i:s')
+                                'updated_at' => date('Y-m-d H:i:s'),
+                                'mode' => 'Updated from Manual'
                             ]);
                 }
                 
@@ -545,24 +617,23 @@ class UpdateInventoryController extends Controller
                 ]);
         }else {
             $this->validate($req, [
+                'receiving_no' => 'required',
                 'materials_type' => 'required',
                 'materials_code' => 'required',
-                'heat_no' => 'required',
-                'quantity' => 'required|numeric',
-                // 'qty_weight' => 'required|numeric',
-                // 'qty_pcs' => 'required|numeric',
-                'item' => 'required',
+                // 'quantity' => 'required|numeric',
+                'qty_weight' => 'required|numeric',
+                'qty_pcs' => 'required|numeric',
+                // 'item' => 'required',
                 // 'size' => 'required',
-                'alloy' => 'required',
+                // 'alloy' => 'required',
                 'heat_no' => 'required',
                 'invoice_no' => 'required',
                 'received_date' => 'required',
                 'supplier' => 'required'
             ]);
 
-            $UP = new PpcUpdateInventory();
-
             $received = PpcUpdateInventory::insertGetId([
+                            'receiving_no' => strtoupper($req->receiving_no),
                             'materials_type' => strtoupper($req->materials_type),
                             'materials_code' => strtoupper($req->materials_code),
                             'description' => strtoupper($req->description),
@@ -570,26 +641,30 @@ class UpdateInventoryController extends Controller
                             'alloy' => strtoupper($req->alloy),
                             'schedule' => strtoupper($req->schedule),
                             'size' => strtoupper($req->size),
-                            'width' => strtoupper($req->width),
-                            'length' => strtoupper($req->length),
-                            'quantity' => $req->quantity,
-                            // 'qty_weight' => $req->qty_weight,
-                            // 'qty_pcs' => $req->qty_pcs,
-                            'uom' => strtoupper($req->uom),
+                            'width' => (!is_null($req->width))? strtoupper($req->width): 'N/A',
+                            'length' => (!is_null($req->length))? strtoupper($req->length): 'N/A',
+                            // 'quantity' => $req->quantity,
+                            'qty_weight' => $req->qty_weight,
+                            'qty_pcs' => $req->qty_pcs,
+                            'weight_uom' => 'KGS',
+                            'pcs_uom' => 'PCS',
+                            // 'uom' => strtoupper($req->uom),
                             'heat_no' => strtoupper($req->heat_no),
                             'invoice_no' => strtoupper($req->invoice_no),
-                            'received_date' => $req->received_date,
-                            'supplier' => strtoupper($req->supplier),
-                            'supplier_heat_no' => strtoupper($req->supplier_heat_no),
+                            'received_date' => $req->received_date.' '.date('H:i:s'),
+                            'supplier' => (!is_null($req->supplier))? strtoupper($req->supplier): 'N/A',
+                            'supplier_heat_no' => (!is_null($req->supplier_heat_no))? strtoupper($req->supplier_heat_no): 'N/A',
                             'create_user' =>  Auth::user()->id,
                             'update_user' =>  Auth::user()->id,
                             'created_at' => date('Y-m-d H:i:s'),
                             'updated_at' => date('Y-m-d H:i:s'),
+                            'mode' => 'Inserted from Manual'
                         ]);
 
             if ($received) {
                 $inv = new Inventory();
 
+                $inv->receiving_no = strtoupper($req->receiving_no);
                 $inv->materials_type = strtoupper($req->materials_type);
                 $inv->materials_code = strtoupper($req->materials_code);
                 $inv->description = strtoupper($req->description);
@@ -597,21 +672,24 @@ class UpdateInventoryController extends Controller
                 $inv->alloy = strtoupper($req->alloy);
                 $inv->schedule = strtoupper($req->schedule);
                 $inv->size = strtoupper($req->size);
-                $inv->width = strtoupper($req->width);
-                $inv->length = strtoupper($req->length);
-                $inv->quantity = $req->quantity;
-                $inv->orig_quantity = $req->quantity;
-                // $inv->qty_weight = $req->qty_weight;
-                // $inv->qty_pcs = $req->qty_pcs;
-                $inv->uom = strtoupper($req->uom);
+                $inv->width = (!is_null($req->width))? strtoupper($req->width): 'N/A';
+                $inv->length = (!is_null($req->length))? strtoupper($req->length): 'N/A';
+                // $inv->quantity = $req->quantity;
+                $inv->orig_quantity = $req->qty_pcs;
+                $inv->qty_weight = $req->qty_weight;
+                $inv->qty_pcs = $req->qty_pcs;
+                $inv->weight_uom = 'KGS';
+                $inv->pcs_uom = 'PCS';
+                // $inv->uom = strtoupper($req->uom);
                 $inv->heat_no = strtoupper($req->heat_no);
                 $inv->invoice_no = strtoupper($req->invoice_no);
-                $inv->received_date = $req->received_date;
-                $inv->supplier = strtoupper($req->supplier);
-                $inv->supplier_heat_no = strtoupper($req->supplier_heat_no);
+                $inv->received_date = $req->received_date.' '.date('H:i:s');
+                $inv->supplier = (!is_null($req->supplier))? strtoupper($req->supplier): 'N/A';
+                $inv->supplier_heat_no = (!is_null($req->supplier_heat_no))? strtoupper($req->supplier_heat_no): 'N/A';
                 $inv->received_id = $received;
                 $inv->create_user =  Auth::user()->id;
                 $inv->update_user =  Auth::user()->id;
+                $inv->mode = 'Inserted from Manual';
 
                 $inv->save();
             }
@@ -693,10 +771,11 @@ class UpdateInventoryController extends Controller
     public function unRegisteredMaterials()
     {
         $none = NotRegisteredMaterial::select(
+                                        'receiving_no',
                                         'materials_type',
                                         'materials_code',
-                                        'quantity',
-                                        'uom',
+                                        'qty_weight',
+                                        'qty_pcs',
                                         'heat_no',
                                         'invoice_no',
                                         'received_date',
@@ -708,10 +787,11 @@ class UpdateInventoryController extends Controller
                                     )
                                     ->where('create_user',Auth::user()->id)
                                     ->groupBy(
+                                        'receiving_no',
                                         'materials_type',
                                         'materials_code',
-                                        'quantity',
-                                        'uom',
+                                        'qty_weight',
+                                        'qty_pcs',
                                         'heat_no',
                                         'invoice_no',
                                         'received_date',
@@ -729,9 +809,10 @@ class UpdateInventoryController extends Controller
     {
         $date = date('Y-m-d');
         $data = NotRegisteredMaterial::select(
+                                        'receiving_no',
                                         'materials_code',
-                                        'quantity',
-                                        'uom',
+                                        'qty_weight',
+                                        'qty_pcs',
                                         'heat_no',
                                         'invoice_no',
                                         'received_date',
@@ -743,9 +824,10 @@ class UpdateInventoryController extends Controller
                                     )
                                     ->where('create_user',Auth::user()->id)
                                     ->groupBy(
+                                        'receiving_no',
                                         'materials_code',
-                                        'quantity',
-                                        'uom',
+                                        'qty_weight',
+                                        'qty_pcs',
                                         'heat_no',
                                         'invoice_no',
                                         'received_date',
@@ -803,8 +885,8 @@ class UpdateInventoryController extends Controller
                     $cells->setBorder('solid', 'solid', 'solid', 'solid');
                 });
                 $sheet->cell('A6', "Material Code");
-                $sheet->cell('B6', "Quantity");
-                $sheet->cell('C6', "UOM");
+                $sheet->cell('B6', "Quantity(KGS)");
+                $sheet->cell('C6', "Quantity(PCS)");
                 $sheet->cell('D6', "Heat No.");
                 $sheet->cell('E6', "Invoice No.");
                 $sheet->cell('F6', "Received Date");
@@ -819,8 +901,8 @@ class UpdateInventoryController extends Controller
                 foreach ($data as $key => $dt) {
                     $sheet->setHeight($row, 15);
                     $sheet->cell('A'.$row, $dt->materials_code);
-                    $sheet->cell('B'.$row, $dt->quantity);
-                    $sheet->cell('C'.$row, $dt->uom);
+                    $sheet->cell('B'.$row, $dt->qty_weight);
+                    $sheet->cell('C'.$row, $dt->qty_pcs);
                     $sheet->cell('D'.$row, $dt->heat_no);
                     $sheet->cell('E'.$row, $dt->invoice_no);
                     $sheet->cell('F'.$row, $dt->received_date);
@@ -829,6 +911,7 @@ class UpdateInventoryController extends Controller
                     $sheet->cell('I'.$row, $dt->length);
                     $sheet->cell('J'.$row, $dt->supplier_heat_no);
                     $sheet->cell('K'.$row, $this->_helper->convertDate($dt->created_at,'Y-m-d'));
+                    $sheet->cell('L'.$row, $dt->receiving_no);
                     $row++;
                 }
                 
@@ -861,8 +944,8 @@ class UpdateInventoryController extends Controller
                 $sheet->cell('E1', "alloy");
                 $sheet->cell('F1', "schedule");
                 $sheet->cell('G1', "size");
-                $sheet->cell('H1', "quantity");
-                $sheet->cell('I1', "uom");
+                $sheet->cell('H1', "qty_weight");
+                $sheet->cell('I1', "qty_pcs");
                 $sheet->cell('J1', "heatnumber");
                 $sheet->cell('K1', "invoiceno");
                 $sheet->cell('L1', "receiveddate");
@@ -870,6 +953,7 @@ class UpdateInventoryController extends Controller
                 $sheet->cell('N1', "width");
                 $sheet->cell('O1', "length");
                 $sheet->cell('P1', "supplierheatno");
+                $sheet->cell('Q1', "receiving_no");
             });
         })->download('xlsx');
     }

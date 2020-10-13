@@ -18,9 +18,9 @@ class Inventory extends Model
         'length',
         'orig_quantity',
         'qty_weight',
+        'weight_uom',
         'qty_pcs',
-        'quantity',
-        'uom',
+        'pcs_uom',
         'heat_no',
         'invoice_no',
         'received_date',
@@ -28,6 +28,10 @@ class Inventory extends Model
         'supplier_heat_no',
         'received_id',
         'create_user',
-        'update_user'
+        'update_user',
+        'deleted',
+        'delete_user',
+        'deleted_at',
+        'mode'
     ];
 }
