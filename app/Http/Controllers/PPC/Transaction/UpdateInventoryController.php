@@ -272,6 +272,8 @@ class UpdateInventoryController extends Controller
                                             'schedule' => $PpcMaterialCode->schedule,
                                             'size' =>  $PpcMaterialCode->size,
                                             'quantity' => $field['quantity'],
+                                            // 'qty_weight' => $field['qty_weight'],
+                                            // 'qty_pcs' => $field['qty_pcs'],
                                             'uom' => $uom,
                                             'heat_no' => strtoupper($field['heatnumber']),
                                             'invoice_no' => strtoupper($field['invoiceno']),
@@ -295,6 +297,8 @@ class UpdateInventoryController extends Controller
                                     'width' => (isset($field['width']))? strtoupper($field['width']): 'N/A',
                                     'length' => (isset($field['length']))? strtoupper($field['length']): 'N/A',
                                     'orig_quantity' => $field['quantity'],
+                                    // 'qty_weight' => $field['qty_weight'],
+                                    // 'qty_pcs' => $field['qty_pcs'],
                                     'uom' => $uom,
                                     'heat_no' => strtoupper($field['heatnumber']),
                                     'invoice_no' => strtoupper($field['invoiceno']),
@@ -316,6 +320,8 @@ class UpdateInventoryController extends Controller
                                         'schedule' => $PpcMaterialCode->schedule,
                                         'size' =>  $PpcMaterialCode->size,
                                         'quantity' => $field['quantity'],
+                                        // 'qty_weight' => $field['qty_weight'],
+                                        // 'qty_pcs' => $field['qty_pcs'],
                                         'uom' => $uom,
                                         'heat_no' => strtoupper($field['heatnumber']),
                                         'invoice_no' => strtoupper($field['invoiceno']),
@@ -342,6 +348,8 @@ class UpdateInventoryController extends Controller
                             'length' => (isset($field['length']))? strtoupper($field['length']): 'N/A',
                             'orig_quantity' => $field['quantity'],
                             'quantity' => $field['quantity'],
+                            // 'qty_weight' => $field['qty_weight'],
+                            // 'qty_pcs' => $field['qty_pcs'],
                             'uom' => $uom,
                             'heat_no' => strtoupper($field['heatnumber']),
                             'invoice_no' => strtoupper($field['invoiceno']),
@@ -460,6 +468,8 @@ class UpdateInventoryController extends Controller
                 'materials_code' => 'required',
                 'heat_no' => 'required',
                 'quantity' => 'required|numeric',
+                // 'qty_weight' => 'required|numeric',
+                // 'qty_pcs' => 'required|numeric',
                 'item' => 'required',
                 // 'size' => 'required',
                 'alloy' => 'required',
@@ -486,6 +496,8 @@ class UpdateInventoryController extends Controller
                 $UP->width = strtoupper($req->width);
                 $UP->length = strtoupper($req->length);
                 $UP->quantity = $req->quantity;
+                // $UP->qty_weight = $req->qty_weight;
+                // $UP->qty_pcs = $req->qty_pcs;
                 $UP->uom = strtoupper($req->uom);
                 $UP->heat_no = strtoupper($req->heat_no);
                 $UP->invoice_no = strtoupper($req->invoice_no);
@@ -508,6 +520,8 @@ class UpdateInventoryController extends Controller
                                 'length' => strtoupper($req->length),
                                 'orig_quantity' => $req->quantity,
                                 'quantity' => $req->quantity,
+                                // 'qty_weight' => $req->qty_weight,
+                                // 'qty_pcs' => $req->qty_pcs,
                                 'uom' => strtoupper($req->uom),
                                 'heat_no' => strtoupper($req->heat_no),
                                 'invoice_no' => strtoupper($req->invoice_no),
@@ -535,6 +549,8 @@ class UpdateInventoryController extends Controller
                 'materials_code' => 'required',
                 'heat_no' => 'required',
                 'quantity' => 'required|numeric',
+                // 'qty_weight' => 'required|numeric',
+                // 'qty_pcs' => 'required|numeric',
                 'item' => 'required',
                 // 'size' => 'required',
                 'alloy' => 'required',
@@ -557,6 +573,8 @@ class UpdateInventoryController extends Controller
                             'width' => strtoupper($req->width),
                             'length' => strtoupper($req->length),
                             'quantity' => $req->quantity,
+                            // 'qty_weight' => $req->qty_weight,
+                            // 'qty_pcs' => $req->qty_pcs,
                             'uom' => strtoupper($req->uom),
                             'heat_no' => strtoupper($req->heat_no),
                             'invoice_no' => strtoupper($req->invoice_no),
@@ -583,6 +601,8 @@ class UpdateInventoryController extends Controller
                 $inv->length = strtoupper($req->length);
                 $inv->quantity = $req->quantity;
                 $inv->orig_quantity = $req->quantity;
+                // $inv->qty_weight = $req->qty_weight;
+                // $inv->qty_pcs = $req->qty_pcs;
                 $inv->uom = strtoupper($req->uom);
                 $inv->heat_no = strtoupper($req->heat_no);
                 $inv->invoice_no = strtoupper($req->invoice_no);

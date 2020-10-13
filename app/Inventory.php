@@ -17,6 +17,8 @@ class Inventory extends Model
         'width',
         'length',
         'orig_quantity',
+        'qty_weight',
+        'qty_pcs',
         'quantity',
         'uom',
         'heat_no',

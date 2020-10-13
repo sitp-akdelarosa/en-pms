@@ -25,6 +25,8 @@ class CreatePpcUpdateInventoriesTable extends Migration
             $table->string('width')->nullable();
             $table->string('length')->nullable();
             $table->double('quantity',20,2)->default(0.00);
+            $table->double('qty_weight',20,2)->default(0.00);
+            $table->double('qty_pcs',20,2)->default(0.00);
             $table->string('uom')->nullable();
             $table->string('heat_no')->nullable();
             $table->string('invoice_no')->nullable();

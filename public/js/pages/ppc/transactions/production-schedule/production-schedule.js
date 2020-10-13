@@ -804,7 +804,8 @@ function getMaterialHeatNo(withdrawal_slip_no) {
     dataType: 'JSON',
     data: {
       _token: token,
-      rmw_no: withdrawal_slip_no
+      rmw_no: withdrawal_slip_no,
+      state: 'add'
     },
     success: function success(returnData) {
       var materials = returnData.materials;
@@ -856,7 +857,8 @@ function getMaterialHeatNoEdit() {
     dataType: 'JSON',
     data: {
       _token: token,
-      rmw_no: $('#rmw_no').val()
+      rmw_no: $('#rmw_no').val(),
+      state: 'edit'
     },
     success: function success(returnData) {
       // $.each(MainData, function(i, x) {
@@ -880,7 +882,7 @@ function getMaterialHeatNoEdit() {
         var rmw_issued_qty = $('#material_heat_no_' + y).find('option:selected').attr('data-rmw_issued_qty');
         var uom = $('#material_heat_no_' + y).find('option:selected').attr('data-uom');
         $('#rmw_issued_qty_' + y).val(rmw_issued_qty);
-        $('#uom' + y).val(uom);
+        $('#uom_' + y).val(uom);
         getMaterialusedEdit(MainData[y].material_heat_no, y);
       }
     },

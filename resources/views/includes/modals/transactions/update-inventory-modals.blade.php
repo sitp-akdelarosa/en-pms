@@ -117,6 +117,22 @@
                                 </div>
                             </div>
 
+                            {{-- <div class="form-group row">
+                                <label for="qty_weight" class="col-sm-3 control-label mt-5">Qty/Weight:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control validate clear" name="qty_weight" id="qty_weight">
+                                    <div id="qty_weight_feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="qty_pcs" class="col-sm-3 control-label mt-5">Qty/Pcs:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control validate clear" name="qty_pcs" id="qty_pcs">
+                                    <div id="qty_pcs_feedback"></div>
+                                </div>
+                            </div> --}}
+
                             <div class="form-group row">
                                 <label for="heat_no" class="col-sm-3 control-label mt-5">Heat #:</label>
                                 <div class="col-sm-9">

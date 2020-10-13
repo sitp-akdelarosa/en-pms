@@ -17,6 +17,8 @@ class PpcUpdateInventory extends Model
 					'width',
 					'length',
 					'quantity',
+					'qty_weight',
+					'qty_pcs',
 					'uom',
 					'heat_no',
 					'invoice_no',

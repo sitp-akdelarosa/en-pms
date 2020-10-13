@@ -498,31 +498,40 @@ class ProductionScheduleController extends Controller
                             ORDER BY pui.id desc");
 
         if ($this->_helper->check_if_exists($materials) > 0) {
-            foreach ($materials as $key => $material) {
-                $exists = PpcJoDetails::where('material_heat_no', $material->heat_no)
-                                        ->count();
-                if ($exists < 1) {
-                    array_push($heat_no,[
-                        'heat_no' => $material->heat_no,
-                        'uom' => $material->uom, 
-                        'rmw_issued_qty' => $material->rmw_issued_qty
-                    ]);
-                }
-            }
-
-            $data = [
-                'msg' => '',
-                'status' => '',
-                'materials' => $heat_no
-            ];
-
-            if (count($heat_no) < 1) {
+            if ($req->state == 'edit') {
                 $data = [
-                    'msg' => 'All of Heat Number in Withdrawal Slip # '.$req->rmw_no.' is already scheduled.',
-                    'status' => 'failed',
+                    'msg' => '',
+                    'status' => '',
+                    'materials' => $materials
+                ];
+            } else {
+                foreach ($materials as $key => $material) {
+                    $exists = PpcJoDetails::where('material_heat_no', $material->heat_no)
+                                            ->count();
+                    if ($exists < 1) {
+                        array_push($heat_no,[
+                            'heat_no' => $material->heat_no,
+                            'uom' => $material->uom, 
+                            'rmw_issued_qty' => $material->rmw_issued_qty
+                        ]);
+                    }
+                }
+
+                $data = [
+                    'msg' => '',
+                    'status' => '',
                     'materials' => $heat_no
                 ];
+
+                if (count($heat_no) < 1) {
+                    $data = [
+                        'msg' => 'All of Heat Number in Withdrawal Slip # '.$req->rmw_no.' is already scheduled.',
+                        'status' => 'failed',
+                        'materials' => $heat_no
+                    ];
+                }
             }
+            
 
             
         }
