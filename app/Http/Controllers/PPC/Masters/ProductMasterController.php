@@ -344,11 +344,14 @@ class ProductMasterController extends Controller
                 'pc.cut_weight_uom as cut_weight_uom',
                 'pc.cut_length as cut_length',
                 'pc.cut_length_uom as cut_length_uom',
+                'pc.cut_width as cut_width',
+                'pc.cut_width_uom as cut_width_uom',
                 'pc.item as item',
                 'pc.alloy as alloy',
                 'pc.class as class',
                 'pc.size as size',
                 DB::raw('IFNULL(pc.standard_material_used, "") as standard_material_used'),
+                DB::raw('IFNULL(pc.formula_classification, "") as formula_classification'),
                 'pc.create_user as create_user',
                 'pc.created_at as created_at'
             )->groupBy(
@@ -360,11 +363,14 @@ class ProductMasterController extends Controller
                 'pc.cut_weight_uom',
                 'pc.cut_length',
                 'pc.cut_length_uom',
+                'pc.cut_width',
+                'pc.cut_width_uom',
                 'pc.item',
                 'pc.alloy',
                 'pc.class',
                 'pc.size',
                 'pc.standard_material_used',
+                'pc.formula_classification',
                 'pc.create_user',
                 'pc.created_at'
             )->get();
@@ -393,11 +399,14 @@ class ProductMasterController extends Controller
             $prod->cut_weight_uom = strtoupper($req->cut_weight_uom);
             $prod->cut_length = $req->cut_length;
             $prod->cut_length_uom = strtoupper($req->cut_length_uom);
+            $prod->cut_width = $req->cut_width;
+            $prod->cut_width_uom = strtoupper($req->cut_width_uom);
             $prod->item = $req->item;
             $prod->class = $req->class;
             $prod->alloy = $req->alloy;
             $prod->size = $req->size;
             $prod->standard_material_used = strtoupper($req->standard_material_used);
+            //$prod->formula_classification = strtoupper($req->formula_classification);
             $prod->update_user = Auth::user()->id;
 
             $prod->update();
@@ -438,11 +447,14 @@ class ProductMasterController extends Controller
             $prod->cut_weight_uom = strtoupper($req->cut_weight_uom);
             $prod->cut_length = $req->cut_length;
             $prod->cut_length_uom = strtoupper($req->cut_length_uom);
+            $prod->cut_width = $req->cut_width;
+            $prod->cut_width_uom = strtoupper($req->cut_width_uom);
             $prod->item = $req->item;
             $prod->class = $req->class;
             $prod->alloy = $req->alloy;
             $prod->size = $req->size;
             $prod->standard_material_used = strtoupper($req->standard_material_used);
+            //$prod->formula_classification = strtoupper($req->formula_classification);
             $prod->create_user = Auth::user()->id;
             $prod->update_user = Auth::user()->id;
 

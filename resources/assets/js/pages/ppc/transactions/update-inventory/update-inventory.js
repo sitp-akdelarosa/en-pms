@@ -80,7 +80,7 @@ $(function () {
 		$('#schedule').val($(this).attr('data-schedule'));
 		$('#size').val($(this).attr('data-size'));
 		$('#width').val($(this).attr('data-width'));
-		$('#thickness').val($(this).attr('data-thickness'));
+		// $('#thickness').val($(this).attr('data-thickness'));
 		$('#length').val($(this).attr('data-length'));
 		$('#qty_weight').val($(this).attr('data-qty_weight'));
 		$('#qty_pcs').val($(this).attr('data-qty_pcs'));
@@ -593,7 +593,7 @@ function InventoryTable(arr) {
 						"data-invoice_no='" + data.invoice_no + "'" +
 						"data-received_date='" + data.received_date + "'" +
 						"data-width='" + data.width + "' " +
-						"data-thickness='" + data.thickness + "' " +
+						// "data-thickness='" + data.thickness + "' " +
 						"data-length='" + data.length + "' " +
 						"data-supplier_heat_no='" + data.supplier_heat_no + "' " +
 						"data-supplier='" + data.supplier + "'>" +
@@ -610,7 +610,7 @@ function InventoryTable(arr) {
 			{ data: 'schedule' },
 			{ data: 'size' },
 			{ data: 'width' },
-			{ data: 'thickness' },
+			// { data: 'thickness' },
 			{ data: 'length' },
 			// {
 			// 	data: function (data) {

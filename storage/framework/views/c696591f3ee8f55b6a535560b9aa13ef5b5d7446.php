@@ -96,13 +96,7 @@
                                     <div id="size_feedback"></div>
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label for="thickness" class="col-sm-3 control-label mt-5">Thickness:</label>
-                                <div class="col-sm-9">
-                                    <input type="text" class="form-control validate clear" name="thickness" id="thickness" >
-                                    <div id="thickness_feedback"></div>
-                                </div>
-                            </div>
+                            
                              <div class="form-group row">
                                 <label for="width" class="col-sm-3 control-label mt-5">Width:</label>
                                 <div class="col-sm-9">
@@ -126,7 +120,7 @@
                                 <label for="qty_weight" class="col-sm-3 control-label mt-5">Qty/Weight:</label>
                                 <div class="col-sm-9">
                                     <div class="input-group mb-3 input-group-sm">
-										<input type="number" class="form-control validate clear " name="qty_weight" id="qty_weight">
+										<input type="number" class="form-control validate clear " step=".01" name="qty_weight" id="qty_weight">
                                         <div class="input-group-append">
                                             <span class="input-group-text">KGS</span>
                                         </div>
@@ -361,13 +355,7 @@
                                     <div id="srch_size_feedback"></div>
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label for="srch_thickness" class="col-sm-3 control-label mt-5">Thickness:</label>
-                                <div class="col-sm-9">
-                                    <input type="text" class="form-control validate srch-clear" name="srch_thickness" id="srch_thickness" >
-                                    <div id="srch_thickness_feedback"></div>
-                                </div>
-                            </div>
+                            
                              <div class="form-group row">
                                 <label for="srch_width" class="col-sm-3 control-label mt-5">Width:</label>
                                 <div class="col-sm-9">

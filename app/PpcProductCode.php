@@ -13,12 +13,15 @@ class PpcProductCode extends Model
     				'cut_weight',
     				'cut_weight_uom',
     				'cut_length',
-    				'cut_length_uom',
+					'cut_length_uom',
+					'cut_width',
+    				'cut_width_uom',
                     'item',
                     'class',
                     'alloy',
 					'size',
 					'standard_material_used',
+					'formula_classification',
     				'create_user',
 					'update_user'
     			];

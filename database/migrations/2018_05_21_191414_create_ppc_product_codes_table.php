@@ -22,10 +22,13 @@ class CreatePpcProductCodesTable extends Migration
             $table->string('cut_weight_uom');
             $table->double('cut_length',20,2);
             $table->string('cut_length_uom');
+            $table->double('cut_width',20,2);
+            $table->string('cut_width_uom');
             $table->string('item');
             $table->string('class');
             $table->string('alloy');
             $table->string('size');
+            $table->string('formula_classification');
             $table->string('standard_material_used');
             $table->integer('create_user')->default(0);
             $table->integer('update_user')->default(0);

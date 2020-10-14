@@ -61,7 +61,7 @@ foreach ($user_accesses as $user_access){
                                     <th>Schedule</th>
                                     <th>Size</th>
                                     <th>Width</th>
-                                    <th>Thickness</th>
+                                    {{-- <th>Thickness</th> --}}
                                     <th>Length</th>
                                     <th>Qty(KGS)</th>
                                     <th>Qty(PCS)</th>

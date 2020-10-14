@@ -551,21 +551,21 @@ class ProductionScheduleController extends Controller
         return response()->json($data);
     }
 
-    public function caculateWeighttoLength(Request $req)
+    public function caculateBar(Request $req)
     {
         $data = [
             'msg' => 'Calculating failed.',
             'status' => 'failed',
             'stock' => 0
         ];
-        // get cut weight
+        // get product cut weight
         $prod = DB::table('ppc_product_codes')
                     ->select('cut_weight')
                     ->where('product_code',$req->prod_code)
                     ->first();
-        $OD = 0;
+        $OD_size = 0;
         $pcs = 0;
-        $length = 0;
+        $product_cut_length = 0;
         $cut_weight = 0;
         $stock = 0;
 
@@ -579,12 +579,12 @@ class ProductionScheduleController extends Controller
                             ->first();
 
             if ($this->_helper->check_id_exists($material) > 0) {
-                $OD = $material->size;
+                $OD_size = $material->size;
                 // calculate length
-                $length = ($cut_weight / $OD / $OD / 6.2) * 1000000;
+                $product_cut_length = ($cut_weight / $OD_size / $OD_size / 6.2) * 1000000;
 
                 // calculate PCS
-                $pcs = $req->sched_qty/$length;
+                $pcs = $req->sched_qty/$product_cut_length;
 
                 // Calculate stocks
                 $stock = $req->rmw_issued_qty - $pcs;

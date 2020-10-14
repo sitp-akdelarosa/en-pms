@@ -357,12 +357,19 @@ $( function() {
 		$('#product_type').val($(this).attr('data-product_type'));
 		$('#product_code').val($(this).attr('data-product_code'));
 		$('#code_description').val($(this).attr('data-code_description'));
+
 		$('#cut_weight').val($(this).attr('data-cut_weight'));
 		defaultSizes('#cut_weight',$('#cut_weight').val());
 		$('#cut_weight_uom').val($(this).attr('data-cut_weight_uom'));
+
 		$('#cut_length').val($(this).attr('data-cut_length'));
 		defaultSizes('#cut_length',$('#cut_length').val())
 		$('#cut_length_uom').val($(this).attr('data-cut_length_uom'));
+
+		$('#cut_width').val($(this).attr('data-cut_width'));
+		defaultSizes('#cut_width', $('#cut_width').val())
+		$('#cut_width_uom').val($(this).attr('data-cut_width_uom'));
+		
 		$('#product-type').val($(this).attr('data-product_type'));
 		showDropdowns($(this).attr('data-product_type'));
 		$('#product_code').prop('readonly', false);
@@ -594,8 +601,10 @@ function clearCode() {
 	$('.clear').val('');
 	$('#cut_weight').val(0);
 	$('#cut_length').val(0);
+	$('#cut_width').val(0);
 	$('#cut_length_uom').val('N/A');
 	$('#cut_weight_uom').val('N/A');
+	$('#cut_width_uom').val('N/A');
 	$('#hide_3rd').show();
 	$('#hide_9th').show();
 	$('#hide_14th').show();
@@ -1243,7 +1252,9 @@ function ProductCodesTable(arr) {
                             "data-cut_weight='"+data.cut_weight+"'"+
                             "data-cut_weight_uom='"+data.cut_weight_uom+"'"+
                             "data-cut_length='"+data.cut_length+"'"+
-                            "data-cut_length_uom='"+data.cut_length_uom+"'"+
+							"data-cut_length_uom='"+data.cut_length_uom+"'"+
+							"data-cut_width='" + data.cut_width + "'" +
+							"data-cut_width_uom='" + data.cut_width_uom + "'" +
                             "data-item='"+data.item+"'"+
                             "data-alloy='"+data.alloy+"'"+
                             "data-class='"+data.class+"'"+

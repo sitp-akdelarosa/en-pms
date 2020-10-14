@@ -160,8 +160,8 @@ $(function () {
     $('#alloy').val($(this).attr('data-alloy'));
     $('#schedule').val($(this).attr('data-schedule'));
     $('#size').val($(this).attr('data-size'));
-    $('#width').val($(this).attr('data-width'));
-    $('#thickness').val($(this).attr('data-thickness'));
+    $('#width').val($(this).attr('data-width')); // $('#thickness').val($(this).attr('data-thickness'));
+
     $('#length').val($(this).attr('data-length'));
     $('#qty_weight').val($(this).attr('data-qty_weight'));
     $('#qty_pcs').val($(this).attr('data-qty_pcs'));
@@ -638,7 +638,8 @@ function InventoryTable(arr) {
     scrollX: true,
     columns: [{
       data: function data(_data) {
-        return "<button type='button' name='edit-mainEdit' class='btn btn-sm btn-primary edit-mainEdit'" + "id='editinventory'" + "data-id= '" + _data.id + "' " + "data-receiving_no='" + _data.receiving_no + "' " + "data-materials_type='" + _data.materials_type + "' " + "data-materials_code='" + _data.materials_code + "'" + "data-description='" + _data.description + "'" + "data-item='" + _data.item + "'" + "data-alloy='" + _data.alloy + "'" + "data-schedule='" + _data.schedule + "'" + "data-size='" + _data.size + "'" + "data-qty_weight='" + _data.qty_weight + "'" + "data-qty_pcs='" + _data.qty_pcs + "'" + "data-current_stock='" + _data.current_stock + "'" + "data-heat_no='" + _data.heat_no + "' " + "data-invoice_no='" + _data.invoice_no + "'" + "data-received_date='" + _data.received_date + "'" + "data-width='" + _data.width + "' " + "data-thickness='" + _data.thickness + "' " + "data-length='" + _data.length + "' " + "data-supplier_heat_no='" + _data.supplier_heat_no + "' " + "data-supplier='" + _data.supplier + "'>" + "<i class='fa fa-edit'></i> " + "</button>";
+        return "<button type='button' name='edit-mainEdit' class='btn btn-sm btn-primary edit-mainEdit'" + "id='editinventory'" + "data-id= '" + _data.id + "' " + "data-receiving_no='" + _data.receiving_no + "' " + "data-materials_type='" + _data.materials_type + "' " + "data-materials_code='" + _data.materials_code + "'" + "data-description='" + _data.description + "'" + "data-item='" + _data.item + "'" + "data-alloy='" + _data.alloy + "'" + "data-schedule='" + _data.schedule + "'" + "data-size='" + _data.size + "'" + "data-qty_weight='" + _data.qty_weight + "'" + "data-qty_pcs='" + _data.qty_pcs + "'" + "data-current_stock='" + _data.current_stock + "'" + "data-heat_no='" + _data.heat_no + "' " + "data-invoice_no='" + _data.invoice_no + "'" + "data-received_date='" + _data.received_date + "'" + "data-width='" + _data.width + "' " + // "data-thickness='" + data.thickness + "' " +
+        "data-length='" + _data.length + "' " + "data-supplier_heat_no='" + _data.supplier_heat_no + "' " + "data-supplier='" + _data.supplier + "'>" + "<i class='fa fa-edit'></i> " + "</button>";
       },
       searchable: false,
       orderable: false
@@ -660,9 +661,8 @@ function InventoryTable(arr) {
       data: 'size'
     }, {
       data: 'width'
-    }, {
-      data: 'thickness'
-    }, {
+    }, // { data: 'thickness' },
+    {
       data: 'length'
     }, // {
     // 	data: function (data) {

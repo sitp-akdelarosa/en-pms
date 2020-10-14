@@ -105,15 +105,15 @@ class UpdateInventoryController extends Controller
                         return response()->json($data);
                     }
 
-                    if ((!empty($field['heatnumber']) && !is_null($field['heatnumber'])) && in_array($field['heatnumber'], $heatnumber)) {
-                        $data = ['status' => 'heatnumber error','msg' => 'The '.$field['heatnumber'].' Heat Number is same in Excel File'];
-                        return response()->json($data);
-                    }
+                    // if ((!empty($field['heatnumber']) && !is_null($field['heatnumber'])) && in_array($field['heatnumber'], $heatnumber)) {
+                    //     $data = ['status' => 'heatnumber error','msg' => 'The '.$field['heatnumber'].' Heat Number is same in Excel File'];
+                    //     return response()->json($data);
+                    // }
                     $heatnumber[] =  $field['heatnumber'];
 
                     $weight = $field['qty_weight'];
 
-                    if(filter_var($weight, FILTER_VALIDATE_INT) === false) {
+                    if(filter_var($weight, FILTER_VALIDATE_FLOAT) === false) {
                         $data = ['status' => 'not num'];
                         return response()->json($data);
                     }
@@ -386,7 +386,7 @@ class UpdateInventoryController extends Controller
                                         'width' => (isset($field['width']))? strtoupper($field['width']): 'N/A',
                                         'length' => (isset($field['length']))? strtoupper($field['length']): 'N/A',
                                         'supplier_heat_no' => (isset($field['supplierheatno']))? strtoupper($field['supplierheatno']): 'N/A',
-                                        'thickness' => (isset($field['thickness']))? strtoupper($field['thickness']): 'N/A',
+                                        // 'thickness' => (isset($field['thickness']))? strtoupper($field['thickness']): 'N/A',
                                         'created_at' => date("Y-m-d H:i:s"),
                                         'updated_at' => date("Y-m-d H:i:s"),
                                         'create_user' => Auth::user()->id,
@@ -417,7 +417,7 @@ class UpdateInventoryController extends Controller
                             'received_date' => DATE_FORMAT($field['receiveddate'], 'Y-m-d').' '.date('H:i:s'),
                             'supplier' => strtoupper($field['supplier']),
                             'supplier_heat_no' => (isset($field['supplierheatno']))? strtoupper($field['supplierheatno']): 'N/A',
-                            'thickness' => (isset($field['thickness']))? strtoupper($field['thickness']): 'N/A',
+                            // 'thickness' => (isset($field['thickness']))? strtoupper($field['thickness']): 'N/A',
                             'received_id' => $received_id,
                             'created_at' => date("Y-m-d H:i:s"),
                             'updated_at' => date("Y-m-d H:i:s"),
@@ -496,8 +496,8 @@ class UpdateInventoryController extends Controller
                             DB::raw("IFNULL(pui.length,'') as length"),
                             DB::raw("IFNULL(pui.width,'') as width"),
                             DB::raw("CONCAT(pui.width,' ','x',' ',pui.length) as wxl"),
-                            DB::raw("IFNULL(pui.supplier_heat_no,'') as supplier_heat_no"),
-                            DB::raw("IFNULL(pui.thickness,'') as thickness")
+                            DB::raw("IFNULL(pui.supplier_heat_no,'') as supplier_heat_no")
+                            // DB::raw("IFNULL(pui.thickness,'') as thickness")
                         )
                         ->whereRaw('1=1 '.$with_zero)
                         ->where('apl.user_id' ,Auth::user()->id)
@@ -522,8 +522,9 @@ class UpdateInventoryController extends Controller
                                 DB::raw("IFNULL(pui.length,'')"),
                                 DB::raw("IFNULL(pui.width,'')"),
                                 DB::raw("CONCAT(pui.width,' ','x',' ',pui.length)"),
-                                DB::raw("IFNULL(pui.supplier_heat_no,'')"),
-                                DB::raw("IFNULL(pui.thickness,'')"))
+                                DB::raw("IFNULL(pui.supplier_heat_no,'')")
+                                // DB::raw("IFNULL(pui.thickness,'')"))
+                        )
                         ->orderBy('pui.id','desc')->get();
                         
         return response()->json($Datalist);
@@ -577,7 +578,7 @@ class UpdateInventoryController extends Controller
                 $UP->received_date = $req->received_date.' '.date('H:i:s');
                 $UP->supplier = (!is_null($req->supplier))? strtoupper($req->supplier): 'N/A';
                 $UP->supplier_heat_no = (!is_null($req->supplier_heat_no))? strtoupper($req->supplier_heat_no): 'N/A';
-                $UP->thickness = (!is_null($req->thickness))? strtoupper($req->thickness): 'N/A';
+                // $UP->thickness = (!is_null($req->thickness))? strtoupper($req->thickness): 'N/A';
                 $UP->update_user =  Auth::user()->id;
                 $UP->mode = 'Updated from Manual';
 
@@ -606,7 +607,7 @@ class UpdateInventoryController extends Controller
                                 'received_date' => $req->received_date.' '.date('H:i:s'),
                                 'supplier' => (!is_null($req->supplier))? strtoupper($req->supplier): 'N/A',
                                 'supplier_heat_no' => (!is_null($req->supplier_heat_no))? strtoupper($req->supplier_heat_no): 'N/A',
-                                'thickness' => (!is_null($req->thickness))? strtoupper($req->thickness): 'N/A',
+                                // 'thickness' => (!is_null($req->thickness))? strtoupper($req->thickness): 'N/A',
                                 'update_user' =>  Auth::user()->id,
                                 'updated_at' => date('Y-m-d H:i:s'),
                                 'mode' => 'Updated from Manual'
@@ -662,7 +663,7 @@ class UpdateInventoryController extends Controller
                             'received_date' => $req->received_date.' '.date('H:i:s'),
                             'supplier' => (!is_null($req->supplier))? strtoupper($req->supplier): 'N/A',
                             'supplier_heat_no' => (!is_null($req->supplier_heat_no))? strtoupper($req->supplier_heat_no): 'N/A',
-                            'thickness' => (!is_null($req->thickness))? strtoupper($req->thickness): 'N/A',
+                            // 'thickness' => (!is_null($req->thickness))? strtoupper($req->thickness): 'N/A',
                             'create_user' =>  Auth::user()->id,
                             'update_user' =>  Auth::user()->id,
                             'created_at' => date('Y-m-d H:i:s'),
@@ -695,7 +696,7 @@ class UpdateInventoryController extends Controller
                 $inv->received_date = $req->received_date.' '.date('H:i:s');
                 $inv->supplier = (!is_null($req->supplier))? strtoupper($req->supplier): 'N/A';
                 $inv->supplier_heat_no = (!is_null($req->supplier_heat_no))? strtoupper($req->supplier_heat_no): 'N/A';
-                $inv->thickness = (!is_null($req->thickness))? strtoupper($req->thickness): 'N/A';
+                // $inv->thickness = (!is_null($req->thickness))? strtoupper($req->thickness): 'N/A';
                 $inv->received_id = $received;
                 $inv->create_user =  Auth::user()->id;
                 $inv->update_user =  Auth::user()->id;
@@ -793,7 +794,7 @@ class UpdateInventoryController extends Controller
                                         'width',
                                         'length',
                                         'supplier_heat_no',
-                                        'thickness',
+                                        // 'thickness',
                                         DB::raw("left(created_at,10) as created_at")
                                     )
                                     ->where('create_user',Auth::user()->id)
@@ -810,7 +811,7 @@ class UpdateInventoryController extends Controller
                                         'width',
                                         'length',
                                         'supplier_heat_no',
-                                        'thickness',
+                                        // 'thickness',
                                         DB::raw("left(created_at,10)")
                                     )
                                     ->get();
@@ -832,7 +833,7 @@ class UpdateInventoryController extends Controller
                                         'width',
                                         'length',
                                         'supplier_heat_no',
-                                        'thickness',
+                                        // 'thickness',
                                         DB::raw("left(created_at,10) as created_at")
                                     )
                                     ->where('create_user',Auth::user()->id)
@@ -848,7 +849,7 @@ class UpdateInventoryController extends Controller
                                         'width',
                                         'length',
                                         'supplier_heat_no',
-                                        'thickness',
+                                        // 'thickness',
                                         DB::raw("left(created_at,10)")
                                     )
                                     ->get();
@@ -908,9 +909,9 @@ class UpdateInventoryController extends Controller
                 $sheet->cell('H6', "width");
                 $sheet->cell('I6', "Length");
                 $sheet->cell('J6', "Supplier Heat No.");
-                $sheet->cell('K6', "Thickness");
-                $sheet->cell('L6', "Receiving No.");
-                $sheet->cell('M6', "Date Uploaded");
+                // $sheet->cell('K6', "Thickness");
+                $sheet->cell('K6', "Receiving No.");
+                $sheet->cell('L6', "Date Uploaded");
 
                 $row = 7;
 
@@ -926,9 +927,9 @@ class UpdateInventoryController extends Controller
                     $sheet->cell('H'.$row, $dt->width);
                     $sheet->cell('I'.$row, $dt->length);
                     $sheet->cell('J'.$row, $dt->supplier_heat_no);
-                    $sheet->cell('K'.$row, $dt->thickness);
-                    $sheet->cell('L'.$row, $dt->receiving_no);
-                    $sheet->cell('M'.$row, $this->_helper->convertDate($dt->created_at,'Y-m-d'));
+                    // $sheet->cell('K'.$row, $dt->thickness);
+                    $sheet->cell('K'.$row, $dt->receiving_no);
+                    $sheet->cell('L'.$row, $this->_helper->convertDate($dt->created_at,'Y-m-d'));
                     
                     $row++;
                 }
@@ -963,16 +964,16 @@ class UpdateInventoryController extends Controller
                 $sheet->cell('F1', "alloy");
                 $sheet->cell('G1', "schedule");
                 $sheet->cell('H1', "size");
-                $sheet->cell('I1', "thickness");
-                $sheet->cell('J1', "qty_weight");
-                $sheet->cell('K1', "qty_pcs");
-                $sheet->cell('L1', "heatnumber");
-                $sheet->cell('M1', "invoiceno");
-                $sheet->cell('N1', "receiveddate");
-                $sheet->cell('O1', "supplier");
-                $sheet->cell('P1', "width");
-                $sheet->cell('Q1', "length");
-                $sheet->cell('R1', "supplierheatno");
+                // $sheet->cell('I1', "thickness");
+                $sheet->cell('I1', "qty_weight");
+                $sheet->cell('J1', "qty_pcs");
+                $sheet->cell('K1', "heatnumber");
+                $sheet->cell('L1', "invoiceno");
+                $sheet->cell('M1', "receiveddate");
+                $sheet->cell('N1', "supplier");
+                $sheet->cell('O1', "width");
+                $sheet->cell('P1', "length");
+                $sheet->cell('Q1', "supplierheatno");
                 
             });
         })->download('xlsx');
