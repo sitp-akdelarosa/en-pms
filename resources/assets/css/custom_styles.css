@@ -160,3 +160,12 @@ input {
     height: 28px;
     line-height: 1.8;
 }
+.list-group-item {
+    padding: 5px 5px;
+}
+
+#sortable_process {
+    height: 400px;
+    overflow-y: scroll;
+    cursor: move;
+}

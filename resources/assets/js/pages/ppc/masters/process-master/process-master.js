@@ -3,6 +3,13 @@ var selected_process_arr = [];
 var setArray = [];
 
 $( function() {
+	$('#sortable_process').sortable({
+		multiDrag: true,
+		selectedClass: 'selected',
+		fallbackTolerance: 3, // So that we can select items on mobile
+		animation: 150
+	});
+	
 	//$('.select2').select2();
 
 	// $('#set_list').slimscroll({ height: '100px',width: '100%' });
@@ -10,7 +17,7 @@ $( function() {
 	processSelection();
 	// get_dropdown_items_by_id(2,'#set');
 	checkAllCheckboxesInTable('#tbl_added_sets','.check_all_sets','.check_set','#btn_delete_set');
-	checkAllCheckboxesInTable('#tbl_selected_process','.check_all','.check_item');
+	checkAllCheckboxesInTable('#tbl_select_process','.check_all','.check_item');
 
 	init();
 	//selectedProcess('Default');
@@ -85,6 +92,23 @@ $( function() {
 		var selectedSet = $('#selected_set').val();
 		if (selectedSet.length > 0 && selected_process_arr.length > 0) {
 
+			data = [];
+			var cnt = 1;
+
+			$.each($('.process_name'), function(i,x) {
+				data.push({
+					count: cnt,
+					sequence: cnt,
+					process: $(x).attr('data-process')
+				});
+				cnt++;
+				console.log($(x).attr('data-process'));
+			});
+
+			selected_process_arr = data;
+
+			console.log(selected_process_arr);
+
 			$('.loadingOverlay').show();
 
 			$.ajax({
@@ -125,7 +149,7 @@ $( function() {
 	// 	selectedProcess($(this).val());
 	// });
 
-	$('#tbl_selected_process_body').on('click', '.delete', function() {
+	$('#sortable_process').on('click', '.delete', function() {
 		var id = $(this).attr('data-count');
 		id--;
 		selected_process_arr.splice(id,1);
@@ -146,11 +170,17 @@ $( function() {
 
 		selectedProcessTable(selected_process_arr);
 
-		if ($('#tbl_selected_process_body > tr').length < 1) {
-			$('#tbl_selected_process_body').html('<tr id="no_data">'+
-                                            '<td colspan="4" class="text-center">No data available.</td>'+
-                                        '</tr>');
+		console.log($('#sortable_process > .process_name').length);
+
+		if ($('#sortable_process > .process_name').length < 1) {
+			$('#sortable_process').html('<div class="list-group-item process_name" data-process="">No Process selected.</div>');
 		}
+
+		// if ($('#tbl_selected_process_body > tr').length < 1) {
+		// 	$('#tbl_selected_process_body').html('<tr id="no_data">'+
+        //                                     '<td colspan="4" class="text-center">No data available.</td>'+
+        //                                 '</tr>');
+		// }
 	});
 
 	$('#frm_add_set').on('submit', function(e) {
@@ -232,8 +262,6 @@ $( function() {
 		selectedProcessTable(selected_process_arr);
 	});
 
-	
-
 });
 
 function init() {
@@ -288,6 +316,7 @@ function GUIState(state) {
 }
 
 function processSelection() {
+	$('.loadingOverlay').show();
 	process_select_arr = [];
 	$.ajax({
 		url: processListURL,
@@ -309,7 +338,7 @@ function makeProcessesTable(arr) {
         data: arr,
         bLengthChange : false,
         //scrollY: "300px",
-        searching: false,
+        //searching: false,
         pageLength: 10,
 	    //paging: false,
 	    order: [[1,'asc']],
@@ -324,12 +353,14 @@ function makeProcessesTable(arr) {
         ],
         fnInitComplete: function() {
         	GUIState('view');
-            $('.dataTables_scrollBody').slimscroll();
-        }
+			$('.dataTables_scrollBody').slimscroll();
+			$('.loadingOverlay').hide();
+		}
     });
 }
 
 function selectedProcess(set_id) {
+	$('.loadingOverlay').show();
 	selected_process_arr = [];
 	$.ajax({
 		url: selectedProcessListURL,
@@ -350,60 +381,76 @@ function selectedProcess(set_id) {
 		selectedProcessTable(selected_process_arr);
 	}).fail(function(xhr, textStatus, errorThrown) {
 		msg(errorThrown,textStatus);
+	}).always( function() {
+		$('.loadingOverlay').hide();
 	});
 }
 
 function selectedProcessTable(arr) {
-	$('#tbl_selected_process_body').html('');
-	$('#tbl_selected_process').dataTable().fnClearTable();
-    $('#tbl_selected_process').dataTable().fnDestroy();
-    $('#tbl_selected_process').dataTable({
-        data: arr,
-        bLengthChange : false,
-        searching: false,
-	    paging: false,
-	    order: [[1,'asc']],
-        columns: [
-        	{ data: function() {
-        		return '<i class="text-blue fa fa-arrows"></i>';
-        	}, searchable: false, orderable: false },
-            { data: 'sequence' },
-            { data: 'process' },
-            { data: function(x) {
-        		return '<i class="text-red fa fa-times delete" data-count="'+x.count+'"></i>';
-        	}, searchable: false, orderable: false },
-        ],
-        rowReorder: {
-            dataSrc: 'process'
-        }
-    });
+
+	if (arr.length > 0) {
+		var list = '';
+		$('#sortable_process').html(list);
+
+		$.each(arr, function (i, x) {
+			list += '<div class="list-group-item process_name" data-process="' + x.process + '">' +
+				x.process +
+				'<button type="button" class="btn btn-sm bg-red delete pull-right" data-count="' + x.count + '">' +
+				'<i class="fa fa-times" ></i> ' +
+				'</button> ' +
+				'</div>';
+		});
+		$('#sortable_process').html(list);
+		$('.loadingOverlay').hide();
+	} else {
+		$('#sortable_process').html('<div class="list-group-item process_name" data-process="">No Process selected.</div>');
+		$('.loadingOverlay').hide();
+	}
+
+
+	
+	
+
+		
+	
+	// $('#tbl_selected_process_body').html('');
+	// $('#tbl_selected_process').dataTable().fnClearTable();
+    // $('#tbl_selected_process').dataTable().fnDestroy();
+    // $('#tbl_selected_process').dataTable({
+    //     data: arr,
+    //     bLengthChange : false,
+    //     searching: false,
+	//     paging: false,
+	//     order: [[1,'asc']],
+    //     columns: [
+    //     	{ data: function() {
+    //     		return '<i class="text-blue fa fa-arrows"></i>';
+    //     	}, searchable: false, orderable: false },
+    //         { data: 'sequence' },
+    //         { data: 'process' },
+    //         { data: function(x) {
+    //     		return '<i class="text-red fa fa-times delete" data-count="'+x.count+'"></i>';
+    //     	}, searchable: false, orderable: false },
+	// 	],
+    //     rowReorder: {
+    //         dataSrc: 'process'
+    //     }
+    // });
 }
 
 function get_set() {
-	var set = '<option value=""></option>';
-	// var set_list = '';
-	$('#selected_set').html(set);
-	// $('#set_list').html(set_list);
+	$('.loadingOverlay').show();
+
 	$.ajax({
 		url: getSetURL,
 		type: 'GET',
 		dataType: 'JSON',
 		data: {_token: token},
 	}).done(function(data, textStatus, xhr) {
-		console.log(data);
 		$('#selected_set').select2({
 			data: data
 		});
 		setTable(data);
-		// $.each(data, function(i, x) {
-		// 	set = '<option value="'+x.id+'">'+x.set+'</option>';
-		// 	$('#selected_set').append(set);
-
-		// 	set_list = '<h6>'+
-		// 					'<input type="checkbox" class="set_item" value="'+x.id+'">'+x.set+
-		// 				'</h6>';
-		// 	$('#set_list').append(set_list);
-		// });
 	}).fail(function(xhr, textStatus, errorThrown) {
 		msg(errorThrown,textStatus);
 	});

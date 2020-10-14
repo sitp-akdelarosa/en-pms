@@ -26,6 +26,7 @@ class CreatePpcJoDetailsTable extends Migration
             $table->string('material_heat_no');
             $table->string('uom');
             $table->string('lot_no');
+            $table->integer('inv_id')->default(0);
             $table->integer('create_user')->default(0);
             $table->integer('update_user')->default(0);
             $table->timestamps();

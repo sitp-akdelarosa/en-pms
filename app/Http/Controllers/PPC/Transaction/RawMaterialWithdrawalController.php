@@ -66,7 +66,43 @@ class RawMaterialWithdrawalController extends Controller
                                             ->first();
 
             if (count((array)$info) > 0) {
-                $details = PpcRawMaterialWithdrawalDetails::where('trans_id',$info->id)->get();
+                $details = DB::table('ppc_raw_material_withdrawal_details as d')
+                            ->where('d.trans_id',$info->id)
+                            ->where('d.deleted','<>','1')
+                            ->select('d.id as id',
+                                    'd.id as detail_id',
+                                    'd.trans_id as trans_id',
+                                    'd.mat_code as mat_code',
+                                    'd.alloy as alloy',
+                                    'd.item as item',
+                                    'd.size as size',
+                                    'd.schedule as schedule',
+                                    'd.lot_no as lot_no',
+                                    'd.material_heat_no as material_heat_no',
+                                    'd.sc_no as sc_no',
+                                    'd.remarks as remarks',
+                                    'd.issued_qty as issued_qty',
+                                    'd.needed_qty as needed_qty',
+                                    'd.returned_qty as returned_qty',
+                                    'd.issued_uom as issued_uom',
+                                    'd.needed_uom as needed_uom',
+                                    'd.returned_uom as returned_uom',
+                                    'd.inv_id as inv_id',
+                                    DB::raw("(SELECT cu.nickname
+                                            FROM users as cu
+                                            where cu.id = d.create_user) as create_user"),
+                                    DB::raw("(SELECT uu.nickname
+                                            FROM users as uu
+                                            where uu.id = d.update_user) as update_user"),
+                                    'd.created_at as created_at',
+                                    'd.updated_at as updated_at',
+                                    'd.deleted as deleted',
+                                    DB::raw("(SELECT du.nickname
+                                            FROM users as du
+                                            where du.id = d.delete_user) as delete_user"),
+                                    'd.deleted_at as deleted_at'
+                                )
+                            ->get();
 
                 $data = [
                     'status' => 'success',
@@ -127,8 +163,43 @@ class RawMaterialWithdrawalController extends Controller
                                               })
                                             ->first();
         if (count((array)$info) > 0) {
-            $details = PpcRawMaterialWithdrawalDetails::where('trans_id',$info->id)
-                        ->where('create_user',Auth::user()->id)->get();
+            $details = DB::table('ppc_raw_material_withdrawal_details as d')
+                            ->where('trans_id',$info->id)
+                            ->where('d.deleted','<>','1')
+                            ->select('d.id as id',
+                                'd.id as detail_id',
+                                'd.trans_id as trans_id',
+                                'd.mat_code as mat_code',
+                                'd.alloy as alloy',
+                                'd.item as item',
+                                'd.size as size',
+                                'd.schedule as schedule',
+                                'd.lot_no as lot_no',
+                                'd.material_heat_no as material_heat_no',
+                                'd.sc_no as sc_no',
+                                'd.remarks as remarks',
+                                'd.issued_qty as issued_qty',
+                                'd.needed_qty as needed_qty',
+                                'd.returned_qty as returned_qty',
+                                'd.issued_uom as issued_uom',
+                                'd.needed_uom as needed_uom',
+                                'd.returned_uom as returned_uom',
+                                'd.inv_id as inv_id',
+                                DB::raw("(SELECT cu.nickname
+                                        FROM users as cu
+                                        where cu.id = d.create_user) as create_user"),
+                                DB::raw("(SELECT uu.nickname
+                                        FROM users as uu
+                                        where uu.id = d.update_user) as update_user"),
+                                'd.created_at as created_at',
+                                'd.updated_at as updated_at',
+                                'd.deleted as deleted',
+                                DB::raw("(SELECT du.nickname
+                                        FROM users as du
+                                        where du.id = d.delete_user) as delete_user"),
+                                'd.deleted_at as deleted_at'
+                            )
+                            ->where('create_user',Auth::user()->id)->get();
 
             $data = [
                 'trans_id' => $info->id,
@@ -153,8 +224,43 @@ class RawMaterialWithdrawalController extends Controller
                                             ->where('create_user',Auth::user()->id)
                                             ->first();
         if (count((array)$info) > 0) {
-            $details = PpcRawMaterialWithdrawalDetails::where('trans_id',$info->id)
-                    ->where('create_user',Auth::user()->id)->get();
+            $details = DB::table('ppc_raw_material_withdrawal_details as d')
+                            ->where('trans_id',$info->id)
+                            ->where('d.deleted','<>','1')
+                            ->select('d.id as id',
+                                'd.id as detail_id',
+                                'd.trans_id as trans_id',
+                                'd.mat_code as mat_code',
+                                'd.alloy as alloy',
+                                'd.item as item',
+                                'd.size as size',
+                                'd.schedule as schedule',
+                                'd.lot_no as lot_no',
+                                'd.material_heat_no as material_heat_no',
+                                'd.sc_no as sc_no',
+                                'd.remarks as remarks',
+                                'd.issued_qty as issued_qty',
+                                'd.needed_qty as needed_qty',
+                                'd.returned_qty as returned_qty',
+                                'd.issued_uom as issued_uom',
+                                'd.needed_uom as needed_uom',
+                                'd.returned_uom as returned_uom',
+                                'd.inv_id as inv_id',
+                                DB::raw("(SELECT cu.nickname
+                                        FROM users as cu
+                                        where cu.id = d.create_user) as create_user"),
+                                DB::raw("(SELECT uu.nickname
+                                        FROM users as uu
+                                        where uu.id = d.update_user) as update_user"),
+                                'd.created_at as created_at',
+                                'd.updated_at as updated_at',
+                                'd.deleted as deleted',
+                                DB::raw("(SELECT du.nickname
+                                        FROM users as du
+                                        where du.id = d.delete_user) as delete_user"),
+                                'd.deleted_at as deleted_at'
+                            )
+                            ->where('create_user',Auth::user()->id)->get();
 
             $data = [
                 'trans_id' => $info->id,
@@ -181,8 +287,43 @@ class RawMaterialWithdrawalController extends Controller
                                             ->orderBy("id")
                                             ->first();
         if (count((array)$info) > 0) {
-            $details = PpcRawMaterialWithdrawalDetails::where('trans_id',$info->id)
-                     ->where('create_user',Auth::user()->id)->get();
+            $details = DB::table('ppc_raw_material_withdrawal_details as d')
+                            ->where('trans_id',$info->id)
+                            ->where('d.deleted','<>','1')
+                            ->select('d.id as id',
+                                'd.id as detail_id',
+                                'd.trans_id as trans_id',
+                                'd.mat_code as mat_code',
+                                'd.alloy as alloy',
+                                'd.item as item',
+                                'd.size as size',
+                                'd.schedule as schedule',
+                                'd.lot_no as lot_no',
+                                'd.material_heat_no as material_heat_no',
+                                'd.sc_no as sc_no',
+                                'd.remarks as remarks',
+                                'd.issued_qty as issued_qty',
+                                'd.needed_qty as needed_qty',
+                                'd.returned_qty as returned_qty',
+                                'd.issued_uom as issued_uom',
+                                'd.needed_uom as needed_uom',
+                                'd.returned_uom as returned_uom',
+                                'd.inv_id as inv_id',
+                                DB::raw("(SELECT cu.nickname
+                                        FROM users as cu
+                                        where cu.id = d.create_user) as create_user"),
+                                DB::raw("(SELECT uu.nickname
+                                        FROM users as uu
+                                        where uu.id = d.update_user) as update_user"),
+                                'd.created_at as created_at',
+                                'd.updated_at as updated_at',
+                                'd.deleted as deleted',
+                                DB::raw("(SELECT du.nickname
+                                        FROM users as du
+                                        where du.id = d.delete_user) as delete_user"),
+                                'd.deleted_at as deleted_at'
+                            )
+                            ->where('create_user',Auth::user()->id)->get();
 
             $data = [
                 'trans_id' => $info->id,
@@ -207,8 +348,43 @@ class RawMaterialWithdrawalController extends Controller
                                             ->first();
 
         if (count((array)$info) > 0) {                                            
-            $details = PpcRawMaterialWithdrawalDetails::where('trans_id',$info->id)
-                        ->where('create_user',Auth::user()->id)->get();
+            $details = DB::table('ppc_raw_material_withdrawal_details as d')
+                            ->where('trans_id',$info->id)
+                            ->where('d.deleted','<>','1')
+                            ->select('d.id as id',
+                                'd.id as detail_id',
+                                'd.trans_id as trans_id',
+                                'd.mat_code as mat_code',
+                                'd.alloy as alloy',
+                                'd.item as item',
+                                'd.size as size',
+                                'd.schedule as schedule',
+                                'd.lot_no as lot_no',
+                                'd.material_heat_no as material_heat_no',
+                                'd.sc_no as sc_no',
+                                'd.remarks as remarks',
+                                'd.issued_qty as issued_qty',
+                                'd.needed_qty as needed_qty',
+                                'd.returned_qty as returned_qty',
+                                'd.issued_uom as issued_uom',
+                                'd.needed_uom as needed_uom',
+                                'd.returned_uom as returned_uom',
+                                'd.inv_id as inv_id',
+                                DB::raw("(SELECT cu.nickname
+                                        FROM users as cu
+                                        where cu.id = d.create_user) as create_user"),
+                                DB::raw("(SELECT uu.nickname
+                                        FROM users as uu
+                                        where uu.id = d.update_user) as update_user"),
+                                'd.created_at as created_at',
+                                'd.updated_at as updated_at',
+                                'd.deleted as deleted',
+                                DB::raw("(SELECT du.nickname
+                                        FROM users as du
+                                        where du.id = d.delete_user) as delete_user"),
+                                'd.deleted_at as deleted_at'
+                            )
+                            ->where('create_user',Auth::user()->id)->get();
 
             $data = [
                 'trans_id' => $info->id,
@@ -234,35 +410,55 @@ class RawMaterialWithdrawalController extends Controller
             $info->update_user = Auth::user()->id;
             $info->save();
 
-            foreach ($req->ids as $key => $detailid) {
+            
+
+            foreach ($req->detail_ids as $key => $detailid) {
+                $deleted = 0;
+                $delete_user = 0;
+                $deleted_at = NULL;
                 // PpcUpdateInventory::where('heat_no',$req->material_heat_no[$key])
                 //                     ->decrement('quantity',(int)$req->issued_qty[$key]);
 
-                Inventory::where('id',$req->inv_id[$key])
-                        ->decrement('quantity',(int)$req->issued_qty[$key]);
+                
 
-                array_push($params, [
-                    'trans_id' => $info->id,
-                    'mat_code' => strtoupper($req->mat_code[$key]),
-                    'alloy' => strtoupper($req->alloy[$key]),
-                    'item' => strtoupper($req->item[$key]),
-                    'size' => strtoupper($req->size[$key]),
-                    'schedule' => strtoupper($req->schedule[$key]),
-                    // 'lot_no' => strtoupper($req->lot_no[$key]),
-                    'material_heat_no' => strtoupper($req->material_heat_no[$key]),
-                    // 'sc_no' => $req->sc_no[$key],
-                    'remarks' => strtoupper($req->remarks[$key]),
-                    'issued_qty' => $req->issued_qty[$key],
-                    // 'needed_qty' => $req->needed_qty[$key],
-                    // 'returned_qty' => $req->returned_qty[$key],
-                    'issued_uom' => $req->issued_uom[$key],
-                    // 'needed_uom' => $req->needed_uom[$key],
-                    // 'returned_uom' => $req->returned_uom[$key],
-                    'create_user' => Auth::user()->id,
-                    'update_user' => Auth::user()->id,
-                    'created_at' => date('Y-m-d h:i:s'),
-                    'updated_at' => date('Y-m-d h:i:s'),
-                ]);
+                if ($req->deleted[$key] > 0) {
+                    $deleted = 1;
+                    $delete_user = Auth::user()->id;
+                    $deleted_at = date('Y-m-d H:i:s');
+
+                    // Inventory::where('id',$req->inv_id[$key])
+                    //     ->increment('qty_pcs',(int)$req->issued_qty[$key]);
+                } else {
+                    Inventory::where('id',$req->inv_ids[$key])
+                        ->decrement('qty_pcs',(int)$req->issued_qty[$key]);
+
+                    array_push($params, [
+                        'trans_id' => $info->id,
+                        'mat_code' => strtoupper($req->mat_code[$key]),
+                        'alloy' => strtoupper($req->alloy[$key]),
+                        'item' => strtoupper($req->item[$key]),
+                        'size' => strtoupper($req->size[$key]),
+                        'schedule' => strtoupper($req->schedule[$key]),
+                        // 'lot_no' => strtoupper($req->lot_no[$key]),
+                        'material_heat_no' => strtoupper($req->material_heat_no[$key]),
+                        // 'sc_no' => $req->sc_no[$key],
+                        'remarks' => strtoupper($req->remarks[$key]),
+                        'issued_qty' => $req->issued_qty[$key],
+                        // 'needed_qty' => $req->needed_qty[$key],
+                        // 'returned_qty' => $req->returned_qty[$key],
+                        'issued_uom' => 'PCS',
+                        'inv_id' => $req->inv_ids[$key],
+                        // 'needed_uom' => $req->needed_uom[$key],
+                        // 'returned_uom' => $req->returned_uom[$key],
+                        'create_user' => Auth::user()->id,
+                        'update_user' => Auth::user()->id,
+                        'created_at' => date('Y-m-d h:i:s'),
+                        'updated_at' => date('Y-m-d h:i:s'),
+                        'deleted' => $deleted,
+                        'delete_user' => $delete_user,
+                        'deleted_at' => $deleted_at
+                    ]);
+                }
             }
             
             $insert = array_chunk($params, 1000);
@@ -284,56 +480,115 @@ class RawMaterialWithdrawalController extends Controller
                                                ->where('trans_no',$req->trans_no)
                                                ->first();
 
-            $RawMatQuantity = PpcRawMaterialWithdrawalDetails::where('trans_id',$info->id)->get();
+            // $RawMatQuantity = PpcRawMaterialWithdrawalDetails::where('trans_id',$info->id)->get();
 
-            foreach ($RawMatQuantity as $key => $rw) {
-                PpcUpdateInventory::where('heat_no',$rw->material_heat_no)
-                                    ->increment('quantity',(int)$rw->issued_qty);
-            }
+            // foreach ($RawMatQuantity as $key => $rw) {
+            //     PpcUpdateInventory::where('heat_no',$rw->material_heat_no)
+            //                         ->increment('quantity',(int)$rw->issued_qty);
+            // }
 
-            PpcRawMaterialWithdrawalDetails::where('trans_id',$info->id)->delete();
+            // PpcRawMaterialWithdrawalDetails::where('trans_id',$info->id)->delete();
+
+            PpcRawMaterialWithdrawalInfo::where('trans_no',$req->trans_no)
+                                        ->update([
+                                            'update_user' => Auth::user()->id,
+                                            'updated_at' => date('Y-m-d H:i:s')
+                                        ]);
            
             $inv_qty = 0;
-            foreach ($req->ids as $key => $detailid) {
+            foreach ($req->detail_ids as $key => $detailid) {
+                if ($detailid == 0) {
+                    Inventory::where('id',$req->inv_ids[$key])
+                        ->decrement('qty_pcs',(int)$req->issued_qty[$key]);
+
+                    $sc_no = $req->sc_no[$key];
+                    if($req->sc_no[$key] == null || $req->sc_no[$key] == 'null' ){
+                        $sc_no = '';
+                    }
+
+                    PpcRawMaterialWithdrawalDetails::insert([
+                        'trans_id' => $info->id,
+                        'mat_code' => $req->mat_code[$key],
+                        'alloy' => strtoupper($req->alloy[$key]),
+                        'item' => strtoupper($req->item[$key]),
+                        'size' => strtoupper($req->size[$key]),
+                        'schedule' => strtoupper($req->schedule[$key]),
+                        // 'lot_no' => strtoupper($req->lot_no[$key]),
+                        'material_heat_no' => strtoupper($req->material_heat_no[$key]),
+                        'sc_no' => $sc_no,
+                        'remarks' => strtoupper($req->remarks[$key]),
+                        'issued_qty' => $req->issued_qty[$key],
+                        // 'needed_qty' => $req->needed_qty[$key],
+                        // 'returned_qty' => $req->returned_qty[$key],
+                        'issued_uom' => 'PCS',
+                        'inv_id' => $req->inv_ids[$key],
+                        // 'needed_uom' => $req->needed_uom[$key],
+                        // 'returned_uom' => $req->returned_uom[$key],
+                        'create_user' => Auth::user()->id,
+                        'update_user' => Auth::user()->id,
+                        'created_at' => date('Y-m-d h:i:s'),
+                        'updated_at' => date('Y-m-d h:i:s'),
+                    ]);
+
+                    
+                } else {
+                    $deleted = 0;
+                    $delete_user = 0;
+                    $deleted_at = NULL;
+
+                    if ($req->deleted[$key] > 0) {
+                        $deleted = 1;
+                        $delete_user = Auth::user()->id;
+                        $deleted_at = date('Y-m-d H:i:s');
+
+                        Inventory::where('id',$req->inv_ids[$key])
+                            ->increment('qty_pcs',(int)$req->issued_qty[$key]);
+                    } else {
+                        if ((int)$req->issued_qty[$key] !== (int)$req->old_issued_qtys[$key]) {
+                            Inventory::where('id',$req->inv_ids[$key])
+                                    ->increment('qty_pcs',(int)$req->old_issued_qtys[$key]);
+
+                            Inventory::where('id',$req->inv_ids[$key])
+                                    ->decrement('qty_pcs',(int)$req->issued_qty[$key]);
+                        }
+                    }
+
+                    $sc_no = $req->sc_no[$key];
+                    if($req->sc_no[$key] == null || $req->sc_no[$key] == 'null' ){
+                        $sc_no = '';
+                    }
+
+                    PpcRawMaterialWithdrawalDetails::where('id',$detailid)
+                        ->update([
+                            'trans_id' => $info->id,
+                            'mat_code' => $req->mat_code[$key],
+                            'alloy' => strtoupper($req->alloy[$key]),
+                            'item' => strtoupper($req->item[$key]),
+                            'size' => strtoupper($req->size[$key]),
+                            'schedule' => strtoupper($req->schedule[$key]),
+                            // 'lot_no' => strtoupper($req->lot_no[$key]),
+                            'material_heat_no' => strtoupper($req->material_heat_no[$key]),
+                            'sc_no' => $sc_no,
+                            'remarks' => strtoupper($req->remarks[$key]),
+                            'issued_qty' => (int)$req->issued_qty[$key],
+                            // 'needed_qty' => $req->needed_qty[$key],
+                            // 'returned_qty' => $req->returned_qty[$key],
+                            'issued_uom' => 'PCS',
+                            // 'needed_uom' => $req->needed_uom[$key],
+                            // 'returned_uom' => $req->returned_uom[$key],
+                            'inv_id' => $req->inv_ids[$key],
+                            'update_user' => Auth::user()->id,
+                            'updated_at' => date('Y-m-d h:i:s'),
+                            'deleted' => $deleted,
+                            'delete_user' => $delete_user,
+                            'deleted_at' => $deleted_at
+                        ]);
+                }
                 
                 // PpcUpdateInventory::where('heat_no' , $req->material_heat_no[$key])
                 //                 ->decrement('quantity',(int)$req->issued_qty[$key]);
 
-                Inventory::where('id',$req->inv_id[$key])
-                        ->decrement('quantity',(int)$req->issued_qty[$key]);
-
-                $sc_no = $req->sc_no[$key];
-                if($req->sc_no[$key] == null || $req->sc_no[$key] == 'null'){
-                    $sc_no = '';
-                }
-
-                array_push($params, [
-                    'trans_id' => $info->id,
-                    'mat_code' => $req->mat_code[$key],
-                    'alloy' => strtoupper($req->alloy[$key]),
-                    'item' => strtoupper($req->item[$key]),
-                    'size' => strtoupper($req->size[$key]),
-                    'schedule' => strtoupper($req->schedule[$key]),
-                    // 'lot_no' => strtoupper($req->lot_no[$key]),
-                    'material_heat_no' => strtoupper($req->material_heat_no[$key]),
-                    'sc_no' => $sc_no,
-                    'remarks' => strtoupper($req->remarks[$key]),
-                    'issued_qty' => $req->issued_qty[$key],
-                    // 'needed_qty' => $req->needed_qty[$key],
-                    // 'returned_qty' => $req->returned_qty[$key],
-                    'issued_uom' => $req->issued_uom[$key],
-                    // 'needed_uom' => $req->needed_uom[$key],
-                    // 'returned_uom' => $req->returned_uom[$key],
-                    'create_user' => Auth::user()->id,
-                    'update_user' => Auth::user()->id,
-                    'created_at' => date('Y-m-d h:i:s'),
-                    'updated_at' => date('Y-m-d h:i:s'),
-                ]);
-            }
-            $insert = array_chunk($params, 1000);
-            foreach ($insert as $batch) {
-                PpcRawMaterialWithdrawalDetails::insert($batch);
-            }
+            } 
 
             $this->_audit->insert([
                 'user_type' => Auth::user()->user_type,
@@ -403,22 +658,38 @@ class RawMaterialWithdrawalController extends Controller
 
     public function material_details(Request $req)
     {
+        $with_inv_id = "";
+
+        if (!is_null($req->inv_id)) {
+            $with_inv_id = " AND i.id = '". $req->inv_id ."' ";
+        }
+
         $materials = DB::table('ppc_update_inventories as pui')
                         ->leftJoin('admin_assign_production_lines as apl', 'apl.product_line', '=', 'pui.materials_type')
                         ->leftJoin('inventories as i','pui.id','=','i.received_id')
                         ->select([
                             'i.id as inv_id',
+                            'pui.receiving_no as receiving_no',
+                            'pui.materials_type as materials_type',
                             'pui.materials_code as materials_code',
                             'pui.item as item',
                             'pui.alloy as alloy',
                             'pui.schedule as schedule',
                             'pui.size as size',
-                            'i.quantity as current_stock',
-                            DB::raw("pui.quantity + '".$req->issued_qty."' as quantity ")
+                            'pui.length as length',
+                            'pui.qty_weight as qty_weight',
+                            'pui.qty_pcs as qty_pcs',
+                            'i.qty_pcs as current_stock',
+                            'pui.heat_no as heat_no', 
+                            DB::raw("pui.qty_pcs + '".$req->issued_qty."' as quantity"),
+                            'pui.invoice_no as invoice_no',
+                            'pui.received_date as received_date',
+                            'pui.supplier as supplier'
                         ])
                         ->where('apl.user_id' ,Auth::user()->id)
                         ->where('pui.heat_no',$req->material_heat_no)
-                        ->first();
+                        ->whereRaw("1=1 ".$with_inv_id)
+                        ->get();
 
         return response()->json($materials);
     }

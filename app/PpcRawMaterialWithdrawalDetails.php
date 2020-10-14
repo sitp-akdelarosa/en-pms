@@ -21,7 +21,9 @@ class PpcRawMaterialWithdrawalDetails extends Model
 		'issued_uom',
 		'needed_qty',
 		'needed_uom',
+		'inv_id',
 		'returned_qty',
+		'scheduled_qty',
 		'returned_uom',
 		'create_user',
 		'update_user'

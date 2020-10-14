@@ -44,6 +44,7 @@ class CreateInventoriesTable extends Migration
             $table->integer('delete_user')->default(0);
             $table->dateTime('deleted_at')->default(0);
             $table->string('mode')->nullable();
+            $table->string('thickness')->nullable();
         });
     }
 

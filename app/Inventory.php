@@ -32,6 +32,7 @@ class Inventory extends Model
         'deleted',
         'delete_user',
         'deleted_at',
-        'mode'
+        'mode',
+        'thickness'
     ];
 }

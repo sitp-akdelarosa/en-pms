@@ -1,9 +1,11 @@
 var _with_zero = 0;
 
 $(function () {
-	getMaterials();
+	getMaterials('');
 	getInventory(_with_zero);
 	init();
+
+	//$('#srch_received_date').daterangepicker();
 
 	$(document).on('shown.bs.modal', function () {
 		$($.fn.dataTable.tables(true)).DataTable()
@@ -12,11 +14,19 @@ $(function () {
 
 
 	$("#materials_type").on('change', function () {
-		getMaterialCode();
+		getMaterialCode('','');
+	});
+
+	$("#srch_materials_type").on('change', function () {
+		getMaterialCode('', 'search');
 	});
 
 	$("#materials_code").on('change', function () {
-		GetMaterialCodeDetails();
+		GetMaterialCodeDetails('');
+	});
+
+	$("#srch_materials_code").on('change', function () {
+		GetMaterialCodeDetails('search');
 	});
 
 	$('.custom-file-input').on('change', function () {
@@ -34,7 +44,7 @@ $(function () {
 		$('#qty_pcs').val(0);
 		$('#modal_material_inventory').modal('show');
 		clear();
-		getMaterialCode();
+		getMaterialCode('');
 	});
 
 	$('#btn_zero').on('click', function () {
@@ -61,7 +71,7 @@ $(function () {
 		$('#materials_type').val($(this).attr('data-materials_type'));
 
 		if ($('#materials_type').val() != '') {
-			getMaterialCode($(this).attr('data-materials_code'));
+			getMaterialCode($(this).attr('data-materials_code'),'');
 		}
 
 		$('#description').val($(this).attr('data-description'));
@@ -70,6 +80,7 @@ $(function () {
 		$('#schedule').val($(this).attr('data-schedule'));
 		$('#size').val($(this).attr('data-size'));
 		$('#width').val($(this).attr('data-width'));
+		$('#thickness').val($(this).attr('data-thickness'));
 		$('#length').val($(this).attr('data-length'));
 		$('#qty_weight').val($(this).attr('data-qty_weight'));
 		$('#qty_pcs').val($(this).attr('data-qty_pcs'));
@@ -351,6 +362,42 @@ $(function () {
 			hideErrors($(this).attr('id'));
 		}
 	});
+
+	$('#btn_search_filter').on('click', function() {
+		$('.srch-clear').val('');
+		getMaterials('search');
+		$('#modal_material_search').modal('show');
+	});
+
+	$('#srch_received_date_from').on('change', function() {
+		var selected_date = new Date($(this).val()).toISOString().split('T')[0];
+		document.getElementsByName("srch_received_date_to")[0].setAttribute('min', selected_date);
+	});
+
+	$("#frm_search").on('submit', function (e) {
+		e.preventDefault();
+		$('.loadingOverlay-modal').show();
+
+		$.ajax({
+			url: $(this).attr('action'),
+			type: 'GET',
+			dataType: 'JSON',
+			data: $(this).serialize(),
+		}).done(function (data, textStatus, xhr) {
+			//msg(data.msg, data.status);
+
+			InventoryTable(data);
+			$('#modal_material_search').modal('hide');
+			
+		}).fail(function (xhr, textStatus, errorThrown) {
+			var errors = xhr.responseJSON.errors;
+
+			console.log(errors);
+			showErrors(errors);
+		}).always(function () {
+			$('.loadingOverlay-modal').hide();
+		});
+	});
 });
 
 function init() {
@@ -359,32 +406,50 @@ function init() {
 	});
 }
 
-function getMaterials() {
+function getMaterials(state) {
+	$('.loadingOverlay-modal').show();
+
 	$.ajax({
 		url: materialTypeURL,
 		type: 'GET',
 		dataType: 'JSON',
 		data: { _token: token },
 	}).done(function (data, textStatus, xhr) {
+		var mat_type = $('#materials_type');
+		if (state == 'search') {
+			mat_type = $('#srch_materials_type');
+		}
 		var code = '<option></option>';
-		$('#materials_type').html(code);
+		mat_type.html(code);
 
 		$.each(data.type, function (i, x) {
 			code = '<option value="' + x.material_type + '">' + x.material_type + '</option>';
-			$('#materials_type').append(code);
+			mat_type.append(code);
 		});
 	}).fail(function (xhr, textStatus, errorThrown) {
 		msg(errorThrown, textStatus);
+	}).always( function() {
+		$('.loadingOverlay-modal').hide();
 	});
 }
 
-function getMaterialCode(mat_code) {
+function getMaterialCode(mat_code,state) {
+
+	
+	var hideErr = 'materials_code';
+	var material_type = $('#materials_type');
+	var material_code = $('#materials_code')
 	var code = "<option value=''></option>";
-	$('#materials_code').html(code);
+	
 
-	hideErrors('materials_code');
-
-	var material_type = $('#materials_type').val();
+	if (state == 'search') {
+		material_type = $('#srch_materials_type');
+		material_code = $('#srch_materials_code');
+		hideErr = 'srch_materials_code';
+	}
+	hideErrors(hideErr);
+	material_code.html(code);
+	
 
 	$('.loadingOverlay-modal').show();
 	$.ajax({
@@ -393,19 +458,19 @@ function getMaterialCode(mat_code) {
 		dataType: 'JSON',
 		data: {
 			_token: token,
-			mat_type: material_type
+			mat_type: material_type.val()
 		},
 	}).done(function (data, textStatus, xhr) {
 		if (data.length > 0) {
 			$.each(data, function (i, x) {
 				code = "<option value='" + x.material_code + "'>" + x.material_code + "</option>";
-				$('#materials_code').append(code);
+				material_code.append(code);
 			});
 
-			$('#materials_code').val(mat_code);
+			material_code.val(mat_code);
 		} else {
-			if (material_type !== '') {
-				showErrors({materials_code:["No Materials registered to " + material_type]});
+			if (material_type.val() !== '') {
+				showErrors({materials_code:["No Materials registered to " + material_type.val()]});
 			}
 		}
 			
@@ -416,24 +481,36 @@ function getMaterialCode(mat_code) {
 	});
 }
 
-function GetMaterialCodeDetails() {
+function GetMaterialCodeDetails(state) {
 	$('.loadingOverlay-modal').show();
+
+	var material_code = $('#materials_code');
+	if (state == 'search') {
+		material_code = $('#srch_materials_code');
+	}
+
 	$.ajax({
 		url: GetMaterialCodeDetailsurl,
 		type: 'GET',
 		dataType: 'JSON',
 		data: {
 			_token: token,
-			mat_code: $('#materials_code').val()
+			mat_code: material_code.val()
 		},
 	}).done(function (data, textStatus, xhr) {
-		// if (data.length > 0) {
-		$('#description').val(data.code_description);
-		$('#item').val(data.item);
-		$('#alloy').val(data.alloy);
-		$('#schedule').val(data.schedule);
-		$('#size').val(data.size);
-		// } else {
+		if (state == 'search') {
+			$('#srch_item').val(data.item);
+			$('#srch_alloy').val(data.alloy);
+			$('#srch_schedule').val(data.schedule);
+			$('#srch_size').val(data.size);
+		} else {
+			$('#description').val(data.code_description);
+			$('#item').val(data.item);
+			$('#alloy').val(data.alloy);
+			$('#schedule').val(data.schedule);
+			$('#size').val(data.size);
+		}
+		//else {
 		// 	msg("Material Code is not registered");
 		// }
 
@@ -516,6 +593,7 @@ function InventoryTable(arr) {
 						"data-invoice_no='" + data.invoice_no + "'" +
 						"data-received_date='" + data.received_date + "'" +
 						"data-width='" + data.width + "' " +
+						"data-thickness='" + data.thickness + "' " +
 						"data-length='" + data.length + "' " +
 						"data-supplier_heat_no='" + data.supplier_heat_no + "' " +
 						"data-supplier='" + data.supplier + "'>" +
@@ -532,6 +610,7 @@ function InventoryTable(arr) {
 			{ data: 'schedule' },
 			{ data: 'size' },
 			{ data: 'width' },
+			{ data: 'thickness' },
 			{ data: 'length' },
 			// {
 			// 	data: function (data) {

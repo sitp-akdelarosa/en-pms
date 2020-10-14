@@ -11,7 +11,6 @@
     "/js/pages/ppc/masters/division-master/division-master.js": "/js/pages/ppc/masters/division-master/division-master.js",
     "/js/pages/ppc/masters/dropdown-master/dropdown-master.js": "/js/pages/ppc/masters/dropdown-master/dropdown-master.js",
     "/js/pages/ppc/masters/operator-master/operator-master.js": "/js/pages/ppc/masters/operator-master/operator-master.js",
-    "/js/pages/ppc/masters/process-master/process-master.js": "/js/pages/ppc/masters/process-master/process-master.js",
     "/js/pages/ppc/reports/fg-summary.js": "/js/pages/ppc/reports/fg-summary.js",
     "/js/pages/ppc/reports/transfer-item-report.js": "/js/pages/ppc/reports/transfer-item-report.js",
     "/js/pages/ppc/transactions/cutting-schedule/cutting-schedule.js": "/js/pages/ppc/transactions/cutting-schedule/cutting-schedule.js",
@@ -28,5 +27,6 @@
     "/css/main.css": "/css/main.css",
     "/js/main.js": "/js/main.js",
     "/js/pages/ppc/masters/product-master/product-master.js": "/js/pages/ppc/masters/product-master/product-master.js",
-    "/js/pages/ppc/masters/material-master/material-master.js": "/js/pages/ppc/masters/material-master/material-master.js"
+    "/js/pages/ppc/masters/material-master/material-master.js": "/js/pages/ppc/masters/material-master/material-master.js",
+    "/js/pages/ppc/masters/process-master/process-master.js": "/js/pages/ppc/masters/process-master/process-master.js"
 }

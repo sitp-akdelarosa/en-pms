@@ -28,6 +28,7 @@ class CreateNotRegisteredMaterialsTable extends Migration
             $table->string('width');
             $table->string('length');
             $table->string('supplier_heat_no');
+            $table->string('thickness');
             $table->integer('create_user')->default(0);
             $table->integer('update_user')->default(0);
             $table->timestamps();

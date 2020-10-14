@@ -117,16 +117,16 @@ foreach ($user_accesses as $user_access){
                             <table class="table table-sm table-striped dt-responsive nowrap" style="width:100%" id="tbl_jo_details">
                                 <thead class="thead-dark">
                                     <tr>
-                                        <th width="5%"></th>
-                                        <th width="5%">SC No.</th>
-                                        <th width="10%">Product Code</th>
-                                        <th width="15%">Description</th>
-                                        <th width="10%">Back Order Qty.</th>
-                                        <th width="15%">Material Heat No.</th>
-                                        <th width="8%">UoM</th>
-                                        <th width="17%">Material Used</th>
-                                        <th width="10%">Lot No.</th>
-                                        <th width="10%">Sched. Qty.</th>
+                                        <th></th>
+                                        <th>SC No.</th>
+                                        <th>Product Code</th>
+                                        <th>Description</th>
+                                        <th>Back Order Qty.</th>
+                                        <th>Material Heat No.</th>
+                                        <th>Withdrawal Qty(PCS)</th>
+                                        <th>Material Used</th>
+                                        <th>Lot No.</th>
+                                        <th>Sched. Qty.</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbl_jo_details_body"></tbody>
@@ -230,17 +230,17 @@ foreach ($user_accesses as $user_access){
                     </div>
 
                     <div class="row justify-content-center">
-                        <div class="col-md-3 mb-5">
+                        <div class="col-md-1 col-sm-2 mb-5">
                             <button type="button" id="btn_save" class="btn bg-green btn-block permission-button">
                                 <i class="fa fa-floppy-o"></i> Save
                             </button>
                         </div>
-                        <div class="col-md-3 mb-5">
+                        <div class="col-md-1 col-sm-2 mb-5">
                             <button type="button" id="btn_edit" class="btn bg-blue btn-block permission-button">
                                 <i class="fa fa-edit"></i> Edit
                             </button>
                         </div>
-                        <div class="col-md-3 mb-5">
+                        <div class="col-md-1 col-sm-2 mb-5">
                             <button type="button" id="btn_cancel" class="btn bg-red btn-block">
                                 <i class="fa fa-times"></i> Cancel
                             </button>

@@ -59,6 +59,7 @@ foreach ($user_accesses as $user_access){
                                     <th>Schedule</th>
                                     <th>Size</th>
                                     <th>Width</th>
+                                    <th>Thickness</th>
                                     <th>Length</th>
                                     <th>Qty(KGS)</th>
                                     <th>Qty(PCS)</th>
@@ -94,6 +95,12 @@ foreach ($user_accesses as $user_access){
                         <div class="col-md-2">
                             <button id="btn_download_format" class="btn btn-sm btn-block bg-navy mb-3">
                                 <i class="fa fa-file-excel-o"></i> Download Format
+                            </button>
+                        </div>
+
+                        <div class="col-md-2">
+                            <button id="btn_search_filter" class="btn btn-sm btn-block bg-teal mb-3">
+                                <i class="fa fa-search"></i> Search / Filter
                             </button>
                         </div>
                     </div>

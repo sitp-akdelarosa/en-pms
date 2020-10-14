@@ -22,8 +22,8 @@ mix.js('resources/assets/js/app.js', 'public/js')
 	    'resources/assets/plugins/DataTables/css/datatables.min.css',
 	    'resources/assets/plugins/DataTables/css/dataTables.bootstrap4.min.css',
         'resources/assets/plugins/bootstrap-slider/slider.css',
-        'resources/assets/plugins/select2/dist/css/select2.min.css',
-        // 'resources/assets/plugins/select2/select2-bootstrap.css',
+        'resources/assets/plugins/select2/dist/css/select2.min.css', 
+        'resources/assets/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css',
         'resources/assets/plugins/autocomplete/jquery-ui.min.css',
 	    'resources/assets/css/master_style.css',
 	    'resources/assets/css/custom_styles.css',
@@ -45,6 +45,8 @@ mix.js('resources/assets/js/app.js', 'public/js')
 	    'resources/assets/plugins/DataTables/js/dataTables.bootstrap4.min.js',
         'resources/assets/plugins/timeago/timeago.min.js',
         'resources/assets/plugins/select2/dist/js/select2.full.js',
+        'resources/assets/plugins//moment/min/moment.min.js',
+        'resources/assets/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js',
         'resources/assets/plugins/autocomplete/jquery-ui.min.js',
         'resources/assets/js/resizer.js',
         'resources/assets/js/helpers.js',
@@ -79,7 +81,13 @@ mix.js('resources/assets/js/app.js', 'public/js')
         'resources/assets/js/pages/ppc/masters/material-master/material-code-assembly.js',
         'resources/assets/js/pages/ppc/masters/material-master/material-code.js'
     ], 'public/js/pages/ppc/masters/material-master/material-master.js')
-    .js('resources/assets/js/pages/ppc/masters/process-master/process-master.js', 'public/js/pages/ppc/masters/process-master')
+
+    .scripts([
+        'resources/assets/plugins/sortablejs/Sortable.js',
+        'resources/assets/plugins/sortablejs/jquery-sortable.js',
+        'resources/assets/js/pages/ppc/masters/process-master/process-master.js'
+    ], 'public/js/pages/ppc/masters/process-master/process-master.js')
+
     .js('resources/assets/js/pages/ppc/masters/operator-master/operator-master.js', 'public/js/pages/ppc/masters/operator-master')
 
     //transaction

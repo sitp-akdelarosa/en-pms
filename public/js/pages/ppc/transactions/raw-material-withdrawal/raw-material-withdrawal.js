@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 19);
+/******/ 	return __webpack_require__(__webpack_require__.s = 18);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -98,9 +98,11 @@ $(function () {
   getRawMaterialList();
   checkAllCheckboxesInTable('.check_all', '.check_item');
   init();
-  $('#material_heat_no').on('change', function () {
+  $(document).on('shown.bs.modal', function () {
+    $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+  });
+  $('#btn_search_heat_no').on('click', function () {
     var current_stock = 0;
-    var count = $(this).attr('data-row');
     $.each(rawMaterial, function (i, x) {
       if (x.material_heat_no == $('#material_heat_no').val() && x.trans_id == undefined) {
         current_stock -= x.issued_qty;
@@ -108,31 +110,29 @@ $(function () {
     });
 
     if (current_stock != 0) {
-      getMaterialDetails($(this).val(), current_stock);
+      getMaterialDetails($('#material_heat_no').val(), current_stock, '');
     } else {
-      getMaterialDetails($(this).val(), 0);
+      getMaterialDetails($('#material_heat_no').val(), 0, '');
     } //getscnosuggest(undefined, $(this).val());
 
   });
   $('#btn_new').on('click', function () {
     addState();
-  });
-  $('#issued_qty').on('change', function () {
-    var inv_qty = parseInt($('#inv_qty').val());
-    var issued_qty = parseInt($(this).val());
-    var material_heat_no = $('#material_heat_no').val();
-    var trans_no = $('#trans_no').val();
+  }); // $('#issued_qty').on('change', function () {
+  // 	var inv_qty = parseInt($('#inv_qty').val());
+  // 	var issued_qty = parseInt($(this).val());
+  // 	var material_heat_no = $('#material_heat_no').val();
+  // 	var trans_no = $('#trans_no').val();
+  // 	if ($('#inv_qty').val() != '') {
+  // 		if (issued_qty > inv_qty) {
+  // 			msg('Issued Quantity is greater than stocks', 'warning');
+  // 		}
+  // 	}
+  // 	if ($(this).val() == '') {
+  // 		$(this).val(0)
+  // 	}
+  // });
 
-    if ($('#inv_qty').val() != '') {
-      if (issued_qty > inv_qty) {
-        msg('Issued Quantity is greater than stocks', 'warning');
-      }
-    }
-
-    if ($(this).val() == '') {
-      $(this).val(0);
-    }
-  });
   $('#needed_qty').on('change', function () {
     if ($(this).val() == '') {
       $(this).val(0);
@@ -166,116 +166,8 @@ $(function () {
   $('#trans_no').on('change', function () {
     getRawMaterialList($(this).val());
   });
-  $('#btn_add').on('click', function () {
-    var limit = $('#item_id').val() != '' ? 21 : 20;
-    var current_stock = parseInt($('#inv_qty').val());
-    var issued_qty = parseInt($('#issued_qty').val());
-    var ExistHeat_NO = 1;
-
-    if (rawMaterial.length == limit) {
-      msg('Material already reach the limit of 20 item', 'failed');
-    } else if (issued_qty > current_stock) {
-      msg('Issued Quantity is greater than stocks', 'failed');
-    } else if ($('#issued_uom').val() == "") {
-      msg('Please provide an Unit of Measurement.', 'failed');
-    } else {
-      if ($('#material_heat_no').val() == '' || $('#mat_code').val() == '') {
-        msg('Please comply some other fields.', 'failed');
-      } else if ($('#issued_qty').val() < 0 || $('#needed_qty').val() < 0 || $('#returned_qty').val() < 0) {
-        msg('Please Input valid Number.', 'failed');
-      } else {
-        if ($('#item_id').val() == '') {
-          $.each(rawMaterial, function (i, x) {
-            if (x.lot_no == $('#lot_no').val()) {
-              ExistHeat_NO = 0;
-            }
-          }); // if (ExistHeat_NO == 0){
-          // 	msg('Lot No Already Exist in this table','failed');
-          // 	return false;
-          // }else{		
-
-          var count = rawMaterial.length + 1;
-          rawMaterial.push({
-            count: count,
-            id: 'NONE',
-            trans_no: $('#trans_no').val(),
-            mat_code: $('#mat_code').val(),
-            alloy: $('#alloy').val(),
-            item: $('#item').val(),
-            size: $('#size').val(),
-            schedule: $('#schedule').val(),
-            // lot_no: $('#lot_no').val(),
-            material_heat_no: $('#material_heat_no').val(),
-            // sc_no: $('#sc_no').val(),
-            remarks: $('#remarks').val(),
-            issued_qty: $('#issued_qty').val(),
-            issued_uom: $('#issued_uom').val(),
-            saveIssued_qty: $('#save_issued_qty').val(),
-            inv_id: $('#inv_id').val(),
-            // needed_qty: $('#needed_qty').val(),
-            // returned_uom: $('#returned_uom').val(),
-            // needed_uom: $('#needed_uom').val(),
-            // returned_qty: $('#returned_qty').val(),
-            create_user: $('#create_user').val(),
-            update_user: $('#update_user').val(),
-            created_at: $('#created_at').val(),
-            updated_at: $('#updated_at').val()
-          }); // }
-        } else {
-          var count = parseInt($('#item_id').val()) + 1; // $.each(rawMaterial, function(i, x) {
-          // 	if(x.material_heat_no == $('#material_heat_no').val() && x.count != count ){ 
-          // 		ExistHeat_NO = 0; 
-          // 	}
-          // });
-          // if (ExistHeat_NO == 0){
-          // 	msg('Material Heat No Already Exist in this table','failed');
-          // 	return false;
-          // }else{
-
-          var id = $('#item_id').val();
-          var count = parseInt($('#item_id').val()) + 1;
-          rawMaterial.splice(id, 1, {
-            count: count,
-            id: id,
-            trans_no: $('#trans_no').val(),
-            mat_code: $('#mat_code').val(),
-            alloy: $('#alloy').val(),
-            item: $('#item').val(),
-            size: $('#size').val(),
-            schedule: $('#schedule').val(),
-            // lot_no: $('#lot_no').val(),
-            material_heat_no: $('#material_heat_no').val(),
-            // sc_no: $('#sc_no').val(),
-            remarks: $('#remarks').val(),
-            issued_qty: $('#issued_qty').val(),
-            issued_uom: $('#issued_uom').val(),
-            saveIssued_qty: $('#save_issued_qty').val(),
-            inv_id: $('#inv_id').val(),
-            // needed_qty: $('#needed_qty').val(),
-            // returned_qty: $('#returned_qty').val(),
-            // needed_uom: $('#needed_uom').val(),
-            // returned_uom: $('#returned_uom').val(),
-            create_user: $('#create_user').val(),
-            update_user: $('#update_user').val(),
-            created_at: $('#created_at').val(),
-            updated_at: $('#updated_at').val()
-          }); // }
-        }
-
-        RawMaterialList(rawMaterial);
-        clear();
-        $('#needed_qty').val(0);
-        $('#issued_qty').val(0);
-        $('#returned_qty').val(0);
-        $('#needed_uom').val('');
-        $('#issued_uom').val('');
-        $('#returned_uom').val('');
-        $('#btn_add').removeClass('bg-blue');
-        $('#btn_add').addClass('bg-green');
-        $('#btn_add').html('<i class="fa fa-plus"></i> Add');
-        $('.btn_edit_item').prop('disabled', false);
-      }
-    }
+  $('#btn_add').unbind('click').click(function () {
+    addDetails();
   });
   $('#frm_raw_material').on('submit', function (e) {
     e.preventDefault();
@@ -297,6 +189,7 @@ $(function () {
           $('#btn_add').html('<i class="fa fa-plus"></i> Add');
         }
       }).fail(function (xhr, textStatus, errorThrown) {
+        console.log(xhr.responseJSON);
         var errors = xhr.responseJSON.errors;
         showErrors(errors);
         viewState();
@@ -338,14 +231,17 @@ $(function () {
     });
 
     if (current_stock != 0 && $(this).attr('data-save-issued_qty') == '') {
-      getMaterialDetails(mat_heat_no, current_stock);
+      getMaterialDetails(mat_heat_no, current_stock, $(this).attr('data-inv_id'));
     } else if ($(this).attr('data-id') != 'NONE') {
-      getMaterialDetails(mat_heat_no, issued_qty);
+      getMaterialDetails(mat_heat_no, issued_qty, $(this).attr('data-inv_id'));
       $('#save_issued_qty').val(issued_qty);
     } else {
-      getMaterialDetails(mat_heat_no, 0);
+      getMaterialDetails(mat_heat_no, 0, $(this).attr('data-inv_id'));
     }
 
+    $('#detail_id').val($(this).attr('data-id'));
+    $('#inv_id').val($(this).attr('data-inv_id'));
+    $('#old_issued_qty').val($(this).attr('data-old_issued_qtys'));
     $('#hide_schedule').val($(this).attr('data-schedule'));
     $('#schedule').val($(this).attr('data-schedule'));
     $('#item_id').val($(this).attr('data-row'));
@@ -357,7 +253,8 @@ $(function () {
     //getscnosuggest(sc_no, $(this).attr('data-material_heat_no'));
 
     $('#remarks').val(remarks);
-    $('#issued_qty').val($(this).attr('data-issued_qty')); // $('#needed_qty').val($(this).attr('data-needed_qty'));
+    $('#issued_qty').val($(this).attr('data-issued_qty'));
+    $('#saved_issued_qty').val($(this).attr('data-issued_qty')); // $('#needed_qty').val($(this).attr('data-needed_qty'));
     // $('#returned_qty').val($(this).attr('data-returned_qty'));
 
     $('#issued_uom').val($(this).attr('data-issued_uom')); // $('#needed_uom').val($(this).attr('data-needed_uom'));
@@ -372,8 +269,9 @@ $(function () {
     $('#btn_add').html('<i class="fa fa-check"></i> Update');
   });
   $('#tbl_raw_material_body').on('click', '.btn_remove_item', function () {
-    var id = $(this).attr('data-row');
-    rawMaterial.splice(id, 1);
+    var id = $(this).attr('data-row'); //rawMaterial.splice(id, 1);
+
+    rawMaterial[id].deleted = 1;
     RawMaterialList(rawMaterial);
     clear(); // msg("Item was successfully remove.", "success");
 
@@ -433,6 +331,30 @@ $(function () {
       msg('Please Input date.', 'failed');
     } else {
       window.open(print_link, '_tab');
+    }
+  });
+  $('#tbl_inventory').on('click', '.btn_pick_item', function () {
+    if (parseInt($(this).attr('data-quantity')) == 0 && $('#item_id').val() == '') {
+      $('#issued_qty').prop('readonly', true);
+      msg("Material Heat Number have no qty inventory.", "failed");
+    } else {
+      $('#item').val($(this).attr('data-item'));
+      $('#alloy').val($(this).attr('data-alloy'));
+      $('#size').val($(this).attr('data-size'));
+      $('#length').val($(this).attr('data-length'));
+      $('#mat_code').val($(this).attr('data-materials_code'));
+      $('#inv_qty').val($(this).attr('data-current_stock'));
+      $('#qty_weight').val($(this).attr('data-qty_weight'));
+      $('#issued_qty').prop('readonly', false);
+
+      if ($('#hide_schedule').val() == "") {
+        $('#schedule').val($(this).attr('data-schedule'));
+      } else {
+        $('#hide_schedule').val("");
+      }
+
+      $('#inv_id').val($(this).attr('data-inv_id'));
+      $('#modal_inventory').modal('hide');
     }
   });
 });
@@ -552,6 +474,7 @@ function getRawMaterialList(trans_no) {
           remarks: x.remarks,
           issued_qty: x.issued_qty,
           saveIssued_qty: x.issued_qty,
+          old_issued_qtys: x.issued_qty,
           // needed_qty: x.needed_qty,
           // returned_qty: x.returned_qty,
           issued_uom: x.issued_uom == null || x.issued_uom == 'N/A' ? '' : x.issued_uom,
@@ -560,7 +483,10 @@ function getRawMaterialList(trans_no) {
           create_user: x.create_user,
           update_user: x.update_user,
           created_at: x.created_at,
-          updated_at: x.updated_at
+          updated_at: x.updated_at,
+          deleted: x.deleted,
+          inv_id: x.inv_id,
+          detail_id: x.detail_id
         });
         count++;
         $('#create_user').val(x.create_user);
@@ -596,17 +522,11 @@ function RawMaterialList(data) {
         row++;
         return "<button type='button' class='btn btn-sm bg-blue btn_edit_item' " + "data-id='" + x.id + "'" + "data-row='" + row + "'" + "data-trans_id='" + x.trans_id + "'" + "data-trans_no='" + x.trans_no + "'" + "data-mat_code='" + x.mat_code + "'" + "data-alloy='" + x.alloy + "'" + "data-item='" + x.item + "'" + "data-size='" + x.size + "'" + "data-schedule='" + x.schedule + "'" + // "data-lot_no='" + x.lot_no + "'" +
         "data-material_heat_no='" + x.material_heat_no + "'" + // "data-sc_no='" + x.sc_no + "'" +
-        "data-remarks='" + x.remarks + "'" + "data-issued_qty='" + x.issued_qty + "'" + "data-issued_uom='" + x.issued_uom + "'" + "data-save-issued_qty='" + x.saveIssued_qty + "'" + "data-inv_id='" + x.inv_id + "'" + // "data-needed_qty='" + x.needed_qty + "'" +
+        "data-remarks='" + x.remarks + "'" + "data-issued_qty='" + x.issued_qty + "'" + // "data-issued_uom='" + x.issued_uom + "'" +
+        "data-save-issued_qty='" + x.saveIssued_qty + "'" + "data-old_issued_qtys='" + x.old_issued_qtys + "'" + "data-inv_id='" + x.inv_id + "'" + // "data-needed_qty='" + x.needed_qty + "'" +
         // "data-returned_qty='" + x.returned_qty + "'" +
         // "data-needed_uom='" + x.needed_uom + "'" +
-        // "data-returned_uom='" + x.returned_uom + "'" +
-        "data-create_user='" + x.create_user + "'" + "data-update_user='" + x.update_user + "'" + "data-created_at='" + x.created_at + "'" + "data-updated_at='" + x.updated_at + "' disabled>" + "<i class='fa fa-edit'></i>" + "</button>";
-      },
-      searchable: false,
-      orderable: false
-    }, {
-      data: function data(x) {
-        return "<span class='btn_remove_item' data-row='" + row + "' data-issued_qty='" + x.issued_qty + "'><i class='text-red fa fa-times'></i></span>" + "<input type='hidden' name='ids[]' value='" + x.id + "'>" + "<input type='hidden' name='inv_id[]' value='" + x.inv_id + "'>";
+        "data-deleted='" + x.deleted + "'" + "data-create_user='" + x.create_user + "'" + "data-update_user='" + x.update_user + "'" + "data-created_at='" + x.created_at + "'" + "data-updated_at='" + x.updated_at + "' disabled>" + "<i class='fa fa-edit'></i>" + "</button>" + "<button type='button' class='btn btn-sm bg-red btn_remove_item' data-row='" + row + "' data-issued_qty='" + x.issued_qty + "'>" + "<i class=' fa fa-times'></i>" + "</button >" + "<input type='hidden' name='ids[]' value='" + x.id + "'>" + "<input type='hidden' name='old_issued_qtys[]' value='" + x.old_issued_qtys + "'>" + "<input type='hidden' name='detail_ids[]' value='" + x.detail_id + "'>" + "<input type='hidden' name='inv_ids[]' value='" + x.inv_id + "'>" + "<input type='hidden' name='deleted[]' value='" + x.deleted + "'>";
       },
       searchable: false,
       orderable: false
@@ -682,7 +602,13 @@ function RawMaterialList(data) {
           return ellipsis(x.remarks, 15) + "<input type='hidden' name='remarks[]' value='" + x.remarks + "'>";
         }
       }
-    }]
+    }],
+    createdRow: function createdRow(row, data, dataIndex) {
+      if (data.deleted === 1) {
+        $(row).css('background-color', '#ff6266');
+        $(row).css('color', '#fff');
+      }
+    }
   });
 }
 
@@ -733,7 +659,7 @@ function getscnosuggest(scno, heat_no) {
   });
 }
 
-function getMaterialDetails(material_heat_no, issued_qty) {
+function getMaterialDetails(material_heat_no, issued_qty, inv_id) {
   $('.loadingOverlay').show();
   $.ajax({
     url: getMaterialDetailsURL,
@@ -741,55 +667,238 @@ function getMaterialDetails(material_heat_no, issued_qty) {
     dataType: 'JSON',
     data: {
       material_heat_no: material_heat_no,
-      issued_qty: issued_qty
+      issued_qty: issued_qty,
+      inv_id: inv_id
     }
   }).done(function (data, textStatus, xhr) {
-    if (data.materials_code == undefined) {
-      $('#item').val("");
-      $('#alloy').val("");
-      $('#schedule').val("");
-      $('#size').val("");
-      $('#mat_code').val("");
-      $('#inv_qty').val("");
-      $('#inv_id').val("");
-      $('#issued_qty').prop('readonly', true);
-      msg("Material Heat Number is not in the list.", "failed");
-    } else if (data.quantity == 0 && $('#item_id').val() == '') {
-      $('#item').val("");
-      $('#alloy').val("");
-      $('#schedule').val("");
-      $('#size').val("");
-      $('#mat_code').val("");
-      $('#inv_qty').val("");
-      $('#inv_id').val("");
-      $('#issued_qty').prop('readonly', true);
-      msg("Material Heat Number have no qty inventory.", "failed");
-    } else {
-      $('#item').val(data.item);
-      $('#alloy').val(data.alloy);
-      $('#size').val(data.size);
-      $('#mat_code').val(data.materials_code);
-      $('#inv_qty').val(data.current_stock);
-      $('#issued_qty').prop('readonly', false);
-
-      if ($('#hide_schedule').val() == "") {
-        $('#schedule').val(data.schedule);
+    if (data.length > 0) {
+      if (data.length > 1) {
+        inventoryTable(data);
+        $('#modal_inventory').modal('show');
       } else {
-        $('#hide_schedule').val("");
-      }
+        var material = data[0];
+        $('#item').val("");
+        $('#alloy').val("");
+        $('#schedule').val("");
+        $('#size').val("");
+        $('#length').val("");
+        $('#mat_code').val("");
+        $('#inv_qty').val("");
+        $('#qty_weight').val("");
+        $('#inv_id').val("");
 
-      $('#inv_id').val(data.inv_id);
+        if (material.materials_code == undefined) {
+          $('#issued_qty').prop('readonly', true);
+          msg("Material Heat Number is not in the list.", "failed");
+        } else if (material.quantity == 0 && $('#item_id').val() == '') {
+          $('#issued_qty').prop('readonly', true);
+          msg("Material Heat Number have no qty inventory.", "failed");
+        } else {
+          $('#item').val(material.item);
+          $('#alloy').val(material.alloy);
+          $('#size').val(material.size);
+          $('#length').val(material.length);
+          $('#mat_code').val(material.materials_code);
+          $('#inv_qty').val(material.current_stock);
+          $('#qty_weight').val(material.qty_weight);
+          $('#issued_qty').prop('readonly', false);
+
+          if ($('#hide_schedule').val() == "") {
+            $('#schedule').val(material.schedule);
+          } else {
+            $('#hide_schedule').val("");
+          }
+
+          $('#inv_id').val(material.inv_id);
+        }
+      }
+    } else {
+      msg("No Materials found for this Heat Number.", 'warning');
     }
   }).fail(function (xhr, textStatus, errorThrown) {
-    msg(errorThrown, textStatus);
+    //msg(errorThrown, textStatus);
+    var response = jQuery.parseJSON(xhr.responseText);
+    ErrorMsg(response);
   }).always(function () {
     $('.loadingOverlay').hide();
   });
 }
 
+function inventoryTable(arr) {
+  $('.loadingOverlay-modal').show();
+  $('#tbl_inventory').dataTable().fnClearTable();
+  $('#tbl_inventory').dataTable().fnDestroy();
+  $('#tbl_inventory').dataTable({
+    data: arr,
+    order: [[13, 'asc']],
+    scrollX: true,
+    columns: [{
+      data: function data(x) {
+        var trimqty = x.quantity;
+        var quantity = trimqty.toString().replace(/\s/g, '');
+        return "<button class='btn btn-sm bg-blue btn_pick_item' type='button'" + "data-receiving_no='" + x.receiving_no + "' " + "data-materials_type='" + x.materials_type + "' " + "data-materials_code='" + x.materials_code + "' " + "data-item='" + x.item + "' " + "data-alloy='" + x.alloy + "' " + "data-size='" + x.size + "' " + "data-length='" + x.length + "' " + "data-qty_weight='" + x.qty_weight + "' " + "data-qty_pcs='" + x.qty_pcs + "' " + "data-current_stock='" + x.current_stock + "' " + "data-heat_no='" + x.heat_no + "' " + "data-quantity='" + quantity + "'" + "data-inv_id='" + x.inv_id + "' " + ">" + "<i class='fa fa-edit'></i>" + "</button>";
+      },
+      orderable: false,
+      searchable: false
+    }, {
+      data: 'receiving_no'
+    }, {
+      data: 'materials_type'
+    }, {
+      data: 'materials_code'
+    }, {
+      data: 'item'
+    }, {
+      data: 'alloy'
+    }, {
+      data: 'size'
+    }, {
+      data: 'length'
+    }, {
+      data: 'qty_weight'
+    }, {
+      data: 'qty_pcs'
+    }, {
+      data: 'current_stock'
+    }, {
+      data: 'heat_no'
+    }, {
+      data: 'invoice_no'
+    }, {
+      data: 'received_date'
+    }, {
+      data: 'supplier'
+    }],
+    initComplete: function initComplete() {
+      $('.loadingOverlay-modal').hide();
+    }
+  });
+}
+
+function addDetails() {
+  var limit = $('#item_id').val() != '' ? 21 : 20;
+  var current_stock = parseInt($('#inv_qty').val());
+  var issued_qty = parseInt($('#issued_qty').val());
+  var save_issued_qty = parseInt($('#save_issued_qty').val());
+  var ExistHeat_NO = 1;
+
+  if (rawMaterial.length == limit) {
+    msg('Material already reach the limit of 20 item', 'failed');
+  } else if (issued_qty > current_stock + save_issued_qty) {
+    msg('Issued Quantity is greater than stocks.', 'failed');
+  } else if ($('#issued_uom').val() == "") {
+    msg('Please provide an Unit of Measurement.', 'failed');
+  } else if (issued_qty == 0 || issued_qty == "") {
+    msg('Please provide an Issued Quantity.', 'failed');
+  } else {
+    if ($('#material_heat_no').val() == '' || $('#mat_code').val() == '') {
+      msg('Please comply some other fields.', 'failed');
+    } else if ($('#issued_qty').val() < 0 || $('#needed_qty').val() < 0 || $('#returned_qty').val() < 0) {
+      msg('Please Input valid Number.', 'failed');
+    } else {
+      if ($('#item_id').val() == '') {
+        $.each(rawMaterial, function (i, x) {
+          if (x.lot_no == $('#lot_no').val()) {
+            ExistHeat_NO = 0;
+          }
+        }); // if (ExistHeat_NO == 0){
+        // 	msg('Lot No Already Exist in this table','failed');
+        // 	return false;
+        // }else{		
+
+        var count = rawMaterial.length + 1;
+        rawMaterial.push({
+          count: count,
+          id: 'NONE',
+          detail_id: 0,
+          trans_no: $('#trans_no').val(),
+          mat_code: $('#mat_code').val(),
+          alloy: $('#alloy').val(),
+          item: $('#item').val(),
+          size: $('#size').val(),
+          schedule: $('#schedule').val(),
+          // lot_no: $('#lot_no').val(),
+          material_heat_no: $('#material_heat_no').val(),
+          // sc_no: $('#sc_no').val(),
+          remarks: $('#remarks').val(),
+          issued_qty: $('#issued_qty').val(),
+          issued_uom: $('#issued_uom').val(),
+          saveIssued_qty: $('#save_issued_qty').val(),
+          old_issued_qtys: 0,
+          inv_id: $('#inv_id').val(),
+          // needed_qty: $('#needed_qty').val(),
+          // returned_uom: $('#returned_uom').val(),
+          // needed_uom: $('#needed_uom').val(),
+          // returned_qty: $('#returned_qty').val(),
+          create_user: $('#create_user').val(),
+          update_user: $('#update_user').val(),
+          created_at: $('#created_at').val(),
+          updated_at: $('#updated_at').val(),
+          deleted: 0
+        }); // }
+      } else {
+        var count = parseInt($('#item_id').val()) + 1; // $.each(rawMaterial, function(i, x) {
+        // 	if(x.material_heat_no == $('#material_heat_no').val() && x.count != count ){ 
+        // 		ExistHeat_NO = 0; 
+        // 	}
+        // });
+        // if (ExistHeat_NO == 0){
+        // 	msg('Material Heat No Already Exist in this table','failed');
+        // 	return false;
+        // }else{
+
+        var id = $('#item_id').val();
+        var count = parseInt($('#item_id').val()) + 1;
+        rawMaterial.splice(id, 1, {
+          count: count,
+          id: id,
+          detail_id: $('#detail_id').val(),
+          trans_no: $('#trans_no').val(),
+          mat_code: $('#mat_code').val(),
+          alloy: $('#alloy').val(),
+          item: $('#item').val(),
+          size: $('#size').val(),
+          schedule: $('#schedule').val(),
+          // lot_no: $('#lot_no').val(),
+          material_heat_no: $('#material_heat_no').val(),
+          // sc_no: $('#sc_no').val(),
+          remarks: $('#remarks').val(),
+          issued_qty: $('#issued_qty').val(),
+          issued_uom: $('#issued_uom').val(),
+          saveIssued_qty: $('#save_issued_qty').val(),
+          old_issued_qtys: $('#old_issued_qty').val(),
+          inv_id: $('#inv_id').val(),
+          // needed_qty: $('#needed_qty').val(),
+          // returned_qty: $('#returned_qty').val(),
+          // needed_uom: $('#needed_uom').val(),
+          // returned_uom: $('#returned_uom').val(),
+          create_user: $('#create_user').val(),
+          update_user: $('#update_user').val(),
+          created_at: $('#created_at').val(),
+          updated_at: $('#updated_at').val(),
+          deleted: 0
+        }); // }
+      }
+
+      RawMaterialList(rawMaterial);
+      clear();
+      $('#needed_qty').val(0);
+      $('#issued_qty').val(0);
+      $('#returned_qty').val(0);
+      $('#needed_uom').val('');
+      $('#issued_uom').val('');
+      $('#returned_uom').val('');
+      $('#btn_add').removeClass('bg-blue');
+      $('#btn_add').addClass('bg-green');
+      $('#btn_add').html('<i class="fa fa-plus"></i> Add');
+      $('.btn_edit_item').prop('disabled', false);
+    }
+  }
+}
+
 /***/ }),
 
-/***/ 19:
+/***/ 18:
 /*!*************************************************************************************************************!*\
   !*** multi ./resources/assets/js/pages/ppc/transactions/raw-material-withdrawal/raw-material-withdrawal.js ***!
   \*************************************************************************************************************/

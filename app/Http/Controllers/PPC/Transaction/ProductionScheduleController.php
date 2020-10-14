@@ -488,13 +488,21 @@ class ProductionScheduleController extends Controller
 
         $materials = DB::select("SELECT pui.heat_no as heat_no,
                                     ifnull(rmw.issued_uom,'') as uom,
-                                    ifnull(rmw.issued_qty,0) as rmw_issued_qty
+                                    ifnull(rmw.issued_qty,0) as rmw_issued_qty,
+                                    ifnull(rmw.scheduled_qty,0) as rmw_scheduled_qty,
+                                    rmw.id as rmw_id,
+                                    rmw.inv_id as inv_id,
+                                    pui.length as rmw_length
                             FROM ppc_update_inventories as pui
                             left join admin_assign_production_lines as apl on apl.product_line = pui.materials_type
                             left join ppc_raw_material_withdrawal_details as rmw on pui.heat_no = rmw.material_heat_no
                             WHERE apl.user_id = ".Auth::user()->id.$with_rmw."
                             group by pui.heat_no,
-                                    rmw.issued_qty
+                                    rmw.issued_qty,
+                                    rmw.scheduled_qty,
+                                    rmw.id,
+                                    rmw.inv_id,
+                                    pui.length
                             ORDER BY pui.id desc");
 
         if ($this->_helper->check_if_exists($materials) > 0) {
@@ -512,7 +520,11 @@ class ProductionScheduleController extends Controller
                         array_push($heat_no,[
                             'heat_no' => $material->heat_no,
                             'uom' => $material->uom, 
-                            'rmw_issued_qty' => $material->rmw_issued_qty
+                            'rmw_issued_qty' => $material->rmw_issued_qty,
+                            'rmw_scheduled_qty' => $material->rmw_scheduled_qty,
+                            'rmw_id' => $material->rmw_id,
+                            'inv_id' => $material->inv_id,
+                            'rmw_length' => $material->rmw_length
                         ]);
                     }
                 }
@@ -537,6 +549,67 @@ class ProductionScheduleController extends Controller
         }
         
         return response()->json($data);
+    }
+
+    public function caculateWeighttoLength(Request $req)
+    {
+        $data = [
+            'msg' => 'Calculating failed.',
+            'status' => 'failed',
+            'stock' => 0
+        ];
+        // get cut weight
+        $prod = DB::table('ppc_product_codes')
+                    ->select('cut_weight')
+                    ->where('product_code',$req->prod_code)
+                    ->first();
+        $OD = 0;
+        $pcs = 0;
+        $length = 0;
+        $cut_weight = 0;
+        $stock = 0;
+
+        if ($this->_helper->check_id_exists($prod) > 0) {
+            $cut_weight = $prod->cut_weight;
+
+            // get OD size
+            $material = DB::table('ppc_update_inventories')
+                            ->select(DB::raw("TRIM(TRAILING 'MM' FROM size ) AS size"))
+                            ->where('inv_id',$req->inv_id)
+                            ->first();
+
+            if ($this->_helper->check_id_exists($material) > 0) {
+                $OD = $material->size;
+                // calculate length
+                $length = ($cut_weight / $OD / $OD / 6.2) * 1000000;
+
+                // calculate PCS
+                $pcs = $req->sched_qty/$length;
+
+                // Calculate stocks
+                $stock = $req->rmw_issued_qty - $pcs;
+
+                $data = [
+                    'msg' => '',
+                    'status' => 'success',
+                    'stock' => $stock
+                ];
+            } else {
+                $data = [
+                    'msg' => "Material doesn't exist in Inventory",
+                    'status' => 'failed',
+                    'stock' => 0
+                ];
+            }
+        } else {
+            $data = [
+                'msg' => "Product Code doesn't exist in Product Master",
+                'status' => 'failed',
+                'stock' => 0
+            ];
+        }
+
+        return $data;
     }
 
     public function getTravel_sheet(Request $req)

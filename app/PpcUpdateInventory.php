@@ -32,6 +32,7 @@ class PpcUpdateInventory extends Model
 					'deleted',
 					'delete_user',
 					'deleted_at',
-					'mode'
+					'mode',
+					'thickness'
 			    ];
 }

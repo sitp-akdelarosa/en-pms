@@ -8,8 +8,8 @@ class PpcRawMaterialWithdrawalInfo extends Model
 {
     protected $fillable = [
     	'trans_no',
-		'create_user',
-		'update_user'
+      'create_user',
+      'update_user'
     ];
 
     public function details()

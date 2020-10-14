@@ -20,38 +20,46 @@ class PDFController extends Controller
 	public function RawMaterialWithdrawalSlip(Request $req)
 	{
 		$cutt = DB::table('ppc_cutting_schedules')->select('id')
-			->where('withdrawal_slip_no', $req->trans_id)
-			->first();
+					->where('withdrawal_slip_no', $req->trans_id)
+					->first();
 
-		if ($req->print_format == 'material_withdrawal') {
-			$raw_material = DB::table('ppc_raw_material_withdrawal_details')
-				->where('trans_id', $req->trans_id)
-				->get();
-		} else {
-			$raw_material = DB::select("SELECT cs.alloy as alloy,
-												cs.material_desc_item as item,
-												cs.material_desc_size as size,
-												cs.plate_qty as issued_qty,
-												cs.qty_needed as needed_qty,
-												cs.material_desc_lot_no as lot_no,
-												concat(cs.material_desc_heat_no,'/',cs.material_desc_supplier_heat_no) as material_heat_no,
-												cs.sc_no as sc_no,
-												concat(cs.size,' ',cs.class) as remarks
-										FROM ppc_raw_material_withdrawal_infos as rmw
-										join ppc_cutting_schedule_details as cs
-										where rmw.id = '" . $req->trans_id . "'
-										group by cs.alloy,
-												cs.material_desc_item,
-												cs.material_desc_size,
-												cs.plate_qty,
-												cs.qty_needed,
-												cs.material_desc_lot_no,
-												cs.material_desc_heat_no,
-												cs.material_desc_supplier_heat_no,
-												cs.sc_no,
-												cs.size,
-												cs.class");
-		}
+		$raw_material = DB::table('v_raw_material_withdrawal_slip')
+							->where('trans_id',$req->trans_id)
+							->get();
+
+		// if ($req->print_format == 'material_withdrawal') {
+		// 	$raw_material = DB::table('ppc_raw_material_withdrawal_details')
+		// 						->where('trans_id', $req->trans_id)
+		// 						->get();
+
+		// 	$raw_material = DB::table('v_raw_material_withdrawal_slip')
+		// 						->where('trans_id',$req->trans_id)
+		// 						->get();
+		// } else {
+			// $raw_material = DB::select("SELECT cs.alloy as alloy,
+			// 									cs.material_desc_item as item,
+			// 									cs.material_desc_size as size,
+			// 									cs.plate_qty as issued_qty,
+			// 									cs.qty_needed as needed_qty,
+			// 									cs.material_desc_lot_no as lot_no,
+			// 									concat(cs.material_desc_heat_no,'/',cs.material_desc_supplier_heat_no) as material_heat_no,
+			// 									cs.sc_no as sc_no,
+			// 									concat(cs.size,' ',cs.class) as remarks
+			// 							FROM ppc_raw_material_withdrawal_infos as rmw
+			// 							join ppc_cutting_schedule_details as cs
+			// 							where rmw.id = '" . $req->trans_id . "'
+			// 							group by cs.alloy,
+			// 									cs.material_desc_item,
+			// 									cs.material_desc_size,
+			// 									cs.plate_qty,
+			// 									cs.qty_needed,
+			// 									cs.material_desc_lot_no,
+			// 									cs.material_desc_heat_no,
+			// 									cs.material_desc_supplier_heat_no,
+			// 									cs.sc_no,
+			// 									cs.size,
+			// 									cs.class");
+		//}
 
 		$data = [
 			'date' => $this->_helper->convertDate($req->date, 'F d, Y'),

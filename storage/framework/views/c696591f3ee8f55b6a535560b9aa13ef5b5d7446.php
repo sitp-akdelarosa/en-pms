@@ -96,6 +96,13 @@
                                     <div id="size_feedback"></div>
                                 </div>
                             </div>
+                            <div class="form-group row">
+                                <label for="thickness" class="col-sm-3 control-label mt-5">Thickness:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control validate clear" name="thickness" id="thickness" >
+                                    <div id="thickness_feedback"></div>
+                                </div>
+                            </div>
                              <div class="form-group row">
                                 <label for="width" class="col-sm-3 control-label mt-5">Width:</label>
                                 <div class="col-sm-9">
@@ -253,6 +260,170 @@
                 <div class="modal-footer">
                     <button type="button" class="btn bg-red" data-dismiss="modal">Close</button>
                 </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="modal_material_search" class="modal fade " data-backdrop="static">
+    <div class="modal-dialog modal-full" role="document">
+        <form method="GET" action="<?php echo e(url('/transaction/update-inventory/search-filter')); ?>" id="frm_search">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Search / Filter Inventory</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="loadingOverlay-modal"></div>
+
+                    <?php echo csrf_field(); ?>
+
+                    <div class="row">
+                        <div class="col-md-4">
+
+                            <div class="form-group row">
+                                <label for="srch_received_date" class="col-sm-4 control-label mt-5">Received Date:</label>
+                                <div class="col-sm-8">
+                                    <div class="input-group input-group-sm">
+                                        <input type="date" class="form-control validate srch-clear" name="srch_received_date_from" id="srch_received_date_from">
+                                        
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">-</span>
+                                        </div>
+                                        <input type="date" class="form-control validate srch-clear" name="srch_received_date_to" id="srch_received_date_to">
+                                        
+                                    </div>
+                                    <div id="srch_received_date_from_feedback"></div>
+                                    <div id="srch_received_date_to_feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="srch_receiving_no" class="col-sm-4 control-label mt-5">Receiving No.:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control validate srch-clear" name="srch_receiving_no" id="srch_receiving_no">
+                                    <div id="receiving_no_feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="srch_materials_type" class="col-sm-4 control-label mt-5">Material Type:</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control select-validate srch-clear" name="srch_materials_type" id="srch_materials_type"></select>
+                                    <div id="srch_materials_type_feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="srch_materials_code" class="col-sm-4 control-label mt-5">Material Code:</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control select-validate srch-clear" name="srch_materials_code" id="srch_materials_code">
+                                        <option value=''></option>
+                                    </select>
+                                    <div id="srch_materials_code_feedback"></div>
+                                </div>
+                            </div>
+                            
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label for="srch_item" class="col-sm-3 control-label mt-5">Item:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control validate srch-clear" name="srch_item" id="srch_item">
+                                    <div id="srch_item_feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="srch_alloy" class="col-sm-3 control-label mt-5">Alloy:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control validate srch-clear" name="srch_alloy" id="srch_alloy">
+                                    <div id="srch_alloy_feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="srch_schedule" class="col-sm-3 control-label mt-5">Schedule:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control validate srch-clear" name="srch_schedule" id="srch_schedule">
+                                    <div id="srch_schedule_feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="srch_size" class="col-sm-3 control-label mt-5">Size:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control validate srch-clear" name="srch_size" id="srch_size">
+                                    <div id="srch_size_feedback"></div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="srch_thickness" class="col-sm-3 control-label mt-5">Thickness:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control validate srch-clear" name="srch_thickness" id="srch_thickness" >
+                                    <div id="srch_thickness_feedback"></div>
+                                </div>
+                            </div>
+                             <div class="form-group row">
+                                <label for="srch_width" class="col-sm-3 control-label mt-5">Width:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control validate srch-clear" name="srch_width" id="srch_width">
+                                    <div id="srch_width_feedback"></div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="srch_length" class="col-sm-3 control-label mt-5">Length:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control validate srch-clear" name="srch_length" id="srch_length">
+                                    <div id="srch_length_feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <div class="form-group row">
+                                <label for="srch_heat_no" class="col-sm-3 control-label mt-5">Heat #:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control validate srch-clear" name="srch_heat_no" id="srch_heat_no">
+                                    <div id="srch_heat_no_feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="srch_invoice_no" class="col-sm-3 control-label mt-5">Invoice No.:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control validate srch-clear" name="srch_invoice_no" id="srch_invoice_no">
+                                    <div id="srch_invoice_no_feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="srch_supplier" class="col-sm-3 control-label mt-5">Supplier:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control validate srch-clear" name="srch_supplier" id="srch_supplier">
+                                    <div id="srch_supplier_feedback"></div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="srch_supplier_heat_no" class="col-sm-3 control-label mt-5">Supplier Heat No:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control validate srch-clear" name="srch_supplier_heat_no" id="srch_supplier_heat_no">
+                                    <div id="srch_supplier_heat_no_feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn bg-red" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn bg-green float-right permission-button">Filter</button>
+                </div>
+                
             </div>
         </form>
     </div>

@@ -17,6 +17,7 @@ class PpcJoDetails extends Model
 					'material_heat_no',
 					'uom',
 					'lot_no',
+					'inv_id',
 					'create_user',
 					'update_user',
     			];

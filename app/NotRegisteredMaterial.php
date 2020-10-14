@@ -19,6 +19,7 @@ class NotRegisteredMaterial extends Model
     				'length',
     				'supplier_heat_no',
     				'create_user',
-    				'update_user'
+					'update_user',
+					'thickness'
     			];
 }

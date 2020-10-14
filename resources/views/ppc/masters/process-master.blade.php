@@ -125,7 +125,8 @@ foreach ($user_accesses as $user_access){
 
                             <div class="row mb-10">
                                 <div class="col-sm-12">
-                                    <div class="table-reponsive">
+                                    <div id="sortable_process" class="list-group"></div>
+                                    {{-- <div class="table-reponsive">
                                         <table class="table table-striped table-sm mb-10 table-hover" id="tbl_selected_process" style="width:100%">
                                             <thead class="thead-dark">
                                                 <tr>
@@ -141,7 +142,7 @@ foreach ($user_accesses as $user_access){
                                                 </tr>
                                             </tbody>
                                         </table>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
 
@@ -177,6 +178,6 @@ foreach ($user_accesses as $user_access){
 		var deleteSetURL = "{{ url('masters/process-master/delete-set') }}";
 
         var code_permission = "M0005";
-	</script>
+    </script>
 	<script type="text/javascript" src="{{ asset('/js/pages/ppc/masters/process-master/process-master.js') }}"></script>
 @endpush

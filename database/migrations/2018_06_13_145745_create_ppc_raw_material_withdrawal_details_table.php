@@ -28,6 +28,7 @@ class CreatePpcRawMaterialWithdrawalDetailsTable extends Migration
             $table->double('issued_qty',20,2)->default(0.00);
             $table->double('needed_qty',20,2)->default(0.00);
             $table->double('returned_qty',20,2)->default(0.00);
+            $table->double('scheduled_qty',20,2)->default(0.00);
             $table->string('issued_uom')->default('N/A');
             $table->string('needed_uom')->default('N/A');
             $table->string('returned_uom')->default('N/A');
