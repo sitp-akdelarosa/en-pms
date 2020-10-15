@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HelpersController;
 use App\Http\Controllers\Admin\AuditTrailController;
+use Illuminate\Support\Str;
 use DataTables;
 use App\PpcProductCode;
 use App\PpcUploadOrder;
@@ -83,7 +84,7 @@ class UploadOrdersController extends Controller
             $fields = $reader->toArray();
         });
 
-        PpcUploadOrder::where('create_user',Auth::user()->id)->delete();
+        // PpcUploadOrder::where('create_user',Auth::user()->id)->delete();
 
         $for_overwrite = [];
         $Schedule = [];
@@ -93,27 +94,50 @@ class UploadOrdersController extends Controller
         foreach ($fields as $key => $field) {
             $prod = PpcProductCode::where('product_code',$field['productcode'])->count();
             if ($prod > 0) {
-                if ($field['scno'] == null ||
-                    $field['productcode'] == null ||
-                    $field['quantity'] == null ||
-                    $field['pono'] == null) {
+                if (is_null($field['scno']) ||
+                    is_null($field['productcode']) ||
+                    is_null($field['quantity']) ||
+                    is_null($field['pono'])) {
 
                 } else {
                     $countAddedRow++;
                     $description = PpcProductCode::select('code_description')->where('product_code',$field['productcode'])->first();
-                    PpcUploadOrder::insert([
-                        'sc_no' => $field['scno'],
-                        'prod_code' => $field['productcode'],
-                        'description' => $description->code_description,
-                        'quantity' => $field['quantity'],
-                        'po' => $field['pono'],
-                        'uploader' => Auth::user()->id,
-                        'date_upload' => date("Y-m-d H:i:s"),
-                        'create_user' => Auth::user()->id,
-                        'update_user' => Auth::user()->id,
-                        'created_at' => date("Y-m-d H:i:s"),
-                        'updated_at' => date("Y-m-d H:i:s"),
-                    ]);
+                    $exist = PpcUploadOrder::select('id')
+                                        ->where('sc_no',$field['scno'])
+                                        ->where('prod_code',$field['productcode'])
+                                        ->where('po',$field['pono'])
+                                        ->count();
+
+                    if ($exist > 0) {
+                        PpcUploadOrder::where('sc_no',$field['scno'])
+                                    ->where('prod_code',$field['productcode'])
+                                    ->where('po',$field['pono'])->update([
+                                        'sc_no' => $field['scno'],
+                                        'prod_code' => $field['productcode'],
+                                        'description' => $description->code_description,
+                                        'quantity' => $field['quantity'],
+                                        'po' => $field['pono'],
+                                        'uploader' => Auth::user()->id,
+                                        'date_upload' => date("Y-m-d H:i:s"),
+                                        'update_user' => Auth::user()->id,
+                                        'updated_at' => date("Y-m-d H:i:s"),
+                                    ]);
+                    } else {
+                        PpcUploadOrder::insert([
+                            'sc_no' => $field['scno'],
+                            'prod_code' => $field['productcode'],
+                            'description' => $description->code_description,
+                            'quantity' => $field['quantity'],
+                            'po' => $field['pono'],
+                            'uploader' => Auth::user()->id,
+                            'date_upload' => date("Y-m-d H:i:s"),
+                            'create_user' => Auth::user()->id,
+                            'update_user' => Auth::user()->id,
+                            'created_at' => date("Y-m-d H:i:s"),
+                            'updated_at' => date("Y-m-d H:i:s"),
+                        ]);
+                    }
+                    
                 }
                     
             } else {
@@ -124,20 +148,45 @@ class UploadOrdersController extends Controller
 
                 } else {
                     $countAddedRow++;
+                    $exist = PpcUploadOrder::select('id')
+                                            ->where('sc_no',$field['scno'])
+                                            ->where('prod_code',$field['productcode'])
+                                            ->where('po',$field['pono'])
+                                            ->count();
+
                     $description = "Please register this code in Product Master.";
-                    PpcUploadOrder::insert([
-                        'sc_no' => $field['scno'],
-                        'prod_code' => $field['productcode'],
-                        'description' => $description,
-                        'quantity' => $field['quantity'],
-                        'po' => $field['pono'],
-                        'uploader' => Auth::user()->id,
-                        'date_upload' => date("Y-m-d H:i:s"),
-                        'create_user' => Auth::user()->id,
-                        'update_user' => Auth::user()->id,
-                        'created_at' => date("Y-m-d H:i:s"),
-                        'updated_at' => date("Y-m-d H:i:s"),
-                    ]);
+
+                    if ($exist > 0) {
+                        PpcUploadOrder::where('sc_no',$field['scno'])
+                                    ->where('prod_code',$field['productcode'])
+                                    ->where('po',$field['pono'])->update([
+                                        'sc_no' => $field['scno'],
+                                        'prod_code' => $field['productcode'],
+                                        'description' => $description,
+                                        'quantity' => $field['quantity'],
+                                        'po' => $field['pono'],
+                                        'uploader' => Auth::user()->id,
+                                        'date_upload' => date("Y-m-d H:i:s"),
+                                        'update_user' => Auth::user()->id,
+                                        'updated_at' => date("Y-m-d H:i:s"),
+                                    ]);
+                    } else {
+                        
+                        PpcUploadOrder::insert([
+                            'sc_no' => $field['scno'],
+                            'prod_code' => $field['productcode'],
+                            'description' => $description,
+                            'quantity' => $field['quantity'],
+                            'po' => $field['pono'],
+                            'uploader' => Auth::user()->id,
+                            'date_upload' => date("Y-m-d H:i:s"),
+                            'create_user' => Auth::user()->id,
+                            'update_user' => Auth::user()->id,
+                            'created_at' => date("Y-m-d H:i:s"),
+                            'updated_at' => date("Y-m-d H:i:s"),
+                        ]);
+                    }
+                    
 
                     array_push($not_registered, [
                         'sc_no' => $field['scno'],
@@ -398,6 +447,186 @@ class UploadOrdersController extends Controller
                 
                 $sheet->cells('A6:E'.$row, function($cells) {
                     $cells->setBorder('solid', 'solid', 'solid', 'solid');
+                });
+            });
+        })->download('xlsx');
+    }
+
+    public function searchFilter(Request $req)
+    {
+        return response()->json($this->getFilteredOrders($req));
+    }
+
+    private function getFilteredOrders($req)
+    {
+        $srch_date_upload = "";
+        $srch_sc_no = "";
+        $srch_prod_code = "";
+        $srch_description = "";
+        $srch_po = "";
+
+        if (!is_null($req->srch_date_upload_from) && !is_null($req->srch_date_upload_to)) {
+            $srch_date_upload = " AND DATE_FORMAT(date_upload,'%Y-%m-%d') BETWEEN '".$req->srch_date_upload_from."' AND '".$req->srch_date_upload_to."'";
+        }
+
+        if (!is_null($req->srch_sc_no)) {
+            $equal = "= ";
+            $_value = $req->srch_sc_no;
+
+            if (Str::contains($req->srch_sc_no, '*')){
+                $equal = "LIKE ";
+                $_value = str_replace("*","%",$req->srch_sc_no);
+            }
+            $srch_sc_no = " AND sc_no ".$equal."'".$_value."'";
+        }
+
+        if (!is_null($req->srch_prod_code)) {
+            $equal = "= ";
+            $_value = $req->srch_prod_code;
+
+            if (Str::contains($req->srch_prod_code, '*')){
+                $equal = "LIKE ";
+                $_value = str_replace("*","%",$req->srch_prod_code);
+            }
+            $srch_prod_code = " AND prod_code ".$equal."'".$_value."'";
+        }
+
+        if (!is_null($req->srch_description)) {
+            $equal = "= ";
+            $_value = $req->srch_description;
+
+            if (Str::contains($req->srch_description, '*')){
+                $equal = "LIKE ";
+                $_value = str_replace("*","%",$req->srch_description);
+            }
+            $srch_description = " AND `description` ".$equal."'".$_value."'";
+        }
+        if (!is_null($req->srch_po)) {
+            $equal = "= ";
+            $_value = $req->srch_po;
+
+            if (Str::contains($req->srch_po, '*')){
+                $equal = "LIKE ";
+                $_value = str_replace("*","%",$req->srch_po);
+            }
+            $srch_po = " AND po ".$equal."'".$_value."'";
+        }
+
+        $Datalist = DB::select("select sc_no,
+                                    prod_code,
+                                    description,
+                                    quantity,
+                                    sched_qty,
+                                    po,
+                                    date_upload
+                            from enpms.ppc_upload_orders
+                            where create_user='".Auth::user()->id."'".$srch_date_upload.$srch_sc_no.$srch_prod_code.$srch_description.$srch_po);
+
+        return $Datalist;
+    }
+
+    public function excelFilteredData(Request $req)
+    {
+        $data = $this->getFilteredOrders($req);
+        $date = date('Ymd');
+
+        Excel::create('UploadedOrders_'.$date, function($excel) use($data)
+        {
+            $excel->sheet('Summary', function($sheet) use($data)
+            {
+                $sheet->setHeight(4, 20);
+                $sheet->mergeCells('A2:F2');
+                $sheet->cells('A2:F2', function($cells) {
+                    $cells->setAlignment('center');
+                    $cells->setFont([
+                        'family'     => 'Calibri',
+                        'size'       => '14',
+                        'bold'       =>  true,
+                        'underline'  =>  true
+                    ]);
+                });
+                $sheet->cell('A2',"Uploaded Orders Summary");
+
+                $sheet->setHeight(6, 15);
+                $sheet->cells('A4:F4', function($cells) {
+                    $cells->setFont([
+                        'family'     => 'Calibri',
+                        'size'       => '11',
+                        'bold'       =>  true,
+                    ]);
+                    // Set all borders (top, right, bottom, left)
+                    $cells->setBorder('solid', 'solid', 'solid', 'solid');
+                });
+
+                $sheet->cell('A4', function($cell) {
+                    $cell->setValue("SC No.");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+            
+                $sheet->cell('B4', function($cell) {
+                    $cell->setValue("Product Code");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+
+                $sheet->cell('C4', function($cell) {
+                    $cell->setValue("Description");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+
+                $sheet->cell('D4', function($cell) {
+                    $cell->setValue("Quantity");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+
+                $sheet->cell('E4', function($cell) {
+                    $cell->setValue("P.O.");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+
+                $sheet->cell('F4', function($cell) {
+                    $cell->setValue("Date Uploaded");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+
+                $sheet->cells('A4:F4', function($cells) {
+                    $cells->setBorder('thick', 'thick', 'thick', 'thick');
+                });
+
+                $row = 5;
+
+                foreach ($data as $key => $dt) {
+                    $sheet->setHeight($row, 15);
+
+                    $sheet->cell('A'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->sc_no);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('B'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->prod_code);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('C'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->description);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('D'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->quantity);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('E'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->po);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('F'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->date_upload);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    
+                    $row++;
+                }
+                
+                $sheet->cells('A4:F'.$row, function($cells) {
+                    $cells->setBorder('thick', 'thick', 'thick', 'thick');
                 });
             });
         })->download('xlsx');

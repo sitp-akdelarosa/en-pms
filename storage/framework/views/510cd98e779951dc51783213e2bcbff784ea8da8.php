@@ -290,7 +290,11 @@ foreach ($user_accesses as $user_access){
                             <i class="fa fa-print"></i> Prepare for printing
                         </button>
                     </div>
-                    
+                    <div class="col-md-2 mb-5" id="search">
+                        <button type="button" id="btn_search_filter" class="btn bg-teal btn-block">
+                            <i class="fa fa-search"></i> Search / Filter
+                        </button>
+                    </div>
                 </div>
             </form>
 
@@ -312,6 +316,7 @@ foreach ($user_accesses as $user_access){
         var RawMaterialWithdrawalSlipURL = "<?php echo e(url('/pdf/raw-material-withdrawal-slip')); ?>";
         var code_permission = 'T0003';
         var getComputationIssuedQty = "<?php echo e(url('/transaction/raw-material-withdrawal/getComputationIssuedQty')); ?>";
+        var excelSearchRawMaterialURL = "<?php echo e(url('/transaction/raw-material-withdrawal/search-raw-material-excel')); ?>";
     </script>
     <script type="text/javascript" src="<?php echo e(mix('/js/pages/ppc/transactions/raw-material-withdrawal/raw-material-withdrawal.js')); ?>"></script>
 <?php $__env->stopPush(); ?>

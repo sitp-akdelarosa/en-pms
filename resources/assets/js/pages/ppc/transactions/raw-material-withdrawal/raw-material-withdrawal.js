@@ -301,6 +301,48 @@ $(function () {
 			$('#modal_inventory').modal('hide');
 		}
 	});
+
+	$('#btn_search_filter').on('click', function() {
+		$('.srch-clear').val('');
+		searchDataTable([]);
+		$('#modal_raw_material_search').modal('show');
+	});
+
+	$('#btn_search_excel').on('click', function () {
+
+		window.location.href = excelSearchRawMaterialURL + "?srch_date_withdrawal_from="+$('#srch_date_withdrawal_from').val() +
+								"&srch_date_withdrawal_to="+$('#srch_date_withdrawal_to').val() +
+								"&srch_trans_no=" + $('#srch_trans_no').val() +
+								"&srch_heat_no="+$('#srch_heat_no').val() +
+								"&srch_mat_code="+$('#srch_mat_code').val() +
+								"&srch_alloy="+$('#srch_alloy').val() +
+								"&srch_item="+$('#srch_item').val() +
+								"&srch_size="+$('#srch_size').val() +
+								"&srch_length="+$('#srch_length').val() +
+								"&srch_schedule="+$('#srch_schedule').val();
+	});
+
+	$("#frm_search").on('submit', function (e) {
+		e.preventDefault();
+		$('.loadingOverlay-modal').show();
+
+		$.ajax({
+			url: $(this).attr('action'),
+			type: 'GET',
+			dataType: 'JSON',
+			data: $(this).serialize(),
+		}).done(function (data, textStatus, xhr) {
+			searchDataTable(data);
+
+		}).fail(function (xhr, textStatus, errorThrown) {
+			var errors = xhr.responseJSON.errors;
+
+			console.log(errors);
+			showErrors(errors);
+		}).always(function () {
+			$('.loadingOverlay-modal').hide();
+		});
+	});
 });
 
 function init() {
@@ -314,6 +356,7 @@ function viewState(data = []) {
 	$('#btn_edit_item').hide();
 	$('#controls').hide();
 	$('#add_new').show();
+	$('#search').show();
 	$('#edit').show();
 	$('#save').hide();
 	$('.btn_edit_item').prop('disabled', true);
@@ -337,6 +380,7 @@ function addState() {
 	$('#trans_no').val('');
 	$('#controls').show();
 	$('#add_new').hide();
+	$('#search').hide();
 	$('#edit').hide();
 	$('#save').show();
 	$('#delete').hide();
@@ -363,6 +407,7 @@ function editState() {
 	$('#returned_uom').val('');
 	$('#controls').show();
 	$('#add_new').hide();
+	$('#search').hide();
 	$('#edit').hide();
 	$('#save').show();
 	$(".btn_remove_item").css("visibility", "visible");
@@ -879,4 +924,31 @@ function addDetails() {
 			$('.btn_edit_item').prop('disabled', false);
 		}
 	}
+}
+
+function searchDataTable(arr) {
+	$('.loadingOverlay-modal').show();
+
+	$('#tbl_search').dataTable().fnClearTable();
+	$('#tbl_search').dataTable().fnDestroy();
+	$('#tbl_search').dataTable({
+		data: arr,
+		order: [[10, 'asc']],
+		columns: [
+			{ data: 'trans_no' },
+			{ data: 'mat_code' },
+			{ data: 'heat_no' },
+			{ data: 'alloy' },
+			{ data: 'item' },
+			{ data: 'size' },
+			{ data: 'schedule' },
+			{ data: 'length' },
+			{ data: 'issued_qty' },
+			{ data: 'create_user' },
+			{ data: 'created_at' }
+		],
+		initComplete: function () {
+			$('.loadingOverlay-modal').hide();
+		}
+	});
 }

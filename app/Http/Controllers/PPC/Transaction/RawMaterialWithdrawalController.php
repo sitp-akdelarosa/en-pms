@@ -15,6 +15,7 @@ use App\PpcMaterialCode;
 use App\PpcJoDetails;
 use App\Inventory;
 use DataTables;
+use Excel;
 use DB;
 
 class RawMaterialWithdrawalController extends Controller
@@ -700,6 +701,305 @@ class RawMaterialWithdrawalController extends Controller
     {
         $old_trans = PpcRawMaterialWithdrawalInfo::where('create_user',Auth::user()->id)
                                                 ->latest()->first();
+    }
+
+    public function searchFilter(Request $req)
+    {
+        return response()->json($this->getFilteredOrders($req));
+    }
+
+    private function getFilteredOrders($req)
+    {
+        $srch_date_withdrawal = "";
+        $srch_mat_code = "";
+        $srch_alloy = "";
+        $srch_item = "";
+        $srch_size = "";
+        $srch_length = "";
+        $srch_schedule = "";
+        $srch_trans_no = "";
+        $srch_heat_no = "";
+
+        if (!is_null($req->srch_date_withdrawal_from) && !is_null($req->srch_date_withdrawal_to)) {
+            $srch_date_withdrawal = " AND DATE_FORMAT(i.created_at,'%Y-%m-%d') BETWEEN '".$req->srch_date_withdrawal_from."' AND '".$req->srch_date_withdrawal_to."'";
+        }
+
+        if (!is_null($req->srch_mat_code)) {
+            $equal = "= ";
+            $_value = $req->srch_mat_code;
+
+            if (Str::contains($req->srch_mat_code, '*')){
+                $equal = "LIKE ";
+                $_value = str_replace("*","%",$req->srch_mat_code);
+            }
+            $srch_mat_code = " AND d.mat_code ".$equal."'".$_value."'";
+        }
+
+        if (!is_null($req->srch_alloy)) {
+            $equal = "= ";
+            $_value = $req->srch_alloy;
+
+            if (Str::contains($req->srch_alloy, '*')){
+                $equal = "LIKE ";
+                $_value = str_replace("*","%",$req->srch_alloy);
+            }
+            $srch_alloy = " AND d.alloy ".$equal."'".$_value."'";
+        }
+
+        if (!is_null($req->srch_item)) {
+            $equal = "= ";
+            $_value = $req->srch_item;
+
+            if (Str::contains($req->srch_item, '*')){
+                $equal = "LIKE ";
+                $_value = str_replace("*","%",$req->srch_item);
+            }
+            $srch_item = " AND d.item ".$equal."'".$_value."'";
+        }
+
+        if (!is_null($req->srch_size)) {
+            $equal = "= ";
+            $_value = $req->srch_size;
+
+            if (Str::contains($req->srch_size, '*')){
+                $equal = "LIKE ";
+                $_value = str_replace("*","%",$req->srch_size);
+            }
+            $srch_size = " AND d.size ".$equal."'".$_value."'";
+        }
+
+        if (!is_null($req->srch_length)) {
+            $equal = "= ";
+            $_value = $req->srch_length;
+
+            if (Str::contains($req->srch_length, '*')){
+                $equal = "LIKE ";
+                $_value = str_replace("*","%",$req->srch_length);
+            }
+            $srch_length = " AND inv.length ".$equal."'".$_value."'";
+        }
+
+        if (!is_null($req->srch_schedule)) {
+            $equal = "= ";
+            $_value = $req->srch_schedule;
+
+            if (Str::contains($req->srch_schedule, '*')){
+                $equal = "LIKE ";
+                $_value = str_replace("*","%",$req->srch_schedule);
+            }
+            $srch_schedule = " AND d.`schedule` ".$equal."'".$_value."'";
+        }
+
+        if (!is_null($req->srch_trans_no)) {
+            $equal = "= ";
+            $_value = $req->srch_trans_no;
+
+            if (Str::contains($req->srch_trans_no, '*')){
+                $equal = "LIKE ";
+                $_value = str_replace("*","%",$req->srch_trans_no);
+            }
+            $srch_trans_no = " AND i.trans_no ".$equal."'".$_value."'";
+        }
+
+        if (!is_null($req->srch_heat_no)) {
+            $equal = "= ";
+            $_value = $req->srch_heat_no;
+
+            if (Str::contains($req->srch_heat_no, '*')){
+                $equal = "LIKE ";
+                $_value = str_replace("*","%",$req->srch_heat_no);
+            }
+            $srch_heat_no = " AND d.material_heat_no ".$equal."'".$_value."'";
+        }
+
+        $Datalist = DB::select("SELECT i.trans_no as trans_no,
+                                d.mat_code as mat_code,
+                                d.alloy as alloy,
+                                d.item as item,
+                                d.size as size,
+                                d.`schedule` as `schedule`,
+                                d.material_heat_no as heat_no,
+                                d.issued_qty as issued_qty,
+                                inv.length as `length`,
+                                CONCAT(u.firstname,' ',u.lastname) as create_user,
+                                DATE_FORMAT(i.created_at, '%Y-%m-%d') as created_at
+                        FROM enpms.ppc_raw_material_withdrawal_details as d
+                        INNER JOIN enpms.ppc_raw_material_withdrawal_infos as i
+                        ON i.id = d.trans_id
+                        INNER JOIN users as u
+                        on i.create_user = u.id
+                        INNER JOIN inventories as inv
+                        on d.inv_id = inv.id
+                        where d.deleted <> 0 AND i.create_user = '".Auth::user()->id."'
+                        ".$srch_date_withdrawal.$srch_mat_code.$srch_alloy.$srch_item.$srch_size.$srch_length.$srch_schedule.$srch_trans_no.$srch_heat_no."
+                        group by i.trans_no,
+                                d.mat_code,
+                                d.alloy,
+                                d.item,
+                                d.size,
+                                d.`schedule`,
+                                d.material_heat_no,
+                                d.issued_qty,
+                                inv.length,
+                                CONCAT(u.firstname,' ',u.lastname),
+                                DATE_FORMAT(i.created_at, '%Y-%m-%d')");
+
+        return $Datalist;
+    }
+    
+    public function excelFilteredData(Request $req)
+    {
+        $data = $this->getFilteredOrders($req);
+        $date = date('Ymd');
+
+        Excel::create('RawMaterialWithdrawals'.$date, function($excel) use($data)
+        {
+            $excel->sheet('Summary', function($sheet) use($data)
+            {
+                $sheet->setHeight(4, 20);
+                $sheet->mergeCells('A2:K2');
+                $sheet->cells('A2:K2', function($cells) {
+                    $cells->setAlignment('center');
+                    $cells->setFont([
+                        'family'     => 'Calibri',
+                        'size'       => '14',
+                        'bold'       =>  true,
+                        'underline'  =>  true
+                    ]);
+                });
+                $sheet->cell('A2',"Material Withdrawal Summary");
+
+                $sheet->setHeight(6, 15);
+                $sheet->cells('A4:K4', function($cells) {
+                    $cells->setFont([
+                        'family'     => 'Calibri',
+                        'size'       => '11',
+                        'bold'       =>  true,
+                    ]);
+                    // Set all borders (top, right, bottom, left)
+                    $cells->setBorder('solid', 'solid', 'solid', 'solid');
+                });
+
+                $sheet->cell('A4', function($cell) {
+                    $cell->setValue("Withdrawal No.");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+            
+                $sheet->cell('B4', function($cell) {
+                    $cell->setValue("Material Code");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+
+                $sheet->cell('C4', function($cell) {
+                    $cell->setValue("Heat No.");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+
+                $sheet->cell('D4', function($cell) {
+                    $cell->setValue("Alloy");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+
+                $sheet->cell('E4', function($cell) {
+                    $cell->setValue("Item");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+
+                $sheet->cell('F4', function($cell) {
+                    $cell->setValue("Size");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+
+                $sheet->cell('G4', function($cell) {
+                    $cell->setValue("Schedule");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+
+                $sheet->cell('H4', function($cell) {
+                    $cell->setValue("Length");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+
+                $sheet->cell('I4', function($cell) {
+                    $cell->setValue("QTY Withdrawed");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+
+                $sheet->cell('J4', function($cell) {
+                    $cell->setValue("Withdrawed By");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+
+                $sheet->cell('K4', function($cell) {
+                    $cell->setValue("Withdrawal Date");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+
+                $sheet->cells('A4:K4', function($cells) {
+                    $cells->setBorder('thick', 'thick', 'thick', 'thick');
+                });
+
+                
+
+                $row = 5;
+
+                foreach ($data as $key => $dt) {
+                    $sheet->setHeight($row, 15);
+
+                    $sheet->cell('A'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->trans_no);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('B'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->mat_code);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('C'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->heat_no);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('D'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->alloy);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('E'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->item);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('F'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->size);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('G'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->schedule);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('H'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->length);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('I'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->issued_qty);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('J'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->create_user);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('K'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->created_at);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    
+                    
+                    $row++;
+                }
+                
+                $sheet->cells('A4:K'.$row, function($cells) {
+                    $cells->setBorder('thick', 'thick', 'thick', 'thick');
+                });
+            });
+        })->download('xlsx');
     }
 
     // public function getComputationIssuedQty(Request $req)

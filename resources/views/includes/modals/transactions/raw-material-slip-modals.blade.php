@@ -129,3 +129,144 @@
         </form>
     </div>
 </div>
+
+<div id="modal_raw_material_search" class="modal fade " data-backdrop="static">
+    <div class="modal-dialog modal-full" role="document">
+        <form method="GET" action="{{ url('/transaction/raw-material-withdrawal/search-filter-raw-material') }}" id="frm_search">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Search / Filter Withdrawed Raw Materials</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="loadingOverlay-modal"></div>
+
+                    @csrf
+
+                    <div class="row">
+                        <div class="col-md-4">
+
+                            <div class="form-group row">
+                                <label for="srch_date_withdrawal" class="col-sm-3 control-label mt-5">Withdrawal Date:</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group input-group-sm">
+                                        <input type="date" class="form-control validate srch-clear" name="srch_date_withdrawal_from" id="srch_date_withdrawal_from">
+                                        
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">-</span>
+                                        </div>
+                                        <input type="date" class="form-control validate srch-clear" name="srch_date_withdrawal_to" id="srch_date_withdrawal_to">
+                                        
+                                    </div>
+                                    <div id="srch_date_withdrawal_from_feedback"></div>
+                                    <div id="srch_date_withdrawal_to_feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="srch_trans_no" class="col-sm-3 control-label mt-5">Withdrawal No.:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control form-control-sm validate srch-clear" id="srch_trans_no" name="srch_trans_no">
+                                        <div id="srch_trans_no_feedback"></div>                              
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+
+                             <div class="form-group row">
+                                <label for="srch_heat_no" class="col-sm-3 control-label mt-5">Material Heat No:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control form-control-sm validate srch-clear" id="srch_heat_no" name="srch_heat_no">
+                                        <div id="srch_heat_no_feedback"></div>                              
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="srch_mat_code" class="col-sm-3 control-label mt-5">Material Code:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control form-control-sm validate srch-clear" id="srch_mat_code" name="srch_mat_code" maxlength="16">
+                                    <div id="srch_mat_code_feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="srch_length" class="col-sm-3 control-label mt-5">Length:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control form-control-sm validate srch-clear" id="srch_length" name="srch_length" maxlength="10">
+                                    <div id="srch_length_feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="srch_alloy" class="col-sm-3 control-label mt-5">Alloy:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control form-control-sm validate srch-clear" id="srch_alloy" name="srch_alloy" maxlength="20">
+                                    <div id="srch_alloy_feedback"></div>
+                                </div>
+                            </div>
+
+                            
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label for="srch_size" class="col-sm-3 control-label mt-5">Size:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control form-control-sm validate srch-clear" id="srch_size" name="srch_size" maxlength="10">
+                                    <div id="srch_size_feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="srch_item" class="col-sm-3 control-label mt-5">Item:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control form-control-sm validate srch-clear" id="srch_item" name="srch_item" maxlength="20">
+                                    <div id="srch_item_feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="srch_schedule" class="col-sm-3 control-label mt-5">Schedule:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control form-control-sm validate srch-clear" id="srch_schedule" name="srch_schedule" maxlength="15">
+                                    <div id="srch_schedule_feedback"></div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table table-sm table-striped nowrap table-bordered" id="tbl_search" style="width:100%">
+                                <thead class="thead-dark">
+                                    <th>Withdrawal Slip No.</th>
+                                    <th>Material Code</th>
+                                    <th>Material Heat No.</th>
+                                    <th>Alloy</th>
+                                    <th>Item</th>
+                                    <th>Size</th>
+                                    <th>Schedule</th>
+                                    <th>Length</th>
+                                    <th>Qty Withdrawed</th>
+                                    <th>Withdrawed By</th>
+                                    <th>Date Withdrawed</th>
+                                </thead>
+                                <tbody id="tbl_search_body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn bg-red" data-dismiss="modal">Close</button>
+                    <button type="button" id="btn_search_excel" class="btn bg-green float-right">Download Excel</button>
+                    <button type="submit" class="btn bg-blue float-right permission-button">Filter</button>
+                </div>
+                
+            </div>
+        </form>
+    </div>
+</div>

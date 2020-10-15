@@ -66,8 +66,43 @@ $(function () {
     	}).fail(function(xhr,textStatus,errorThrown) {
     		msg('Unregistered Products: '+ errorThrown);
     	});
-    	
-    });
+	});
+	
+	$('#btn_filter_search').on('click', function() {
+		$('.srch-clear').val('');
+		$('#modal_order_search').modal('show');
+	});
+
+	$("#frm_search").on('submit', function (e) {
+		e.preventDefault();
+		$('.loadingOverlay-modal').show();
+
+		$.ajax({
+			url: $(this).attr('action'),
+			type: 'GET',
+			dataType: 'JSON',
+			data: $(this).serialize(),
+		}).done(function (data, textStatus, xhr) {
+			uploadedProductsTable(data);
+
+		}).fail(function (xhr, textStatus, errorThrown) {
+			var errors = xhr.responseJSON.errors;
+
+			console.log(errors);
+			showErrors(errors);
+		}).always(function () {
+			$('.loadingOverlay-modal').hide();
+		});
+	});
+
+	$('#btn_search_excel').on('click', function () {
+		window.location.href = excelSearchFilterURL + "?srch_date_upload_from=" + $('#srch_date_upload_from').val() +
+							"&srch_date_upload_to=" + $('#srch_date_upload_to').val() +
+							"&srch_sc_no=" + $('#srch_sc_no').val() +
+							"&srch_prod_code=" + $('#srch_prod_code').val() +
+							"&srch_description=" + $('#srch_description').val() +
+							"&srch_po=" + $('#srch_po').val();
+	});
 });
 
 function init() {
@@ -275,7 +310,8 @@ function scheduletable(arr) {
     $('#tbl_Schedule').dataTable({
     	data: arr,
     	bLengthChange : false,
-    	paging: true,
+		paging: true,
+		order: [[3,'asc']],
     	columns: [
     		{ data: 'sc_no', name: 'sc_no' },
 	    	{ data: 'prod_code', name: 'prod_code' },
@@ -315,7 +351,7 @@ function uploadedProductsTable(arr) {
                 $(row).css('background-color', '#ff6266');
                 $(row).css('color', '#fff');
             }
-        }
+		}
     });
 }
 

@@ -239,6 +239,10 @@ Route::group(['middleware' => ['ppc', 'auth', 'no.back', 'deleted_user']], funct
 				->name('transaction.upload-orders.download-unregistered-products');
 			Route::get('/get-unregistered-products', 'PPC\Transaction\UploadOrdersController@unRegisteredProducts')
 				->name('transaction.upload-orders.get-unregistered-products');
+			Route::get('/search-orders-excel', 'PPC\Transaction\UploadOrdersController@excelFilteredData')
+				->name('transaction.upload-orders.search-orders-excel');
+			Route::get('/search-filter-orders', 'PPC\Transaction\UploadOrdersController@searchFilter')
+				->name('transaction.upload-orders.search-filter-orders');
 		});
 
 		Route::group(['prefix' => 'production-schedule'], function () {
@@ -287,6 +291,10 @@ Route::group(['middleware' => ['ppc', 'auth', 'no.back', 'deleted_user']], funct
 				->name('transaction.raw-material-withdrawal.material-details');
 			Route::get('/getComputationIssuedQty', 'PPC\Transaction\RawMaterialWithdrawalController@getComputationIssuedQty')
 				->name('transaction.raw-material-withdrawal.getComputationIssuedQty');
+			Route::get('/search-filter-raw-material', 'PPC\Transaction\RawMaterialWithdrawalController@searchFilter')
+				->name('transaction.raw-material-withdrawal.search-filter-raw-material');
+			Route::get('/search-raw-material-excel', 'PPC\Transaction\RawMaterialWithdrawalController@excelFilteredData')
+				->name('transaction.raw-material-withdrawal.search-raw-material-excel');
 		});
 
 		Route::group(['prefix' => 'travel-sheet'], function () {
