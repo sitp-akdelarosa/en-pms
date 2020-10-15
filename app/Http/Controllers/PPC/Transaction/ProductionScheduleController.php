@@ -586,56 +586,123 @@ class ProductionScheduleController extends Controller
         return response()->json($p_code);
     }
 
+    private function getSameArrayValues($array)
+    {
+        $counts = array_count_values($array);
+        $filtered = array_filter($array, function ($value) use ($counts) {
+            return $counts[$value] > 1;
+        });
+
+        return $filtered;
+    }
+
     public function calculateOverIssuance(Request $req)
     {
         $material_type = '';
-        // get OD size
-        $inventory = DB::table('inventories')
-                        ->select(
-                            'materials_type',
-                            DB::raw("TRIM(TRAILING 'MM' FROM length ) as length"),
-                            DB::raw("TRIM(TRAILING 'MM' FROM width ) as width"),
-                            DB::raw("TRIM(TRAILING 'MM' FROM size ) AS size")
-                        )
-                        ->where('id',$req->inv_id)
-                        ->first();
 
-        // get product cut weight
-        $prod = DB::table('ppc_product_codes')
-                    ->select('cut_weight','cut_length','cut_width')
-                    ->where('product_code',$req->prod_code)
-                    ->first();
+        $heat_by_rmw_qty = [];
+        $heat_by_sched_qty = [];
+        $heat_by_prod_code = [];
+        $heat_by_inv_id = [];
 
-        if ($this->_helper->check_if_exists($inventory) > 0) {
-            $material_type = $inventory->materials_type;
+        $data = [];
+
+        foreach ($req->rmw_id as $key => $rmw_id) {
+            if (array_key_exists($rmw_id,$heat_by_sched_qty)) {
+                $heat_by_sched_qty[$rmw_id] = $heat_by_sched_qty[$rmw_id] + $req->sched_qty[$key];
+            } else {
+                $heat_by_sched_qty[$rmw_id] = $req->sched_qty[$key];
+            }
         }
 
-        switch ($material_type) {
-            case 'S/S BAR':
-            case 'C/S BAR':
-                return $this->calculateBar($prod,$inventory,$req);
-                break;
+        foreach ($req->rmw_id as $key => $rmw_id) {
+            $heat_by_rmw_qty[$rmw_id] = $req->rmw_issued_qty[$key];
+        }
 
-            case 'S/S PLATE':
-                return $this->calculatePlate($prod,$inventory,$req);
-                break;
-                
-            case 'S/S PIPE':
-                return $this->calculatePipe($prod,$inventory,$req);
-                break;
+        foreach ($req->prod_code as $key => $prod_code) {
+            $heat_by_prod_code[$prod_code] = $req->rmw_id[$key];
+        }
+
+        foreach ($req->rmw_id as $key => $rmw_id) {
+            $heat_by_inv_id[$rmw_id] = $req->inv_id[$key];
+        }
+        
+
+        foreach ($heat_by_sched_qty as $key => $sched_qty) {
+
+            $prod_cond = "";
+            $arr_prod_code = $this->getSameArrayValues($heat_by_prod_code);
+
+            $prod = DB::table('ppc_product_codes')->select('cut_weight','cut_length','cut_width','product_code');
+                        
+
+            if (count($arr_prod_code) > 0) {
+                $prod_key = array_search($key, $arr_prod_code);
+                $prod->whereIn('product_code',$prod_key);
+            } else {
+                $prod->whereIn('product_code',$heat_by_prod_code[$key]);
+            }
+
+            $prod->first();
+
+            $inventory = DB::table('inventories')
+                            ->select(
+                                'materials_type',
+                                'heat_no',
+                                'id',
+                                DB::raw("TRIM(TRAILING 'MM' FROM length ) as length"),
+                                DB::raw("TRIM(TRAILING 'MM' FROM width ) as width"),
+                                DB::raw("TRIM(TRAILING 'MM' FROM size ) AS size")
+                            )
+                            ->where('id',$key)
+                            ->first();
+
+            // get product cut weight
             
-            default:
-                $data = [
-                    'msg' => 'No Formula assigned for this Material.',
-                    'status' => 'failed'
-                ];
 
-                return $data;
-                break;
+            if ($this->_helper->check_if_exists($inventory) > 0) {
+                $material_type = $inventory->materials_type;
+            }
+
+            switch ($material_type) {
+                case 'S/S BAR':
+                case 'C/S BAR':
+                    $data = $this->calculateBar(
+                                    $prod,
+                                    $inventory,
+                                    $heat_by_rmw_qty[$key],
+                                    $sched_qty
+                                );
+                    break;
+
+                case 'S/S PLATE':
+                    $data = $this->calculatePlate(
+                                    $prod,
+                                    $inventory
+                                );
+                    break;
+                    
+                case 'S/S PIPE':
+                    $data = $this->calculatePipe(
+                                    $prod,
+                                    $inventory,
+                                    $heat_by_rmw_qty[$key]
+                                );
+                    break;
+                
+                default:
+                    $data = [
+                        'msg' => 'No Formula assigned for this Material.',
+                        'status' => 'failed'
+                    ];
+                    break;
+            }
         }
+
+        return $data;
     }
 
-    private function calculateBar($prod,$inventory,$req)
+    private function calculateBar($prod,$inventory,$rmw_issued_qty,$sched_qty)
     {
         $data = [
             'msg' => 'Calculating failed.',
@@ -652,7 +719,7 @@ class ProductionScheduleController extends Controller
         $mat_length = 0;
         $stock = 0;
         $length_with_1p5 = 0;
-        $rmw_qty = (int)$req->rmw_issued_qty;
+        $rmw_qty = (int)$rmw_issued_qty;
 
         if ($this->_helper->check_if_exists($prod) > 0) {
             $cut_weight = $prod->cut_weight;
@@ -668,7 +735,7 @@ class ProductionScheduleController extends Controller
                 $length = $mat_length/$length_with_1p5;
 
                 // calculate PCS
-                $bar_pcs = (float)$req->sched_qty/$length;
+                $bar_pcs = (float)$sched_qty/$length;
 
                 // Calculate stocks
                 $stock = $rmw_qty - $bar_pcs;
@@ -699,7 +766,7 @@ class ProductionScheduleController extends Controller
         return $data;
     }
 
-    private function calculatePipe($prod,$inventory,$req)
+    private function calculatePipe($prod,$inventory)
     {
         $data = [
             'msg' => 'Calculating failed.',
@@ -714,7 +781,7 @@ class ProductionScheduleController extends Controller
         $pipe_pcs = 0;
         $stock = 0;
         $length_wth_1p8 = 0;
-        $rmw_qty = (int)$req->rmw_issued_qty;
+        $rmw_qty = (int)$rmw_issued_qty;
         $pcs = 0;
 
         if ($this->_helper->check_if_exists($prod) > 0) {
@@ -723,10 +790,10 @@ class ProductionScheduleController extends Controller
             if ($this->_helper->check_if_exists($inventory) > 0) {
                 $inv_length = (float)$inventory->length;
 
-                $length_wth_1p8 = $product_cut_length + 1.8;
+                $length_wth_1p8 = $product_cut_length + 1.5;
 
                 // calculate pipe length
-                $pipe_pcs = ($inv_length / $length_wth_1p8); // somehow addition 1.8 for product cut length
+                $pipe_pcs = ($inv_length / $length_wth_1p8); // somehow addition 1.5 for product cut length
 
                 // Calculate stocks
                 // $pcs = $rmw_qty * $pipe_pcs;

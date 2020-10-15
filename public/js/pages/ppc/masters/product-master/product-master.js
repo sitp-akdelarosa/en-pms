@@ -322,7 +322,7 @@ $( function() {
 	// });
 
 	$('#set').on('change', function(e) {
-		selectedProcess($(this).val());
+		selectedProcess($(this).val(),$('#prod_id').val());
 		$('#process').val('');
 		$('#div_code').val('');
 		$('#btn_save_process').html('<i class="fa fa-floppy-o"></i> Save');
@@ -406,7 +406,7 @@ $( function() {
 			prod_code: $('#prod_code').val(),
 			sequence: $('input[name="sequence[]"]').map(function(){return $(this).val();}).get(),
 			process: $('input[name="process[]"]').map(function(){return $(this).val();}).get(),
-			sets: $('input[name="set[]"]').map(function(){return $(this).val();}).get(),
+			sets: $('input[name="sets[]"]').map(function(){return $(this).val();}).get(),
 		};
 
 		e.preventDefault();
@@ -979,7 +979,7 @@ function makeProcessList() {
 				'</td>'+
 				'<td>'+
 					'<i class="fa fa-edit text-aqua" data-id="'+row+'" data-sets="'+x.sets+'"></i>'+
-					'<input type="hidden" name="set[]" value="'+x.sets+'">'+
+					'<input type="hidden" name="sets[]" value="'+x.sets+'">'+
 				'</td>'+
 				'<td>'+
 					'<i class="fa fa-times text-red" data-id="'+row+'"></i>'+
@@ -1177,19 +1177,19 @@ function get_set() {
 	});
 }
 
-function selectedProcess(set_id) {
+function selectedProcess(set_id, prod_id ) {
 	$.ajax({
 		url: getProcessURL,
 		type: 'POST',
 		dataType: 'JSON',
-		data: {_token: token,set_id:set_id},
+		data: {_token: token, set_id:set_id, prod_id: prod_id},
 	}).done(function(data, textStatus, xhr) {
 		if (textStatus == 'success') {
 			process_array = [];
 			$.each(data, function(i, x) {
 				process_array.push({
 					process: x.process,
-					sets: x.set_id,
+					sets: x.set,
 				});
 			});
 

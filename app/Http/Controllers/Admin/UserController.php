@@ -50,13 +50,14 @@ class UserController extends Controller
 								   ut.description as user_type,
 								   ifnull(CONCAT(d.div_code,' - ',d.div_name),'') as div_code,
 								   u.actual_password as actual_password,
-								   u.del_flag as del_flag,
+								   u.deleted as del_flag,
 								   DATE_FORMAT(u.created_at, '%Y-%m-%d %H:%i %p') as created_at
 							FROM enpms.users as u
 							INNER JOIN  enpms.admin_user_types as ut 
 							ON u.user_type =  ut.id
 							LEFT JOIN enpms.ppc_divisions as d
 							on u.div_code = d.id
+							where u.deleted <> 1
 							ORDER BY u.id DESC");
 
 		return $users;
@@ -74,16 +75,17 @@ class UserController extends Controller
 	private function store($req)
 	{
 		$this->validate($req, [
-			'user_id' => 'required|string|max:50|min:1|unique:users',
+			'user_id' => 'required|string|max:50|min:1|unique:users,user_id,NULL,id,deleted_at,NULL',
 			'firstname' => 'required|string|max:50|min:1',
 			'lastname' => 'required|string|max:50|min:1',
 			'password' => 'required|string|min:5|confirmed',
 			'user_type' => 'required',
+			'email' => 'unique:users',
 			// 'div_code' => 'required',
 			'photo' => 'image|mimes:jpeg,png,jpg,gif,svg',
 		]);
 
-		$exists = User::where('user_id',$req->user_id)->first();
+		$exists = User::where('user_id',$req->user_id)->where('deleted',0)->first();
 		if (is_null($exists)) {
 
 			$user = new User();
@@ -313,7 +315,8 @@ class UserController extends Controller
 
 		$query = User::whereIn('id', $req->ids)
 					->update([
-						'del_flag' => 1,
+						'deleted' => 1,
+						'delete_user' => Auth::user()->id,
 						'update_user' => Auth::user()->id,
 						'deleted_at' => Carbon::now(),
 						'updated_at' => Carbon::now()

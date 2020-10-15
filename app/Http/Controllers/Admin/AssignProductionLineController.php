@@ -71,11 +71,13 @@ class AssignProductionLineController extends Controller
 		$last_user = 0;
 
 		foreach ($req->user_id as $key => $user_id) {
-			AdminAssignProductionLine::where('user_id',$user_id)->delete();
+			//AdminAssignProductionLine::where('user_id',$user_id)->delete();
 
 			foreach ($req->product_line as $key => $product_line) {
 				
 				if ($product_line !== '' || !empty($product_line)) {
+					AdminAssignProductionLine::where('user_id',$user_id)
+											->where('product_line',$product_line)->delete();
 					array_push($params, [
 						'user_id' => $user_id,
 						'product_line' => $product_line,
