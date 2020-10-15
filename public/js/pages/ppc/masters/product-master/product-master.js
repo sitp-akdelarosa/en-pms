@@ -343,7 +343,7 @@ $( function() {
 		showProcessList($('#prod_code').val(),$('#set').val());
 	});
 
-	$('#tbl_prod_process').on('click', '.btn_edit_process', function() {
+	$('#tbl_selected_set_process').on('click', '.btn_edit_process', function() {
 		$('#process_id').val($(this).attr('data-id'));
 		$('#prod_code').val($(this).attr('data-prod_code'));
 		$('#process').val($(this).attr('data-process'));
@@ -537,7 +537,7 @@ $( function() {
 					var sequence = process_array.length + 1;
 					$('#sequence').val(sequence);
 				}
-				makeProcessList();
+				makeProcessList(process_array);
 			}
 		}else{
 			msg("The Process already existing.","failed");
@@ -551,7 +551,7 @@ $( function() {
 		id--;
 		process_array.splice(id,1);
 
-		makeProcessList();
+		makeProcessList(process_array);
 
 		if ($('#tbl_prod_process_body > tr').length < 1) {
 			$('#tbl_prod_process_body').html('<tr id="no_data">'+
@@ -959,36 +959,76 @@ function delete_process(checkboxClass,deleteURL) {
 	$('.check_all_process').prop('checked',false);
 }
 
-function makeProcessList() {
+function makeProcessList(arr) {
 	var tr = '';
 	$('#tbl_prod_process_body').html(tr);
 
 	var row = 1;
 
-	$.each(process_array, function(i, x) {
-		tr = '<tr id="'+row+'">'+
-				'<td>'+
-					'<input type="hidden" name="proc_id[]" value="'+x.id+'">'+
-					'<input type="hidden" name="sequence[]" value="'+row+'">'+row+
-				'</td>'+
+	if (arr.length > 0) {
+		$.each(arr, function (i, x) {
+			tr = '<tr id="' + row + '">' +
+				'<td>' +
+				'<input type="hidden" name="proc_id[]" value="' + x.id + '">' +
+				'<input type="hidden" name="sequence[]" value="' + row + '">' + row +
+				'</td>' +
 				// '<td>'+
 				// 	'<input type="hidden" name="prod_code[]" value="'+x.prod_code+'">'+x.prod_code+
 				// '</td>'+
-				'<td>'+
-					'<input type="hidden" name="process[]" value="'+x.process+'">'+x.process+
-				'</td>'+
-				'<td>'+
-					'<i class="fa fa-edit text-aqua" data-id="'+row+'" data-sets="'+x.sets+'"></i>'+
-					'<input type="hidden" name="sets[]" value="'+x.sets+'">'+
-				'</td>'+
-				'<td>'+
-					'<i class="fa fa-times text-red" data-id="'+row+'"></i>'+
-				'</td>'+
-			'</tr>';
-		$('#tbl_prod_process_body').append(tr);
-		row++;
-	});
+				'<td>' +
+				'<input type="hidden" name="process[]" value="' + x.process + '">' + x.process +
+				'</td>' +
+				'<td>' +
+				'<i class="fa fa-edit text-aqua" data-id="' + row + '" data-sets="' + x.sets + '"></i>' +
+				'<input type="hidden" name="sets[]" value="' + x.sets + '">' +
+				'</td>' +
+				'<td>' +
+				'<i class="fa fa-times text-red" data-id="' + row + '"></i>' +
+				'</td>' +
+				'</tr>';
+			$('#tbl_prod_process_body').append(tr);
+			row++;
+		});
+	} else {
+		showProcessList($('#prod_code').val(), $('#set').val());
+	}
 }
+
+
+
+// function savedProductProcessList(arr) {
+// 	var tr = '';
+// 	$('#tbl_prod_process_body').html(tr);
+
+// 	var row = 1;
+
+// 	if (arr.length > 0) {
+// 		$.each(arr, function (i, x) {
+// 			tr = '<tr id="' + row + '">' +
+// 				'<td>' +
+// 				'<input type="hidden" name="proc_id[]" value="' + x.id + '">' +
+// 				'<input type="hidden" name="sequence[]" value="' + row + '">' + row +
+// 				'</td>' +
+// 				// '<td>'+
+// 				// 	'<input type="hidden" name="prod_code[]" value="'+x.prod_code+'">'+x.prod_code+
+// 				// '</td>'+
+// 				'<td>' +
+// 				'<input type="hidden" name="process[]" value="' + x.process + '">' + x.process +
+// 				'</td>' +
+// 				'<td>' +
+// 				'<i class="fa fa-edit text-aqua" data-id="' + row + '" data-sets="' + x.sets + '"></i>' +
+// 				'<input type="hidden" name="sets[]" value="' + x.sets + '">' +
+// 				'</td>' +
+// 				'<td>' +
+// 				'<i class="fa fa-times text-red" data-id="' + row + '"></i>' +
+// 				'</td>' +
+// 				'</tr>';
+// 			$('#tbl_prod_process_body').append(tr);
+// 			row++;
+// 		});
+// 	}
+	
+// }
 
 function showProcessList(prod_code,set) {
 	$.ajax({
@@ -1016,7 +1056,7 @@ function showProcessList(prod_code,set) {
 			var seq = process_array.length + 1;
 			$('#sequence').val(seq);
 		}
-		makeProcessList();
+		makeProcessList(process_array);
 	}).fail(function(xhr, textStatus, errorThrown) {
 		msg(errorThrown,textStatus);
 	});
@@ -1189,14 +1229,14 @@ function selectedProcess(set_id, prod_id ) {
 			$.each(data, function(i, x) {
 				process_array.push({
 					process: x.process,
-					sets: x.set,
+					sets: x.set_id,
 				});
 			});
 
 			var seq = process_array.length + 1;
 			$('#sequence').val(seq);
 		}
-		makeProcessList();
+		makeProcessList(process_array);
 	}).fail(function(xhr, textStatus, errorThrown) {
 		msg(errorThrown,textStatus);
 	});

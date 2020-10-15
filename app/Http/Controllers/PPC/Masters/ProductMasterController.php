@@ -272,9 +272,7 @@ class ProductMasterController extends Controller
 
     public function prod_process_list(Request $req)
     {
-        $process = PpcProductProcess::where('set',$req->sets)
-                    ->where('prod_code', $req->prod_code)
-                    ->get();
+        $process = PpcProductProcess::where('prod_code', $req->prod_code)->get();
         return response()->json($process);
     }
 
@@ -288,12 +286,14 @@ class ProductMasterController extends Controller
             'status' => 'warning',
         ];
 
+        PpcProductProcess::where('prod_id', $req->prod_id)
+                        // ->where('set',$req->sets[0])
+                        ->delete();
+
         
 
         if (is_array($req->sequence)) {
-            PpcProductProcess::where('prod_id', $req->prod_id)
-                        ->where('set',$req->sets[0])
-                        ->delete();
+            
 
             foreach ($req->sequence as $key => $seq) {
                 
@@ -586,8 +586,8 @@ class ProductMasterController extends Controller
 
     public function selected_process_list(Request $req)
     {
-        $process = PpcProductProcess::where('set', $req->set_id)
-                                    ->where('prod_id', $req->prod_id)
+        $process = PpcProcess::where('set_id', $req->set_id)
+                                    // ->where('prod_id', $req->prod_id)
                                     // ->where('create_user',Auth::user()->id)
                                     ->get();
         return response()->json($process);
