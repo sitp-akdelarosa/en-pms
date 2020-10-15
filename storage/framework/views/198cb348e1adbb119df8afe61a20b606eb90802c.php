@@ -39,11 +39,11 @@
 	?>
 					<div class="container page">
 						<div class="row">
-							<div class="col-xs-2">
-								<img src="<?php echo e(asset($header->iso_photo)); ?>" alt="" height="80px" width="200px">
+							<div class="col-xs-6" style="padding-right: 200px">
+								<img src="<?php echo e(asset($header->iso_photo)); ?>" alt="" height="80px" width="200px" >
 							</div>
-							<div class="col-xs-10 text-center">
-								<h3 style="margin-left:55px">TRAVEL SHEET</h3>
+							<div class="col-xs-6 text-center">
+								<h3>TRAVEL SHEET</h3>
 							</div>
 							    
 						</div>

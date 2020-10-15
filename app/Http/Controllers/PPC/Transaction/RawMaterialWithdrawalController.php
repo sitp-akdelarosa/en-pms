@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HelpersController;
 use App\Http\Controllers\Admin\AuditTrailController;
+use Illuminate\Support\Str;
 use App\PpcUpdateInventory;
 use App\PpcUploadOrder;
 use App\PpcRawMaterialWithdrawalInfo;
@@ -830,7 +831,7 @@ class RawMaterialWithdrawalController extends Controller
                         on i.create_user = u.id
                         INNER JOIN inventories as inv
                         on d.inv_id = inv.id
-                        where d.deleted <> 0 AND i.create_user = '".Auth::user()->id."'
+                        where d.deleted <> 1 AND i.create_user = '".Auth::user()->id."'
                         ".$srch_date_withdrawal.$srch_mat_code.$srch_alloy.$srch_item.$srch_size.$srch_length.$srch_schedule.$srch_trans_no.$srch_heat_no."
                         group by i.trans_no,
                                 d.mat_code,

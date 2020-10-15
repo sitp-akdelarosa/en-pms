@@ -8979,6 +8979,10 @@
 			border: 1px solid #ddd !important;
 		}
 		}
+
+		.left-double-border {
+			border-style: dotted dashed solid double;
+		}
 		/*# sourceMappingURL=bootstrap.css.map */
     </style>
     <?php echo $__env->yieldPushContent('css'); ?>

@@ -46,10 +46,11 @@ foreach ($user_accesses as $user_access){
             <div class="box">
                 <div class="box-body">
                     <div class="table-responsive">
-                        <table class="table table-sm table-hover table-striped dt-responsive nowrap mb-10" id="tbl_materials" style="width: 100%">
+                        <table class="table table-sm table-hover table-striped nowrap mb-10" id="tbl_materials" style="width: 100%">
                             <thead class="thead-dark">
                                 <tr>
                                     <th></th>
+                                    <th>Receiving No.</th>
                                     <th>Material Type</th>
                                     <th>Material Code</th>
                                     <th>Description</th>
@@ -58,9 +59,11 @@ foreach ($user_accesses as $user_access){
                                     <th>Schedule</th>
                                     <th>Size</th>
                                     <th>Width</th>
+                                    
                                     <th>Length</th>
-                                    <th>Qty</th>
-                                    <th>UOM</th>
+                                    <th>Qty(KGS)</th>
+                                    <th>Qty(PCS)</th>
+                                    <th>Stock(PCS)</th>
                                     <th>Heat No.</th>
                                     <th>Invoice No.</th>
                                     <th>Received Date</th>
@@ -94,6 +97,12 @@ foreach ($user_accesses as $user_access){
                                 <i class="fa fa-file-excel-o"></i> Download Format
                             </button>
                         </div>
+
+                        <div class="col-md-2">
+                            <button id="btn_search_filter" class="btn btn-sm btn-block bg-teal mb-3">
+                                <i class="fa fa-search"></i> Search / Filter
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -117,6 +126,7 @@ foreach ($user_accesses as $user_access){
         var downloadNonexistingURL = "<?php echo e(url('/transaction/update-inventory/download-unregistered-materials')); ?>";
         var getNonexistingURL = "<?php echo e(url('/transaction/update-inventory/get-unregistered-materials')); ?>";
         var downloadFormatURL = "<?php echo e(url('/transaction/update-inventory/download-update-inventory-format')); ?>";
+        var downloadSearchExcelURL = "<?php echo e(url('/transaction/update-inventory/download-update-inventory-search')); ?>";
     </script>
     <script type="text/javascript" src="<?php echo e(mix('/js/pages/ppc/transactions/update-inventory/update-inventory.js')); ?>"></script>
 

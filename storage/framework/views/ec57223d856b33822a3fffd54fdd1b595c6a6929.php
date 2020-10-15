@@ -216,6 +216,8 @@ foreach ($user_accesses as $user_access){
 								<input type="text" class="form-control clear" name="standard_material_used" id="standard_material_used" >
 							</div>
 
+							
+
 							<div class="input-group mb-5 input-group-sm">
 								<div class="input-group-prepend">
 									<span class="input-group-text">Cut Weight:</span>
@@ -243,6 +245,21 @@ foreach ($user_accesses as $user_access){
 									<option value="M">M</option>
 								</select>
 								<div id="cut_length_uom_feedback"></div>
+							</div>
+
+							<div class="input-group mb-5 input-group-sm">
+								<div class="input-group-prepend">
+									<span class="input-group-text">Cut Width:</span>
+								</div>
+								<input type="number" class="form-control validate size" name="cut_width" id="cut_width" step="any">
+								<div id="cut_width_feedback"></div>
+								<select class="form-control select-validate" name="cut_width_uom" id="cut_width_uom">
+									<option value="N/A">N/A</option>
+									<option value="MM">mm</option>
+									<option value="CM">cm</option>
+									<option value="M">M</option>
+								</select>
+								<div id="cut_width_uom_feedback"></div>
 							</div>
 
 							
