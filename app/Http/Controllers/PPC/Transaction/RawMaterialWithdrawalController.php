@@ -688,6 +688,8 @@ class RawMaterialWithdrawalController extends Controller
                         ])
                         ->where('apl.user_id' ,Auth::user()->id)
                         ->where('pui.heat_no',$req->material_heat_no)
+                        ->where('pui.deleted','<>','1')
+                        ->where('i.qty_pcs','<>','0')
                         ->whereRaw("1=1 ".$with_inv_id)
                         ->get();
 

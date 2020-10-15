@@ -394,12 +394,14 @@ class ProductionScheduleController extends Controller
                                     d.created_at as created_at,
                                     d.update_user as update_user,
                                     d.updated_at as updated_at,
-                                    s.rmw_no as rmw_no
+                                    s.rmw_no as rmw_no,
+                                    ifnull(pui.inv_id,0) as inv_id
                             FROM ppc_jo_details_summaries as s
                             JOIN ppc_jo_details as d ON d.jo_summary_id = s.id
                             LEFT JOIN ppc_jo_travel_sheets as ts ON ts.id = d.jo_summary_id
                             LEFT JOIN ppc_product_codes as pc ON d.product_code = pc.product_code
                             LEFT JOIN admin_assign_production_lines as pl ON pl.product_line = pc.product_type
+                            LEFT JOIN ppc_update_inventories as pui ON d.inv_id = pui.inv_id
                             WHERE s.jo_no = '".$req->JOno."'
                             AND ts.status IN (1,0)
                             AND pl.user_id = ".Auth::user()->id."
@@ -416,7 +418,8 @@ class ProductionScheduleController extends Controller
                                     d.created_at,
                                     d.update_user,
                                     d.updated_at,
-                                    s.rmw_no");
+                                    s.rmw_no,
+                                    pui.inv_id");
 
         return response()->json($details);
     }
@@ -454,17 +457,33 @@ class ProductionScheduleController extends Controller
 
     public function getMaterialUsed(Request $req)
     {
-        $inv = PpcUpdateInventory::groupBy('description')
-                                    ->where('heat_no', $req->heat_no)
-                                    ->select('description','size','schedule')->get();
+        $rmw_id = $req->heat_no; // this is now id from raw mats withdrawal 
+        $inv = DB::table('ppc_update_inventories as pui')
+                    ->join('ppc_raw_material_withdrawal_details as rmw','rmw.inv_id','=','pui.id')
+                    ->select('pui.description',
+                            'pui.size',
+                            'pui.schedule',
+                            'pui.heat_no as heat_no',
+                            DB::raw("ifnull(rmw.issued_uom,'') as uom"),
+                            DB::raw("ifnull(rmw.issued_qty,0) as rmw_issued_qty"),
+                            DB::raw("ifnull(rmw.scheduled_qty,0) as rmw_scheduled_qty"),
+                            'rmw.id as rmw_id',
+                            'rmw.inv_id as inv_id',
+                            'pui.length as rmw_length',
+                            'pui.id as upd_inv_id'
+                    )->where('rmw.id', $rmw_id)
+                    ->groupBy('pui.description',
+                            'pui.size',
+                            'pui.schedule',
+                            'rmw.id',
+                            'rmw.inv_id',
+                            'pui.length',
+                            'pui.id',
+                            'rmw.issued_uom',
+                            'rmw.issued_qty',
+                            'rmw.scheduled_qty'
+                    )->get();
         return response()->json($inv);
-    }
-
-    public function getStandardMaterialUsed(Request $req)
-    {
-        $p_code = PpcProductCode::where('product_code', $req->product_code)
-            ->select('standard_material_used')->first();
-        return response()->json($p_code);
     }
 
     public function getMaterialHeatNo(Request $req)
@@ -492,18 +511,27 @@ class ProductionScheduleController extends Controller
                                     ifnull(rmw.scheduled_qty,0) as rmw_scheduled_qty,
                                     rmw.id as rmw_id,
                                     rmw.inv_id as inv_id,
-                                    pui.length as rmw_length
-                            FROM ppc_update_inventories as pui
-                            left join admin_assign_production_lines as apl on apl.product_line = pui.materials_type
-                            left join ppc_raw_material_withdrawal_details as rmw on pui.heat_no = rmw.material_heat_no
-                            WHERE apl.user_id = ".Auth::user()->id.$with_rmw."
-                            group by pui.heat_no,
+                                    pui.length as rmw_length,
+                                    pui.id as upd_inv_id,
+                                    CONCAT(
+                                        pui.heat_no,
+                                        IF(pui.length = 'N/A','', CONCAT(' | (',pui.length,')') ),
+                                        CONCAT( ' | (' ,ifnull(rmw.issued_qty,0), ')' )
+                                    ) as `text`
+                                FROM ppc_update_inventories as pui
+                                left join admin_assign_production_lines as apl on apl.product_line = pui.materials_type
+                                left join ppc_raw_material_withdrawal_details as rmw 
+                                on pui.heat_no = rmw.material_heat_no
+                                and pui.id = rmw.inv_id
+                                WHERE rmw.issued_qty <> 0 AND apl.user_id = ".Auth::user()->id.$with_rmw."
+                                group by pui.id,
+                                    pui.heat_no,
                                     rmw.issued_qty,
                                     rmw.scheduled_qty,
                                     rmw.id,
                                     rmw.inv_id,
                                     pui.length
-                            ORDER BY pui.id desc");
+                                ORDER BY pui.id desc");
 
         if ($this->_helper->check_if_exists($materials) > 0) {
             if ($req->state == 'edit') {
@@ -524,7 +552,10 @@ class ProductionScheduleController extends Controller
                             'rmw_scheduled_qty' => $material->rmw_scheduled_qty,
                             'rmw_id' => $material->rmw_id,
                             'inv_id' => $material->inv_id,
-                            'rmw_length' => $material->rmw_length
+                            'rmw_length' => $material->rmw_length,
+                            'upd_inv_id' => $material->upd_inv_id,
+                            'id' => $material->rmw_id,
+                            'text' => $material->text
                         ]);
                     }
                 }
@@ -542,62 +573,117 @@ class ProductionScheduleController extends Controller
                         'materials' => $heat_no
                     ];
                 }
-            }
-            
-
-            
+            }            
         }
         
         return response()->json($data);
     }
 
-    public function caculateBar(Request $req)
+    public function getStandardMaterialUsed(Request $req)
+    {
+        $p_code = PpcProductCode::where('product_code', $req->product_code)
+            ->select('standard_material_used')->first();
+        return response()->json($p_code);
+    }
+
+    public function calculateOverIssuance(Request $req)
+    {
+        $material_type = '';
+        // get OD size
+        $inventory = DB::table('inventories')
+                        ->select(
+                            'materials_type',
+                            DB::raw("TRIM(TRAILING 'MM' FROM length ) as length"),
+                            DB::raw("TRIM(TRAILING 'MM' FROM width ) as width"),
+                            DB::raw("TRIM(TRAILING 'MM' FROM size ) AS size")
+                        )
+                        ->where('id',$req->inv_id)
+                        ->first();
+
+        // get product cut weight
+        $prod = DB::table('ppc_product_codes')
+                    ->select('cut_weight','cut_length','cut_width')
+                    ->where('product_code',$req->prod_code)
+                    ->first();
+
+        if ($this->_helper->check_if_exists($inventory) > 0) {
+            $material_type = $inventory->materials_type;
+        }
+
+        switch ($material_type) {
+            case 'S/S BAR':
+            case 'C/S BAR':
+                return $this->calculateBar($prod,$inventory,$req);
+                break;
+
+            case 'S/S PLATE':
+                return $this->calculatePlate($prod,$inventory,$req);
+                break;
+                
+            case 'S/S PIPE':
+                return $this->calculatePipe($prod,$inventory,$req);
+                break;
+            
+            default:
+                $data = [
+                    'msg' => 'No Formula assigned for this Material.',
+                    'status' => 'failed'
+                ];
+
+                return $data;
+                break;
+        }
+    }
+
+    private function calculateBar($prod,$inventory,$req)
     {
         $data = [
             'msg' => 'Calculating failed.',
             'status' => 'failed',
+            'type' => 'BAR',
             'stock' => 0
         ];
-        // get product cut weight
-        $prod = DB::table('ppc_product_codes')
-                    ->select('cut_weight')
-                    ->where('product_code',$req->prod_code)
-                    ->first();
+
         $OD_size = 0;
-        $pcs = 0;
+        $bar_pcs = 0;
         $product_cut_length = 0;
         $cut_weight = 0;
+        $length = 0;
+        $mat_length = 0;
         $stock = 0;
+        $length_with_1p5 = 0;
+        $rmw_qty = (int)$req->rmw_issued_qty;
 
-        if ($this->_helper->check_id_exists($prod) > 0) {
+        if ($this->_helper->check_if_exists($prod) > 0) {
             $cut_weight = $prod->cut_weight;
-
-            // get OD size
-            $material = DB::table('ppc_update_inventories')
-                            ->select(DB::raw("TRIM(TRAILING 'MM' FROM size ) AS size"))
-                            ->where('inv_id',$req->inv_id)
-                            ->first();
-
-            if ($this->_helper->check_id_exists($material) > 0) {
-                $OD_size = $material->size;
+            
+            if ($this->_helper->check_if_exists($inventory) > 0) {
+                $OD_size = (float)$inventory->size;
+                $mat_length = (float)$inventory->length;
                 // calculate length
                 $product_cut_length = ($cut_weight / $OD_size / $OD_size / 6.2) * 1000000;
 
+                // get length
+                $length_with_1p5 = $product_cut_length + 1.5;
+                $length = $mat_length/$length_with_1p5;
+
                 // calculate PCS
-                $pcs = $req->sched_qty/$product_cut_length;
+                $bar_pcs = (float)$req->sched_qty/$length;
 
                 // Calculate stocks
-                $stock = $req->rmw_issued_qty - $pcs;
+                $stock = $rmw_qty - $bar_pcs;
 
                 $data = [
                     'msg' => '',
                     'status' => 'success',
+                    'type' => 'BAR',
                     'stock' => $stock
                 ];
             } else {
                 $data = [
                     'msg' => "Material doesn't exist in Inventory",
                     'status' => 'failed',
+                    'type' => 'BAR',
                     'stock' => 0
                 ];
             }
@@ -605,9 +691,130 @@ class ProductionScheduleController extends Controller
             $data = [
                 'msg' => "Product Code doesn't exist in Product Master",
                 'status' => 'failed',
+                'type' => 'BAR',
                 'stock' => 0
             ];
-        }
+        }      
+
+        return $data;
+    }
+
+    private function calculatePipe($prod,$inventory,$req)
+    {
+        $data = [
+            'msg' => 'Calculating failed.',
+            'status' => 'failed',
+            'type' => 'PIPE',
+            'stock' => 0
+        ];
+
+        $pipe_pcs = 0;
+        $product_cut_length = 0;
+        $inv_length = 0;
+        $pipe_pcs = 0;
+        $stock = 0;
+        $length_wth_1p8 = 0;
+        $rmw_qty = (int)$req->rmw_issued_qty;
+        $pcs = 0;
+
+        if ($this->_helper->check_if_exists($prod) > 0) {
+            $product_cut_length = $prod->cut_length;
+            
+            if ($this->_helper->check_if_exists($inventory) > 0) {
+                $inv_length = (float)$inventory->length;
+
+                $length_wth_1p8 = $product_cut_length + 1.8;
+
+                // calculate pipe length
+                $pipe_pcs = ($inv_length / $length_wth_1p8); // somehow addition 1.8 for product cut length
+
+                // Calculate stocks
+                // $pcs = $rmw_qty * $pipe_pcs;
+                // $stock =  $pcs - $req->sched_qty;
+                $stock = $rmw_qty * (int)$pipe_pcs;;
+
+                $data = [
+                    'msg' => '',
+                    'status' => 'success',
+                    'type' => 'PIPE',
+                    'stock' => $stock
+                ];
+            } else {
+                $data = [
+                    'msg' => "Material doesn't exist in Inventory",
+                    'status' => 'failed',
+                    'type' => 'PIPE',
+                    'stock' => 0
+                ];
+            }
+        } else {
+            $data = [
+                'msg' => "Product Code doesn't exist in Product Master",
+                'status' => 'failed',
+                'type' => 'PIPE',
+                'stock' => 0
+            ];
+        }      
+
+        return $data;
+    }
+
+    private function calculatePlate($prod,$inventory,$req)
+    {
+        $data = [
+            'msg' => 'Calculating failed.',
+            'status' => 'failed',
+            'type' => 'PLATE',
+            'stock' => 0
+        ];
+
+        $product_cut_length = 0;
+        $product_cut_width = 0;
+        $inv_length = 0;
+        $inv_width = 0;
+        $prod_plate = 0;
+        $mat_plate = 0;
+        $stock = 0;
+
+        if ($this->_helper->check_if_exists($prod) > 0) {
+            $product_cut_length = $prod->cut_length;
+            $product_cut_width = $prod->cut_width;
+            
+            if ($this->_helper->check_if_exists($inventory) > 0) {
+                $inv_length = (float)$inventory->length;
+                $inv_width = (float)$inventory->width;
+
+                // calculate product plate
+                $prod_plate = ($product_cut_length * $product_cut_width);
+
+                // calculate material plate
+                $mat_plate = ($inv_length * $inv_width); // somehow addition 1.8 for product cut length
+
+                // Calculate stocks
+                $stock = $mat_plate / $prod_plate;
+
+                $data = [
+                    'msg' => '',
+                    'status' => 'success',
+                    'type' => 'PLATE',
+                    'stock' => $stock
+                ];
+            } else {
+                $data = [
+                    'msg' => "Material doesn't exist in Inventory",
+                    'status' => 'failed',
+                    'type' => 'PLATE',
+                    'stock' => 0
+                ];
+            }
+        } else {
+            $data = [
+                'msg' => "Product Code doesn't exist in Product Master",
+                'status' => 'failed',
+                'type' => 'PLATE',
+                'stock' => 0
+            ];
+        }      
 
         return $data;
     }

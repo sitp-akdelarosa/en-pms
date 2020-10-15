@@ -126,6 +126,7 @@ foreach ($user_accesses as $user_access){
         var downloadNonexistingURL = "<?php echo e(url('/transaction/update-inventory/download-unregistered-materials')); ?>";
         var getNonexistingURL = "<?php echo e(url('/transaction/update-inventory/get-unregistered-materials')); ?>";
         var downloadFormatURL = "<?php echo e(url('/transaction/update-inventory/download-update-inventory-format')); ?>";
+        var downloadSearchExcelURL = "<?php echo e(url('/transaction/update-inventory/download-update-inventory-search')); ?>";
     </script>
     <script type="text/javascript" src="<?php echo e(mix('/js/pages/ppc/transactions/update-inventory/update-inventory.js')); ?>"></script>
 

@@ -129,6 +129,7 @@ foreach ($user_accesses as $user_access){
                                         <th>Material Used</th>
                                         <th>Lot No.</th>
                                         <th>Sched. Qty.</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbl_jo_details_body"></tbody>
@@ -296,6 +297,7 @@ foreach ($user_accesses as $user_access){
         var getjotablesALL = "{{ url('/transaction/production-schedule/getjoALL') }}";
         var getTravelSheetURL = "{{ url('/transaction/production-schedule/getTravelSheet') }}";
         var cancelTravelSheetURL = "{{ url('/transaction/production-schedule/cancelTravelSheet') }}";
+        var OverIssuanceURL = "{{ url('/transaction/production-schedule/over-issuance') }}";
         var code_permission = 'T0004';
         
     </script>

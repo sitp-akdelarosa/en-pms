@@ -981,6 +981,11 @@ class UpdateInventoryController extends Controller
 
     public function searchFilter(Request $req)
     {
+        return response()->json($this->getFilteredInventory($req));
+    }
+
+    private function getFilteredInventory($req)
+    {
         $srch_received_date = '';
         $srch_receiving_no = '';
         $srch_materials_type = '';
@@ -1181,6 +1186,7 @@ class UpdateInventoryController extends Controller
                     ->whereRaw('1=1 '.$srch_received_date.$srch_receiving_no.$srch_materials_type.$srch_materials_code.$srch_item.$srch_alloy.$srch_schedule.$srch_size.$srch_thickness.$srch_width.$srch_length.$srch_heat_no.$srch_invoice_no.$srch_supplier.$srch_supplier_heat_no)
                     ->where('apl.user_id' ,Auth::user()->id)
                     ->where('i.deleted','<>','1')
+                    ->where('i.qty_pcs','<>','0')
                     ->groupBy('pui.id',
                             'pui.receiving_no',
                             'pui.materials_type',
@@ -1205,6 +1211,171 @@ class UpdateInventoryController extends Controller
                             DB::raw("IFNULL(pui.thickness,'')"))
                     ->orderBy('pui.id','desc')->get();
                         
-        return response()->json($data);
+        return $data;
+    }
+
+    public function downloadExcelSearchFilter(Request $req)
+    {
+        $data = $this->getFilteredInventory($req);
+        $date = date('Ymd');
+
+        Excel::create('MaterialInventory_'.$date, function($excel) use($data)
+        {
+            $excel->sheet('Report', function($sheet) use($data)
+            {
+                // $sheet->setHeight(1, 15);
+                // $sheet->mergeCells('A1:K1');
+                // $sheet->cells('A1:K1', function($cells) {
+                //     $cells->setAlignment('center');
+                //     $cells->setFont([
+                //         'family'     => 'Calibri',
+                //         'size'       => '14',
+                //         'bold'       =>  true,
+                //     ]);
+                // });
+                // $sheet->cell('A1',"Material Inventory");
+
+                // $sheet->setHeight(2, 15);
+                // $sheet->mergeCells('A2:R2');
+                // $sheet->cells('A2:R2', function($cells) {
+                //     $cells->setAlignment('center');
+                // });
+
+                $sheet->setHeight(4, 20);
+                $sheet->mergeCells('A2:R2');
+                $sheet->cells('A2:R2', function($cells) {
+                    $cells->setAlignment('center');
+                    $cells->setFont([
+                        'family'     => 'Calibri',
+                        'size'       => '14',
+                        'bold'       =>  true,
+                        'underline'  =>  true
+                    ]);
+                });
+                $sheet->cell('A2',"MATERIAL INVENTORY");
+
+                $sheet->setHeight(6, 15);
+                $sheet->cells('A4:R4', function($cells) {
+                    $cells->setFont([
+                        'family'     => 'Calibri',
+                        'size'       => '11',
+                        'bold'       =>  true,
+                    ]);
+                    // Set all borders (top, right, bottom, left)
+                    $cells->setBorder('solid', 'solid', 'solid', 'solid');
+                });
+                $sheet->cell('A4', "Receiving No.");
+                $sheet->cell('B4', "Material Type");
+                $sheet->cell('C4', "Material Code");
+                $sheet->cell('D4', "Description");
+                $sheet->cell('E4', "Item");
+                $sheet->cell('F4', "Alloy");
+                $sheet->cell('G4', "Schedule");
+                $sheet->cell('H4', "Size");
+                $sheet->cell('I4', "Length");
+                $sheet->cell('J4', "Width");
+                $sheet->cell('K4', "QTY(Weight)");
+                $sheet->cell('L4', "QTY(Pcs)");
+                $sheet->cell('M4', "Current Stock");
+                $sheet->cell('N4', "Heat No.");
+                $sheet->cell('O4', "Invoice No.");
+                $sheet->cell('P4', "Supplier");
+                $sheet->cell('Q4', "Supplier Heat No.");
+                $sheet->cell('R4', "Received Date");
+
+                $sheet->cells('A4:R4', function($cells) {
+                    $cells->setBorder('thick', 'thick', 'thick', 'thick');
+                });
+
+                $row = 5;
+
+                foreach ($data as $key => $dt) {
+                    $sheet->setHeight($row, 15);
+
+                    $sheet->cell('A'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->receiving_no);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('B'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->materials_type);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('C'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->materials_code);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('D'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->description);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('E'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->item);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('F'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->alloy);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('G'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->schedule);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('H'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->size);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('I'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->length);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('J'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->width);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('K'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->qty_weight);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('L'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->qty_pcs);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('M'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->current_stock);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('N'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->heat_no);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('O'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->invoice_no);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('P'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->supplier);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('Q'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->supplier_heat_no);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('R'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->received_date);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+
+                    $sheet->cells('A'.$row.':R'.$row, function($cells) {
+                        $cells->setBorder('thin', 'thin', 'thin', 'thin');
+                    });
+                    
+                    $row++;
+                }
+                
+                $sheet->cells('A4:R'.$row, function($cells) {
+                    $cells->setBorder('thick', 'thick', 'thick', 'thick');
+                });
+            });
+        })->download('xlsx');
     }
 }

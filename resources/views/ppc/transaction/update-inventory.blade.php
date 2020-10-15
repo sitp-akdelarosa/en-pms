@@ -128,6 +128,7 @@ foreach ($user_accesses as $user_access){
         var downloadNonexistingURL = "{{ url('/transaction/update-inventory/download-unregistered-materials') }}";
         var getNonexistingURL = "{{ url('/transaction/update-inventory/get-unregistered-materials') }}";
         var downloadFormatURL = "{{ url('/transaction/update-inventory/download-update-inventory-format') }}";
+        var downloadSearchExcelURL = "{{ url('/transaction/update-inventory/download-update-inventory-search') }}";
     </script>
     <script type="text/javascript" src="{{ mix('/js/pages/ppc/transactions/update-inventory/update-inventory.js') }}"></script>
 

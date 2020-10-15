@@ -195,8 +195,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn bg-red" data-dismiss="modal">Close</button>
-                    {{-- <button type="button" id="btn_add_inventory" class="btn bg-blue float-right">New</button> --}}
-                    <button type="submit" class="btn bg-green float-right permission-button" id="AddInventoryUpdate">Save</button>
+                    <button type="submit" class="btn bg-blue float-right permission-button" id="AddInventoryUpdate">Save</button>
                 </div>
                 
             </div>
@@ -373,13 +372,6 @@
                                     <div id="srch_size_feedback"></div>
                                 </div>
                             </div>
-                            {{-- <div class="form-group row">
-                                <label for="srch_thickness" class="col-sm-3 control-label mt-5">Thickness:</label>
-                                <div class="col-sm-9">
-                                    <input type="text" class="form-control validate srch-clear" name="srch_thickness" id="srch_thickness" >
-                                    <div id="srch_thickness_feedback"></div>
-                                </div>
-                            </div> --}}
                              <div class="form-group row">
                                 <label for="srch_width" class="col-sm-3 control-label mt-5">Width:</label>
                                 <div class="col-sm-9">
@@ -433,7 +425,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn bg-red" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn bg-green float-right permission-button">Filter</button>
+                    <button type="button" id="btn_search_excel" class="btn bg-green float-right">Download Excel</button>
+                    <button type="submit" class="btn bg-blue float-right permission-button">Filter</button>
                 </div>
                 
             </div>

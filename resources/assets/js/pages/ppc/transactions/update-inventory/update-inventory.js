@@ -387,7 +387,7 @@ $(function () {
 			//msg(data.msg, data.status);
 
 			InventoryTable(data);
-			$('#modal_material_search').modal('hide');
+			//$('#modal_material_search').modal('hide');
 			
 		}).fail(function (xhr, textStatus, errorThrown) {
 			var errors = xhr.responseJSON.errors;
@@ -397,6 +397,43 @@ $(function () {
 		}).always(function () {
 			$('.loadingOverlay-modal').hide();
 		});
+	});
+
+	$('#btn_search_excel').on('click', function() {
+		var srch_received_date_from = $('#srch_received_date_from').val();
+		var srch_received_date_to = $('#srch_received_date_to').val();
+		var srch_receiving_no = $('#srch_receiving_no').val();
+		var srch_materials_type = $('#srch_materials_type').val();
+		var srch_materials_code = $('#srch_materials_code').val();
+		var srch_item = $('#srch_item').val();
+		var srch_alloy = $('#srch_alloy').val();
+		var srch_schedule = $('#srch_schedule').val();
+		var srch_size = $('#srch_size').val();
+		var srch_width = $('#srch_width').val();
+		var srch_length = $('#srch_length').val();
+		var srch_heat_no = $('#srch_heat_no').val();
+		var srch_invoice_no = $('#srch_invoice_no').val();
+		var srch_supplier = $('#srch_supplier').val();
+		var srch_supplier_heat_no = $('#srch_supplier_heat_no').val();
+
+		var url = downloadSearchExcelURL+
+		"?srch_received_date_from=" + srch_received_date_from +
+		"&&?srch_received_date_to=" + srch_received_date_to +
+		"&&?srch_receiving_no=" + srch_receiving_no +
+		"&&?srch_materials_type=" + srch_materials_type +
+		"&&?srch_materials_code=" + srch_materials_code +
+		"&&?srch_item=" + srch_item +
+		"&&?srch_alloy=" + srch_alloy +
+		"&&?srch_schedule=" + srch_schedule +
+		"&&?srch_size=" + srch_size +
+		"&&?srch_width=" + srch_width +
+		"&&?srch_length=" + srch_length +
+		"&&?srch_heat_no=" + srch_heat_no +
+		"&&?srch_invoice_no=" + srch_invoice_no +
+		"&&?srch_supplier=" + srch_supplier +
+		"&&?srch_supplier_heat_no=" + srch_supplier_heat_no;
+
+		window.location.href = url;
 	});
 });
 

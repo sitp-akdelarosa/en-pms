@@ -212,6 +212,9 @@ Route::group(['middleware' => ['ppc', 'auth', 'no.back', 'deleted_user']], funct
 
 			Route::get('/download-update-inventory-format', 'PPC\Transaction\UpdateInventoryController@downloadExcelFormat')
 				->name('transaction.update-inventory.download-update-inventory-format');
+			
+			Route::get('/download-update-inventory-search', 'PPC\Transaction\UpdateInventoryController@downloadExcelSearchFilter')
+				->name('transaction.update-inventory.download-update-inventory-search');
 
 			Route::get('/search-filter', 'PPC\Transaction\UpdateInventoryController@searchFilter')
 				->name('transaction.update-inventory.search-filter');
@@ -261,6 +264,8 @@ Route::group(['middleware' => ['ppc', 'auth', 'no.back', 'deleted_user']], funct
 				->name('transaction.production-schedule.getTravelSheet');
 			Route::post('/cancelTravelSheet', 'PPC\Transaction\ProductionScheduleController@cancel_TravelSheet')
 				->name('transaction.production-schedule.cancelTravelSheet');
+			Route::get('/over-issuance', 'PPC\Transaction\ProductionScheduleController@calculateOverIssuance')
+				->name('transaction.production-schedule.over-issuance');
 		});
 
 		Route::group(['prefix' => 'raw-material-withdrawal'], function () {
