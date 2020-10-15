@@ -8,9 +8,9 @@ $( function() {
 	$('#code_description').prop('readonly', true);
 	$('#product_code').mask('AAAAA-AAA-AAAAAA', {
 		'translation': {
-			A: { pattern: /[A-Za-z0-9]/ },
-			S: { pattern: /[A-Za-z]/ },
-			Y: { pattern: /[0-9]/ }
+			A: { pattern: /[A-Za-z0-9.]/ },
+			S: { pattern: /[A-Za-z.]/ },
+			Y: { pattern: /[0-9.]/ }
 		},
 		'placeholder': '_____-___-______'
 	});
