@@ -1185,7 +1185,7 @@ class UpdateInventoryController extends Controller
                     )
                     ->whereRaw('1=1 '.$srch_received_date.$srch_receiving_no.$srch_materials_type.$srch_materials_code.$srch_item.$srch_alloy.$srch_schedule.$srch_size.$srch_thickness.$srch_width.$srch_length.$srch_heat_no.$srch_invoice_no.$srch_supplier.$srch_supplier_heat_no)
                     ->where('apl.user_id' ,Auth::user()->id)
-                    ->where('pui.create_user' ,Auth::user()->id)
+                    // ->where('pui.create_user' ,Auth::user()->id)
                     ->where('i.deleted','<>','1')
                     ->where('i.qty_pcs','<>','0')
                     ->groupBy('pui.id',

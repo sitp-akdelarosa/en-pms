@@ -776,8 +776,6 @@ function makeJODetailsList(arr) {
     });
 }
 
-
-
 function getMaterialHeatNo(withdrawal_slip_no) {
     var op = "<option value=''></option>";
     $.each(joDetails_arr, function(i, x) {
