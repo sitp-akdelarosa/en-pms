@@ -76,7 +76,7 @@ class ProductMasterController extends Controller
             'prod_type' => 'required',
             'character_num' => 'required|min:1|max:2',
             'character_code' => 'required|max:20',
-            'description' => 'required|max:50',
+            'description' => 'max:50',
         ]);
 
         $error = ['errors' => [
