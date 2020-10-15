@@ -271,11 +271,11 @@ $(function () {
       $.each(joDetails_arr, function (i, x) {
         // use ID for 1 select box only
         $('.material_heat_no').select2().val(material_heat_no); //$('#material_heat_no_'+x.count).val(material_heat_no);
+        // $('#rmw_issued_qty_'+x.count).val(rmw_issued_qty);
+        // $('#uom_' + x.count).val(uom);
+        // $('#uom_span_' + x.count).html(uom);
+        // $('#inv_id_' + x.count).val(inv_id);
 
-        $('#rmw_issued_qty_' + x.count).val(rmw_issued_qty);
-        $('#uom_' + x.count).val(uom);
-        $('#uom_span_' + x.count).html(uom);
-        $('#inv_id_' + x.count).val(inv_id);
         getMaterialused(material_heat_no, x.count); // if ($('#sched_qty_'+x.count).val() > rmw_issued_qty) {
         //     error = "Over issuance";
         //     $('.material_heat_no_select').addClass('is-invalid');
@@ -288,7 +288,7 @@ $(function () {
         // }
       });
     } else {
-      $('#rmw_issued_qty_' + $(this).attr('data-count')).val(rmw_issued_qty);
+      // $('#rmw_issued_qty_'+$(this).attr('data-count')).val(rmw_issued_qty);
       getMaterialused(material_heat_no, $(this).attr('data-count')); // if ($('#sched_qty_'+$(this).attr('data-count')).val() > rmw_issued_qty) {
       //     error = "Over issuance";
       //     $('#material_heat_no_'+$(this).attr('data-count')).addClass('is-invalid');
@@ -1006,10 +1006,21 @@ function getMaterialused(heat_no, count) {
           $('#material_used_' + count).html(op);
         });
         $.each(data, function (i, x) {
+          var material = data[count];
+          var rmw_issued_qty = material.rmw_issued_qty;
+          var uom = material.uom;
+          var inv_id = material.inv_id;
+          var material_heat_no = material.heat_no;
+          $('#rmw_issued_qty_' + count).val(rmw_issued_qty);
+          $('#uom_' + count).val(uom);
+          $('#uom_span_' + count).html(uom);
+          $('#inv_id_' + count).val(inv_id);
           compareStandardMaterialUsed(count, p_pcode, x); //x = description,schedule,size
 
           op = "<option value='" + x.description + "' selected>" + x.description + "</option>";
           $('#material_used_' + count).append(op);
+          $('#btn_over_issuance_' + count).attr('data-inv_id', inv_id);
+          $('#btn_over_issuance_' + count).attr('data-rmw_issued_qty', rmw_issued_qty);
         });
       }
     } else {

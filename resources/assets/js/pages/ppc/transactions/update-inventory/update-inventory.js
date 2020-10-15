@@ -418,20 +418,20 @@ $(function () {
 
 		var url = downloadSearchExcelURL+
 		"?srch_received_date_from=" + srch_received_date_from +
-		"&&?srch_received_date_to=" + srch_received_date_to +
-		"&&?srch_receiving_no=" + srch_receiving_no +
-		"&&?srch_materials_type=" + srch_materials_type +
-		"&&?srch_materials_code=" + srch_materials_code +
-		"&&?srch_item=" + srch_item +
-		"&&?srch_alloy=" + srch_alloy +
-		"&&?srch_schedule=" + srch_schedule +
-		"&&?srch_size=" + srch_size +
-		"&&?srch_width=" + srch_width +
-		"&&?srch_length=" + srch_length +
-		"&&?srch_heat_no=" + srch_heat_no +
-		"&&?srch_invoice_no=" + srch_invoice_no +
-		"&&?srch_supplier=" + srch_supplier +
-		"&&?srch_supplier_heat_no=" + srch_supplier_heat_no;
+		"&srch_received_date_to=" + srch_received_date_to +
+		"&srch_receiving_no=" + srch_receiving_no +
+		"&srch_materials_type=" + srch_materials_type +
+		"&srch_materials_code=" + srch_materials_code +
+		"&srch_item=" + srch_item +
+		"&srch_alloy=" + srch_alloy +
+		"&srch_schedule=" + srch_schedule +
+		"&srch_size=" + srch_size +
+		"&srch_width=" + srch_width +
+		"&srch_length=" + srch_length +
+		"&srch_heat_no=" + srch_heat_no +
+		"&srch_invoice_no=" + srch_invoice_no +
+		"&srch_supplier=" + srch_supplier +
+		"&srch_supplier_heat_no=" + srch_supplier_heat_no;
 
 		window.location.href = url;
 	});
