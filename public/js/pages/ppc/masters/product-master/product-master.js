@@ -270,7 +270,14 @@ $( function() {
 	get_dropdown_product();
 	$('#product_code').prop('readonly', true);
 	$('#code_description').prop('readonly', true);
-	$('#product_code').mask('AAAAA-AAA-AAAAAA', {placeholder: '_____-___-______'});
+	$('#product_code').mask('AAAAA-AAA-AAAAAA', {
+		'translation': {
+			A: { pattern: /[A-Za-z0-9]/ },
+			S: { pattern: /[A-Za-z]/ },
+			Y: { pattern: /[0-9]/ }
+		},
+		'placeholder': '_____-___-______'
+	});
 	$("#product-type").on('keyup', showProductType);
 	checkAllCheckboxesInTable('.check_all_process','.check_process_item');
 	checkAllCheckboxesInTable('#tbl_product_code','.check_all_product','.check_product_item');
@@ -340,7 +347,7 @@ $( function() {
 
 		$(this).hide();
 
-		showProcessList($('#prod_code').val(),$('#set').val());
+		showProcessList($('#prod_id').val(),$('#set').val());
 	});
 
 	$('#tbl_selected_set_process').on('click', '.btn_edit_process', function() {
@@ -392,7 +399,7 @@ $( function() {
 		$('#btn_save_process').html('<i class="fa fa-floppy-o"></i> Save');
 		$('#process_id').val('');
 
-		showProcessList($('#prod_code').val(),$('#set').val());
+		showProcessList($('#prod_id').val(),$('#set').val());
 
 		$('#btn_cancel_process').hide();
 
@@ -990,7 +997,9 @@ function makeProcessList(arr) {
 			row++;
 		});
 	} else {
-		showProcessList($('#prod_code').val(), $('#set').val());
+		$('#tbl_prod_process_body').html('<tr id="no_data">' +
+			'<td colspan="4" class="text-center">No data available.</td>' +
+			'</tr>');
 	}
 }
 
@@ -1037,7 +1046,7 @@ function showProcessList(prod_code,set) {
 		dataType: 'JSON',
 		data: {
 			_token:token,
-			prod_code:prod_code,
+			prod_id:prod_code,
 			sets:set
 		}
 	}).done(function(data, textStatus, xhr) {

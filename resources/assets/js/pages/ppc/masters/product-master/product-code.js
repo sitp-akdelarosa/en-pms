@@ -83,7 +83,7 @@ $( function() {
 
 		$(this).hide();
 
-		showProcessList($('#prod_code').val(),$('#set').val());
+		showProcessList($('#prod_id').val(),$('#set').val());
 	});
 
 	$('#tbl_selected_set_process').on('click', '.btn_edit_process', function() {
@@ -135,7 +135,7 @@ $( function() {
 		$('#btn_save_process').html('<i class="fa fa-floppy-o"></i> Save');
 		$('#process_id').val('');
 
-		showProcessList($('#prod_code').val(),$('#set').val());
+		showProcessList($('#prod_id').val(),$('#set').val());
 
 		$('#btn_cancel_process').hide();
 
@@ -782,7 +782,7 @@ function showProcessList(prod_code,set) {
 		dataType: 'JSON',
 		data: {
 			_token:token,
-			prod_code:prod_code,
+			prod_id:prod_code,
 			sets:set
 		}
 	}).done(function(data, textStatus, xhr) {
