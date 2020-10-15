@@ -22,6 +22,7 @@ class CreatePpcMaterialCodesTable extends Migration
             $table->string('alloy');
             $table->string('schedule');
             $table->string('size');
+            $table->double('std_weight',20,2)->default(0.00);
             $table->integer('create_user')->default(0);
             $table->integer('update_user')->default(0);
             $table->timestamps();

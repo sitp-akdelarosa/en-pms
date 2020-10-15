@@ -236,6 +236,13 @@ foreach ($user_accesses as $user_access){
                                 <i class="fa fa-floppy-o"></i> Save
                             </button>
                         </div>
+
+                        <div class="col-md-2 col-sm-3 mb-5">
+                            <button type="button" id="btn_check_over_issuance" class="btn bg-purple btn-block permission-button">
+                                <i class="fa fa-refresh"></i> Check Over Issuance
+                            </button>
+                        </div>
+
                         <div class="col-md-1 col-sm-2 mb-5">
                             <button type="button" id="btn_edit" class="btn bg-blue btn-block permission-button">
                                 <i class="fa fa-edit"></i> Edit

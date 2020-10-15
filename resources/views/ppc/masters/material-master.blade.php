@@ -259,6 +259,16 @@ foreach ($user_accesses as $user_access){
 										<div id="size_feedback"></div>
 									</div>
 								</div>
+
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+									<div class="input-group mb-3 input-group-sm">
+										<div class="input-group-prepend">
+											<span class="input-group-text">Standard Weight:</span>
+										</div>
+										<input type="number" class="form-control validate" name="std_weight" id="std_weight" step=".01" readonly>
+										<div id="std_weight_feedback"></div>
+									</div>
+								</div>
 							</div>
 
 							{{-- <div class="form-group row">

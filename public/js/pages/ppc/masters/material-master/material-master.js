@@ -186,6 +186,7 @@ $( function() {
 	$('#alloy').prop('readonly',true);
 	$('#schedule').prop('readonly',true);
 	$('#size').prop('readonly',true);
+	$('#std_weight').prop('readonly', true);
 
 	$('#material_code').mask('AAAAA-AAA-AAAAAA', {
 		placeholder: '_____-___-______',
@@ -213,6 +214,7 @@ $( function() {
 			$('#alloy').prop('readonly',false);
 			$('#schedule').prop('readonly',false);
 			$('#size').prop('readonly',false);
+			$('#std_weight').prop('readonly', false);
 		} else {
 			clearCode();
 			clearInputs();
@@ -222,6 +224,7 @@ $( function() {
 			$('#alloy').prop('readonly',true);
 			$('#schedule').prop('readonly',true);
 			$('#size').prop('readonly',true);
+			$('#std_weight').prop('readonly', true);
 		}
 			$('.select-code').val('');
 			$('#hide_5th').show();
@@ -254,6 +257,7 @@ $( function() {
 		$('#schedule').val($(this).attr('data-schedule'));
 		$('#alloy').val($(this).attr('data-alloy'));
 		$('#size').val($(this).attr('data-size'));
+		$('#std_weight').val($(this).attr('data-std_weight'));
 		$('#material_id').val($(this).attr('data-id'));
 		$('#btn_save').html('<i class="fa fa-check"></i> Update');
 
@@ -263,6 +267,7 @@ $( function() {
 		$('#alloy').prop('readonly',false);
 		$('#schedule').prop('readonly',false);
 		$('#size').prop('readonly',false);
+		$('#std_weight').prop('readonly', false);
 	});
 
 	$('#frm_mat_code').on('submit', function(e) {
@@ -732,6 +737,7 @@ function clearCode() {
 	$('#item').val('');
 	$('#alloy').val('');
 	$('#size').val('');
+	$('#std_weight').val('');
 	$('#schedule').val('');
 }
 
@@ -740,6 +746,7 @@ function clearInputs() {
 	$('#item').val('');
 	$('#alloy').val('');
 	$('#size').val('');
+	$('#std_weight').val('');
 	$('#schedule').val('');
 	$('#material-type').val('');
 	$('#material_code').val('');

@@ -263,6 +263,7 @@ class MaterialMasterController extends Controller
 							'pmc.alloy as alloy',
 							'pmc.schedule as schedule',
 							'pmc.size as size',
+							'pmc.std_weight as std_weight',
 							'pmc.created_at as created_at'
 						])
 						->where('apl.user_id' ,Auth::user()->id)
@@ -285,6 +286,7 @@ class MaterialMasterController extends Controller
 										data-alloy='".$data->alloy."'
 										data-schedule='".$data->schedule."'
 										data-size='".$data->size."'
+										data-std_weight='".$data->std_weight."'
 										data-create_user='".$data->create_user."'
 										data-created_at='".$data->created_at."'>
 										<i class='fa fa-edit'></i>
@@ -302,7 +304,8 @@ class MaterialMasterController extends Controller
 				'code_description' => 'required',
 				'item' => 'required',
 				'alloy' => 'required',
-				'size' => 'required'
+				'size' => 'required',
+				'std_weight' => 'required'
 			]);
 
 			$exists = PpcMaterialCode::where('material_code',$req->material_code)->where('id','!=', $req->material_id)->first();
@@ -316,6 +319,7 @@ class MaterialMasterController extends Controller
 				$mat->alloy = strtoupper($req->alloy);
 				$mat->schedule = strtoupper($req->schedule);
 				$mat->size = strtoupper($req->size);
+				$mat->std_weight = $req->std_weight;
 				$mat->update_user = Auth::user()->id;
 
 				$mat->update();
@@ -334,6 +338,7 @@ class MaterialMasterController extends Controller
 											'alloy' => strtoupper($req->alloy),
 											'schedule' => strtoupper($req->schedule),
 											'size' => strtoupper($req->size),
+											'std_weight' => $req->std_weight,
 											'update_user' => Auth::user()->id,//strtoupper($req->update_user),
 											'updated_at' => date('Y-m-d H:i:S')
 										]);
@@ -358,7 +363,8 @@ class MaterialMasterController extends Controller
 				'code_description' => 'required',
 				'item' => 'required',
 				'alloy' => 'required',
-				'size' => 'required'
+				'size' => 'required',
+				'std_weight' => 'required'
 			]);
 			$mat = new PpcMaterialCode();
 
@@ -369,6 +375,7 @@ class MaterialMasterController extends Controller
 			$mat->alloy = strtoupper($req->alloy);
 			$mat->schedule = strtoupper($req->schedule);
 			$mat->size = strtoupper($req->size);
+			$mat->std_weight = $req->std_weight;
 			$mat->create_user = Auth::user()->id;
 			$mat->update_user = Auth::user()->id;
 
@@ -388,6 +395,7 @@ class MaterialMasterController extends Controller
 										'alloy' => strtoupper($req->alloy),
 										'schedule' => strtoupper($req->schedule),
 										'size' => strtoupper($req->size),
+										'std_weight' => $req->std_weight,
 										'update_user' => Auth::user()->id,//strtoupper($req->update_user),
 										'updated_at' => date('Y-m-d H:i:S')
 									]);

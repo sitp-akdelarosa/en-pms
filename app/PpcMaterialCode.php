@@ -13,7 +13,8 @@ class PpcMaterialCode extends Model
     	'item',
     	'alloy',
     	'schedule',
-    	'size',
+		'size',
+		'std_weight',
     	'create_user',
     	'update_user'
     ];

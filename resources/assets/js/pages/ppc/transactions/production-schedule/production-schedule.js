@@ -90,6 +90,7 @@ $(function () {
                     }
                     if (joDetails_arr.length < 1) {
                         $('#btn_save').hide();
+                        $('#btn_check_over_issuance').hide();
                         $('#btn_edit').show();
                         $('#btn_cancel').hide();
                     }
@@ -161,6 +162,7 @@ $(function () {
         }
         if (joDetails_arr.length < 1 && $('#jono').val() == '') {
             $('#btn_save').hide();
+            $('#btn_check_over_issuance').hide();
             $('#btn_edit').show();
             $('#btn_cancel').hide();
         }
@@ -243,6 +245,7 @@ $(function () {
         }
 
         $('#btn_save').show();
+        $('#btn_check_over_issuance').show();
         $('#btn_edit').hide();
         $('#btn_cancel').show();
 
@@ -262,6 +265,7 @@ $(function () {
         compareStandardMaterialUsed(count,$(this).attr('data-pcode'),material_used);
        
         $('#btn_save').show();
+        $('#btn_check_over_issuance').show();
         $('#btn_edit').hide();
         $('#btn_cancel').show();
     });
@@ -463,6 +467,7 @@ $(function () {
         clear();
 
         $('#btn_save').hide();
+        $('#btn_check_over_issuance').hide();
         $('#btn_edit').show();
         $('#btn_cancel').hide();
 
@@ -474,6 +479,7 @@ $(function () {
         joDetails_arr = [];
         makeJODetailsList(joDetails_arr);
         $('#btn_save').show();
+        $('#btn_check_over_issuance').show();
         $('#btn_edit').hide();
         $('#btn_cancel').show();
         $('.check_item_prod_sum').prop('checked',false);
@@ -546,6 +552,7 @@ function initializePage() {
     $('.material_heat_no').prop('disabled', true);
 
     $('#btn_save').hide();
+    $('#btn_check_over_issuance').hide();
     $('#btn_edit').show();
     $('#btn_cancel').hide();
 }
@@ -974,12 +981,11 @@ function getMaterialused(heat_no,count) {
                 });
 
                 $.each(data, function(i, x) {
-                    var material = data[count];
 
-                    var rmw_issued_qty = material.rmw_issued_qty;
-                    var uom = material.uom;
-                    var inv_id = material.inv_id;
-                    var material_heat_no = material.heat_no;
+                    var rmw_issued_qty = x.rmw_issued_qty;
+                    var uom = x.uom;
+                    var inv_id = x.inv_id;
+                    var material_heat_no = x.heat_no;
 
                     $('#rmw_issued_qty_' + count).val(rmw_issued_qty);
                     $('#uom_' + count).val(uom);
@@ -1130,6 +1136,7 @@ function SaveJODetails() {
         $('#tbl_jo_details').dataTable().fnDestroy();
         $('#total_sched_qty').val('');
         $('#btn_save').hide();
+        $('#btn_check_over_issuance').hide();
         $('#btn_edit').show();
         $('#btn_cancel').hide();
         ProdSummaries(prodSummariesURL);
