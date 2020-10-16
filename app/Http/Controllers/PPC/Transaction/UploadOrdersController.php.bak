@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HelpersController;
 use App\Http\Controllers\Admin\AuditTrailController;
-use Illuminate\Support\Str;
 use DataTables;
 use App\PpcProductCode;
 use App\PpcUploadOrder;
@@ -84,12 +83,13 @@ class UploadOrdersController extends Controller
             $fields = $reader->toArray();
         });
 
-        PpcUploadOrder::where('create_user',Auth::user()->id)->delete();
+        //PpcUploadOrder::where('create_user',Auth::user()->id)->delete();
 
         $for_overwrite = [];
         $Schedule = [];
         $not_registered = [];
         $countAddedRow = 0;
+        $overwrite_upload = [];
 
         foreach ($fields as $key => $field) {
             $prod = PpcProductCode::where('product_code',$field['productcode'])->count();
@@ -101,20 +101,73 @@ class UploadOrdersController extends Controller
 
                 } else {
                     $countAddedRow++;
+
+                    $check = PpcUploadOrder::select('id')->where([
+                                                ['sc_no', $field['scno']],
+                                                ['prod_code', $field['productcode']],
+                                                ['po', $field['pono']],
+                                            ])->count();
                     $description = PpcProductCode::select('code_description')->where('product_code',$field['productcode'])->first();
-                    PpcUploadOrder::insert([
-                        'sc_no' => $field['scno'],
-                        'prod_code' => $field['productcode'],
-                        'description' => $description->code_description,
-                        'quantity' => $field['quantity'],
-                        'po' => $field['pono'],
-                        'uploader' => Auth::user()->id,
-                        'date_upload' => date("Y-m-d H:i:s"),
-                        'create_user' => Auth::user()->id,
-                        'update_user' => Auth::user()->id,
-                        'created_at' => date("Y-m-d H:i:s"),
-                        'updated_at' => date("Y-m-d H:i:s"),
-                    ]);
+
+                    if ($check) {
+
+                        $overwrite_up = PpcUploadOrder::select('quantity')->where([
+                                                        ['sc_no', $field['scno']],
+                                                        ['prod_code', $field['productcode']],
+                                                        ['po', $field['pono']],
+                                                    ])->where('quantity','<>',$field['quantity'])->first();
+                        if ($this->_helper->check_if_exists($overwrite_up) > 0) {
+                            array_push($overwrite_upload, [
+                                'sc_no' => $field['scno'],
+                                'prod_code' => $field['productcode'],
+                                'description' => $description->code_description,
+                                'oldquantity' => $overwrite_up->quantity,
+                                'quantity' => $field['quantity'],
+                                'po' => $field['pono'],
+                                'uploader' => Auth::user()->id,
+                            ]);
+
+                        } else {
+                            PpcUploadOrder::where([
+                                                ['sc_no', $field['scno']],
+                                                ['prod_code', $field['productcode']],
+                                                ['po', $field['pono']],
+                                            ])->update([
+                                'sc_no' => $field['scno'],
+                                'prod_code' => $field['productcode'],
+                                'description' => $description->code_description,
+                                //'quantity' => $field['quantity'],
+                                'po' => $field['pono'],
+                                'uploader' => Auth::user()->id,
+                                'date_upload' => date("Y-m-d H:i:s"),
+                                'update_user' => Auth::user()->id,
+                                'updated_at' => date("Y-m-d H:i:s"),
+                            ]);
+                        }
+                        
+                    } else {
+                        PpcUploadOrder::insert([
+                            'sc_no' => $field['scno'],
+                            'prod_code' => $field['productcode'],
+                            'description' => $description->code_description,
+                            'quantity' => $field['quantity'],
+                            'po' => $field['pono'],
+                            'uploader' => Auth::user()->id,
+                            'date_upload' => date("Y-m-d H:i:s"),
+                            'create_user' => Auth::user()->id,
+                            'update_user' => Auth::user()->id,
+                            'created_at' => date("Y-m-d H:i:s"),
+                            'updated_at' => date("Y-m-d H:i:s"),
+                        ]);
+                    }
+
+                    $inNotRegistered = NotRegisteredProduct::select('id')->where('prod_code',$field['productcode'])->count();
+
+                    if ($inNotRegistered > 0) {
+                        NotRegisteredProduct::where('prod_code',$field['productcode'])->delete();
+                    }
+                    
+                    
                 }
                     
             } else {
@@ -125,20 +178,64 @@ class UploadOrdersController extends Controller
 
                 } else {
                     $countAddedRow++;
+                    $check = PpcUploadOrder::select('id')->where([
+                                                ['sc_no', $field['scno']],
+                                                ['prod_code', $field['productcode']],
+                                                ['po', $field['pono']],
+                                            ])->count();
+
                     $description = "Please register this code in Product Master.";
-                    PpcUploadOrder::insert([
-                        'sc_no' => $field['scno'],
-                        'prod_code' => $field['productcode'],
-                        'description' => $description,
-                        'quantity' => $field['quantity'],
-                        'po' => $field['pono'],
-                        'uploader' => Auth::user()->id,
-                        'date_upload' => date("Y-m-d H:i:s"),
-                        'create_user' => Auth::user()->id,
-                        'update_user' => Auth::user()->id,
-                        'created_at' => date("Y-m-d H:i:s"),
-                        'updated_at' => date("Y-m-d H:i:s"),
-                    ]);
+
+                    if ($check > 0) {
+                        $overwrite_up = PpcUploadOrder::select('quantity')->where([
+                                                        ['sc_no', $field['scno']],
+                                                        ['prod_code', $field['productcode']],
+                                                        ['po', $field['pono']],
+                                                    ])->where('quantity','<>',$field['quantity'])->first();
+                        if ($this->_helper->check_if_exists($overwrite_up) > 0) {
+                            array_push($overwrite_upload, [
+                                'sc_no' => $field['scno'],
+                                'prod_code' => $field['productcode'],
+                                'description' => $description,
+                                'oldquantity' => $overwrite_up->quantity,
+                                'quantity' => $field['quantity'],
+                                'po' => $field['pono'],
+                                'uploader' => Auth::user()->id,
+                            ]);
+                            
+                        } else {
+                            PpcUploadOrder::where([
+                                        ['sc_no', $field['scno']],
+                                        ['prod_code', $field['productcode']],
+                                        ['po', $field['pono']],
+                                    ])->update([
+                                        'sc_no' => $field['scno'],
+                                        'prod_code' => $field['productcode'],
+                                        'description' => $description,
+                                        // 'quantity' => $field['quantity'],
+                                        'po' => $field['pono'],
+                                        'uploader' => Auth::user()->id,
+                                        'date_upload' => date("Y-m-d H:i:s"),
+                                        'update_user' => Auth::user()->id,
+                                        'updated_at' => date("Y-m-d H:i:s"),
+                                    ]);
+                        }
+                    } else {
+                        PpcUploadOrder::insert([
+                            'sc_no' => $field['scno'],
+                            'prod_code' => $field['productcode'],
+                            'description' => $description,
+                            'quantity' => $field['quantity'],
+                            'po' => $field['pono'],
+                            'uploader' => Auth::user()->id,
+                            'date_upload' => date("Y-m-d H:i:s"),
+                            'create_user' => Auth::user()->id,
+                            'update_user' => Auth::user()->id,
+                            'created_at' => date("Y-m-d H:i:s"),
+                            'updated_at' => date("Y-m-d H:i:s"),
+                        ]);
+                    }
+                    
 
                     array_push($not_registered, [
                         'sc_no' => $field['scno'],
@@ -196,7 +293,7 @@ class UploadOrdersController extends Controller
                 $NotScheduled = PpcProductionSummary::where('sc_no', $field->sc_no)
                                                     ->where('prod_code',$field->prod_code)
                                                     ->where('po' , $field->po)
-                                                    ->where('sched_qty','==',0)
+                                                    ->where('sched_qty','=',0)
                                                     ->count();
 
                 if($NotScheduled != 0){
@@ -240,6 +337,7 @@ class UploadOrdersController extends Controller
                 'countAddedRow' => $countAddedRow,
                 'not_registered' => $not_registered,
                 'for_overwrite' => $for_overwrite,
+                'overwrite_upload' => $overwrite_upload,
                 'Schedule' => $Schedule,
             ];
 
@@ -249,17 +347,34 @@ class UploadOrdersController extends Controller
     public function overwrite(Request $req)
     {
         $updated = false;
-        foreach ($req->data as $key => $up) {
-            PpcProductionSummary::where('sc_no', $up['sc_no'])
-                                ->where('prod_code',$up['prod_code'])
-                                ->where('po',$up['po'])
-                                ->update([
-                                    'quantity' => $up['quantity'],
-                                    'update_user' => Auth::user()->id,
-                                    'updated_at' => date("Y-m-d H:i:s")
-                                ]);
-            $updated = true;
+        if ($req->state == 'UPLOADORDERS') {
+                foreach ($req->data as $key => $up) {
+
+                PpcUploadOrder::where('sc_no', $up['sc_no'])
+                                    ->where('prod_code',$up['prod_code'])
+                                    ->where('po',$up['po'])
+                                    ->update([
+                                        'quantity' => $up['quantity'],
+                                        'update_user' => Auth::user()->id,
+                                        'updated_at' => date("Y-m-d H:i:s")
+                                    ]);
+                $updated = true;
+            }
+        } else {
+                foreach ($req->data as $key => $up) {
+
+                PpcProductionSummary::where('sc_no', $up['sc_no'])
+                                    ->where('prod_code',$up['prod_code'])
+                                    ->where('po',$up['po'])
+                                    ->update([
+                                        'quantity' => $up['quantity'],
+                                        'update_user' => Auth::user()->id,
+                                        'updated_at' => date("Y-m-d H:i:s")
+                                    ]);
+                $updated = true;
+            }
         }
+        
         return response()->json($updated);
     }
 

@@ -70,13 +70,13 @@ foreach ($user_accesses as $user_access){
                                 <i class="fa fa-check"></i> Check Unregistered Products
                             </button>
                         </div>
-
                         <div class="col-md-2">
                             <button id="btn_filter_search" class="btn btn-lg btn-block bg-teal">
                                 <i class="fa fa-search"></i> Search / Filter
                             </button>
                         </div>
                     </div>
+                    
                 </div>
             </div>
         </div>
@@ -99,7 +99,6 @@ foreach ($user_accesses as $user_access){
         var downloadNonexistingURL = "<?php echo e(url('/transaction/upload-orders/download-unregistered-products')); ?>";
         var getNonexistingURL = "<?php echo e(url('/transaction/upload-orders/get-unregistered-products')); ?>";
         var excelSearchFilterURL = "<?php echo e(url('/transaction/upload-orders/search-orders-excel')); ?>";
-        
     </script>
     <script type="text/javascript" src="<?php echo e(mix('/js/pages/ppc/transactions/upload-orders/upload-orders.js')); ?>"></script>
 <?php $__env->stopPush(); ?>

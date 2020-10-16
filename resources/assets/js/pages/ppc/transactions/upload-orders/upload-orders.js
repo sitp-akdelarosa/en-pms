@@ -66,9 +66,10 @@ $(function () {
     	}).fail(function(xhr,textStatus,errorThrown) {
     		msg('Unregistered Products: '+ errorThrown);
     	});
+    	
 	});
 	
-	$('#btn_filter_search').on('click', function() {
+	$('#btn_filter_search').on('click', function () {
 		$('.srch-clear').val('');
 		$('#modal_order_search').modal('show');
 	});
@@ -97,11 +98,11 @@ $(function () {
 
 	$('#btn_search_excel').on('click', function () {
 		window.location.href = excelSearchFilterURL + "?srch_date_upload_from=" + $('#srch_date_upload_from').val() +
-							"&srch_date_upload_to=" + $('#srch_date_upload_to').val() +
-							"&srch_sc_no=" + $('#srch_sc_no').val() +
-							"&srch_prod_code=" + $('#srch_prod_code').val() +
-							"&srch_description=" + $('#srch_description').val() +
-							"&srch_po=" + $('#srch_po').val();
+			"&srch_date_upload_to=" + $('#srch_date_upload_to').val() +
+			"&srch_sc_no=" + $('#srch_sc_no').val() +
+			"&srch_prod_code=" + $('#srch_prod_code').val() +
+			"&srch_description=" + $('#srch_description').val() +
+			"&srch_po=" + $('#srch_po').val();
 	});
 });
 
@@ -310,8 +311,7 @@ function scheduletable(arr) {
     $('#tbl_Schedule').dataTable({
     	data: arr,
     	bLengthChange : false,
-		paging: true,
-		order: [[3,'asc']],
+    	paging: true,
     	columns: [
     		{ data: 'sc_no', name: 'sc_no' },
 	    	{ data: 'prod_code', name: 'prod_code' },
@@ -351,7 +351,7 @@ function uploadedProductsTable(arr) {
                 $(row).css('background-color', '#ff6266');
                 $(row).css('color', '#fff');
             }
-		}
+        }
     });
 }
 

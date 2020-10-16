@@ -377,7 +377,6 @@ function scheduletable(arr) {
     data: arr,
     bLengthChange: false,
     paging: true,
-    order: [[3, 'asc']],
     columns: [{
       data: 'sc_no',
       name: 'sc_no'

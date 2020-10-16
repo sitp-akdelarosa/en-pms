@@ -738,7 +738,7 @@ class ProductionScheduleController extends Controller
                 $bar_pcs = (float)$sched_qty/$length;
 
                 // Calculate stocks
-                $stock = $rmw_qty - $bar_pcs;
+                $stock = $rmw_qty - (int)$bar_pcs;
 
                 $data = [
                     'msg' => '',
@@ -793,12 +793,12 @@ class ProductionScheduleController extends Controller
                 $length_wth_1p8 = $product_cut_length + 1.5;
 
                 // calculate pipe length
-                $pipe_pcs = ($inv_length / $length_wth_1p8); // somehow addition 1.5 for product cut length
+                $pipe_pcs = ($inv_length / $length_wth_1p8)*2; // somehow addition 1.5 for product cut length
 
                 // Calculate stocks
                 // $pcs = $rmw_qty * $pipe_pcs;
                 // $stock =  $pcs - $req->sched_qty;
-                $stock = $rmw_qty * (int)$pipe_pcs;;
+                $stock = $rmw_qty * (int)$pipe_pcs;
 
                 $data = [
                     'msg' => '',
