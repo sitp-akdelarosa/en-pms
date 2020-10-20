@@ -320,20 +320,12 @@ Route::group(['middleware' => ['ppc', 'auth', 'no.back', 'deleted_user']], funct
 				->name('transaction.product-withdrawal.get-product-inventory');
 			Route::post('/save', 'PPC\Transaction\ProductWithdrawalController@save')
 				->name('transaction.product-withdrawal.save');
-			// Route::post('/destroy', 'PPC\Transaction\RawMaterialWithdrawalController@destroy')
-			// 	->name('transaction.raw-material-withdrawal.destroy');
-			// Route::get('/search-trans-no', 'PPC\Transaction\RawMaterialWithdrawalController@searchTransNo')
-			// 	->name('transaction.raw-material-withdrawal.search-trans-no');
-			// Route::get('/scnosuggest', 'PPC\Transaction\RawMaterialWithdrawalController@scnosuggest')
-			// 	->name('transaction.raw-material-withdrawal.scnosuggest');
-			// Route::get('/material-details', 'PPC\Transaction\RawMaterialWithdrawalController@material_details')
-			// 	->name('transaction.raw-material-withdrawal.material-details');
-			// Route::get('/getComputationIssuedQty', 'PPC\Transaction\RawMaterialWithdrawalController@getComputationIssuedQty')
-			// 	->name('transaction.raw-material-withdrawal.getComputationIssuedQty');
-			// Route::get('/search-filter-raw-material', 'PPC\Transaction\RawMaterialWithdrawalController@searchFilter')
-			// 	->name('transaction.raw-material-withdrawal.search-filter-raw-material');
-			// Route::get('/search-raw-material-excel', 'PPC\Transaction\RawMaterialWithdrawalController@excelFilteredData')
-			// 	->name('transaction.raw-material-withdrawal.search-raw-material-excel');
+			Route::get('/get-withdrawal-transaction', 'PPC\Transaction\ProductWithdrawalController@getWithdrawalTransaction')
+				->name('transaction.product-withdrawal.get-withdrawal-transaction');
+			Route::get('/search-filter-product-withdrawal', 'PPC\Transaction\ProductWithdrawalController@searchFilter')
+				->name('transaction.raw-material-withdrawal.search-filter-product-withdrawal');
+			Route::get('/search-product-withdrawal-excel', 'PPC\Transaction\ProductWithdrawalController@excelFilteredData')
+				->name('transaction.raw-material-withdrawal.search-product-withdrawal-excel');
 		});
 
 		Route::group(['prefix' => 'travel-sheet'], function () {
@@ -569,6 +561,7 @@ Route::group(['prefix' => 'helpers'], function () {
 
 Route::group(['prefix' => 'pdf'], function () {
 	Route::get('raw-material-withdrawal-slip', 'PDFController@RawMaterialWithdrawalSlip')->name('pdf.raw-material-withdrawal-slip');
+	Route::get('product-withdrawal-slip', 'PDFController@ProductWithdrawalSlip')->name('pdf.product-withdrawal-slip');
 	Route::get('cutting-schedule', 'PDFController@CuttingSchedule')->name('pdf.cutting-schedule');
 	Route::get('cutting-schedule-reprint', 'PDFController@CuttingScheduleReprint')->name('pdf.cutting-schedule-reprint');
 	Route::get('travel-sheet', 'PDFController@TravelSheet')->name('pdf.travel-sheet');

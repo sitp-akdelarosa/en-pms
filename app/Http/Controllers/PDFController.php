@@ -302,4 +302,27 @@ class PDFController extends Controller
 			->setOption('margin-bottom', 5)
 			->inline();
 	}
+
+	public function ProductWithdrawalSlip(Request $req)
+	{
+
+		$product = DB::table('ppc_product_withdrawal_details as d')
+						->join('ppc_product_codes as p','p.product_code','=','d.item_code')
+							->where('d.trans_id',$req->trans_id)
+							->get();
+
+		$data = [
+			'date' => $this->_helper->convertDate($req->date, 'F d, Y'),
+			'products' => $product,
+			'prepared_by' => $req->prepared_by,
+			'issued_by' => $req->issued_by,
+			'received_by' => $req->received_by,
+			'trans_no' => $req->trans_no,
+			'print_format' => $req->print_format,
+			'plant' => $req->plant,
+		];
+
+		$pdf = PDF::loadView('pdf.product_withdrawal_slip', $data);
+		return $pdf->inline();
+	}
 }

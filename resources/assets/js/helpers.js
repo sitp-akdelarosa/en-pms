@@ -247,7 +247,7 @@ function confirm_delete(id, token, ajax_url,refresh_table,tbl,tbl_url,dataColumn
 
 				return data.status;
 			}).fail(function(xhr, textStatus, errorThrown) {
-				msg(errorThrown,'error');
+				ErrorMsg(xhr);
 			});
 		} else {
 			swal("Cancelled", "Your data is safe and not deleted.");
@@ -374,7 +374,7 @@ function getDivisionCode(el) {
 			$(el).append(opt);
 		});
 	}).fail(function(xhr, textStatus, errorThrown) {
-		console.log(errorThrown);
+		ErrorMsg(xhr);
 	});
 }
 
@@ -392,7 +392,7 @@ function get_dropdown_items_by_id(id,el) {
 			$(el).append(opt);
 		});
 	}).fail(function(xhr, textStatus, errorThrown) {
-		console.log("error");
+		ErrorMsg(xhr);
 	});
 }
 
@@ -410,7 +410,7 @@ function get_dropdown_items_by_name(name,el) {
 			$(el).append(opt);
 		});
 	}).fail(function(xhr, textStatus, errorThrown) {
-		console.log("error");
+		ErrorMsg(xhr);
 	});
 }
 
@@ -428,7 +428,7 @@ function get_user_type(el) {
 			$(el).append(opt);
 		});
 	}).fail(function(xhr, textStatus, errorThrown) {
-		console.log("error");
+		ErrorMsg(xhr);
 	});
 }
 
@@ -446,7 +446,7 @@ function get_leader(el) {
 			$(el).append(opt);
 		});
 	}).fail(function(xhr, textStatus, errorThrown) {
-		console.log("error");
+		ErrorMsg(xhr);
 	});
 }
 
@@ -469,7 +469,7 @@ function getAuditTrailData() {
 		audit_arr = data;
 		makeAuditTrailTable(audit_arr);
 	}).fail(function(xhr, textStatus, errorThrown) {
-		console.log(xhr+' '+errorThrown);
+		ErrorMsg(xhr);
 	});
 }
 
@@ -546,8 +546,7 @@ function getUnreadNotification() {
 		}
 		notiList(data.noti_list);
 	}).fail(function(xhr, textStatus, errorThrown) {
-		var response = xhr.responseJSON;
-		ErrorMsg(response);
+		ErrorMsg(xhr);
 	});
 }
 
@@ -573,7 +572,7 @@ function readNotification(id,link) {
 			window.location.href=link;
 		}
 	}).fail(function(xhr, textStatus, errorThrown) {
-		msg(errorThrown,textStatus);
+		ErrorMsg(xhr);
 	});
 }
 
@@ -620,7 +619,7 @@ function getISO(elem) {
 			$(elem).append(options);
 		});
 	}).fail(function(xhr, textStatus, errorThrown) {
-		msg(errorThrown,textStatus);
+		ErrorMsg(xhr);
 	});
 }
 
@@ -643,10 +642,17 @@ function autoComplete(id,url,text) {
 	});
 }
 
-function ErrorMsg(data) {
-	var msg = "File: " + data.file + "</br>" + "Line: " + data.line + "</br>" + "Message: " + data.message;
-	var file = data.file;
-	var line = data.line;
+function ErrorMsg(xhr) {
+	var response;
+	if (xhr.hasOwnProperty('responseJSON')) {
+		response = xhr.responseJSON;
+	} else {
+		response = jQuery.parseJSON(xhr.responseText);
+	}
+
+	var msg = "File: " + response.file + "</br>" + "Line: " + response.line + "</br>" + "Message: " + response.message;
+	var file = response.file;
+	var line = response.line;
 
 	$('#msg_content').html(msg);
 	$('#modalMsg').modal('show');

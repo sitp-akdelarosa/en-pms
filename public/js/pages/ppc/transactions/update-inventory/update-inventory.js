@@ -293,8 +293,7 @@ $(function () {
                 }
               }).fail(function (xhr, textStatus, errorThrown) {
                 $('.loadingOverlay').hide();
-                var response = jQuery.parseJSON(xhr.responseText);
-                ErrorMsg(response);
+                ErrorMsg(xhr);
               }).always(function () {
                 $('.loadingOverlay').hide();
               }); // $.ajax({
@@ -353,8 +352,7 @@ $(function () {
             }
           }).fail(function (xhr, textStatus, errorThrown) {
             $('.loadingOverlay').hide();
-            var response = jQuery.parseJSON(xhr.responseText);
-            ErrorMsg(response);
+            ErrorMsg(xhr);
           }).always(function () {//$('.loadingOverlay').hide();
           }); // $.ajax({
           // 	url: checkfile,
