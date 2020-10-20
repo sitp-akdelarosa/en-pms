@@ -324,21 +324,21 @@ class MaterialMasterController extends Controller
 
 				$mat->update();
 
-				$check = NotRegisteredMaterial::where('materials_code',$req->material_code)
+				$check = NotRegisteredMaterial::where('item_code',$req->material_code)
 												->count();
 
 				if ($check > 0) {
-					NotRegisteredMaterial::where('materials_code',$req->material_code)
+					NotRegisteredMaterial::where('item_code',$req->material_code)
 												->delete();
 
-					PpcUpdateInventory::where('materials_code',$req->material_code)
+					PpcUpdateInventory::where('item_code',$req->material_code)
 										->update([
 											'description' => strtoupper($req->code_description),
 											'item' => strtoupper($req->item),
 											'alloy' => strtoupper($req->alloy),
 											'schedule' => strtoupper($req->schedule),
 											'size' => strtoupper($req->size),
-											'std_weight' => $req->std_weight,
+											// 'std_weight' => $req->std_weight,
 											'update_user' => Auth::user()->id,//strtoupper($req->update_user),
 											'updated_at' => date('Y-m-d H:i:S')
 										]);
@@ -381,21 +381,21 @@ class MaterialMasterController extends Controller
 
 			$mat->save();
 
-			$check = NotRegisteredMaterial::where('materials_code',$req->material_code)
+			$check = NotRegisteredMaterial::where('item_code',$req->material_code)
 												->count();
 
 			if ($check > 0) {
-				NotRegisteredMaterial::where('materials_code',$req->material_code)
+				NotRegisteredMaterial::where('item_code',$req->material_code)
 											->delete();
 
-				PpcUpdateInventory::where('materials_code',$req->material_code)
+				PpcUpdateInventory::where('item_code',$req->material_code)
 									->update([
 										'description' => strtoupper($req->code_description),
 										'item' => strtoupper($req->item),
 										'alloy' => strtoupper($req->alloy),
 										'schedule' => strtoupper($req->schedule),
 										'size' => strtoupper($req->size),
-										'std_weight' => $req->std_weight,
+										// 'std_weight' => $req->std_weight,
 										'update_user' => Auth::user()->id,//strtoupper($req->update_user),
 										'updated_at' => date('Y-m-d H:i:S')
 									]);
