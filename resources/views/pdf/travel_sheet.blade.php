@@ -60,63 +60,63 @@
 								<table class="table table-bordered table-sm" style="font-size:13px;width:100%;">
 									<thead>
 										<tr>
-											<td rowspan="2" colspan="3"><img src="{{ asset('/barcode.php').'?codetype=CODE39&size=30&text='.$header->jo_sequence.'&print=true' }}" class="img-fluid" alt="{{ $header->jo_sequence }}"></td> 
-											<td colspan="2">Type:</td>
-											<td colspan="3">{{ $header->type }}</td>
-											<td colspan="2">Material Used:</td>
-											<td>{{ $header->bar_size }}</td>
+											<td class="text-center" rowspan="2" colspan="3"><img src="{{ asset('/barcode.php').'?codetype=CODE39&size=30&text='.$header->jo_sequence.'&print=true' }}" class="img-fluid" alt="{{ $header->jo_sequence }}"></td> 
+											<td class="text-center" colspan="2">Type:</td>
+											<td class="text-center" colspan="3">{{ $header->type }}</td>
+											<td class="text-center" colspan="2">Material Used:</td>
+											<td class="text-center">{{ $header->bar_size }}</td>
 											{{-- <td>{{ $header->bar_size.' x '.$header->cut_weight }}</td> --}}
 										</tr>
 										<tr>
 											{{-- <td colspan="2">Material Used:</td>
 											<td>{{ $header->material_used }}</td>
 											<td>{{ $header->bar_size.' x '.$header->cut_weight }}</td> --}}
-											<td colspan="2">Part Code:</td>
-											<td colspan="3">{{ $header->prod_code }}</td>
+											<td class="text-center" colspan="2">Part Code:</td>
+											<td class="text-center" colspan="3">{{ $header->prod_code }}</td>
 
-											<td colspan="2">Material Heat #:</td>
-											<td>{{ $header->material_heat_no }}</td>
+											<td class="text-center" colspan="2">Material Heat #:</td>
+											<td class="text-center" >{{ $header->material_heat_no }}</td>
 										</tr>
 										<tr>
 											<td>Job Order Qty.</td>
-											<td colspan="2">{{ $header->sched_qty }}</td>
-											<td colspan="2" rowspan="2">Description</td>  {{-- rowspan="2" --}}
-											<td colspan="3" rowspan="2">{{ $header->description }}</td>{{-- colspan="2" rowspan="2" --}}
+											<td class="text-center" colspan="2">{{ $header->sched_qty }}</td>
+											<td class="text-center" colspan="2" rowspan="2">Description</td>  {{-- rowspan="2" --}}
+											<td class="text-center" colspan="3" rowspan="2">{{ $header->description }}</td>{{-- colspan="2" rowspan="2" --}}
 											{{-- <td colspan="2">{{ $header->issued_qty }}</td> --}}
 											
-											<td colspan="2">Supplier Heat #:</td>
-											<td>{{ $header->supplier_heat_no }}</td>
+											<td class="text-center" colspan="2">Supplier Heat #:</td>
+											<td class="text-center">{{ $header->supplier_heat_no }}</td>
 										</tr>
 										<tr>
 											<td>Product Line</td>
-											<td colspan="2">{{ $header->product_line }}</td>
-											<td>Cut Wt.</td>
-											<td>Cut Length</td>
-											<td>Cut Width</td>
+											<td class="text-center" colspan="2">{{ $header->product_line }}</td>
+											<td class="text-center">Cut Wt.</td>
+											<td class="text-center">Cut Length</td>
+											<td class="text-center">Cut Width</td>
 										</tr>
 										<tr>
 											<td>S/C #</td>
-											<td colspan="2">{{ $header->sc_no }}</td>
-											<td>Issued Qty.</td>
-											<td>{{ $header->issued_qty }}</td>
-											<td>Lot No.</td>
-											<td colspan="2">{{ $header->lot_no }}</td>
+											<td class="text-center" colspan="2">{{ $header->sc_no }}</td>
+											<td class="text-center">Issued Qty.</td>
+											<td class="text-center">{{ $header->issued_qty }}</td>
+											<td class="text-center">Lot No.</td>
+											<td class="text-center" colspan="2">{{ $header->lot_no }}</td>
 
-											<td>{{ $header->cut_weight }}</td> {{-- cut wt --}}
-											<td>{{ $header->cut_length }}</td> {{-- cut length --}}
-											<td>{{ $header->cut_width}}</td> {{-- cut width --}}
+											<td class="text-center">{{ $header->cut_weight }}</td> {{-- cut wt --}}
+											<td class="text-center">{{ $header->cut_length }}</td> {{-- cut length --}}
+											<td class="text-center">{{ $header->cut_width}}</td> {{-- cut width --}}
 										</tr>
 										<tr>
-											<td rowspan="2">Process</td>
-											<td rowspan="2">Division No.</td>
-											<td rowspan="2">Date Process</td>
-											<td rowspan="2">Input Qty.</td>
-											<td rowspan="2">Output Qty.</td>
-											<td rowspan="2">Qty. NC.</td>
-											<td colspan="2">Disposition</td>
-											<td rowspan="2">Date Returned</td>
-											<td rowspan="2">Operator's Name</td>
-											<td rowspan="2">Signature</td>
+											<td class="text-center" rowspan="2">Process</td>
+											<td class="text-center" rowspan="2">Division No.</td>
+											<td class="text-center" rowspan="2">Date Process</td>
+											<td class="text-center" rowspan="2">Input Qty.</td>
+											<td class="text-center" rowspan="2">Output Qty.</td>
+											<td class="text-center" rowspan="2">Qty. NC.</td>
+											<td class="text-center" colspan="2">Disposition</td>
+											<td class="text-center" rowspan="2">Date Returned</td>
+											<td class="text-center" rowspan="2">Operator's Name</td>
+											<td class="text-center" rowspan="2">Signature</td>
 										</tr>
 										<tr>
 											<td>A/B/C</td>
