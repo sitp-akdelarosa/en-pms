@@ -295,9 +295,16 @@ class ProductWithdrawalController extends Controller
                 'info' => $info,
                 'details' => $details
             ];
-
-            return response()->json($data);
+        } else {
+            $data = [
+                'trans_id' => '',
+                'trans_no' => '',
+                'info' => [],
+                'details' => []
+            ];
         }
+
+        return response()->json($data);
     }
 
     public function getInventory(Request $req)
