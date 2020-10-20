@@ -1,5 +1,5 @@
 $(function () {
-	dashboardDataTable(get_dashboard);
+	dashboardDataTable([]);
 	get_chart();
 	get_jono('');
 
@@ -8,17 +8,70 @@ $(function () {
 		get_chart($(this).val());
 	});
 
-	$("#search").on('click', function (e) {
-		if ($('#date_from').val() != '' || $('#date_from').val() != '') {
-			dashboardDataTable(get_dashboard + '?date_from=' + $('#date_from').val() + '&date_to=' + $('#date_to').val());
-		} else {
-			msg('Please Input date', 'warning');
-		}
-
-	});
-
 	$("#tbl_dashboard").on( 'column-sizing.dt', function ( e, settings ) {
 		$(".dataTables_scrollHeadInner").css( "width", "100%" );
+	});
+
+	$('#btn_search_filter').on('click', function() {
+		$('#modal_ppc_dashboard').modal('show');
+	});
+
+	$('#srch_date_from').on('change', function () {
+		var selected_date = new Date($(this).val()).toISOString().split('T')[0];
+		document.getElementsByName("srch_date_to")[0].setAttribute('min', selected_date);
+	});
+
+	$("#frm_search").on('submit', function (e) {
+		e.preventDefault();
+		$('.loadingOverlay-modal').show();
+
+		$.ajax({
+			url: $(this).attr('action'),
+			type: 'GET',
+			dataType: 'JSON',
+			data: $(this).serialize(),
+		}).done(function (data, textStatus, xhr) {
+
+			dashboardDataTable(data);
+
+		}).fail(function (xhr, textStatus, errorThrown) {
+			var errors = xhr.responseJSON.errors;
+
+			console.log(errors);
+			showErrors(errors);
+		}).always(function () {
+			$('.loadingOverlay-modal').hide();
+		});
+	});
+
+	$('#btn_search_excel').on('click', function () {
+		var srch_date_from = $('#srch_date_from').val();
+		var srch_date_to = $('#srch_date_to').val();
+		var srch_jo_sequence = $('#srch_jo_sequence').val();
+		var srch_prod_code = $('#srch_prod_code').val();
+		var srch_description = $('#srch_description').val();
+		var srch_div_code = $('#srch_div_code').val();
+		var srch_plant = $('#srch_plant').val();
+		var srch_process = $('#srch_process').val();
+		var srch_material_used = $('#srch_material_used').val();
+		var srch_material_heat_no = $('#srch_material_heat_no').val();
+		var srch_lot_no = $('#srch_lot_no').val();
+		var srch_status = $('#srch_status').val();
+
+		var url = downloadSearchExcelURL + "?srch_date_from=" + srch_date_from +
+			"&srch_date_to=" + srch_date_to +
+			"&srch_jo_sequence=" + srch_jo_sequence +
+			"&srch_prod_code=" + srch_prod_code +
+			"&srch_description=" + srch_description +
+			"&srch_div_code=" + srch_div_code +
+			"&srch_plant=" + srch_plant +
+			"&srch_process=" + srch_process +
+			"&srch_material_used=" + srch_material_used +
+			"&srch_material_heat_no=" + srch_material_heat_no +
+			"&srch_lot_no=" + srch_lot_no +
+			"&srch_status=" + srch_status;
+
+		window.location.href = url;
 	});
 });
 
@@ -100,21 +153,14 @@ function get_jono() {
 	});
 }
 
-function dashboardDataTable(data_url) {
+function dashboardDataTable(arr) {
 	var table = $('#tbl_dashboard');
 
 	table.dataTable().fnClearTable();
 	table.dataTable().fnDestroy();
 	table.dataTable({
 		processing: true,
-		serverSide: true,
-		ajax: {
-			url: data_url,
-			error: function(jqXHR, ajaxOptions, thrownError) {
-				var response = jqXHR.responseJSON;
-				ErrorMsg(response);
-			}
-		},
+		data: arr,
 		deferRender: true,
 		scrollX: true,
 		columns: [
@@ -137,22 +183,7 @@ function dashboardDataTable(data_url) {
 			{ data: 'order_qty', name: 'order_qty' },
 			{ data: 'total_issued_qty', name: 'total_issued_qty' },
 			{ data: 'issued_qty', name: 'issued_qty' },
-			// { data: 'status', name: 'status' },
-			// { data: 'travel_sheet_status', name: 'travel_sheet_status' },
 			{ data: 'end_date', name: 'end_date' },
-			//{ data: 'updated_at', name: 'updated_at' },
-
-			// { data: 'jo_sequence', name: 'jo_sequence' },
-			// { data: 'prod_code', name: 'prod_code' },
-			// { data: 'description', name: 'description' },
-			// { data: 'div_code', name: 'div_code' },
-			// { data: 'plant', name: 'plant' },
-			// { data: 'process', name: 'process' },
-			// { data: 'material_used', name: 'material_used' },
-			// { data: 'material_heat_no', name: 'material_heat_no' },
-			// { data: 'lot_no', name: 'lot_no' },
-			// { data: 'order_qty', name: 'order_qty' },
-			// { data: 'issued_qty', name: 'issued_qty' },
 			{ 
 				data: function (e) {
 					return e.status;

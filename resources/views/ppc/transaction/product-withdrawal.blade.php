@@ -1,8 +1,10 @@
-<?php $__env->startSection('content'); ?>
+@extends('layouts.app')
+
+@section('content')
  <?php
  $exist = 0;
 foreach ($user_accesses as $user_access){
-        if($user_access->code == "T0003" ){
+        if($user_access->code == "T0009" ){
             $exist++;
         }
 }
@@ -12,15 +14,18 @@ foreach ($user_accesses as $user_access){
     }
 ?>
 <section class="content-header">
-    <h1>Raw Material Withdrawal</h1>
+    <h1>Product Withdrawal</h1>
 </section>
 
 <section class="content">
     <div class="box">
         <div class="box-body">
-            <form id="frm_raw_material" role="form" method="POST" action="<?php echo e(url('/transaction/raw-material-withdrawal/save')); ?>">
-                <?php echo csrf_field(); ?>
-                <input type="hidden" name="id" id="id">
+            <form id="frm_product" role="form" method="POST" action="{{ url('/transaction/product-withdrawal/save') }}">
+                @csrf
+                <input class="clear" type="hidden" name="id" id="id">
+                <input class="clear" type="hidden" name="item_id" id="item_id">
+                <input type="hidden" class="clear input" id="inv_id" name="inv_id">
+                <input type="hidden" class="clear input" id="old_issued_qty" name="old_issued_qty">
 
                 <div class="row mb-10">
                 	<div class="col-md-6">
@@ -31,16 +36,16 @@ foreach ($user_accesses as $user_access){
 		                            <input type="text" class="form-control form-control-sm validate" name="trans_no" id="trans_no">
 		                            <div id="trans_no_feedback"></div>
 		                            <div class="input-group-append">
-		                            	<button type="button" class="btn btn-sm bg-blue" id="btn_first">
+		                            	<button type="button" class="btn btn-sm bg-blue btn_navigation" id="btn_first">
 		                            		<i class="fa fa-angle-double-left"></i>
 		                            	</button>
-		                            	<button type="button" class="btn btn-sm bg-blue" id="btn_prev">
+		                            	<button type="button" class="btn btn-sm bg-blue btn_navigation" id="btn_prev">
 		                            		<i class="fa fa-angle-left"></i>
 		                            	</button>
-		                            	<button type="button" class="btn btn-sm bg-blue" id="btn_next">
+		                            	<button type="button" class="btn btn-sm bg-blue btn_navigation" id="btn_next">
 		                            		<i class="fa fa-angle-right"></i>
 		                            	</button>
-		                            	<button type="button" class="btn btn-sm bg-blue" id="btn_last">
+		                            	<button type="button" class="btn btn-sm bg-blue btn_navigation" id="btn_last">
 		                            		<i class="fa fa-angle-double-right"></i>
 		                            	</button>
 		                            	
@@ -52,34 +57,65 @@ foreach ($user_accesses as $user_access){
                 </div>
 
                 <div class="row mb-10">
+                    
                 	<div class="col-md-3">
-                		<input class="clear" type="hidden" name="item_id" id="item_id">
-                        <input class="clear" type="hidden" name="save_issued_qty" id="save_issued_qty">
                         <div class="form-group row">
-                            <label for="material_heat_no" class="col-sm-4 control-label mt-5">Material Heat No:</label>
+                            <label for="item_class" class="col-sm-4 control-label mt-5">Item Class:</label>
                             <div class="col-sm-8">
-                                <div class="input-group mb-3 input-group-sm">
-                                    <input type="text" class="form-control form-control-sm validate clear input" id="material_heat_no" name="material_heat_no">
-                                    <input type="hidden" class="clear input" id="inv_id" name="inv_id">
-                                    <input type="hidden" class="clear input" id="detail_id" name="detail_id">
-                                    <input type="hidden" class="clear input" id="old_issued_qty" name="old_issued_qty">
-                                    <div class="input-group-append">
-                                        <button type="button" class="btn btn-sm bg-blue" id="btn_search_heat_no">
-		                            		<i class="fa fa-search"></i>
-		                            	</button>
-                                    </div>
-                                    <div id="material_heat_no_feedback"></div>
-                                </div>                                
-                            </div>
-                        </div>
-                		<div class="form-group row">
-                            <label for="mat_code" class="col-sm-4 control-label mt-5">Material Code:</label>
-                            <div class="col-sm-8">
-                                <input type="text" class="form-control form-control-sm validate clear input" id="mat_code" name="mat_code" maxlength="16" readonly>
-		                        <div id="mat_code_feedback"></div>
+                                <select class="form-control select-validate clear" name="item_class" id="item_class">
+                                    <option value=""></option>
+                                    <option value="CRUDE">CRUDE</option>
+                                    <option value="FINISHED">FINISHED</option>
+                                </select>
+                                <div id="item_class_feedback"></div>
                             </div>
                         </div>
 
+                        <div class="form-group row">
+                            <label for="item_code" class="col-sm-4 control-label mt-5">Item Code</label>
+                            <div class="col-sm-8">
+                                <div class="input-group mb-3 input-group-sm">
+                                    <input type="text" class="form-control form-control-sm validate clear input" id="item_code" maxlength="16" name="item_code">
+                                    
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-sm bg-blue" id="btn_search_item_code">
+		                            		<i class="fa fa-search"></i>
+		                            	</button>
+                                    </div>
+                                    <div id="item_code_feedback"></div>
+                                </div>                                
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="jo_no" class="col-sm-4 control-label mt-5">J.O. #:</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control form-control-sm validate clear input" id="jo_no" name="jo_no" readonly>
+		                        <div id="jo_no_feedback"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="lot_no" class="col-sm-4 control-label mt-5">Lot #:</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control form-control-sm validate clear input" id="lot_no" name="lot_no" readonly>
+		                        <div id="lot_no_feedback"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="heat_no" class="col-sm-4 control-label mt-5">Heat #:</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control form-control-sm validate clear input" id="heat_no" name="heat_no" readonly>
+		                        <div id="heat_no_feedback"></div>
+                            </div>
+                        </div>
+
+                        
+
+                	</div>
+
+                	<div class="col-md-3">
                         <div class="form-group row">
                             <label for="alloy" class="col-sm-3 control-label mt-5">Alloy:</label>
                             <div class="col-sm-9">
@@ -104,33 +140,14 @@ foreach ($user_accesses as $user_access){
                             </div>
                         </div>
 
-                	</div>
-
-                	<div class="col-md-3">
-
                         <div class="form-group row">
-                            <label for="length" class="col-sm-3 control-label mt-5">Length:</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control form-control-sm validate clear input" id="length" name="length" maxlength="10" readonly>
-		                        <div id="length_feedback"></div>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="schedule" class="col-sm-3 control-label mt-5">Schedule:</label>
+                            <label for="schedule" class="col-sm-3 control-label mt-5">Schedule/Class:</label>
                             <div class="col-sm-9">
                                 <input type="hidden" class="clear" id="hide_schedule" name="hide_schedule">
                                 <input type="text" class="form-control form-control-sm validate clear input" id="schedule" name="schedule" maxlength="15">
 		                        <div id="schedule_feedback"></div>
                             </div>
                         </div>
-
-                		
-
-                        
-                            
-
-                                
 
 			            <div class="form-group row">
 		                    <div class="col-sm-12">
@@ -142,15 +159,21 @@ foreach ($user_accesses as $user_access){
 
                 	<div class="col-md-3">
 
-                		
-
-                        
+                        <div class="form-group row">
+                            <label for="sc_no" class="col-sm-3 control-label mt-5">SC #:</label>
+                            <div class="col-sm-9">
+                                <div class="input-group mb-3 input-group-sm">
+                                    <input type="text" class="form-control validate clear " name="sc_no" id="sc_no" >
+                                    <div id="sc_no_feedback"></div>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="form-group row">
                             <label for="qty_weight" class="col-sm-3 control-label mt-5">Qty/Weight:</label>
                             <div class="col-sm-9">
                                 <div class="input-group mb-3 input-group-sm">
-                                    <input type="number" class="form-control validate clear " name="qty_weight" id="qty_weight" readonly>
+                                    <input type="number" class="form-control validate clear " name="qty_weight" id="qty_weight" step=".01" readonly>
                                     <div class="input-group-append">
                                         <span class="input-group-text">KGS</span>
                                     </div>
@@ -184,10 +207,7 @@ foreach ($user_accesses as $user_access){
                                 </div>
 		                        
                             </div>
-                            
                         </div>
-
-                        
 
                 	</div>
 
@@ -222,75 +242,78 @@ foreach ($user_accesses as $user_access){
 
                 	</div>
                 </div>
-
                 
 
                 <div class="form-group row justify-content-center" id="controls">
-                    <div class="col-md-2 mb-5">
+                    <div class="col-lg-1 col-md-1 sol-sm-2 mb-5">
                         <button type="button" id="btn_add" class="btn bg-green btn-block">
                             <i class="fa fa-plus"></i> Add
                         </button>
                     </div>
-                    <div class="col-md-2 mb-5">
+                    <div class="col-lg-1 col-md-1 sol-sm-2 mb-5">
                         <button type="button" id="btn_clear" class="btn bg-gray btn-block">
                             <i class="fa fa-refresh"></i> Clear
                         </button>
                     </div>
                 </div>
+
 	            <div class="row">
 	                <div class="col-12">
-	                    <table class="table table-sm table-hover table-striped dt-responsive nowrap" id="tbl_raw_material" style="width:100%">
+	                    <table class="table table-sm table-hover table-striped dt-responsive nowrap" id="tbl_product" style="width:100%">
 	                        <thead class="thead-dark">
 	                            <tr>
 	                                <th width="5%"></th>
-	                                <th>Material Code</th>
+                                    <th>Item Class</th>
+                                    <th>J.O. #</th>
+                                    <th>Item Code</th>
+                                    <th>Lot #</th>
+                                    <th>Heat #</th>
+                                    <th>SC #</th>
 	                                <th>Alloy</th>
-	                                <th>Item / Description</th>
-	                                <th>Size / Sched</th>
+	                                <th>Item</th>
+                                    <th>Size</th>
+                                    <th>Class</th>
 	                                <th>Issued Qty</th>
-	                                
-	                                <th>Material Heat No.</th>
-	                                
 	                                <th>Remarks</th>
 	                            </tr>
 	                        </thead>
-	                        <tbody id="tbl_raw_material_body"></tbody>
+	                        <tbody id="tbl_product_body"></tbody>
 	                    </table>
 	                </div>
 	            </div>
 
             	<div class="form-group row justify-content-center">
-            		<div class="col-md-2 mb-5" id="add_new">
+            		<div class="col-lg-1 col-md-1 col-sm-2 mb-5" id="add_new">
                         <button type="button" id="btn_new" class="btn bg-green btn-block permission-button">
                             <i class="fa fa-pencil"></i> Add New
                         </button>
                     </div>
-                    <div class="col-md-2 mb-5" id="edit">
+                    <div class="col-lg-1 col-md-1 col-sm-2 mb-5" id="edit">
                         <button type="button" id="btn_edit" class="btn bg-purple btn-block permission-button">
                             <i class="fa fa-edit"></i> Edit
                         </button>
                     </div>
-                    <div class="col-md-2 mb-5" id="save">
+                    <div class="col-lg-1 col-md-1 col-sm-2 mb-5" id="save">
                         <button type="submit" id="btn_save" class="btn bg-blue btn-block permission-button">
                             <i class="fa fa-floppy-o"></i> Save
                         </button>
                     </div>
-                    <div class="col-md-2 mb-5" id="delete">
+                    <div class="col-lg-1 col-md-1 col-sm-2 mb-5" id="delete">
                         <button type="button" id="btn_delete" class="btn bg-red btn-block permission-button">
                             <i class="fa fa-trash"></i> Delete
                         </button>
                     </div>
-                    <div class="col-md-2 mb-5" id="cancel">
+                    <div class="col-lg-1 col-md-1 col-sm-2 mb-5" id="cancel">
                         <button type="button" id="btn_cancel" class="btn bg-red btn-block">
                             <i class="fa fa-times"></i> Cancel
                         </button>
                     </div>
-                    <div class="col-md-2 mb-5" id="print">
+                    <div class="col-lg-1 col-md-1 col-sm-2 mb-5" id="print">
                         <button type="button" id="btn_prepare_print" class="btn bg-navy btn-block">
-                            <i class="fa fa-print"></i> Prepare for printing
+                            <i class="fa fa-print"></i> Print Slip
                         </button>
                     </div>
-                    <div class="col-md-2 mb-5" id="search">
+                    <div class="col-lg-1 col-md-1 col-sm-2 mb-5" id="search">
                         <button type="button" id="btn_search_filter" class="btn bg-teal btn-block">
                             <i class="fa fa-search"></i> Search / Filter
                         </button>
@@ -301,23 +324,15 @@ foreach ($user_accesses as $user_access){
         </div>
     </div>
 </section>
-<?php echo $__env->make('includes.modals.transactions.raw-material-slip-modals', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+@include('includes.modals.transactions.product-withdrawal-modals')
 
-<?php $__env->stopSection(); ?>
-<?php $__env->startPush('scripts'); ?>
+@endsection
+@push('scripts')
     <script type="text/javascript">
         var token = $('meta[name="csrf-token"]').attr('content');
-        var getScNoURL = "<?php echo e(url('/transaction/raw-material-withdrawal/get-sc-no')); ?>";
-        var getMaterialHeatNoURL = "<?php echo e(url('/transaction/raw-material-withdrawal/get-heat-no')); ?>";
-        var deleteRawMaterial = "<?php echo e(url('/transaction/raw-material-withdrawal/destroy')); ?>";
-        var searchTransNoURL = "<?php echo e(url('/transaction/raw-material-withdrawal/search-trans-no')); ?>";
-        var scnosuggestURL = "<?php echo e(url('/transaction/raw-material-withdrawal/scnosuggest')); ?>";
-        var getMaterialDetailsURL = "<?php echo e(url('/transaction/raw-material-withdrawal/material-details')); ?>";
-        var RawMaterialWithdrawalSlipURL = "<?php echo e(url('/pdf/raw-material-withdrawal-slip')); ?>";
-        var code_permission = 'T0003';
-        var getComputationIssuedQty = "<?php echo e(url('/transaction/raw-material-withdrawal/getComputationIssuedQty')); ?>";
-        var excelSearchRawMaterialURL = "<?php echo e(url('/transaction/raw-material-withdrawal/search-raw-material-excel')); ?>";
+        var code_permission = 'T0009';
+        var getInventoryURL = "{{ url('/transaction/product-withdrawal/get-product-inventory') }}";
+        
     </script>
-    <script type="text/javascript" src="<?php echo e(mix('/js/pages/ppc/transactions/raw-material-withdrawal/raw-material-withdrawal.js')); ?>"></script>
-<?php $__env->stopPush(); ?>
-<?php echo $__env->make('layouts.app', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+    <script type="text/javascript" src="{{ mix('/js/pages/ppc/transactions/product-withdrawal/product-withdrawal.js') }}"></script>
+@endpush

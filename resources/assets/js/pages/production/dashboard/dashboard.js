@@ -26,22 +26,21 @@ function makeDashTable(arr) {
         paging: true,
         searching: true,
         columns: [
-           {data: 'jo_sequence', name: 'ts.jo_sequence'},
-           {data: 'prod_code', name: 'ts.prod_code'},
-           {data: 'description', name: 'ts.description'},
-           {data: 'process', name: 'p.process'},
-           {data: 'div_code', name: 'p.div_code'},
-           {data: 'plant', name: 'd.plant'},
-           {data: 'material_used', name: 'ts.material_used'},
-           {data: 'material_heat_no', name: 'ts.material_heat_no'},
-           {data: 'lot_no', name: 'ts.lot_no'},
-           {data: 'order_qty', name: 'ts.order_qty'},
-           {data: 'issued_qty', name: 'ts.issued_qty'},
-           {data: 'unprocessed', name: 'p.unprocessed'},
-           {data: 'good', name: 'p.good'},
-           {data: 'rework', name: 'p.rework'},
-           {data: 'scrap', name: 'p.scrap'},
-           {data: function(x) {
+            {data: 'jo_sequence', name: 'ts.jo_sequence'},
+            {data: 'prod_code', name: 'ts.prod_code'},
+            {data: 'description', name: 'ts.description'},
+            { data: 'lot_no', name: 'ts.lot_no' },
+            { data: 'issued_qty', name: 'ts.issued_qty' },
+            {data: 'process', name: 'p.process'},
+            { data: 'unprocessed', name: 'p.unprocessed' },
+            { data: 'good', name: 'p.good' },
+            { data: 'rework', name: 'p.rework' },
+            { data: 'scrap', name: 'p.scrap'},
+            // {data: 'div_code', name: 'p.div_code'},
+            // {data: 'plant', name: 'd.plant'},
+            // {data: 'material_used', name: 'ts.material_used'},
+            // {data: 'material_heat_no', name: 'ts.material_heat_no'},
+            {data: function(x) {
                 var status = 'ON PROCESS';
                 if (x.status == 1) {
                     status = 'READY FOR FG';

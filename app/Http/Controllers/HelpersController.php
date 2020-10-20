@@ -16,6 +16,8 @@ use App\PpcDivision;
 use App\AdminSettingIso;
 use App\PpcOperator;
 use App\AdminModule;
+use App\ProcessStatus;
+use App\ItemClassification;
 use DB;
 
 class HelpersController extends Controller
@@ -184,6 +186,10 @@ class HelpersController extends Controller
             if (strpos($transcode, 'JO') !== false) {
                 $desc = 'Job Order No.';
             }
+            
+            if (strpos($transcode, 'PW') !== false) {
+                $desc = 'Product Withdrawal';
+            }
 
             AdminTransactionNo::create([
                 'code' => $transcode,
@@ -308,5 +314,29 @@ class HelpersController extends Controller
     {
         $res = PpcOperator::selectRaw("CONCAT(firstname,' ',lastname) AS fullname")->get();
         return response()->json($res);
+    }
+
+    public function getItemClassification($id = null)
+    {
+        $classes = ItemClassification::select('id','description');
+
+        if (!is_null($id)) {
+            $classes->where('id',$id);
+            return $classes->first();
+        }
+
+        return $classes->get();
+    }
+
+    public function getProcessStatus($id = null)
+    {
+        $statuses = ProcessStatus::select('id','description');
+
+        if (!is_null($id)) {
+            $statuses->where('id',$id);
+            return $statuses->first();
+        }
+
+        return $statuses->get();
     }
 }

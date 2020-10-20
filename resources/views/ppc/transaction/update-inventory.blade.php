@@ -14,7 +14,7 @@ foreach ($user_accesses as $user_access){
     }
 ?>
 <section class="content-header">
-    <h1>Update Material Inventory</h1>
+    <h1>Update Inventory</h1>
 </section>
 
 <section class="content">
@@ -25,7 +25,16 @@ foreach ($user_accesses as $user_access){
             <form id="frm_update_inventory" role="form" method="post" files="true" enctype="multipart/form-data" action="">
                 @csrf
                 <div class="form-group row">
-                    <div class="custom-file col-md-9 mb-3" id="customFile" lang="es">
+                    <label for="item_class" class="col-md-1 control-label mt-5">Item Class:</label>
+                    <div class="col-md-3">
+                        <select class="form-control select-validate clear" name="up_item_class" id="up_item_class">
+                            <option value=""></option>
+                            <option value="RAW MATERIAL">RAW MATERIAL</option>
+                            <option value="PRODUCT">PRODUCT</option>
+                        </select>
+                        <div id="item_class_feedback"></div>
+                    </div>
+                    <div class="custom-file col-md-5 mb-3" id="customFile" lang="es">
                         <input type="file" class="custom-file-input" name="file_inventory" id="file_inventory" aria-describedby="fileHelp">
                         <label class="custom-file-label" for="file_inventory" id="file_inventory_label">
                            Select file...
@@ -48,25 +57,27 @@ foreach ($user_accesses as $user_access){
             <div class="box">
                 <div class="box-body">
                     <div class="table-responsive">
-                        <table class="table table-sm table-hover table-striped nowrap mb-10" id="tbl_materials" style="width: 100%">
+                        <table class="table table-sm table-hover table-striped table-bordered nowrap mb-10" id="tbl_materials" style="width: 100%">
                             <thead class="thead-dark">
                                 <tr>
                                     <th></th>
-                                    <th>Receiving No.</th>
-                                    <th>Material Type</th>
-                                    <th>Material Code</th>
+                                    <th>Item Class</th>
+                                    <th>J.O. / Receiving No.</th>
+                                    <th>Item Type / Line</th>
+                                    <th>Item Code</th>
                                     <th>Description</th>
                                     <th>Item</th>
                                     <th>Alloy</th>
-                                    <th>Schedule</th>
+                                    <th>Schedule/Class</th>
                                     <th>Size</th>
                                     <th>Width</th>
-                                    {{-- <th>Thickness</th> --}}
                                     <th>Length</th>
+                                    <th>Crude / Finish Weight</th>
                                     <th>Qty(KGS)</th>
                                     <th>Qty(PCS)</th>
                                     <th>Stock(PCS)</th>
                                     <th>Heat No.</th>
+                                    <th>Lot No.</th>
                                     <th>Invoice No.</th>
                                     <th>Received Date</th>
                                     <th>Supplier</th>
@@ -84,7 +95,7 @@ foreach ($user_accesses as $user_access){
 
                         <div class="col-md-2">
                             <button id="btn_add" class="btn btn-sm btn-block bg-green mb-3 permission-button">
-                                <i class="fa fa-plus"></i> Add Materials
+                                <i class="fa fa-plus"></i> Add Product / Material
                             </button>
                         </div>
 
@@ -122,12 +133,14 @@ foreach ($user_accesses as $user_access){
         var materialDataTable = "{{ url('/transaction/update-inventory/materials') }}";
         var AddManual = "{{ url('/transaction/update-inventory/AddManual') }}";
         var materialTypeURL = "{{ url('/transaction/update-inventory/material-type') }}";
-        var GetMaterialCode = "{{ url('/transaction/update-inventory/GetMaterialCode') }}";
-        var GetMaterialCodeDetailsurl = "{{ url('/transaction/update-inventory/GetMaterialCodeDetails') }}";
+        var productLineURL = "{{ url('/transaction/update-inventory/prod-lines') }}";
+        var GetItemCodeURL = "{{ url('/transaction/update-inventory/GetItemCode') }}";
+        var getItemCodeDetailsurl = "{{ url('/transaction/update-inventory/GetItemCodeDetails') }}";
         var code_permission = 'T0001';
         var downloadNonexistingURL = "{{ url('/transaction/update-inventory/download-unregistered-materials') }}";
         var getNonexistingURL = "{{ url('/transaction/update-inventory/get-unregistered-materials') }}";
-        var downloadFormatURL = "{{ url('/transaction/update-inventory/download-update-inventory-format') }}";
+        var downloadMaterialFormatURL = "{{ url('/transaction/update-inventory/download-inventory-material-format') }}";
+        var downloadProductFormatURL = "{{ url('/transaction/update-inventory/download-inventory-product-format') }}";
         var downloadSearchExcelURL = "{{ url('/transaction/update-inventory/download-update-inventory-search') }}";
     </script>
     <script type="text/javascript" src="{{ mix('/js/pages/ppc/transactions/update-inventory/update-inventory.js') }}"></script>

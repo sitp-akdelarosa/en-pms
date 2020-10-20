@@ -120,6 +120,7 @@ $( function() {
 		$('#item').val($(this).attr('data-item'));
 		$('#class').val($(this).attr('data-class'));
 		$('#standard_material_used').val($(this).attr('data-standard_material_used'));
+		$('#finish_weight').val($(this).attr('data-finish_weight'));
 		$('#alloy').val($(this).attr('data-alloy'));
 		$('#size').val($(this).attr('data-size'));
 		$('#btn_save').html('<i class="fa fa-check"></i> Update');
@@ -1045,6 +1046,7 @@ function ProductCodesTable(arr) {
                             "data-class='"+data.class+"'"+
 							"data-size='"+data.size+"'"+
 							"data-standard_material_used='"+data.standard_material_used+"'"+
+							"data-finish_weight='" + data.finish_weight + "'" +
                             "data-create_user='"+data.create_user+"'"+
                             "data-created_at='"+data.created_at+"'>"+
                             "<i class='fa fa-edit'></i>"+

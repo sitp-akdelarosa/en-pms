@@ -97,6 +97,7 @@ class DashboardController extends Controller
                                 DB::raw("ts.order_qty as order_qty"),
                                 DB::raw("ts.total_issued_qty as total_issued_qty"),
                                 DB::raw("ts.issued_qty as issued_qty"),
+                                DB::raw("ts.sc_no as sc_no"),
                                 DB::raw("p.unprocessed as unprocessed"),
                                 DB::raw("p.good as good"),
                                 DB::raw("p.rework as rework"),

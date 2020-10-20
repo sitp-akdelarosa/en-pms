@@ -11,18 +11,18 @@
                         <th>JO No.</th>
                         <th>Item Code</th>
                         <th>Description</th>
-                        <th>Process</th>
-                        <th>Div Code</th>
-                        <th>Plant</th>
-                        <th>Mats</th>
-                        <th>Heat No.</th>
                         <th>Lot No.</th>
-                        <th>Order Qty.</th>
-                        <th>Sched Qty.</th>
+                        <th>Issued Qty.</th>
+                        <th>Process</th>
                         <th>Unprocessed</th>
                         <th>Good</th>
                         <th>Rework</th>
                         <th>Scrap</th>
+                        
+                        
+                        
+                        
+                        
                         <th>Status</th>
                     </tr>
                 </thead>

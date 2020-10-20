@@ -97,6 +97,7 @@ mix.js('resources/assets/js/app.js', 'public/js')
     .js('resources/assets/js/pages/ppc/transactions/travel-sheet/travel-sheet.js', 'public/js/pages/ppc/transactions/travel-sheet/travel-sheet.js')
     .js('resources/assets/js/pages/ppc/transactions/cutting-schedule/cutting-schedule.js', 'public/js/pages/ppc/transactions/cutting-schedule/cutting-schedule.js')
     .js('resources/assets/js/pages/ppc/transactions/raw-material-withdrawal/raw-material-withdrawal.js', 'public/js/pages/ppc/transactions/raw-material-withdrawal/raw-material-withdrawal.js')
+    .js('resources/assets/js/pages/ppc/transactions/product-withdrawal/product-withdrawal.js', 'public/js/pages/ppc/transactions/product-withdrawal/product-withdrawal.js')
 
     .js('resources/assets/js/pages/ppc/reports/fg-summary.js', 'public/js/pages/ppc/reports/')
     .js('resources/assets/js/pages/ppc/reports/transfer-item-report.js', 'public/js/pages/ppc/reports/')

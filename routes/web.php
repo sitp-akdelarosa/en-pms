@@ -13,7 +13,13 @@
 
 Route::get('/', function () {
 	if (Auth::check()) {
-		switch (Auth::user()->user_category) {
+		$user_access = \DB::table('users as u')
+                            ->join('admin_user_types as ut','u.user_type','=','ut.id')
+                            ->select('ut.description','ut.category')
+                            ->where('u.user_id',Auth::user()->user_id)
+							->first();
+							
+		switch ($user_access->category) {
 			case 'PRODUCTION':
 				return redirect('/prod/dashboard');
 				break;
@@ -39,6 +45,10 @@ Route::group(['middleware' => ['ppc', 'auth', 'no.back', 'deleted_user']], funct
 			->name('dashboard.pie-graph');
 		Route::get('/get-jono', 'PPC\DashboardController@get_jono')
 			->name('dashboard.get-jono');
+		Route::get('/dashboard-search-filter', 'PPC\DashboardController@searchFilter')
+			->name('dashboard.dashboard-search-filter');
+		Route::get('/dashboard-search-excel', 'PPC\DashboardController@downloadExcelSearchFilter')
+			->name('dashboard.dashboard-search-excel');
 	});
 
 	Route::group(['prefix' => 'masters'], function () {
@@ -197,12 +207,15 @@ Route::group(['middleware' => ['ppc', 'auth', 'no.back', 'deleted_user']], funct
 
 			Route::get('/material-type', 'PPC\Transaction\UpdateInventoryController@GetMaterialType')
 				->name('transaction.update-inventory.material-type');
+			
+				Route::get('/prod-lines', 'PPC\Transaction\UpdateInventoryController@getProductLine')
+				->name('transaction.update-inventory.prod-lines');
 
-			Route::get('/GetMaterialCode', 'PPC\Transaction\UpdateInventoryController@GetMaterialCode')
-				->name('transaction.update-inventory.GetMaterialCode');
+			Route::get('/GetItemCode', 'PPC\Transaction\UpdateInventoryController@GetItemCode')
+				->name('transaction.update-inventory.GetItemCode');
 
-			Route::get('/GetMaterialCodeDetails', 'PPC\Transaction\UpdateInventoryController@GetMaterialCodeDetails')
-				->name('transaction.update-inventory.GetMaterialCodeDetails');
+			Route::get('/GetItemCodeDetails', 'PPC\Transaction\UpdateInventoryController@GetItemCodeDetails')
+				->name('transaction.update-inventory.GetItemCodeDetails');
 
 			Route::get('/download-unregistered-materials', 'PPC\Transaction\UpdateInventoryController@unRegisteredMaterialsExcel')
 				->name('transaction.update-inventory.download-unregistered-materials');
@@ -210,8 +223,11 @@ Route::group(['middleware' => ['ppc', 'auth', 'no.back', 'deleted_user']], funct
 			Route::get('/get-unregistered-materials', 'PPC\Transaction\UpdateInventoryController@unRegisteredMaterials')
 				->name('transaction.update-inventory.get-unregistered-materials');
 
-			Route::get('/download-update-inventory-format', 'PPC\Transaction\UpdateInventoryController@downloadExcelFormat')
-				->name('transaction.update-inventory.download-update-inventory-format');
+			Route::get('/download-inventory-material-format', 'PPC\Transaction\UpdateInventoryController@downloadExcelMaterialFormat')
+				->name('transaction.update-inventory.download-inventory-material-format');
+
+			Route::get('/download-inventory-product-format', 'PPC\Transaction\UpdateInventoryController@downloadExcelProductFormat')
+				->name('transaction.update-inventory.download-inventory-product-format');
 			
 			Route::get('/download-update-inventory-search', 'PPC\Transaction\UpdateInventoryController@downloadExcelSearchFilter')
 				->name('transaction.update-inventory.download-update-inventory-search');
@@ -297,6 +313,29 @@ Route::group(['middleware' => ['ppc', 'auth', 'no.back', 'deleted_user']], funct
 				->name('transaction.raw-material-withdrawal.search-raw-material-excel');
 		});
 
+		Route::group(['prefix' => 'product-withdrawal'], function () {
+			Route::get('/', 'PPC\Transaction\ProductWithdrawalController@index')
+				->name('transaction.product-withdrawal');
+			Route::get('/get-product-inventory', 'PPC\Transaction\ProductWithdrawalController@getInventory')
+				->name('transaction.product-withdrawal.get-product-inventory');
+			Route::post('/save', 'PPC\Transaction\ProductWithdrawalController@save')
+				->name('transaction.product-withdrawal.save');
+			// Route::post('/destroy', 'PPC\Transaction\RawMaterialWithdrawalController@destroy')
+			// 	->name('transaction.raw-material-withdrawal.destroy');
+			// Route::get('/search-trans-no', 'PPC\Transaction\RawMaterialWithdrawalController@searchTransNo')
+			// 	->name('transaction.raw-material-withdrawal.search-trans-no');
+			// Route::get('/scnosuggest', 'PPC\Transaction\RawMaterialWithdrawalController@scnosuggest')
+			// 	->name('transaction.raw-material-withdrawal.scnosuggest');
+			// Route::get('/material-details', 'PPC\Transaction\RawMaterialWithdrawalController@material_details')
+			// 	->name('transaction.raw-material-withdrawal.material-details');
+			// Route::get('/getComputationIssuedQty', 'PPC\Transaction\RawMaterialWithdrawalController@getComputationIssuedQty')
+			// 	->name('transaction.raw-material-withdrawal.getComputationIssuedQty');
+			// Route::get('/search-filter-raw-material', 'PPC\Transaction\RawMaterialWithdrawalController@searchFilter')
+			// 	->name('transaction.raw-material-withdrawal.search-filter-raw-material');
+			// Route::get('/search-raw-material-excel', 'PPC\Transaction\RawMaterialWithdrawalController@excelFilteredData')
+			// 	->name('transaction.raw-material-withdrawal.search-raw-material-excel');
+		});
+
 		Route::group(['prefix' => 'travel-sheet'], function () {
 			Route::get('/', 'PPC\Transaction\TravelSheetController@index')
 				->name('transaction.travel-sheet');
@@ -310,7 +349,6 @@ Route::group(['middleware' => ['ppc', 'auth', 'no.back', 'deleted_user']], funct
 				->name('transaction.travel-sheet.pre-travel-sheet-data');
 			Route::post('/get-Sc_no', 'PPC\Transaction\TravelSheetController@getSc_no')
 				->name('transaction.travel-sheet.get-Sc_no');
-
 		});
 
 		Route::group(['prefix' => 'cutting-schedule'], function () {

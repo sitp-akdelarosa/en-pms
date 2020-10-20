@@ -6,9 +6,11 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\HelpersController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use App\PpcDashboard;
 use DataTables;
 use DB;
+use Excel;
 use Carbon;
 
 class DashboardController extends Controller
@@ -194,6 +196,369 @@ class DashboardController extends Controller
 					return $status;
 				})->make(true);
 	}
+
+	public function searchFilter(Request $req)
+    {
+        return response()->json($this->getFilteredData($req));
+    }
+
+    private function getFilteredData($req)
+    {
+        $srch_date= "";
+		$srch_jo_sequence = "";
+		$srch_prod_code = "";
+		$srch_description = "";
+		$srch_div_code = "";
+		$srch_plant = "";
+		$srch_process = "";
+		$srch_material_used = "";
+		$srch_material_heat_no = "";
+		$srch_lot_no = "";
+		$srch_status = "";
+
+        if (!is_null($req->srch_date_from) && !is_null($req->srch_date_to)) {
+            $srch_date = " AND DATE_FORMAT(updated_at,'%Y-%m-%d') BETWEEN '".$req->srch_date_from."' AND '".$req->srch_date_to."'";
+        }
+
+        if (!is_null($req->srch_jo_sequence)) {
+            $equal = "= ";
+            $_value = $req->srch_jo_sequence;
+
+            if (Str::contains($req->srch_jo_sequence, '*')){
+                $equal = "LIKE ";
+                $_value = str_replace("*","%",$req->srch_jo_sequence);
+            }
+            $srch_jo_sequence = " AND jo_sequence ".$equal."'".$_value."'";
+        }
+
+        if (!is_null($req->srch_prod_code)) {
+            $equal = "= ";
+            $_value = $req->srch_prod_code;
+            
+            if (Str::contains($req->srch_prod_code, '*')){
+                $equal = "LIKE ";
+                $_value = str_replace("*","%",$req->srch_prod_code);
+            }
+            $srch_prod_code = " AND prod_code ".$equal." '".$_value."'";
+        }
+
+        if (!is_null($req->srch_description)) {
+            $equal = "= ";
+            $_value = $req->srch_description;
+            
+            if (Str::contains($req->srch_description, '*')){
+                $equal = "LIKE ";
+                $_value = str_replace("*","%",$req->srch_description);
+            }
+            $srch_description = " AND description ".$equal." '".$_value."'";
+        }
+
+        if (!is_null($req->srch_div_code)) {
+            $equal = "= ";
+            $_value = $req->srch_div_code;
+            
+            if (Str::contains($req->srch_div_code, '*')){
+                $equal = "LIKE ";
+                $_value = str_replace("*","%",$req->srch_div_code);
+            }
+            $srch_div_code = " AND div_code ".$equal." '".$_value."'";
+        }
+
+        if (!is_null($req->srch_plant)) {
+            $equal = "= ";
+            $_value = $req->srch_plant;
+            
+            if (Str::contains($req->srch_plant, '*')){
+                $equal = "LIKE ";
+                $_value = str_replace("*","%",$req->srch_plant);
+            }
+            $srch_plant = " AND plant ".$equal." '".$_value."'";
+        }
+
+        if (!is_null($req->srch_process)) {
+            $equal = "= ";
+            $_value = $req->srch_process;
+            
+            if (Str::contains($req->srch_process, '*')){
+                $equal = "LIKE ";
+                $_value = str_replace("*","%",$req->srch_process);
+            }
+            $srch_process = " AND process ".$equal." '".$_value."'";
+        }
+
+        if (!is_null($req->srch_material_used)) {
+            $equal = "= ";
+            $_value = $req->srch_material_used;
+            
+            if (Str::contains($req->srch_material_used, '*')){
+                $equal = "LIKE ";
+                $_value = str_replace("*","%",$req->srch_material_used);
+            }
+            $srch_material_used = " AND material_used ".$equal." '".$_value."'";
+        }
+
+        if (!is_null($req->srch_material_heat_no)) {
+            $equal = "= ";
+            $_value = $req->srch_material_heat_no;
+            
+            if (Str::contains($req->srch_material_heat_no, '*')){
+                $equal = "LIKE ";
+                $_value = str_replace("*","%",$req->srch_material_heat_no);
+            }
+            $srch_material_heat_no = " AND material_heat_no ".$equal." '".$_value."'";
+        }
+
+        if (!is_null($req->srch_lot_no)) {
+            $equal = "= ";
+            $_value = $req->srch_lot_no;
+            
+            if (Str::contains($req->srch_lot_no, '*')){
+                $equal = "LIKE ";
+                $_value = str_replace("*","%",$req->srch_lot_no);
+            }
+            $srch_lot_no = " AND lot_no ".$equal." '".$_value."'";
+        }
+
+        if (!is_null($req->srch_status)) {
+            $equal = "= ";
+            $_value = $req->srch_status;
+            
+            if (Str::contains($req->srch_status, '*')){
+                $equal = "LIKE ";
+                $_value = str_replace("*","%",$req->srch_status);
+            }
+            $srch_status = " AND `status` ".$equal." '".$_value."'";
+		}
+		
+        
+		
+		$data = DB::table('v_dashboard_ppc')
+								->where('user_id' ,Auth::user()->id)
+								->whereIn('travel_sheet_status',[0,1,2,5])
+								->whereRaw("1=1".$srch_date.
+									$srch_jo_sequence.
+									$srch_prod_code.
+									$srch_description.
+									$srch_div_code.
+									$srch_plant.
+									$srch_process.
+									$srch_material_used.
+									$srch_material_heat_no.
+									$srch_lot_no.
+									$srch_status)
+								->get();
+                        
+        return $data;
+    }
+
+    public function downloadExcelSearchFilter(Request $req)
+    {
+        $data = $this->getFilteredData($req);
+        $date = date('Ymd');
+
+        Excel::create('MaterialInventory_'.$date, function($excel) use($data)
+        {
+            $excel->sheet('Report', function($sheet) use($data)
+            {
+                $sheet->setHeight(4, 20);
+                $sheet->mergeCells('A2:S2');
+                $sheet->cells('A2:S2', function($cells) {
+                    $cells->setAlignment('center');
+                    $cells->setFont([
+                        'family'     => 'Calibri',
+                        'size'       => '14',
+                        'bold'       =>  true,
+                        'underline'  =>  true
+                    ]);
+                });
+                $sheet->cell('A2',"Travel Sheet in Production");
+
+                $sheet->setHeight(6, 15);
+                $sheet->cells('A4:S4', function($cells) {
+                    $cells->setFont([
+                        'family'     => 'Calibri',
+                        'size'       => '11',
+                        'bold'       =>  true,
+                    ]);
+                    // Set all borders (top, right, bottom, left)
+                    $cells->setBorder('solid', 'solid', 'solid', 'solid');
+                });
+                $sheet->cell('A4', function($cell) use($dt) {
+                    $cell->setValue("J.O. No.");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+                $sheet->cell('B4', function($cell) use($dt) {
+                    $cell->setValue("Item Code");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+                $sheet->cell('C4', function($cell) use($dt) {
+                    $cell->setValue("Description");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+                $sheet->cell('D4', function($cell) use($dt) {
+                    $cell->setValue("Division");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+                $sheet->cell('E4', function($cell) use($dt) {
+                    $cell->setValue("Plant");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+                $sheet->cell('F4', function($cell) use($dt) {
+                    $cell->setValue("Process");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+                $sheet->cell('G4', function($cell) use($dt) {
+                    $cell->setValue("Material");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+                $sheet->cell('H4', function($cell) use($dt) {
+                    $cell->setValue("Heat No.");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+                $sheet->cell('I4', function($cell) use($dt) {
+                    $cell->setValue("Lot No.");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+                $sheet->cell('J4', function($cell) use($dt) {
+                    $cell->setValue("Sched Qty");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+                $sheet->cell('K4', function($cell) use($dt) {
+                    $cell->setValue("Unprocess");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+                $sheet->cell('L4', function($cell) use($dt) {
+                    $cell->setValue("Good");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+                $sheet->cell('M4', function($cell) use($dt) {
+                    $cell->setValue("Scrap");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+                $sheet->cell('N4', function($cell) use($dt) {
+                    $cell->setValue("Total Output");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+                $sheet->cell('O4', function($cell) use($dt) {
+                    $cell->setValue("Order Qty");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+                $sheet->cell('P4', function($cell) use($dt) {
+                    $cell->setValue("Total Issued Qty.");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+                $sheet->cell('Q4', function($cell) use($dt) {
+                    $cell->setValue("Issued Qty.");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+                $sheet->cell('R4', function($cell) use($dt) {
+                    $cell->setValue("End Date");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+                $sheet->cell('S4', function($cell) use($dt) {
+                    $cell->setValue("Status");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+
+                $sheet->cells('A4:S4', function($cells) {
+                    $cells->setBorder('thick', 'thick', 'thick', 'thick');
+                });
+
+                $row = 5;
+
+                foreach ($data as $key => $dt) {
+                    $sheet->setHeight($row, 15);
+
+                    $sheet->cell('A'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->jo_sequence);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('B'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->prod_code);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('C'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->description);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('D'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->div_code);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('E'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->plant);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('F'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->process);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('G'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->material_used);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('H'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->material_heat_no);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('I'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->lot_no);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('J'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->sched_qty);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('K'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->unprocessed);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('L'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->good);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('M'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->scrap);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('N'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->total_output);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('O'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->order_qty);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('P'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->total_issued_qty);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('Q'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->issued_qty);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('R'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->end_date);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('S'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->status);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+
+                    $sheet->cells('A'.$row.':R'.$row, function($cells) {
+                        $cells->setBorder('thin', 'thin', 'thin', 'thin');
+                    });
+                    
+                    $row++;
+                }
+                
+                $sheet->cells('A4:R'.$row, function($cells) {
+                    $cells->setBorder('thick', 'thick', 'thick', 'thick');
+                });
+            });
+        })->download('xlsx');
+    }
 
 	public function get_jono()
 	{

@@ -21,6 +21,7 @@ class PpcProductCode extends Model
                     'alloy',
 					'size',
 					'standard_material_used',
+					'finish_weight',
 					'formula_classification',
     				'create_user',
 					'update_user'

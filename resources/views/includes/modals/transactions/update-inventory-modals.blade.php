@@ -3,7 +3,7 @@
         <form method="POST" action="{{ url('/transaction/update-inventory/AddManual') }}" id="frm_material_inventory">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Add / Edit Material Inventory</h5>
+                    <h5 class="modal-title">Add / Edit Inventory</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -13,23 +13,25 @@
                     <div class="loadingOverlay-modal"></div>
 
                     @csrf
-                    <input type="hidden" class="clear" name="material_id" id="material_id">
-
-                    <div class="row mb-15">
-                        <div class="offset-md-7 col-md-5">
-                            <div class="form-group row">
-                                <label for="received_date" class="col-sm-3 control-label mt-5">Received Date:</label>
-                                <div class="col-sm-9">
-                                    <input type="date" class="form-control validate clear" name="received_date" id="received_date">
-                                    <div id="received_date_feedback"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <input type="hidden" class="clear" name="item_id" id="item_id">
 
                     <div class="row">
                         <div class="col-md-4">
+
                             <div class="form-group row">
+                                <label for="item_class" class="col-sm-4 control-label mt-5">Item Class:</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control select-validate clear" name="item_class" id="item_class">
+                                        <option value=""></option>
+                                        @foreach($item_classes as $class)
+                                            <option value="{{ $class->description }}">{{ $class->description }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div id="item_class_feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row material_div">
                                 <label for="receiving_no" class="col-sm-4 control-label mt-5">Receiving No.:</label>
                                 <div class="col-sm-8">
                                     <input type="text" class="form-control validate clear" name="receiving_no" id="receiving_no">
@@ -37,27 +39,55 @@
                                 </div>
                             </div>
 
-                            <div class="form-group row">
+                            <div class="form-group row material_div">
+                                <label for="received_date" class="col-sm-4 control-label mt-5">Received Date:</label>
+                                <div class="col-sm-8">
+                                <input type="date" class="form-control validate clear" name="received_date" id="received_date" value="<?php echo date('Y-m-d');?>">
+                                    <div id="received_date_feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row product_div">
+                                <label for="jo_no" class="col-sm-4 control-label mt-5">J.O. No.:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control validate clear" name="jo_no" id="jo_no">
+                                    <div id="jo_no_feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row product_div">
+                                <label for="product_line" class="col-sm-4 control-label mt-5">Product Line:</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control select-validate clear" name="product_line" id="product_line" style="width:100%;">
+                                        <option value=""></option>
+                                    </select>
+                                    <div id="product_line_feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row material_div">
                                 <label for="materials_type" class="col-sm-4 control-label mt-5">Material Type:</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control select-validate clear" name="materials_type" id="materials_type"></select>
+                                    <select class="form-control select-validate clear" name="materials_type" id="materials_type" style="width:100%;">
+                                        <option value=""></option>
+                                    </select>
                                     <div id="materials_type_feedback"></div>
                                 </div>
                             </div>
 
                             <div class="form-group row">
-                                <label for="materials_code" class="col-sm-4 control-label mt-5">Material Code:</label>
+                                <label for="item_code" class="col-sm-4 control-label mt-5">Item Code:</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control select-validate clear" name="materials_code" id="materials_code">
+                                    <select class="form-control select-validate clear" name="item_code" id="item_code">
                                         <option value=''></option>
                                     </select>
-                                    <div id="materials_code_feedback"></div>
+                                    <div id="item_code_feedback"></div>
                                 </div>
                             </div>
 
                             <div class="form-group row">
                                 <div class="col-sm-12">
-                                    <textarea class="form-control validate clear" name="description" id="description" style="height:100px;resize: none" placeholder="Description" readonly></textarea>
+                                    <textarea class="form-control validate clear" name="description" id="description" style="height:50px;resize: none" placeholder="Description" readonly></textarea>
                                     <div id="description_feedback"></div>
                                 </div>
                             </div>
@@ -82,7 +112,7 @@
                             </div>
 
                             <div class="form-group row">
-                                <label for="schedule" class="col-sm-3 control-label mt-5">Schedule:</label>
+                                <label for="schedule" class="col-sm-3 control-label mt-5">Schedule/Class:</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control validate clear" name="schedule" id="schedule" readonly>
                                     <div id="schedule_feedback"></div>
@@ -96,21 +126,15 @@
                                     <div id="size_feedback"></div>
                                 </div>
                             </div>
-                            {{-- <div class="form-group row">
-                                <label for="thickness" class="col-sm-3 control-label mt-5">Thickness:</label>
-                                <div class="col-sm-9">
-                                    <input type="text" class="form-control validate clear" name="thickness" id="thickness" >
-                                    <div id="thickness_feedback"></div>
-                                </div>
-                            </div> --}}
-                             <div class="form-group row">
+
+                             <div class="form-group row material_div">
                                 <label for="width" class="col-sm-3 control-label mt-5">Width:</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control validate clear" name="width" id="width">
                                     <div id="width_feedback"></div>
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            <div class="form-group row material_div">
                                 <label for="length" class="col-sm-3 control-label mt-5">Length:</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control validate clear" name="length" id="length">
@@ -120,25 +144,13 @@
                         </div>
 
                         <div class="col-md-4">
-                            {{-- <div class="form-group row">
-                                <label for="quantity" class="col-sm-3 control-label mt-5">Qty:</label>
-                                <div class="col-sm-3">
-                                    <input type="number" class="form-control validate clear" name="quantity" id="quantity" step="any">
-                                    <div id="quantity_feedback"></div>
-                                </div>
-
-                                <label for="uom" class="col-sm-2 control-label mt-5">UOM:</label>
-                                <div class="col-sm-4">
-                                    <input type="text" class="form-control validate clear" name="uom" id="uom">
-                                    <div id="uom_feedback"></div>
-                                </div>
-                            </div> --}}
 
                             <div class="form-group row">
                                 <label for="qty_weight" class="col-sm-3 control-label mt-5">Qty/Weight:</label>
                                 <div class="col-sm-9">
                                     <div class="input-group mb-3 input-group-sm">
-										<input type="number" class="form-control validate clear " step=".01" name="qty_weight" id="qty_weight">
+                                        <input type="number" class="form-control validate clear " step=".01" name="qty_weight" id="qty_weight">
+                                        <input type="hidden" class="form-control validate clear " name="finish_weight" id="finish_weight">
                                         <div class="input-group-append">
                                             <span class="input-group-text">KGS</span>
                                         </div>
@@ -168,7 +180,15 @@
                                 </div>
                             </div>
 
-                            <div class="form-group row">
+                            <div class="form-group row product_div">
+                                <label for="lot_no" class="col-sm-3 control-label mt-5">Lot #:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control validate clear" name="lot_no" id="lot_no">
+                                    <div id="lot_no_feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row material_div">
                                 <label for="invoice_no" class="col-sm-3 control-label mt-5">Invoice No.:</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control validate clear" name="invoice_no" id="invoice_no">
@@ -176,14 +196,14 @@
                                 </div>
                             </div>
 
-                            <div class="form-group row">
+                            <div class="form-group row material_div">
                                 <label for="supplier" class="col-sm-3 control-label mt-5">Supplier:</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control validate clear" name="supplier" id="supplier">
                                     <div id="supplier_feedback"></div>
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            <div class="form-group row material_div">
                                 <label for="supplier_heat_no" class="col-sm-3 control-label mt-5">Supplier Heat No:</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control validate clear" name="supplier_heat_no" id="supplier_heat_no">
@@ -217,18 +237,23 @@
                 <div class="modal-body">
                     <p>Most of data are uploaded but these material are not registered in Material Master.</p>
                     <br>
-                    <table class="table table-sm table-striped dt-responsive nowrap" id="tbl_material_not_existing" style="width:100%">
-                        <thead class="thead-dark">
-                            <th>Material Type</th>
-                            <th>Material Code</th>
-                            <th>Qty(KGS)</th>
-                            <th>Qty(PCS)</th>
-                            <th>Heat No.</th>
-                            <th>Invoice No.</th>
-                            <th>Received Date</th>
-                            <th>Supplier</th>
-                        </thead>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-striped table-bordered nowrap" id="tbl_material_not_existing" style="width:100%">
+                            <thead class="thead-dark">
+                                <th>Item Class</th>
+                                <th>J.O. / Receiving #</th>
+                                <th>Mat. Type / Prod. Line</th>
+                                <th>Item Code</th>
+                                <th>Qty(KGS)</th>
+                                <th>Qty(PCS)</th>
+                                <th>Heat No.</th>
+                                <th>Lot No.</th>
+                                <th>Invoice No.</th>
+                                <th>Received Date</th>
+                                <th>Supplier</th>
+                            </thead>
+                        </table>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn bg-red" data-dismiss="modal">Close</button>
@@ -276,7 +301,7 @@
     </div>
 </div>
 
-<div id="modal_material_search" class="modal fade " data-backdrop="static">
+<div id="modal_search" class="modal fade " data-backdrop="static">
     <div class="modal-dialog modal-full" role="document">
         <form method="GET" action="{{ url('/transaction/update-inventory/search-filter') }}" id="frm_search">
             <div class="modal-content">
@@ -296,6 +321,19 @@
                         <div class="col-md-4">
 
                             <div class="form-group row">
+                                <label for="srch_item_class" class="col-sm-4 control-label mt-5">Item Class:</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control select-validate clear" name="srch_item_class" id="srch_item_class">
+                                        <option value=""></option>
+                                        @foreach($item_classes as $class)
+                                            <option value="{{ $class->description }}">{{ $class->description }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div id="srch_item_class_feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row srch_material_div">
                                 <label for="srch_received_date" class="col-sm-4 control-label mt-5">Received Date:</label>
                                 <div class="col-sm-8">
                                     <div class="input-group input-group-sm">
@@ -312,29 +350,49 @@
                                 </div>
                             </div>
 
-                            <div class="form-group row">
+                            <div class="form-group row srch_material_div">
                                 <label for="srch_receiving_no" class="col-sm-4 control-label mt-5">Receiving No.:</label>
                                 <div class="col-sm-8">
                                     <input type="text" class="form-control validate srch-clear" name="srch_receiving_no" id="srch_receiving_no">
-                                    <div id="receiving_no_feedback"></div>
+                                    <div id="srchreceiving_no_feedback"></div>
                                 </div>
                             </div>
 
-                            <div class="form-group row">
+                            <div class="form-group row srch_product_div">
+                                <label for="srch_jo_no" class="col-sm-4 control-label mt-5">J.O. No.:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control validate srch-clear" name="srch_jo_no" id="srch_jo_no">
+                                    <div id="srch_jo_no_feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row srch_material_div">
                                 <label for="srch_materials_type" class="col-sm-4 control-label mt-5">Material Type:</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control select-validate srch-clear" name="srch_materials_type" id="srch_materials_type"></select>
+                                    <select class="form-control select-validate srch-clear" name="srch_materials_type" style="width:100%;" id="srch_materials_type">
+                                        <option value=""></option>
+                                    </select>
                                     <div id="srch_materials_type_feedback"></div>
                                 </div>
                             </div>
 
-                            <div class="form-group row">
-                                <label for="srch_materials_code" class="col-sm-4 control-label mt-5">Material Code:</label>
+                            <div class="form-group row srch_product_div">
+                                <label for="srch_product_line" class="col-sm-4 control-label mt-5">Product Line:</label>
                                 <div class="col-sm-8">
-                                    <select class="form-control select-validate srch-clear" name="srch_materials_code" id="srch_materials_code">
+                                    <select class="form-control select-validate srch-clear" name="srch_product_line" style="width:100%;" id="srch_product_line">
+                                        <option value=""></option>
+                                    </select>
+                                    <div id="srch_product_line_feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="srch_item_code" class="col-sm-4 control-label mt-5">Item Code:</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control select-validate srch-clear" name="srch_item_code" id="srch_item_code">
                                         <option value=''></option>
                                     </select>
-                                    <div id="srch_materials_code_feedback"></div>
+                                    <div id="srch_item_code_feedback"></div>
                                 </div>
                             </div>
                             
@@ -358,7 +416,7 @@
                             </div>
 
                             <div class="form-group row">
-                                <label for="srch_schedule" class="col-sm-3 control-label mt-5">Schedule:</label>
+                                <label for="srch_schedule" class="col-sm-3 control-label mt-5">Schedule/Class:</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control validate srch-clear" name="srch_schedule" id="srch_schedule">
                                     <div id="srch_schedule_feedback"></div>
@@ -372,14 +430,14 @@
                                     <div id="srch_size_feedback"></div>
                                 </div>
                             </div>
-                             <div class="form-group row">
+                             <div class="form-group row srch_material_div">
                                 <label for="srch_width" class="col-sm-3 control-label mt-5">Width:</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control validate srch-clear" name="srch_width" id="srch_width">
                                     <div id="srch_width_feedback"></div>
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            <div class="form-group row srch_material_div">
                                 <label for="srch_length" class="col-sm-3 control-label mt-5">Length:</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control validate srch-clear" name="srch_length" id="srch_length">
@@ -398,7 +456,15 @@
                                 </div>
                             </div>
 
-                            <div class="form-group row">
+                            <div class="form-group row srch_product_div">
+                                <label for="srch_lot_no" class="col-sm-3 control-label mt-5">Lot #:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control validate srch-clear" name="srch_lot_no" id="srch_lot_no">
+                                    <div id="srch_lot_no_feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row srch_material_div">
                                 <label for="srch_invoice_no" class="col-sm-3 control-label mt-5">Invoice No.:</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control validate srch-clear" name="srch_invoice_no" id="srch_invoice_no">
@@ -406,14 +472,14 @@
                                 </div>
                             </div>
 
-                            <div class="form-group row">
+                            <div class="form-group row srch_material_div">
                                 <label for="srch_supplier" class="col-sm-3 control-label mt-5">Supplier:</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control validate srch-clear" name="srch_supplier" id="srch_supplier">
                                     <div id="srch_supplier_feedback"></div>
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            <div class="form-group row srch_material_div">
                                 <label for="srch_supplier_heat_no" class="col-sm-3 control-label mt-5">Supplier Heat No:</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control validate srch-clear" name="srch_supplier_heat_no" id="srch_supplier_heat_no">
@@ -431,5 +497,36 @@
                 
             </div>
         </form>
+    </div>
+</div>
+
+<div id="modal_excel_format" class="modal fade " data-backdrop="static">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Choose Upload Format</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="loadingOverlay-modal"></div>
+                <div class="row justify-content-center mb-5">
+                    <div class="col-md-12">
+                        <button type="button" id="btn_material_format" class="btn bg-blue btn-block">Raw Material Format</button>
+                    </div>
+                </div>
+                <div class="row justify-content-center mb-5">
+                    <div class="col-md-12">
+                        <button type="button" id="btn_product_format" class="btn bg-green btn-block">Product Format</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn bg-red" data-dismiss="modal">Close</button>
+            </div>
+            
+        </div>
     </div>
 </div>

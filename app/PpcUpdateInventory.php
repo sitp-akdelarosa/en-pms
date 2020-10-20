@@ -7,12 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 class PpcUpdateInventory extends Model
 {
     protected $fillable = [
-			        'materials_type',
-					'materials_code',
+					'item_class',
+					'materials_type',
+					'product_line',
+					'item_code',
 					'description',
 					'item',
 					'alloy',
 					'schedule',
+					'class',
 					'size',
 					'width',
 					'length',
@@ -21,6 +24,7 @@ class PpcUpdateInventory extends Model
 					'qty_pcs',
 					'pcs_uom',
 					'heat_no',
+					'lot_no',
 					'invoice_no',
 					'received_date',
 					'supplier',	

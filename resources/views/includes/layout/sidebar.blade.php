@@ -29,10 +29,16 @@
             $array = json_decode($json, true);
             $category = array_column($array, 'category');
             $url = ""; $slug = ""; $route="";
+
+            $user_accecss = \DB::table('users as u')
+                                ->join('admin_user_types as ut','u.user_type','=','ut.id')
+                                ->select('ut.description','ut.category')
+                                ->where('u.id',Auth::user()->id)
+                                ->first();
         ?>
 
         <ul class="sidebar-menu" data-widget="tree">
-            @if (Auth::user()->user_category == 'PRODUCTION')
+            @if ($user_accecss->category == 'PRODUCTION')
                 <li class="{{ Request::is('prod/dashboard') ? ' active' : null }}">
                     <a href="{{ route('prod.dashboard') }}">
                         <i class="fa fa-dashboard"></i>

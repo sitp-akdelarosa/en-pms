@@ -5,34 +5,17 @@
 
 <section class="content">
     <div class="form-group row">
-        <div class="col-md-5">
-            <div class="input-group input-group-sm mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">Date From</span>
-                </div>
-                <input type="date" class="form-control" name="date_from" id="date_from" value="<?php echo e($from); ?>">
-            </div>
-        </div>
-
-        <div class="col-md-5">
-            <div class="input-group input-group-sm mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">Date To</span>
-                </div>
-                <input type="date" class="form-control" name="date_to" id="date_to" value="<?php echo e($to); ?>">
-            </div>
-        </div>
-
-        <div class="col-md-2">
-            <button  id="search" class="btn btn-block btn-lg bg-blue">
-                <i class="fa fa-search"></i> Search
-            </button>
-        </div>
+        
     </div>
 
     <div class="box">
         <div class="box-header with-border">
             <h3 class="box-title">Work In Progress</h3>
+            <div class="box-tools">
+                <button type="button" class="btn btn-sm bg-teal" id="btn_search_filter">
+                    <i class="fa fa-search"></i> Search / Filter
+                </button>
+            </div>
         </div>
 
         <div class="box-body">
@@ -64,6 +47,7 @@
                     </thead>
                     <tbody id="tbl_dashboard_body"></tbody>
                 </table>
+                
             
             
         </div>
@@ -85,6 +69,7 @@
     <div class="row" id="chart"></div>
 </section>
 <?php echo $__env->make('includes.modals.system-modals', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+<?php echo $__env->make('includes.modals.ppc-dashboard-modal', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startPush('scripts'); ?>
@@ -93,6 +78,8 @@
         var get_dashboard = "<?php echo e(url('/dashboard/get-dashboard')); ?>";
         var get_chartURl = "<?php echo e(url('/dashboard/pie-graph')); ?>";
         var get_jonoURL = "<?php echo e(url('/dashboard/get-jono')); ?>";
+        var downloadSearchExcelURL = "<?php echo e(url('/dashboard/dashboard-search-excel')); ?>";
+        var getFilteredDataURL = "<?php echo e(url('/dashboard/dashboard-search-filter')); ?>";
     </script>
     <script src="<?php echo e(mix('/js/pages/ppc/dashboard/dashboard.js')); ?>"></script>
 <?php $__env->stopPush(); ?>

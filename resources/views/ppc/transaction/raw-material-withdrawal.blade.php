@@ -27,8 +27,8 @@ foreach ($user_accesses as $user_access){
                 <div class="row mb-10">
                 	<div class="col-md-6">
                 		<div class="form-group row">
-		                    <label for="trans_no" class="col-sm-3 control-label mt-5">Transaction No:</label>
-		                    <div class="col-sm-7">
+		                    <label for="trans_no" class="col-sm-2 control-label mt-5">Transaction No:</label>
+		                    <div class="col-sm-6">
 		                        <div class="input-group input-group-sm">
 		                            <input type="text" class="form-control form-control-sm validate" name="trans_no" id="trans_no">
 		                            <div id="trans_no_feedback"></div>

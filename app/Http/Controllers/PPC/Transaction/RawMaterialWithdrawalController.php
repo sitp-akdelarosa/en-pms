@@ -673,7 +673,7 @@ class RawMaterialWithdrawalController extends Controller
                             'i.id as inv_id',
                             'pui.receiving_no as receiving_no',
                             'pui.materials_type as materials_type',
-                            'pui.materials_code as materials_code',
+                            'pui.item_code as item_code',
                             'pui.item as item',
                             'pui.alloy as alloy',
                             'pui.schedule as schedule',
@@ -1002,38 +1002,4 @@ class RawMaterialWithdrawalController extends Controller
             });
         })->download('xlsx');
     }
-
-    // public function getComputationIssuedQty(Request $req)
-    // {
-    //    $SumIssued_qty = 0;
-
-    //         if ($req->trans_no == '') {
-    //              $PpcRawMaterialWithdrawalDetails = PpcRawMaterialWithdrawalDetails::
-    //              where('material_heat_no',$req->material_heat_no)->get();  
-    //         }else{
-    //             $info = PpcRawMaterialWithdrawalInfo::select('id','trans_no')->where('trans_no',$req->trans_no)->first();
-    //             $PpcRawMaterialWithdrawalDetails = PpcRawMaterialWithdrawalDetails::where('trans_id','!=',$info->id)->  where('material_heat_no',$req->material_heat_no)->get();
-    //         }
-
-    //         foreach ($PpcRawMaterialWithdrawalDetails as $PRMWD){
-    //             if(isset($PRMWD->issued_qty)){
-    //                 $SumIssued_qty +=  $PRMWD->issued_qty;
-    //             }
-    //         }
-    //         $SumIssued_qty += $req->issued_qty;
-
-    //         if($req->inv_qty < $SumIssued_qty){
-    //             $data = [
-    //             'msg' => 'The total of All Issued Qty of '.$req->material_heat_no.' is Greater than Inventory quantity.',
-    //             'status' => 'failed',
-    //             'SumIssued_qty' => $SumIssued_qty
-    //             ];
-    //             return response()->json($data);
-    //          }
-    //         $data = [
-    //             'msg' => 'success',
-    //             'status' => 'success'
-    //             ];
-    //         return response()->json($data);
-    // }
 }

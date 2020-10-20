@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUomSettingsTable extends Migration
+class CreateProcessStatusesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,9 @@ class CreateUomSettingsTable extends Migration
      */
     public function up()
     {
-        Schema::create('uom_settings', function (Blueprint $table) {
+        Schema::create('process_statuses', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('description');
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ class CreateUomSettingsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('uom_settings');
+        Schema::dropIfExists('process_statuses');
     }
 }

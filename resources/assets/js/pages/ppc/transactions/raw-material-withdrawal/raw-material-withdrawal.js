@@ -713,7 +713,7 @@ function getMaterialDetails(material_heat_no, issued_qty, inv_id) {
 				$('#qty_weight').val("");
 				$('#inv_id').val("");
 
-				if (material.materials_code == undefined) {
+				if (material.item_code == undefined) {
 					$('#issued_qty').prop('readonly', true);
 					msg("Material Heat Number is not in the list.", "failed");
 				} else if (material.quantity == 0 && $('#item_id').val() == '') {
@@ -724,7 +724,7 @@ function getMaterialDetails(material_heat_no, issued_qty, inv_id) {
 					$('#alloy').val(material.alloy);
 					$('#size').val(material.size);
 					$('#length').val(material.length);
-					$('#mat_code').val(material.materials_code);
+					$('#mat_code').val(material.item_code);
 					$('#inv_qty').val(material.current_stock);
 					$('#qty_weight').val(material.qty_weight);
 					$('#issued_qty').prop('readonly', false);

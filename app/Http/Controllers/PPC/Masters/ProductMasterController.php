@@ -355,6 +355,7 @@ class ProductMasterController extends Controller
                 'pc.class as class',
                 'pc.size as size',
                 DB::raw('IFNULL(pc.standard_material_used, "") as standard_material_used'),
+                DB::raw('IFNULL(pc.finish_weight, 0) as finish_weight'),
                 DB::raw('IFNULL(pc.formula_classification, "") as formula_classification'),
                 'pc.create_user as create_user',
                 'pc.created_at as created_at'
@@ -374,6 +375,7 @@ class ProductMasterController extends Controller
                 'pc.class',
                 'pc.size',
                 'pc.standard_material_used',
+                'pc.finish_weight',
                 'pc.formula_classification',
                 'pc.create_user',
                 'pc.created_at'
@@ -409,6 +411,7 @@ class ProductMasterController extends Controller
             $prod->class = $req->class;
             $prod->alloy = $req->alloy;
             $prod->size = $req->size;
+            $prod->finish_weight = $req->finish_weight;
             $prod->standard_material_used = strtoupper($req->standard_material_used);
             //$prod->formula_classification = strtoupper($req->formula_classification);
             $prod->update_user = Auth::user()->id;
@@ -457,6 +460,7 @@ class ProductMasterController extends Controller
             $prod->class = $req->class;
             $prod->alloy = $req->alloy;
             $prod->size = $req->size;
+            $prod->finish_weight = $req->finish_weight;
             $prod->standard_material_used = strtoupper($req->standard_material_used);
             //$prod->formula_classification = strtoupper($req->formula_classification);
             $prod->create_user = Auth::user()->id;

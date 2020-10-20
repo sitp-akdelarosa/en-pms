@@ -17,12 +17,18 @@ class RedirectIfAuthenticated
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if (Auth::guard($guard)->check()) {
-            if (Auth::user()->user_category == 'OFFICE') {
-                return redirect('/dashboard');
-            } 
+        $user_access = \DB::table('users as u')
+                            ->join('admin_user_types as ut','u.user_type','=','ut.id')
+                            ->select('ut.description','ut.category')
+                            ->where('u.user_id',$request->user_id)
+                            ->first();
 
-            if (Auth::user()->user_category == 'PRODUCTION') {
+        if (Auth::guard($guard)->check()) {
+            if ($user_access->category == 'OFFICE' && $user_access->category == 'ALL') {
+                return redirect('/dashboard');
+            }
+
+            if ($user_access->category == 'PRODUCTION' && $user_access->category == 'ALL') {
                 return redirect('/prod/dashboard');
             }
         }

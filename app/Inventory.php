@@ -7,12 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 class Inventory extends Model
 {
     protected $fillable = [
+        'item_class',
         'materials_type',
-        'materials_code',
+        'product_line',
+        'item_code',
         'description',
         'item',
         'alloy',
         'schedule',
+        'class',
         'size',
         'width',
         'length',
@@ -22,6 +25,7 @@ class Inventory extends Model
         'qty_pcs',
         'pcs_uom',
         'heat_no',
+        'lot_no',
         'invoice_no',
         'received_date',
         'supplier',
