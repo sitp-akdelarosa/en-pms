@@ -1482,7 +1482,7 @@ class UpdateInventoryController extends Controller
             $srch_receiving_no = " AND receive_jo_no ".$equal."'".$_value."'";
         }
 
-        if (!is_null($req->srch_materials_type)) {
+        if (!is_null($req->srch_materials_type) && $req->srch_product_line !== "null") {
             $equal = "= ";
             $_value = $req->srch_materials_type;
             
@@ -1493,7 +1493,7 @@ class UpdateInventoryController extends Controller
             $srch_materials_type = " AND item_type_line ".$equal." '".$_value."'";
         }
 
-        if (!is_null($req->srch_product_line)) {
+        if (!is_null($req->srch_product_line) && $req->srch_product_line !== "null") {
             $equal = "= ";
             $_value = $req->srch_product_line;
             
@@ -1504,7 +1504,7 @@ class UpdateInventoryController extends Controller
             $srch_product_line = " AND item_type_line ".$equal." '".$_value."'";
         }
 
-        if (!is_null($req->srch_item_code)) {
+        if (!is_null($req->srch_item_code) && $req->srch_item_code !== "null") {
             $equal = "= ";
             $_value = $req->srch_item_code;
             
@@ -1695,7 +1695,7 @@ class UpdateInventoryController extends Controller
                 });
 
                 $sheet->cell('A4', function($cell) use($req) {
-                    if ($req->item_class == 'RAW MATERIAL') {
+                    if ($req->srch_item_class == 'RAW MATERIAL') {
                         $cell->setValue("Receiving No.");
                     } else {
                         $cell->setValue("J.O. No.");
@@ -1705,7 +1705,7 @@ class UpdateInventoryController extends Controller
                 });
 
                 $sheet->cell('B4', function($cell) use($req) {
-                    if ($req->item_class == 'RAW MATERIAL') {
+                    if ($req->srch_item_class == 'RAW MATERIAL') {
                         $cell->setValue("Material Type");
                     } else {
                         $cell->setValue("Product Line");
