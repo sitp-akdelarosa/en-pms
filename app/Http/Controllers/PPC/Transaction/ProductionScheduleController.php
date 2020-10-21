@@ -500,12 +500,14 @@ class ProductionScheduleController extends Controller
         $with_rmw = '';
 
         if (count((array)$rmw) > 0) {
-            $with_rmw = " AND rmw.trans_id = ".$rmw->id;
+            $with_rmw = " AND rmwi.trans_no = '".$req->rmw_no."'";
         }
 
         $heat_no = [];
 
-        $materials = DB::select("SELECT pui.heat_no as heat_no,
+        $materials = DB::select("SELECT rmwi.trans_no,
+                                    rmw.trans_id,
+                                    pui.heat_no as heat_no,
                                     ifnull(rmw.issued_uom,'') as uom,
                                     ifnull(rmw.issued_qty,0) as rmw_issued_qty,
                                     ifnull(rmw.scheduled_qty,0) as rmw_scheduled_qty,
@@ -519,12 +521,20 @@ class ProductionScheduleController extends Controller
                                         CONCAT( ' | (' ,ifnull(rmw.issued_qty,0), ')' )
                                     ) as `text`
                                 FROM ppc_update_inventories as pui
-                                left join admin_assign_production_lines as apl on apl.product_line = pui.materials_type
-                                left join ppc_raw_material_withdrawal_details as rmw 
+                                left join admin_assign_production_lines as apl 
+                                on apl.product_line = pui.materials_type
+
+                                inner join ppc_raw_material_withdrawal_details as rmw 
                                 on pui.heat_no = rmw.material_heat_no
                                 and pui.id = rmw.inv_id
+
+                                inner join ppc_raw_material_withdrawal_infos as rmwi 
+                                on rmw.trans_id = rmwi.id
+
                                 WHERE rmw.issued_qty <> 0 AND apl.user_id = ".Auth::user()->id.$with_rmw."
-                                group by pui.id,
+                                group by rmwi.trans_no,
+                                    rmw.trans_id,
+                                    pui.id,
                                     pui.heat_no,
                                     rmw.issued_qty,
                                     rmw.scheduled_qty,

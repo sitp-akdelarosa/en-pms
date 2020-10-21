@@ -342,7 +342,7 @@ $(function () {
       $('#alloy').val($(this).attr('data-alloy'));
       $('#size').val($(this).attr('data-size'));
       $('#length').val($(this).attr('data-length'));
-      $('#mat_code').val($(this).attr('data-materials_code'));
+      $('#mat_code').val($(this).attr('data-item_code'));
       $('#inv_qty').val($(this).attr('data-current_stock'));
       $('#qty_weight').val($(this).attr('data-qty_weight'));
       $('#issued_qty').prop('readonly', false);
@@ -765,7 +765,7 @@ function inventoryTable(arr) {
       data: function data(x) {
         var trimqty = x.quantity;
         var quantity = trimqty.toString().replace(/\s/g, '');
-        return "<button class='btn btn-sm bg-blue btn_pick_item' type='button'" + "data-receiving_no='" + x.receiving_no + "' " + "data-materials_type='" + x.materials_type + "' " + "data-materials_code='" + x.materials_code + "' " + "data-item='" + x.item + "' " + "data-alloy='" + x.alloy + "' " + "data-size='" + x.size + "' " + "data-length='" + x.length + "' " + "data-qty_weight='" + x.qty_weight + "' " + "data-qty_pcs='" + x.qty_pcs + "' " + "data-current_stock='" + x.current_stock + "' " + "data-heat_no='" + x.heat_no + "' " + "data-quantity='" + quantity + "'" + "data-inv_id='" + x.inv_id + "' " + ">" + "<i class='fa fa-edit'></i>" + "</button>";
+        return "<button class='btn btn-sm bg-blue btn_pick_item' type='button'" + "data-receiving_no='" + x.receiving_no + "' " + "data-materials_type='" + x.materials_type + "' " + "data-item_code='" + x.item_code + "' " + "data-item='" + x.item + "' " + "data-alloy='" + x.alloy + "' " + "data-size='" + x.size + "' " + "data-length='" + x.length + "' " + "data-qty_weight='" + x.qty_weight + "' " + "data-qty_pcs='" + x.qty_pcs + "' " + "data-current_stock='" + x.current_stock + "' " + "data-heat_no='" + x.heat_no + "' " + "data-quantity='" + quantity + "'" + "data-inv_id='" + x.inv_id + "' " + ">" + "<i class='fa fa-edit'></i>" + "</button>";
       },
       orderable: false,
       searchable: false
@@ -774,7 +774,7 @@ function inventoryTable(arr) {
     }, {
       data: 'materials_type'
     }, {
-      data: 'materials_code'
+      data: 'item_code'
     }, {
       data: 'item'
     }, {

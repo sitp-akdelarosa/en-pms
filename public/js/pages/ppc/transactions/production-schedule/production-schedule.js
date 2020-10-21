@@ -1006,7 +1006,7 @@ function getMaterialHeatNo(withdrawal_slip_no) {
     //     op = "<option value=''></option>";
     // }
   }).fail(function (xhr, textStatus, errorThrown) {
-    msg(errorThrown, textStatus);
+    ErrorMsg(xhr);
   }).always(function () {});
 }
 

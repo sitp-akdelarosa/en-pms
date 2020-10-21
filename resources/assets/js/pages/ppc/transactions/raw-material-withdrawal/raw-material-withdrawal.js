@@ -285,7 +285,7 @@ $(function () {
 			$('#alloy').val($(this).attr('data-alloy'));
 			$('#size').val($(this).attr('data-size'));
 			$('#length').val($(this).attr('data-length'));
-			$('#mat_code').val($(this).attr('data-materials_code'));
+			$('#mat_code').val($(this).attr('data-item_code'));
 			$('#inv_qty').val($(this).attr('data-current_stock'));
 			$('#qty_weight').val($(this).attr('data-qty_weight'));
 			$('#issued_qty').prop('readonly', false);
@@ -769,7 +769,7 @@ function inventoryTable(arr) {
 					return "<button class='btn btn-sm bg-blue btn_pick_item' type='button'"+
 								"data-receiving_no='"+x.receiving_no+"' "+
 								"data-materials_type='"+x.materials_type+"' "+
-								"data-materials_code='"+x.materials_code+"' "+
+								"data-item_code='"+x.item_code+"' "+
 								"data-item='"+x.item+"' "+
 								"data-alloy='"+x.alloy+"' "+
 								"data-size='"+x.size+"' "+
@@ -787,7 +787,7 @@ function inventoryTable(arr) {
 			},
 			{ data: 'receiving_no' },
 			{ data: 'materials_type' },
-			{ data: 'materials_code' },
+			{ data: 'item_code' },
 			{ data: 'item' },
 			{ data: 'alloy' },
 			{ data: 'size' },

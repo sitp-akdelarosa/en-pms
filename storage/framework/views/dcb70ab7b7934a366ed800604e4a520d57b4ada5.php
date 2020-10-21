@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
 
-    <title><?php echo e(config('app.name', 'Laravel')); ?></title>
+    <title>Login | <?php echo e(config('app.name', 'Production Monitoring System')); ?></title>
     <link rel="stylesheet" href="<?php echo e(mix('/css/main.css')); ?>">
 
     <link rel="shortcut icon" type="image/x-icon" href="<?php echo e(asset('images/favicon.ico')); ?>">
