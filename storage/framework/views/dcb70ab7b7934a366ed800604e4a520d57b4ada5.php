@@ -9,7 +9,7 @@
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
 
     <title>Login | <?php echo e(config('app.name', 'Production Monitoring System')); ?></title>
-    <link rel="stylesheet" href="<?php echo e(mix('/css/main.css')); ?>">
+    <link rel="stylesheet" href="<?php echo e(mix('/css/login.css')); ?>">
 
     <link rel="shortcut icon" type="image/x-icon" href="<?php echo e(asset('images/favicon.ico')); ?>">
 </head>
@@ -32,6 +32,7 @@
 
         </div>
     </div>
-    <script src="<?php echo e(mix('/js/main.js')); ?>"></script>
+    <script src="<?php echo e(mix('/js/login.js')); ?>"></script>
+    <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 </html>

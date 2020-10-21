@@ -27,6 +27,8 @@
     "/js/pages/profile.js": "/js/pages/profile.js",
     "/css/main.css": "/css/main.css",
     "/js/main.js": "/js/main.js",
+    "/css/login.css": "/css/login.css",
+    "/js/login.js": "/js/login.js",
     "/js/pages/ppc/masters/product-master/product-master.js": "/js/pages/ppc/masters/product-master/product-master.js",
     "/js/pages/ppc/masters/material-master/material-master.js": "/js/pages/ppc/masters/material-master/material-master.js",
     "/js/pages/ppc/masters/process-master/process-master.js": "/js/pages/ppc/masters/process-master/process-master.js"

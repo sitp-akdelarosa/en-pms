@@ -53,6 +53,27 @@ mix.js('resources/assets/js/app.js', 'public/js')
         'resources/assets/js/csrf_token.js'        
     ], 'public/js/main.js')
 
+    .styles([
+        'resources/assets/plugins/bootstrap/dist/css/bootstrap.css',
+        'resources/assets/plugins/bootstrap/dist/css/bootstrap-extend.css',
+        'resources/assets/plugins/font-awesome/css/font-awesome.css',
+        'resources/assets/plugins/Ionicons/css/ionicons.css',
+        'resources/assets/css/master_style.css',
+        'resources/assets/css/custom_styles.css',
+        'resources/assets/css/skins/_all-skins.css'
+    ], 'public/css/login.css')
+
+    .scripts([
+        'public/js/app.js',
+        'resources/assets/plugins/bootstrap/dist/js/bootstrap.min.js',
+        'resources/assets/plugins/jquery-slimscroll/jquery.slimscroll.min.js',
+        'resources/assets/plugins/fastclick/lib/fastclick.js',
+        'resources/assets/js/template.js',
+        'resources/assets/js/resizer.js',
+        'resources/assets/js/csrf_token.js'
+    ], 'public/js/login.js')
+
+
     .js('resources/assets/js/pages/profile.js', 'public/js/pages/')
     .js('resources/assets/js/pages/notification.js', 'public/js/pages/')
     

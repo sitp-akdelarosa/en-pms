@@ -9,7 +9,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>Login | {{ config('app.name', 'Production Monitoring System') }}</title>
-    <link rel="stylesheet" href="{{ mix('/css/main.css') }}">
+    <link rel="stylesheet" href="{{ mix('/css/login.css') }}">
 
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('images/favicon.ico') }}">
 </head>
@@ -32,6 +32,7 @@
 
         </div>
     </div>
-    <script src="{{ mix('/js/main.js') }}"></script>
+    <script src="{{ mix('/js/login.js') }}"></script>
+    @stack('scripts')
 </body>
 </html>

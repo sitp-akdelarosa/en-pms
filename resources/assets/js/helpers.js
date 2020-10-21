@@ -38,6 +38,7 @@ Echo.channel('notification')
 
 
 $( document ).ajaxError(function( event, jqxhr, settings, thrownError ) {
+	console.log(jqxhr);
 	if (jqxhr.status == 403 || jqxhr.status == 401) {
 		swal({
 			title: "Session Expired!",
