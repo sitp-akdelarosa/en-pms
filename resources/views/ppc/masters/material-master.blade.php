@@ -1,5 +1,10 @@
 @extends('layouts.app')
 
+@section('title')
+	Material Master
+@endsection
+
+
 @section('content')
  <?php
  $exist = 0;

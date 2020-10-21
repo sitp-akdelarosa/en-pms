@@ -1,4 +1,9 @@
 @extends('pdf.layout')
+
+@section('title')
+	Product Withdrawal Slip
+@endsection
+
 @section('body')
 
     @if ($print_format == 'FINISHED')

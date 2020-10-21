@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('title')
+	Travel Sheet
+@endsection
+
 @push('styles')
     <style type="text/css">
         .dataTables_scrollHeadInner{

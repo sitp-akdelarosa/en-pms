@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('title')
+	Transfer Items Approval
+@endsection
+
 @push('styles')
     <style>
     </style>

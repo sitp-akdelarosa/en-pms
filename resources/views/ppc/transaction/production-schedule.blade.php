@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('title')
+	Production Schedule
+@endsection
+
 @section('content')
  <?php
  $exist = 0;

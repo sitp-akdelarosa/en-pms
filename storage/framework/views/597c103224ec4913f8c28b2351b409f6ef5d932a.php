@@ -1,3 +1,7 @@
+<?php $__env->startSection('title'); ?>
+	PPC Dashboard
+<?php $__env->stopSection(); ?>
+
 <?php $__env->startSection('content'); ?>
 <section class="content-header">
     <h1>Dashboard</h1>

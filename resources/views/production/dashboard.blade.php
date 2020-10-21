@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('title')
+	Production Dashboard
+@endsection
+
 @section('content')
 <section class="content-header">
 	<h1>Dashboard</h1>

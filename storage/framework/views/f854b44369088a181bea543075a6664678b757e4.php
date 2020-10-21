@@ -8,6 +8,11 @@
     </style>
 <?php $__env->stopPush(); ?>
 
+<?php $__env->startSection('title'); ?>
+	<?php echo e($user->firstname.' '.$user->lastname); ?>
+
+<?php $__env->stopSection(); ?>
+
 <?php $__env->startSection('content'); ?>
 <section class="content-header">
     <h1>Profile</h1>

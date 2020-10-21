@@ -13,7 +13,7 @@
     <meta name="user_id" content="<?php echo e(Auth::user()->id); ?>">
     <?php endif; ?>
 
-    <title><?php echo e(config('app.name', 'Production Monitoring System')); ?></title>
+    <title><?php echo $__env->yieldContent('title'); ?> | <?php echo e(config('app.name', 'Production Monitoring System')); ?></title>
 
     <?php echo $__env->yieldPushContent('styles'); ?>
     <link rel="stylesheet" href="<?php echo e(mix('/css/main.css')); ?>">

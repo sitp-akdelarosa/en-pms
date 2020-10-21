@@ -1,5 +1,9 @@
 @extends('pdf.layout')
 
+@section('title')
+	Cutting Schedule
+@endsection
+
 @push('css')
 <style type="text/css">
 	.left {

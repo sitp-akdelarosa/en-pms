@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('title')
+	Operator Master
+@endsection
+
 @section('content')
 <section class="content-header">
     <h1>Operator Master</h1>

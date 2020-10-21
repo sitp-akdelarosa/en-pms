@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('title')
+	Operator's Output
+@endsection
+
 @section('content')
  <?php
  $exist = 0;

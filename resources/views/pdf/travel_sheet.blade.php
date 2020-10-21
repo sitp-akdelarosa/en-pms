@@ -1,5 +1,10 @@
 @extends('pdf.layout')
 
+@section('title')
+	Travel Sheet
+@endsection
+
+
 @push('css')
 	<style>
         .header, .footer {

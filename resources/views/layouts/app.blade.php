@@ -13,7 +13,7 @@
     <meta name="user_id" content="{{ Auth::user()->id }}">
     @endif
 
-    <title>{{ config('app.name', 'Production Monitoring System') }}</title>
+    <title>@yield('title') | {{ config('app.name', 'Production Monitoring System') }}</title>
 
     @stack('styles')
     <link rel="stylesheet" href="{{ mix('/css/main.css') }}">

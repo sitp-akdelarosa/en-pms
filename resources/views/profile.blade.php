@@ -10,6 +10,10 @@
     </style>
 @endpush
 
+@section('title')
+	{{ $user->firstname.' '.$user->lastname }}
+@endsection
+
 @section('content')
 <section class="content-header">
     <h1>Profile</h1>

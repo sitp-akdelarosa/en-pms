@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('title')
+	FG Summary
+@endsection
+
 @section('content')
 <?php
  $exist = 0;

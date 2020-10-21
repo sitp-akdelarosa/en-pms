@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('title')
+	Travel Sheet Status Report
+@endsection
+
 @section('content')
 <section class="content-header">
     <h1>Travel Sheet Status</h1>

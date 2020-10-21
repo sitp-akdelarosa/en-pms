@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('title')
+	Update Inventory
+@endsection
+
 @section('content')
  <?php
  $exist = 0;

@@ -1,4 +1,9 @@
 @extends('layouts.app')
+
+@section('title')
+	Production Output
+@endsection
+
 @push('styles')
 	<style>
 		.thead-dark {

@@ -1,4 +1,9 @@
 @extends('pdf.layout')
+
+@section('title')
+	Raw Material Withdrawal Slip
+@endsection
+
 @section('body')
 
 	@if ($print_format == 'material_withdrawal')

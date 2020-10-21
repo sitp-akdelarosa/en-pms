@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('title')
+	Product Withdrawal
+@endsection
+
 @section('content')
  <?php
  $exist = 0;
