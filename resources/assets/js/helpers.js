@@ -38,19 +38,22 @@ Echo.channel('notification')
 
 
 $( document ).ajaxError(function( event, jqxhr, settings, thrownError ) {
-	swal({
-	    title: "Session Expired!",
-	    text: "You'll be take to the login page.",
-	    type: "warning",
-	    showCancelButton: true,
-	    confirmButtonColor: "#f95454",
-	    confirmButtonText: "OK",
-	    closeOnConfirm: true,
-	}, function(isConfirm){
-	    if (isConfirm) {
-	        location.href = "/";
-	    }
-	}); 
+	if (jqxhr.status == 403 || jqxhr.status == 401) {
+		swal({
+			title: "Session Expired!",
+			text: "You'll be take to the login page.",
+			type: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#f95454",
+			confirmButtonText: "OK",
+			closeOnConfirm: true,
+		}, function (isConfirm) {
+			if (isConfirm) {
+				location.href = "/";
+			}
+		}); 
+	}
+	
 });
 
 $( function() {

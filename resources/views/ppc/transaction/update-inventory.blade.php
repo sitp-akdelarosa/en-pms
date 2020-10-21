@@ -26,7 +26,7 @@ foreach ($user_accesses as $user_access){
 	<div class="row justify-content-center">
         <div class="col-lg-8 col-md-10 col-sm-12 col-xs-12">
 
-            <form id="frm_update_inventory" role="form" method="post" files="true" enctype="multipart/form-data" action="">
+            <form id="frm_update_inventory" role="form" method="post" class="form-inline" files="true" enctype="multipart/form-data" action="">
                 @csrf
                 <div class="form-group row">
                     <label for="item_class" class="col-md-1 control-label mt-5">Item Class:</label>
@@ -76,7 +76,9 @@ foreach ($user_accesses as $user_access){
                                     <th>Size</th>
                                     <th>Width</th>
                                     <th>Length</th>
-                                    <th>Crude / Finish Weight</th>
+                                    <th>Std. Material Wt.</th>
+                                    <th>Std. wt. Received</th>
+                                    <th>Crude / Finish Wt.</th>
                                     <th>Qty(KGS)</th>
                                     <th>Qty(PCS)</th>
                                     <th>Stock(PCS)</th>
@@ -93,29 +95,29 @@ foreach ($user_accesses as $user_access){
                     </div>
                     
                     <div class="row justify-content-center mb-5">
-                        <div class="col-md-2">
+                        <div class="col-lg-2 col-md-2 col-sm-3">
                             <button id="btn_zero" class="btn btn-sm btn-block bg-blue mb-3">Include 0 quantity</button>
                         </div>
 
-                        <div class="col-md-2">
+                        <div class="col-lg-2 col-md-2 col-sm-3">
                             <button id="btn_add" class="btn btn-sm btn-block bg-green mb-3 permission-button">
                                 <i class="fa fa-plus"></i> Add Product / Material
                             </button>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-lg-2 col-md-2 col-sm-3">
                             <button id="btn_check_unregistered" class="btn btn-sm btn-block bg-purple mb-3 permission-button">
                                 <i class="fa fa-check"></i> Check Unregistered Materials
                             </button>
                         </div>
 
-                        <div class="col-md-2">
+                        <div class="col-lg-2 col-md-2 col-sm-3">
                             <button id="btn_download_format" class="btn btn-sm btn-block bg-navy mb-3">
                                 <i class="fa fa-file-excel-o"></i> Download Format
                             </button>
                         </div>
 
-                        <div class="col-md-2">
+                        <div class="col-lg-2 col-md-2 col-sm-3">
                             <button id="btn_search_filter" class="btn btn-sm btn-block bg-teal mb-3">
                                 <i class="fa fa-search"></i> Search / Filter
                             </button>

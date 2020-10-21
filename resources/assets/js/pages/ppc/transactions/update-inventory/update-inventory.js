@@ -793,7 +793,7 @@ function InventoryTable(arr) {
 	$('#tbl_materials').dataTable().fnDestroy();
 	$('#tbl_materials').dataTable({
 		data: arr,
-		order: [[14,'asc']],
+		order: [[21,'desc']],
 		scrollX: true,
 		columns: [
 			{
@@ -810,6 +810,8 @@ function InventoryTable(arr) {
 						"data-alloy='" + data.alloy + "'" +
 						"data-schedule='" + data.schedule + "'" +
 						"data-size='" + data.size + "'" +
+						"data-std_weight='" + data.std_weight + "'" +
+						"data-std_weight_received='" + data.std_weight_received + "'" +
 						"data-finish_weight='" + data.finish_weight + "'" +
 						"data-qty_weight='" + data.qty_weight + "'" +
 						"data-qty_pcs='" + data.qty_pcs + "'" +
@@ -838,6 +840,8 @@ function InventoryTable(arr) {
 			{ data: 'size' },
 			{ data: 'width' },
 			{ data: 'length' },
+			{ data: 'std_weight' },
+			{ data: 'std_weight_received' },
 			{ data: 'finish_weight' },
 			{ data: 'qty_weight' },
 			{ data: 'qty_pcs' },
