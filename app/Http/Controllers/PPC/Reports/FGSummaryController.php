@@ -21,8 +21,8 @@ class FGSummaryController extends Controller
 
     public function __construct()
     {
-        $this->middleware('ajax-session-expired');
-        $this->middleware('auth');
+        // $this->middleware('ajax-session-expired');
+        // $this->middleware('auth');
         $this->_helper = new HelpersController;
         $this->_audit = new AuditTrailController;
 

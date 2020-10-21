@@ -35,7 +35,7 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::group(['middleware' => ['ppc', 'auth', 'no.back', 'deleted_user']], function () {
+Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', 'ppc', 'no.back']], function () {
 
 	Route::group(['prefix' => 'dashboard'], function () {
 		Route::get('/', 'PPC\DashboardController@index')->name('dashboard');
@@ -389,7 +389,7 @@ Route::group(['middleware' => ['ppc', 'auth', 'no.back', 'deleted_user']], funct
 	});
 });
 
-Route::group(['prefix' => 'prod', 'middleware' => ['production', 'auth', 'no.back', 'deleted_user']], function () {
+Route::group(['prefix' => 'prod', 'middleware' => ['ajax-session-expired', 'auth', 'deleted_user', 'production','no.back',]], function () {
 	Route::group(['prefix' => 'dashboard'], function () {
 		Route::get('/', 'Production\DashboardController@index')
 			->name('prod.dashboard');
@@ -466,7 +466,7 @@ Route::group(['prefix' => 'prod', 'middleware' => ['production', 'auth', 'no.bac
 	});
 });
 
-Route::group(['prefix' => 'admin', 'middleware' => ['admin', 'auth', 'no.back', 'deleted_user']], function () {
+Route::group(['prefix' => 'admin', 'middleware' => ['ajax-session-expired', 'auth', 'deleted_user', 'admin', 'no.back']], function () {
 
 	Route::group(['prefix' => 'user-type'], function () {
 		Route::get('/', 'Admin\UserTypeController@index')
