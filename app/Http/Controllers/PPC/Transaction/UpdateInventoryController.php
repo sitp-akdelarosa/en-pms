@@ -642,7 +642,7 @@ class UpdateInventoryController extends Controller
                                         'lot_no' => strtoupper($field['lotnumber']),
                                         'invoice_no' => 'N/A',
                                         //'received_date' => DATE_FORMAT($field['receiveddate'], 'Y-m-d').' '.date('H:i:s'),
-                                        'supplier' => strtoupper($field['supplier']),
+                                        'supplier' => 'N/A',
                                         'width' => 'N/A',
                                         'length' => 'N/A',
                                         'supplier_heat_no' => 'N/A',
