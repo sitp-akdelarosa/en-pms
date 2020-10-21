@@ -24,7 +24,7 @@ foreach ($user_accesses as $user_access){
 	<div class="row justify-content-center">
         <div class="col-lg-8 col-md-10 col-sm-12 col-xs-12">
 
-            <form id="frm_update_inventory" role="form" method="post" class="form-inline" files="true" enctype="multipart/form-data" action="">
+            <form id="frm_update_inventory" role="form" method="post" files="true" enctype="multipart/form-data" action="">
                 <?php echo csrf_field(); ?>
                 <div class="form-group row">
                     <label for="item_class" class="col-md-1 control-label mt-5">Item Class:</label>

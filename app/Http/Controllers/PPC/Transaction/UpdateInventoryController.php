@@ -235,10 +235,10 @@ class UpdateInventoryController extends Controller
             if($this->checkExcessSpace($field,$item_class)) {
 
             } else {
-                if (empty($field['jo_no']) && is_null($field['jo_no'])) {
-                    $failed++;
-                    array_push($msg, 'Please provide J.O. No. for Line '.$line.'.');
-                }
+                // if (empty($field['jo_no']) && is_null($field['jo_no'])) {
+                //     $failed++;
+                //     array_push($msg, 'Please provide J.O. No. for Line '.$line.'.');
+                // }
 
                 if (empty($field['product_line']) && is_null($field['product_line'])) {
                     $failed++;
@@ -567,8 +567,7 @@ class UpdateInventoryController extends Controller
                 (!empty($field['qty_pcs']) && !is_null($field['qty_pcs'])) ||
                 (!empty($field['heatnumber']) && !is_null($field['heatnumber'])) ||
                 (!empty($field['lotnumber']) && !is_null($field['lotnumber'])) ||
-                (!empty($field['product_line']) && !is_null($field['product_line'])) ||
-                (!empty($field['jo_no']) && !is_null($field['jo_no'])) ) {
+                (!empty($field['product_line']) && !is_null($field['product_line']))) {
 
                 //$uom = preg_replace('/[0-9]+/', '', strtoupper($field['uom']));
 
@@ -593,7 +592,7 @@ class UpdateInventoryController extends Controller
 
                     NotRegisteredMaterial::insert([
                         'item_class' => $iclass,
-                        'jo_no' => strtoupper($field['jo_no']),
+                        'jo_no' => (isset($field['jo_no']))? strtoupper($field['jo_no']): 'N/A',
                         'product_line' => (isset($prod->product_line))? $prod->product_line: strtoupper($field['product_line']),
                         'item_code' => strtoupper($field['itemcode']),
                         'qty_weight' => $field['qty_weight'],
@@ -627,7 +626,7 @@ class UpdateInventoryController extends Controller
 
                         $received_id = PpcUpdateInventory::insertGetId([
                                         'item_class' => $iclass,
-                                        'jo_no' => strtoupper($field['jo_no']),
+                                        'jo_no' => (isset($field['jo_no']))? strtoupper($field['jo_no']): 'N/A',
                                         'product_line' =>   $PpcProductCode->product_type,
                                         'item_code' => strtoupper($field['itemcode']),
                                         'description' =>  $PpcProductCode->code_description,
@@ -656,7 +655,7 @@ class UpdateInventoryController extends Controller
 
                         Inventory::insert([
                             'item_class' => $iclass,
-                            'jo_no' => strtoupper($field['jo_no']),
+                            'jo_no' => (isset($field['jo_no']))? strtoupper($field['jo_no']): 'N/A',
                             'product_line' =>   $PpcProductCode->product_type,
                             'item_code' => strtoupper($field['itemcode']),
                             'description' =>  $PpcProductCode->code_description,
@@ -918,7 +917,7 @@ class UpdateInventoryController extends Controller
         if (isset($req->item_id)) {
             
             $this->validate($req, [
-                'jo_no' => 'required',
+                // 'jo_no' => 'required',
                 'product_line' => 'required',
                 'item_code' => 'required',
                 'qty_weight' => 'required|numeric',
@@ -931,7 +930,7 @@ class UpdateInventoryController extends Controller
                 $UP = PpcUpdateInventory::find($req->item_id);
 
                 $UP->item_class = $req->item_class;
-                $UP->jo_no = strtoupper($req->jo_no);
+                $UP->jo_no = (!is_null($req->jo_no))? strtoupper($req->jo_no): 'N/A';
                 $UP->product_line = strtoupper($req->product_line);
                 $UP->item_code = strtoupper($req->item_code);
                 $UP->description = strtoupper($req->description);
@@ -957,7 +956,7 @@ class UpdateInventoryController extends Controller
                     Inventory::where('received_id',$req->item_id)
                             ->update([
                                 'item_class' => $req->item_class,
-                                'jo_no' => strtoupper($req->jo_no),
+                                'jo_no' => (!is_null($req->jo_no))? strtoupper($req->jo_no): 'N/A',
                                 'product_line' => strtoupper($req->product_line),
                                 'item_code' => strtoupper($req->item_code),
                                 'description' => strtoupper($req->description),
@@ -1006,7 +1005,7 @@ class UpdateInventoryController extends Controller
 
             $received = PpcUpdateInventory::insertGetId([
                             'item_class' => $req->item_class,
-                            'jo_no' => strtoupper($req->jo_no),
+                            'jo_no' => (!is_null($req->jo_no))? strtoupper($req->jo_no): 'N/A',
                             'product_line' => strtoupper($req->product_line),
                             'item_code' => strtoupper($req->item_code),
                             'description' => strtoupper($req->description),
@@ -1037,7 +1036,7 @@ class UpdateInventoryController extends Controller
                 $inv = new Inventory();
 
                 $inv->item_class = $req->item_class;
-                $inv->jo_no = strtoupper($req->jo_no);
+                $inv->jo_no = (!is_null($req->jo_no))? strtoupper($req->jo_no): 'N/A';
                 $inv->product_line = strtoupper($req->product_line);
                 $inv->item_code = strtoupper($req->item_code);
                 $inv->description = strtoupper($req->description);

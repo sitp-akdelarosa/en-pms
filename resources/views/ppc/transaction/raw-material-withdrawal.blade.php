@@ -29,24 +29,24 @@ foreach ($user_accesses as $user_access){
                 <input type="hidden" name="id" id="id">
 
                 <div class="row mb-10">
-                	<div class="col-md-6">
+                	<div class="col-lg-6 col-md-9 col-sm-12">
                 		<div class="form-group row">
-		                    <label for="trans_no" class="col-sm-2 control-label mt-5">Transaction No:</label>
-		                    <div class="col-sm-6">
+		                    <label for="trans_no" class="col-md-2 col-sm-3 control-label mt-5">Transaction No:</label>
+		                    <div class="col-md-6 col-sm-9">
 		                        <div class="input-group input-group-sm">
 		                            <input type="text" class="form-control form-control-sm validate" name="trans_no" id="trans_no">
 		                            <div id="trans_no_feedback"></div>
 		                            <div class="input-group-append">
-		                            	<button type="button" class="btn btn-sm bg-blue" id="btn_first">
+		                            	<button type="button" class="btn btn-sm bg-blue" id="btn_first" style="width: 30px; border-color: #6c757d">
 		                            		<i class="fa fa-angle-double-left"></i>
 		                            	</button>
-		                            	<button type="button" class="btn btn-sm bg-blue" id="btn_prev">
+		                            	<button type="button" class="btn btn-sm bg-blue" id="btn_prev" style="width: 30px; border-color: #6c757d">
 		                            		<i class="fa fa-angle-left"></i>
 		                            	</button>
-		                            	<button type="button" class="btn btn-sm bg-blue" id="btn_next">
+		                            	<button type="button" class="btn btn-sm bg-blue" id="btn_next" style="width: 30px; border-color: #6c757d">
 		                            		<i class="fa fa-angle-right"></i>
 		                            	</button>
-		                            	<button type="button" class="btn btn-sm bg-blue" id="btn_last">
+		                            	<button type="button" class="btn btn-sm bg-blue" id="btn_last" style="width: 30px; border-color: #6c757d">
 		                            		<i class="fa fa-angle-double-right"></i>
 		                            	</button>
 		                            	
@@ -62,8 +62,8 @@ foreach ($user_accesses as $user_access){
                 		<input class="clear" type="hidden" name="item_id" id="item_id">
                         <input class="clear" type="hidden" name="save_issued_qty" id="save_issued_qty">
                         <div class="form-group row">
-                            <label for="material_heat_no" class="col-sm-4 control-label mt-5">Material Heat No:</label>
-                            <div class="col-sm-8">
+                            <label for="material_heat_no" class="col-lg-4 col-md-4 col-sm-3 control-label mt-5">Material Heat No:</label>
+                            <div class="col-lg-8 col-md-8 col-sm-9">
                                 <div class="input-group mb-3 input-group-sm">
                                     <input type="text" class="form-control form-control-sm validate clear input" id="material_heat_no" name="material_heat_no">
                                     <input type="hidden" class="clear input" id="inv_id" name="inv_id">
@@ -79,8 +79,8 @@ foreach ($user_accesses as $user_access){
                             </div>
                         </div>
                 		<div class="form-group row">
-                            <label for="mat_code" class="col-sm-4 control-label mt-5">Material Code:</label>
-                            <div class="col-sm-8">
+                            <label for="mat_code" class="col-lg-4 col-md-4 col-sm-3 control-label mt-5">Material Code:</label>
+                            <div class="col-lg-8 col-md-8 col-sm-9">
                                 <input type="text" class="form-control form-control-sm validate clear input" id="mat_code" name="mat_code" maxlength="16" readonly>
 		                        <div id="mat_code_feedback"></div>
                             </div>
