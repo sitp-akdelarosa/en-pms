@@ -395,13 +395,13 @@ class ProductionScheduleController extends Controller
                                     d.update_user as update_user,
                                     d.updated_at as updated_at,
                                     s.rmw_no as rmw_no,
-                                    ifnull(pui.inv_id,0) as inv_id
+                                    ifnull(pui.id,0) as inv_id
                             FROM ppc_jo_details_summaries as s
                             JOIN ppc_jo_details as d ON d.jo_summary_id = s.id
                             LEFT JOIN ppc_jo_travel_sheets as ts ON ts.id = d.jo_summary_id
                             LEFT JOIN ppc_product_codes as pc ON d.product_code = pc.product_code
                             LEFT JOIN admin_assign_production_lines as pl ON pl.product_line = pc.product_type
-                            LEFT JOIN ppc_update_inventories as pui ON d.inv_id = pui.inv_id
+                            LEFT JOIN inventories as pui ON d.inv_id = pui.id
                             WHERE s.jo_no = '".$req->JOno."'
                             AND ts.status IN (1,0)
                             AND pl.user_id = ".Auth::user()->id."
@@ -419,7 +419,7 @@ class ProductionScheduleController extends Controller
                                     d.update_user,
                                     d.updated_at,
                                     s.rmw_no,
-                                    pui.inv_id");
+                                    pui.id");
 
         return response()->json($details);
     }
@@ -501,90 +501,129 @@ class ProductionScheduleController extends Controller
 
         if (count((array)$rmw) > 0) {
             $with_rmw = " AND rmwi.trans_no = '".$req->rmw_no."'";
-        }
 
-        $heat_no = [];
+            $heat_no = [];
 
-        $materials = DB::select("SELECT rmwi.trans_no,
-                                    rmw.trans_id,
-                                    pui.heat_no as heat_no,
-                                    ifnull(rmw.issued_uom,'') as uom,
-                                    ifnull(rmw.issued_qty,0) as rmw_issued_qty,
-                                    ifnull(rmw.scheduled_qty,0) as rmw_scheduled_qty,
-                                    rmw.id as rmw_id,
-                                    rmw.inv_id as inv_id,
-                                    pui.length as rmw_length,
-                                    pui.id as upd_inv_id,
-                                    CONCAT(
+            $materials = DB::select("SELECT rmwi.trans_no,
+                                        rmw.trans_id,
+                                        pui.heat_no as heat_no,
+                                        ifnull(rmw.issued_uom,'') as uom,
+                                        ifnull(rmw.issued_qty,0) as rmw_issued_qty,
+                                        ifnull(rmw.scheduled_qty,0) as rmw_scheduled_qty,
+                                        rmw.id as rmw_id,
+                                        rmw.inv_id as inv_id,
+                                        pui.length as rmw_length,
+                                        pui.id as upd_inv_id,
+                                        pui.item_code as item_code,
+                                        CASE 
+                                            WHEN pui.materials_type LIKE '%BAR%' THEN 'BAR'
+                                            WHEN pui.materials_type LIKE '%PIPE%' THEN 'PIPE'
+                                            WHEN pui.materials_type LIKE '%PLATE%' THEN 'PLATE'
+                                            ELSE ''
+                                        END as material_type,
+                                        CONCAT(
+                                            pui.heat_no,
+                                            IF(pui.length = 'N/A','', CONCAT(' | (',pui.length,')') ),
+                                            CONCAT( ' | (' ,ifnull(rmw.issued_qty,0), ')' )
+                                        ) as `text`,
+                                        CASE
+                                            WHEN pui.materials_type LIKE '%BAR%' THEN
+                                                pui.length / ((((SELECT cut_length from ppc_product_codes
+                                                where product_code = '".$req->prod_code."') / TRIM(BOTH 'MM' FROM TRIM(BOTH 'mm' FROM pui.size )) / TRIM(BOTH 'MM' FROM TRIM(BOTH 'mm' FROM pui.size ))/6.2)*1000000)+1.5)
+                                            WHEN pui.materials_type LIKE '%PIPE%' THEN
+                                                (pui.length / ((SELECT cut_length from ppc_product_codes
+                                                where product_code = '".$req->prod_code."')+1.5) )*2
+                                            WHEN pui.materials_type LIKE '%PLATE%' THEN
+                                                (
+                                                    (pui.length*pui.width)/((SELECT cut_length from ppc_product_codes
+                                                    where product_code = '".$req->prod_code."') * (SELECT cut_width from ppc_product_codes
+                                                    where product_code = '".$req->prod_code."'))
+                                                )
+                                            ELSE 0
+                                        END as for_over_issuance,
+                                        (SELECT standard_material_used from ppc_product_codes
+                                                    where product_code = '".$req->prod_code."') as standard_material_used,
+                                        pui.description as description,
+                                        pui.size as size,
+                                        pui.`schedule` as `schedule`
+                                    FROM ppc_update_inventories as pui
+                                    left join admin_assign_production_lines as apl 
+                                    on apl.product_line = pui.materials_type
+
+                                    inner join ppc_raw_material_withdrawal_details as rmw 
+                                    on pui.heat_no = rmw.material_heat_no
+                                    and pui.id = rmw.inv_id
+
+                                    inner join ppc_raw_material_withdrawal_infos as rmwi 
+                                    on rmw.trans_id = rmwi.id
+
+                                    WHERE rmw.issued_qty <> 0 AND apl.user_id = ".Auth::user()->id.$with_rmw."
+                                    group by rmwi.trans_no,
+                                        rmw.trans_id,
+                                        pui.id,
                                         pui.heat_no,
-                                        IF(pui.length = 'N/A','', CONCAT(' | (',pui.length,')') ),
-                                        CONCAT( ' | (' ,ifnull(rmw.issued_qty,0), ')' )
-                                    ) as `text`
-                                FROM ppc_update_inventories as pui
-                                left join admin_assign_production_lines as apl 
-                                on apl.product_line = pui.materials_type
+                                        rmw.issued_qty,
+                                        rmw.scheduled_qty,
+                                        rmw.id,
+                                        rmw.inv_id,
+                                        pui.item_code,
+                                        pui.length,
+                                        pui.description,
+                                        pui.size,
+                                        pui.`schedule`,
+                                        pui.materials_type
+                                    ORDER BY pui.id desc");
 
-                                inner join ppc_raw_material_withdrawal_details as rmw 
-                                on pui.heat_no = rmw.material_heat_no
-                                and pui.id = rmw.inv_id
-
-                                inner join ppc_raw_material_withdrawal_infos as rmwi 
-                                on rmw.trans_id = rmwi.id
-
-                                WHERE rmw.issued_qty <> 0 AND apl.user_id = ".Auth::user()->id.$with_rmw."
-                                group by rmwi.trans_no,
-                                    rmw.trans_id,
-                                    pui.id,
-                                    pui.heat_no,
-                                    rmw.issued_qty,
-                                    rmw.scheduled_qty,
-                                    rmw.id,
-                                    rmw.inv_id,
-                                    pui.length
-                                ORDER BY pui.id desc");
-
-        if ($this->_helper->check_if_exists($materials) > 0) {
-            if ($req->state == 'edit') {
-                $data = [
-                    'msg' => '',
-                    'status' => '',
-                    'materials' => $materials
-                ];
-            } else {
-                foreach ($materials as $key => $material) {
-                    $exists = PpcJoDetails::where('material_heat_no', $material->heat_no)
-                                            ->count();
-                    if ($exists < 1) {
-                        array_push($heat_no,[
-                            'heat_no' => $material->heat_no,
-                            'uom' => $material->uom, 
-                            'rmw_issued_qty' => $material->rmw_issued_qty,
-                            'rmw_scheduled_qty' => $material->rmw_scheduled_qty,
-                            'rmw_id' => $material->rmw_id,
-                            'inv_id' => $material->inv_id,
-                            'rmw_length' => $material->rmw_length,
-                            'upd_inv_id' => $material->upd_inv_id,
-                            'id' => $material->rmw_id,
-                            'text' => $material->text
-                        ]);
-                    }
-                }
-
-                $data = [
-                    'msg' => '',
-                    'status' => '',
-                    'materials' => $heat_no
-                ];
-
-                if (count($heat_no) < 1) {
+            if ($this->_helper->check_if_exists($materials) > 0) {
+                if ($req->state == 'edit') {
                     $data = [
-                        'msg' => 'All of Heat Number in Withdrawal Slip # '.$req->rmw_no.' is already scheduled.',
-                        'status' => 'failed',
+                        'msg' => '',
+                        'status' => '',
+                        'materials' => $materials
+                    ];
+                } else {
+                    foreach ($materials as $key => $material) {
+                        $exists = PpcJoDetails::where('material_heat_no', $material->heat_no)
+                                                ->count();
+                        if ($exists < 1) {
+                            array_push($heat_no,[
+                                'heat_no' => $material->heat_no,
+                                'uom' => $material->uom, 
+                                'rmw_issued_qty' => $material->rmw_issued_qty,
+                                'rmw_scheduled_qty' => $material->rmw_scheduled_qty,
+                                'rmw_id' => $material->rmw_id,
+                                'inv_id' => $material->inv_id,
+                                'rmw_length' => $material->rmw_length,
+                                'upd_inv_id' => $material->upd_inv_id,
+                                'id' => $material->rmw_id,
+                                'text' => $material->text,
+                                'material_type' => $material->material_type,
+                                'for_over_issuance' => $material->for_over_issuance,
+                                'standard_material_used' => $material->standard_material_used,
+                                'description' => $material->description,
+                                'size' => $material->size,
+                                'schedule' => $material->schedule,
+                                'item_code' => $material->item_code
+                            ]);
+                        }
+                    }
+
+                    $data = [
+                        'msg' => '',
+                        'status' => '',
                         'materials' => $heat_no
                     ];
-                }
-            }            
-        }
+
+                    if (count($heat_no) < 1) {
+                        $data = [
+                            'msg' => 'All of Heat Number in Withdrawal Slip # '.$req->rmw_no.' is already scheduled.',
+                            'status' => 'failed',
+                            'materials' => $heat_no
+                        ];
+                    }
+                }            
+            }
+        }        
         
         return response()->json($data);
     }

@@ -1,3 +1,7 @@
+<?php $__env->startSection('title'); ?>
+	Travel Sheet
+<?php $__env->stopSection(); ?>
+
 <?php $__env->startPush('styles'); ?>
     <style type="text/css">
         .dataTables_scrollHeadInner{

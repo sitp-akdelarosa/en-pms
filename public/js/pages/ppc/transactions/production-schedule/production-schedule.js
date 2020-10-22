@@ -101,9 +101,14 @@ var count;
 var travel_Sheet = [];
 var p_pcode = "";
 var msg_non_standard;
+var selected_heat_no = [];
+var unique_heat_no = [];
 $(function () {
   initializePage();
   autoComplete("#jono", getjosuggest, "jo_no");
+  $(document).on('shown.bs.tab', function () {
+    $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+  });
   $('#tbl_prod_sum_body').on('change', '.check_item_prod_sum', function (e) {
     e.preventDefault();
 
@@ -128,20 +133,23 @@ $(function () {
           count = joDetails_arr.length;
           joDetails_arr.push({
             count: count,
-            dataid: $(this).attr('data-id'),
             id: count,
+            dataid: $(this).attr('data-id'),
             sc_no: sc_no,
             prod_code: prod_code,
             description: $(this).attr('data-description'),
             quantity: quantity,
-            sched_qty: 0,
-            totalsched_qty: $(this).attr('data-sched_qty'),
-            material_used: "",
             material_heat_no: "",
+            rmw_issued_qty: 0,
             uom: "",
+            material_used: "",
             lot_no: "",
+            sched_qty: 0,
+            material_type: "",
+            for_over_issuance: 0,
             inv_id: 0,
-            rmw_id: 0
+            rmw_id: 0,
+            totalsched_qty: 0
           });
         } else {
           msg(Exist, 'warning');
@@ -162,20 +170,23 @@ $(function () {
         $.each(joDetails_arr, function (i, x) {
           joDetails_arr.push({
             count: counts,
-            dataid: x.dataid,
             id: x.id,
+            dataid: x.dataid,
             sc_no: x.sc_no,
             prod_code: x.prod_code,
             description: x.description,
             quantity: x.quantity,
-            sched_qty: x.sched_qty,
-            totalsched_qty: x.totalsched_qty,
-            material_used: x.material_used,
             material_heat_no: x.material_heat_no,
+            rmw_issued_qty: x.rmw_issued_qty,
             uom: x.uom,
+            material_used: x.material_used,
             lot_no: x.lot_no,
+            sched_qty: x.sched_qty,
+            material_type: x.material_type,
+            for_over_issuance: x.for_over_issuance,
             inv_id: x.inv_id,
-            rmw_id: x.rmw_id
+            rmw_id: x.rmw_id,
+            totalsched_qty: x.totalsched_qty
           });
           counts++;
         });
@@ -197,8 +208,7 @@ $(function () {
         }
       }
 
-      makeJODetailsList(joDetails_arr);
-      getMaterialHeatNo($('#rmw_no').val());
+      makeJODetailsList(joDetails_arr); // getMaterialHeatNo($('#rmw_no').val());
     } else {
       msg("Not Allowed!!!", "warning");
       $('.check_item_prod_sum').prop('checked', false);
@@ -230,19 +240,23 @@ $(function () {
     $.each(joDetails_arr, function (i, x) {
       joDetails_arr.push({
         count: counts,
-        dataid: x.dataid,
         id: x.id,
+        dataid: x.dataid,
         sc_no: x.sc_no,
         prod_code: x.prod_code,
         description: x.description,
         quantity: x.quantity,
-        sched_qty: x.sched_qty,
-        totalsched_qty: x.totalsched_qty,
-        material_used: x.material_used,
         material_heat_no: x.material_heat_no,
+        rmw_issued_qty: x.rmw_issued_qty,
+        uom: x.uom,
+        material_used: x.material_used,
         lot_no: x.lot_no,
+        sched_qty: x.sched_qty,
+        material_type: x.material_type,
+        for_over_issuance: x.for_over_issuance,
         inv_id: x.inv_id,
-        rmw_id: x.rmw_id
+        rmw_id: x.rmw_id,
+        totalsched_qty: x.totalsched_qty
       });
       counts++;
     });
@@ -268,52 +282,134 @@ $(function () {
   });
   $('#tbl_jo_details_body').on('change', '.material_heat_no', function () {
     //$('.loadingOverlay').show();
-    p_pcode = $(this).attr('data-pcode'); // console.log($(this).select2('data')); //.select2('data').element[0].attributes['data-name'].value);
-
+    p_pcode = $(this).attr('data-pcode');
     var rmw_issued_qty = $(this).find('option:selected').attr('data-rmw_issued_qty');
     var uom = $(this).find('option:selected').attr('data-uom');
     var inv_id = $(this).find('option:selected').attr('data-inv_id');
-    var material_heat_no = $(this).val();
+    var rmw_id = $(this).find('option:selected').attr('data-rmw_id');
+    var heat_no = $(this).find('option:selected').attr('data-heat_no');
+    var material_heat_no = $(this).val(); // rmw_id
+
+    var material_used_code = $(this).find('option:selected').attr('data-item_code');
+    var material_used_size = $(this).find('option:selected').attr('data-size').toUpperCase().replace(/\s+/g, '');
+    var material_used_schedule = $(this).find('option:selected').attr('data-schedule');
+    var material_used_description = $(this).find('option:selected').attr('data-description');
+    var standard_material_used = $(this).find('option:selected').attr('data-standard_material_used').toUpperCase().replace(/\s+/g, '');
+    var for_over_issuance = $(this).find('option:selected').attr('data-for_over_issuance');
+    var material_type = $(this).find('option:selected').attr('data-material_type');
+    var table_index = $(this).attr('data-count');
 
     if ($('#is_same').is(':checked')) {
       $.each(joDetails_arr, function (i, x) {
-        // use ID for 1 select box only
-        $('.material_heat_no').select2().val(material_heat_no); //$('#material_heat_no_'+x.count).val(material_heat_no);
-        // $('#rmw_issued_qty_'+x.count).val(rmw_issued_qty);
-        // $('#uom_' + x.count).val(uom);
-        // $('#uom_span_' + x.count).html(uom);
-        // $('#inv_id_' + x.count).val(inv_id);
+        // assign values
+        $('.material_heat_no').select2().val(material_heat_no);
+        $('#rmw_issued_qty_' + x.count).val(rmw_issued_qty);
+        $('#uom_' + x.count).val(uom);
+        $('#uom_span_' + x.count).html(uom);
+        $('#inv_id_' + x.count).val(inv_id);
+        $('#rmw_id_' + x.count).val(rmw_id);
+        var selected_mat_used = ""; // check standard material used
 
-        getMaterialused(material_heat_no, x.count); // if ($('#sched_qty_'+x.count).val() > rmw_issued_qty) {
-        //     error = "Over issuance";
-        //     $('.material_heat_no_select').addClass('is-invalid');
-        //     $('.material_heat_no_feedback').addClass('invalid-feedback');
-        //     $('.material_heat_no_feedback').html(error);
-        // } else {
-        //     $('.material_heat_no_select').removeClass('is-invalid');
-        //     $('.material_heat_no_feedback').removeClass('invalid-feedback');
-        //     $('.material_heat_no_feedback').html('');
-        // }
+        switch (standard_material_used) {
+          case material_used_code:
+            selected_mat_used = material_used_code;
+            break;
+
+          case material_used_size:
+            selected_mat_used = material_used_size;
+            break;
+
+          case material_used_schedule:
+            selected_mat_used = material_used_schedule;
+            break;
+
+          default:
+            selected_mat_used = material_used_description;
+            break;
+        }
+
+        $('#material_used_' + x.count).val(material_used_description);
+
+        if (standard_material_used != selected_mat_used) {
+          var error = "This is not the Product's Standard Material";
+          $('#material_used_' + x.count).addClass('is-invalid');
+          $('#material_used_' + x.count + '_feedback').addClass('invalid-feedback');
+          $('#material_used_' + x.count + '_feedback').html(error);
+        } else {
+          $('#material_used_' + x.count).removeClass('is-invalid');
+          $('#material_used_' + x.count + '_feedback').removeClass('invalid-feedback');
+          $('#material_used_' + x.count + '_feedback').html('');
+        } // alot material type and comparison for over issuance
+
+
+        $('#for_over_issuance_' + x.count).val(for_over_issuance);
+        $('#material_type_' + x.count).val(material_type);
+        x.material_heat_no = heat_no;
+        x.rmw_issued_qty = rmw_issued_qty;
+        x.uom = uom;
+        x.material_used = selected_mat_used;
+        x.material_type = material_type;
+        x.for_over_issuance = for_over_issuance;
+        x.inv_id = inv_id;
+        x.rmw_id = rmw_id;
       });
     } else {
-      // $('#rmw_issued_qty_'+$(this).attr('data-count')).val(rmw_issued_qty);
-      getMaterialused(material_heat_no, $(this).attr('data-count')); // if ($('#sched_qty_'+$(this).attr('data-count')).val() > rmw_issued_qty) {
-      //     error = "Over issuance";
-      //     $('#material_heat_no_'+$(this).attr('data-count')).addClass('is-invalid');
-      //     $('#material_heat_no_'+$(this).attr('data-count')+'_feedback').addClass('invalid-feedback');
-      //     $('#material_heat_no_'+$(this).attr('data-count')+'_feedback').html(error);
-      // } else {
-      //     $('#material_heat_no_'+$(this).attr('data-count')).removeClass('is-invalid');
-      //     $('#material_heat_no_'+$(this).attr('data-count')+'_feedback').removeClass('invalid-feedback');
-      //     $('#material_heat_no_'+$(this).attr('data-count')+'_feedback').html('');
-      // }
+      $('#rmw_issued_qty_' + table_index).val(rmw_issued_qty);
+      $('#uom_' + table_index).val(uom);
+      $('#uom_span_' + table_index).html(uom);
+      $('#inv_id_' + table_index).val(inv_id);
+      $('#rmw_id_' + table_index).val(rmw_id);
+      var selected_mat_used = ""; // check standard material used
+
+      switch (standard_material_used) {
+        case material_used_code:
+          selected_mat_used = material_used_code;
+          break;
+
+        case material_used_size:
+          selected_mat_used = material_used_size;
+          break;
+
+        case material_used_schedule:
+          selected_mat_used = material_used_schedule;
+          break;
+
+        default:
+          selected_mat_used = material_used_description;
+          break;
+      }
+
+      $('#material_used_' + table_index).val(material_used_description);
+
+      if (standard_material_used != selected_mat_used) {
+        var error = "This is not the Product's Standard Material";
+        $('#material_used_' + table_index).addClass('is-invalid');
+        $('#material_used_' + table_index + '_feedback').addClass('invalid-feedback');
+        $('#material_used_' + table_index + '_feedback').html(error);
+      } else {
+        $('#material_used_' + table_index).removeClass('is-invalid');
+        $('#material_used_' + table_index + '_feedback').removeClass('invalid-feedback');
+        $('#material_used_' + table_index + '_feedback').html('');
+      } // alot material type and comparison for over issuance
+
+
+      $('#for_over_issuance_' + table_index).val(for_over_issuance);
+      $('#material_type_' + table_index).val(material_type);
+      joDetails_arr[table_index].material_heat_no = heat_no;
+      joDetails_arr[table_index].rmw_issued_qty = rmw_issued_qty;
+      joDetails_arr[table_index].uom = uom;
+      joDetails_arr[table_index].material_used = selected_mat_used;
+      joDetails_arr[table_index].material_type = material_type;
+      joDetails_arr[table_index].for_over_issuance = for_over_issuance;
+      joDetails_arr[table_index].inv_id = inv_id;
+      joDetails_arr[table_index].rmw_id = rmw_id;
     }
 
     var inputs = $(".rmw_issued_qty");
     var total = 0;
 
     if ($('#is_same').is(':checked')) {
-      $('#total_heat_qty').val($('#rmw_issued_qty_' + $(this).attr('data-count')).val());
+      $('#total_heat_qty').val($('#rmw_issued_qty_' + table_index).val());
     } else {
       for (var i = 0; i < inputs.length; i++) {
         if ($(inputs[i]).val() == '') {
@@ -328,6 +424,36 @@ $(function () {
       }
 
       $('#total_heat_qty').val(total);
+    } // get all selected HEAT NUMBER
+
+
+    var heat_nos = $('.material_heat_no');
+    selected_heat_no = [];
+
+    for (var i = 0; i < heat_nos.length; i++) {
+      if ($(heat_nos[i]).val() !== "" && $(heat_nos[i]).val() !== null) {
+        selected_heat_no.push({
+          heat_no: $(heat_nos[i]).find('option:selected').attr('data-heat_no'),
+          rmw_qty: $(heat_nos[i]).find('option:selected').attr('data-rmw_issued_qty')
+        });
+      }
+    } // get all UNIQUE HEAT NUMBER
+
+
+    var unique = [];
+    unique_heat_no = [];
+
+    for (var _i = 0; _i < selected_heat_no.length; _i++) {
+      if (!unique[selected_heat_no[_i].heat_no]) {
+        if (!unique[selected_heat_no[_i].rmw_qty]) {
+          unique_heat_no.push({
+            heat_no: selected_heat_no[_i].heat_no,
+            rmw_qty: selected_heat_no[_i].rmw_qty
+          });
+        }
+
+        unique[selected_heat_no[_i].rmw_qty] = 1;
+      }
     }
 
     $('#btn_save_div').show();
@@ -345,6 +471,7 @@ $(function () {
     if ($('#is_same').is(':checked')) {
       var count = $(this).attr('data-count');
       $.each(joDetails_arr, function (i, x) {
+        x.matematerial_used = material_used;
         $('#material_used_' + x.count).val(material_used);
       });
     }
@@ -356,15 +483,20 @@ $(function () {
     $('#btn_cancel_div').show();
   });
   $('#tbl_jo_details_body').on('keyup', '.lot_no', function () {
+    var lot_no = $(this).val();
+    var count = $(this).attr('data-count');
+
     if ($('#is_same').is(':checked')) {
-      var lot_no = $(this).val();
-      var count = $(this).attr('data-count');
       $.each(joDetails_arr, function (i, x) {
+        x.lot_no = lot_no;
         $('#lot_no_' + x.count).val(lot_no);
       });
+    } else {
+      joDetails_arr[count].lot_no = lot_no;
     }
   });
   $('#tbl_jo_details_body').on('change', '.sched_qty', function (event) {
+    var table_count = $(this).attr('data-count');
     var inputs = $(".sched_qty");
     var total = 0;
 
@@ -381,171 +513,85 @@ $(function () {
     }
 
     $('#total_sched_qty').val(total);
-    var rmw_issued_qty = parseFloat($('#rmw_issued_qty_' + $(this).attr('data-count')).val());
-    var sched_qty = parseFloat($(this).val());
-    var pcode = $(this).attr('data-pcode');
-    var heat_no = $('#material_heat_no_' + $(this).attr('data-count')).val();
 
-    if ($(this).val() == "") {} else {
-      $('#btn_over_issuance_' + $(this).attr('data-count')).prop('disabled', false);
+    if ($(this).val() !== "") {
+      var rmw_issued_qty = parseFloat($('#rmw_issued_qty_' + table_count).val());
+      var this_heat_no = $('#material_heat_no_' + table_count).find('option:selected').attr('data-heat_no');
+      var sched_qty = parseFloat($(this).val() == "" ? 0 : $(this).val());
+      var count_same = 0;
+      $.each(unique_heat_no, function (i, x) {
+        if (x.heat_no == this_heat_no && x.rmw_qty == rmw_issued_qty) {
+          count_same++;
+        }
+      });
 
-      if ($('#is_same').is(':checked')) {
-        $('#btn_over_issuance_' + $(this).attr('data-count')).attr('data-sched_qty', total); // if (total > rmw_issued_qty) {
-        //     error = "Over issuance";
-        //     $('.material_heat_no_select').addClass('is-invalid');
-        //     $('.material_heat_no_feedback').addClass('invalid-feedback');
-        //     $('.material_heat_no_feedback').html(error);
-        // } else {
-        //     sum_sched_qty();
-        //     $('.material_heat_no_select').removeClass('is-invalid');
-        //     $('.material_heat_no_feedback').removeClass('invalid-feedback');
-        //     $('.material_heat_no_feedback').html('');
-        // }
+      if (count_same > 0) {
+        sched_qty = 0;
+
+        for (var i = 0; i < inputs.length; i++) {
+          var heat_no = $('#material_heat_no_' + i).find('option:selected').attr('data-heat_no');
+
+          if (heat_no == this_heat_no) {
+            sched_qty = sched_qty + parseInt($(inputs[i]).val() == "" ? 0 : $(inputs[i]).val());
+          }
+        }
+      }
+
+      var over_qty = 0;
+      var is_over = false;
+      var material_type = $('#material_type_' + table_count).val();
+      var over = $('#for_over_issuance_' + table_count).val();
+
+      switch (material_type) {
+        case 'BAR':
+          var bar_length = parseFloat(over);
+          var bar_pcs = sched_qty / bar_length;
+          over_qty = bar_pcs - rmw_issued_qty;
+
+          if (over_qty > 0) {
+            is_over = true;
+          }
+
+          break;
+
+        case 'PIPE':
+          var pipe_pcs = parseFloat(over);
+
+          if (sched_qty > pipe_pcs) {
+            is_over = true;
+          }
+
+          break;
+
+        case 'PLATE':
+          var stock = parseFloat(over);
+
+          if (sched_qty > stock) {
+            is_over = true;
+          }
+
+          break;
+
+        default:
+          break;
+      }
+
+      if (is_over) {
+        error = "Your issuance has an over of " + over_qty.toFixed(2);
+        $('#sched_qty_' + table_count).addClass('is-invalid');
+        $('#sched_qty_' + table_count + '_feedback').addClass('invalid-feedback');
+        $('#sched_qty_' + table_count + '_feedback').html(error);
       } else {
-        $('#btn_over_issuance_' + $(this).attr('data-count')).attr('data-sched_qty', sched_qty); // if (sched_qty > rmw_issued_qty) {
-        //     error = "Over issuance";
-        //     $('#material_heat_no_'+$(this).attr('data-count')).addClass('is-invalid');
-        //     $('#material_heat_no_'+$(this).attr('data-count')+'_feedback').addClass('invalid-feedback');
-        //     $('#material_heat_no_'+$(this).attr('data-count')+'_feedback').html(error);
-        // } else {
-        //     sum_sched_qty();
-        //     $('#material_heat_no_'+$(this).attr('data-count')).removeClass('is-invalid');
-        //     $('#material_heat_no_'+$(this).attr('data-count')+'_feedback').removeClass('invalid-feedback');
-        //     $('#material_heat_no_'+$(this).attr('data-count')+'_feedback').html('');
-        // }
+        sum_sched_qty();
+        $('#sched_qty_' + table_count).removeClass('is-invalid');
+        $('#sched_qty_' + table_count + '_feedback').removeClass('invalid-feedback');
+        $('#sched_qty_' + table_count + '_feedback').html('');
       }
     }
   });
-  $('#btn_check_over_issuance').on('click', function () {
-    $('.loadingOverlay').show();
-    var prod_code = $('input[name="prod_code[]"]').map(function () {
-      return $(this).val();
-    }).get();
-    var inv_id = $('input[name="inv_id[]"]').map(function () {
-      return $(this).val();
-    }).get();
-    var sched_qty = $('input[name="sched_qty[]"]').map(function () {
-      return $(this).val();
-    }).get();
-    var rmw_issued_qty = $('input[name="rmw_issued_qty[]"]').map(function () {
-      return $(this).val();
-    }).get();
-    $.ajax({
-      url: OverIssuanceURL,
-      type: 'GET',
-      dataType: 'JSON',
-      data: {
-        _token: token,
-        prod_code: $('input[name="prod_code[]"]').map(function () {
-          return $(this).val();
-        }).get(),
-        inv_id: $('input[name="inv_id[]"]').map(function () {
-          return $(this).val();
-        }).get(),
-        rmw_id: $('input[name="rmw_id[]"]').map(function () {
-          return $(this).val();
-        }).get(),
-        sched_qty: $('input[name="sched_qty[]"]').map(function () {
-          return $(this).val();
-        }).get(),
-        rmw_issued_qty: $('input[name="rmw_issued_qty[]"]').map(function () {
-          return $(this).val();
-        }).get()
-      }
-    }).done(function (data, textStatus, xhr) {// var stock = parseFloat(data.stock);
-      // console.log(stock);
-      // var over = false;
-      // if (data.type == 'PLATE') {
-      //     if (sched_qty > stock) {
-      //         over = true;
-      //     }
-      // }
-      // if (data.type == 'BAR') {
-      //     if (stock < 0) {
-      //         over = true;
-      //     }
-      // }
-      // if (data.type == 'PIPE') {
-      //     if (sched_qty > stock) {
-      //         over = true;
-      //     }
-      // }
-      // if (over) {
-      //     error = "Over issuance";
-      //     $('#sched_qty_' + count).addClass('is-invalid');
-      //     $('#sched_qty_' + count + '_feedback').addClass('invalid-feedback');
-      //     $('#sched_qty_' + count + '_feedback').html(error);
-      // } else {
-      //     sum_sched_qty();
-      //     $('#sched_qty_' + count).removeClass('is-invalid');
-      //     $('#sched_qty_' + count + '_feedback').removeClass('invalid-feedback');
-      //     $('#sched_qty_' + count + '_feedback').html('');
-      // }
-    }).fail(function (xhr, textStatus, errorThrown) {
-      msg(errorThrown, textStatus);
-    }).always(function () {
-      $('.loadingOverlay').hide();
-    });
-  });
-  $('#tbl_jo_details_body').on('click', '.btn_over_issuance', function () {
-    $('.loadingOverlay').show();
-    var prod_code = $(this).attr('data-prod_code');
-    var inv_id = $(this).attr('data-inv_id');
-    var sched_qty = parseFloat($(this).attr('data-sched_qty'));
-    var rmw_issued_qty = $(this).attr('data-rmw_issued_qty');
-    var count = $(this).attr('data-count');
-    $.ajax({
-      url: OverIssuanceURL,
-      type: 'GET',
-      dataType: 'JSON',
-      data: {
-        _token: token,
-        prod_code: prod_code,
-        inv_id: inv_id,
-        sched_qty: sched_qty,
-        rmw_issued_qty: rmw_issued_qty
-      }
-    }).done(function (data, textStatus, xhr) {
-      var stock = parseFloat(data.stock);
-      console.log(stock);
-      var over = false;
-
-      if (data.type == 'PLATE') {
-        if (sched_qty > stock) {
-          over = true;
-        }
-      }
-
-      if (data.type == 'BAR') {
-        if (stock < 0) {
-          over = true;
-        }
-      }
-
-      if (data.type == 'PIPE') {
-        if (sched_qty > stock) {
-          over = true;
-        }
-      }
-
-      if (over) {
-        error = "Over issuance";
-        $('#sched_qty_' + count).addClass('is-invalid');
-        $('#sched_qty_' + count + '_feedback').addClass('invalid-feedback');
-        $('#sched_qty_' + count + '_feedback').html(error);
-      } else {
-        sum_sched_qty();
-        $('#sched_qty_' + count).removeClass('is-invalid');
-        $('#sched_qty_' + count + '_feedback').removeClass('invalid-feedback');
-        $('#sched_qty_' + count + '_feedback').html('');
-      }
-    }).fail(function (xhr, textStatus, errorThrown) {
-      msg(errorThrown, textStatus);
-    }).always(function () {
-      $('.loadingOverlay').hide();
-    });
-  });
   $('#btn_save').on('click', function () {
+    console.log(joDetails_arr);
+
     if (joDetails_arr.length != 0) {
       var validate = "NONE";
       valid = validateTable(); // if (parseInt($('#total_sched_qty').val()) > parseInt($('#total_heat_qty').val())) {
@@ -665,7 +711,11 @@ $(function () {
     });
   });
   $('#btn_search_withdrawal').on('click', function () {
-    getMaterialHeatNo($('#rmw_no').val());
+    if ($('#rmw_no').val() == "") {
+      msg("Please provide a Withdrawal Slip.", "failed");
+    } else {
+      getMaterialHeatNo($('#rmw_no').val());
+    }
   });
 });
 
@@ -809,6 +859,7 @@ function makeJODetailsList(arr) {
     bLengthChange: false,
     paging: false,
     order: [[1, 'asc']],
+    scrollX: true,
     columns: [{
       data: function data(x) {
         return "<button type='button' class='btn btn-sm bg-red remove_jo_details' data-count='" + x.count + "' data-id='" + x.id + "' data-dataid='" + x.dataid + "'>" + "<i class='fa fa-times'></i>" + "</button>" + "<input type='hidden' name='dataid[]' value='" + x.dataid + "'>";
@@ -853,8 +904,7 @@ function makeJODetailsList(arr) {
       orderable: false
     }, {
       data: function data(x) {
-        return "<select id='material_used_" + x.count + "' data-count='" + x.count + "' data-pcode='" + x.prod_code + "' class='form-control form-control-sm material_used material_used_select' name='material_used[]'>" + //    "<option class='"+x.material_used+"'>"+x.material_used+"</option>"+
-        "</select><div id='material_used_" + x.count + "_feedback' class='material_used__feedback'></div>";
+        return "<input type='text' id='material_used_" + x.count + "' value='" + x.material_used + "' data-count='" + x.count + "' data-pcode='" + x.prod_code + "' class='form-control form-control-sm material_used material_used_select' name='material_used[]'>" + "<div id='material_used_" + x.count + "_feedback' class='material_used__feedback'></div>";
       },
       searchable: false,
       orderable: false
@@ -867,13 +917,7 @@ function makeJODetailsList(arr) {
       orderable: false
     }, {
       data: function data(x) {
-        return "<input type='number' step='1' id='sched_qty_" + x.count + "' data-pcode='" + x.prod_code + "' data-count='" + x.count + "' " + "class='form-control form-control-sm sched_qty' min='0' name='sched_qty[]' value='" + x.sched_qty + "'>" + "<div id='sched_qty_" + x.count + "_feedback' class='sched_qty_feedback'></div>" + "<input type='hidden' class='form-control form-control-sm' id='rmw_id_" + x.count + "' name='rmw_id[]' value='" + x.rmw_id + "'>" + "<input type='hidden' class='form-control form-control-sm' id='inv_id_" + x.count + "' name='inv_id[]' value='" + x.inv_id + "'>";
-      },
-      searchable: false,
-      orderable: false
-    }, {
-      data: function data(x) {
-        return "<button type='button' id='btn_over_issuance_" + x.count + "' " + "data-prod_code='" + x.prod_code + "' " + "data-inv_id='" + x.inv_id + "' " + "data-count='" + x.count + "' " + "data-sched_qty='" + x.sched_qty + "' " + "data-rmw_issued_qty='0' " + "class='btn btn-sm bg-green btn_over_issuance' disabled>" + "Check Issuance" + "</button>";
+        return "<input type='number' step='1' id='sched_qty_" + x.count + "' data-pcode='" + x.prod_code + "' data-count='" + x.count + "' " + "class='form-control form-control-sm sched_qty' min='0' name='sched_qty[]' value='" + x.sched_qty + "'>" + "<div id='sched_qty_" + x.count + "_feedback' class='sched_qty_feedback'></div>" + "<input type='hidden' class='form-control form-control-sm' id='material_type_" + x.count + "' name='material_type[]' value='" + x.material_type + "'>" + "<input type='hidden' class='form-control form-control-sm' id='for_over_issuance_" + x.count + "' name='for_over_issuance[]' value='" + x.for_over_issuance + "'>" + "<input type='hidden' class='form-control form-control-sm' id='rmw_id_" + x.count + "' name='rmw_id[]' value='" + x.rmw_id + "'>" + "<input type='hidden' class='form-control form-control-sm' id='inv_id_" + x.count + "' name='inv_id[]' value='" + x.inv_id + "'>";
       },
       searchable: false,
       orderable: false
@@ -908,9 +952,6 @@ function makeJODetailsList(arr) {
     }, {
       "width": "6%",
       "targets": 9
-    }, {
-      "width": "5%",
-      "targets": 10
     }],
     initCompelete: function initCompelete(settings, json) {
       console.log(settings);
@@ -926,88 +967,88 @@ function makeJODetailsList(arr) {
 }
 
 function getMaterialHeatNo(withdrawal_slip_no) {
-  var op = "<option value=''></option>";
+  var materials = [];
+  var $msg = "";
+  var $status = "";
   $.each(joDetails_arr, function (i, x) {
-    $('.material_heat_no').html(op);
-  });
-  $.ajax({
-    url: getMaterialHeatNoURL,
-    type: 'GET',
-    dataType: 'JSON',
-    data: {
-      _token: token,
-      rmw_no: withdrawal_slip_no,
-      state: 'add'
-    }
-  }).done(function (data, textStatus, xhr) {
-    var materials = data.materials;
-    $('.material_heat_no').select2({
-      allowClear: true,
-      placeholder: 'Select a Heat No.',
-      data: materials
-    }).on('select2:select', function (e) {
-      var children = $(this).children();
-      $.each(children, function (i, x) {
-        if (i > 0) {
-          var mat_idx = i - 1;
-          $(x).attr({
-            'data-heat_no': materials[mat_idx].heat_no,
-            'data-uom': materials[mat_idx].uom,
-            'data-rmw_issued_qty': materials[mat_idx].rmw_issued_qty,
-            'data-rmw_scheduled_qty': materials[mat_idx].rmw_scheduled_qty,
-            'data-rmw_id': materials[mat_idx].rmw_id,
-            'data-inv_id': materials[mat_idx].inv_id,
-            'data-rmw_length': materials[mat_idx].rmw_length,
-            'data-upd_inv_id': materials[mat_idx].upd_inv_id
-          });
-        }
+    $('.loadingOverlay').show();
+    var op = "<option value=''></option>";
+    $('#material_heat_no_' + i).html(op);
+    $.ajax({
+      url: getMaterialHeatNoURL,
+      type: 'GET',
+      dataType: 'JSON',
+      data: {
+        _token: token,
+        rmw_no: withdrawal_slip_no,
+        prod_code: x.prod_code,
+        state: 'add'
+      }
+    }).done(function (data, textStatus, xhr) {
+      materials = data.materials;
+      $msg = data.msg;
+      $status = data.status;
+      $.each(materials, function (indx, mat) {
+        op += "<option value='" + mat.rmw_id + "' " + "data-heat_no='" + mat.heat_no + "' " + "data-uom='" + mat.uom + "' " + "data-rmw_issued_qty='" + mat.rmw_issued_qty + "' " + "data-rmw_scheduled_qty='" + mat.rmw_scheduled_qty + "' " + "data-rmw_id='" + mat.rmw_id + "' " + "data-inv_id='" + mat.inv_id + "' " + "data-rmw_length='" + mat.rmw_length + "' " + "data-upd_inv_id='" + mat.upd_inv_id + "' " + "data-material_type='" + mat.material_type + "' " + "data-for_over_issuance='" + mat.for_over_issuance + "' " + "data-standard_material_used='" + mat.standard_material_used + "' " + "data-description='" + mat.description + "' " + "data-size='" + mat.size + "' " + "data-item_code='" + mat.item_code + "' " + "data-schedule='" + mat.schedule + "' " + "'>" + mat.text + "</option>";
       });
-    }).val(0); // if (materials.length > 0) {
-    //     if ($('#rmw_no').val() == "" && data.msg == "") {
-    //         $('.material_heat_no').prop('disabled', true);
-    //         $('#rmw_no').prop('readonly', false);
-    //     }
-    //     if ($('#rmw_no').val() !== "" && data.msg == "") {
-    //         $('#rmw_no').prop('readonly', true);
-    //         $('.material_heat_no').prop('disabled', false);
-    //     }
-    // } else {
-    //     $('.material_heat_no').prop('disabled', true);
-    //     $('#rmw_no').prop('readonly', false);
-    //     if ($('#rmw_no').val() !== "" && data.msg !== "") {
-    //         $('#rmw_no').prop('readonly', false);
-    //         $('.material_heat_no').prop('disabled', true);
-    //         msg(data.msg, data.status);
-    //     }
-    // }
-    // for (var y = 0; y < joDetails_arr.length; y++) {
-    //     for (var x = 0; x < materials.length; x++) {
-    //         var rmw_length = "";
-    //         var rmw_qty = "";
-    //         if (materials[x].rmw_length !== 'N/A') {
-    //             rmw_length = " | (" + materials[x].rmw_length + ")";
-    //             rmw_qty = " | (" + materials[x].rmw_issued_qty + materials[x].uom +")";
-    //         }
-    //         op += "<option value='" + materials[x].heat_no + "' "+
-    //                 "data-rmw_issued_qty='" + materials[x].rmw_issued_qty + "' " +
-    //                 "data-rmw_scheduled_qty='" + materials[x].rmw_scheduled_qty + "' " +
-    //                 "data-rmw_id='" + materials[x].rmw_id + "' " +
-    //                 "data-inv_id='" + materials[x].inv_id + "' " +
-    //                 "data-heat_no='" + materials[x].heat_no + "' " +
-    //                 "data-mat_heat_no_text='" + materials[x].heat_no + rmw_length + rmw_qty + "' " +
-    //                 "data-uom='" + materials[x].uom + "'>" + 
-    //                     materials[x].heat_no + rmw_length + rmw_qty +
-    //             "</option>";
-    //     }
-    //     $('#material_heat_no_' + y).html(op);
-    //     var materialval = (joDetails_arr[y].material_heat_no != "") ? joDetails_arr[y].material_heat_no : "";
-    //     $('#material_heat_no_' + y).val(materialval);
-    //     getMaterialused(materialval, y);
-    //     op = "<option value=''></option>";
-    // }
-  }).fail(function (xhr, textStatus, errorThrown) {
-    ErrorMsg(xhr);
-  }).always(function () {});
+      $('#material_heat_no_' + i).append(op);
+      $('#material_heat_no_' + i).select2({
+        allowClear: true,
+        placeholder: 'Select a Heat No.',
+        width: '100%'
+      }); // if (materials.length > 0) {
+      //     if ($('#rmw_no').val() == "" && data.msg == "") {
+      //         $('.material_heat_no').prop('disabled', true);
+      //         $('#rmw_no').prop('readonly', false);
+      //     }
+      //     if ($('#rmw_no').val() !== "" && data.msg == "") {
+      //         $('#rmw_no').prop('readonly', true);
+      //         $('.material_heat_no').prop('disabled', false);
+      //     }
+      // } else {
+      //     $('.material_heat_no').prop('disabled', true);
+      //     $('#rmw_no').prop('readonly', false);
+      //     if ($('#rmw_no').val() !== "" && data.msg !== "") {
+      //         $('#rmw_no').prop('readonly', false);
+      //         $('.material_heat_no').prop('disabled', true);
+      //         msg(data.msg, data.status);
+      //     }
+      // }
+      // for (var y = 0; y < joDetails_arr.length; y++) {
+      //     for (var x = 0; x < materials.length; x++) {
+      //         var rmw_length = "";
+      //         var rmw_qty = "";
+      //         if (materials[x].rmw_length !== 'N/A') {
+      //             rmw_length = " | (" + materials[x].rmw_length + ")";
+      //             rmw_qty = " | (" + materials[x].rmw_issued_qty + materials[x].uom +")";
+      //         }
+      //         op += "<option value='" + materials[x].heat_no + "' "+
+      //                 "data-rmw_issued_qty='" + materials[x].rmw_issued_qty + "' " +
+      //                 "data-rmw_scheduled_qty='" + materials[x].rmw_scheduled_qty + "' " +
+      //                 "data-rmw_id='" + materials[x].rmw_id + "' " +
+      //                 "data-inv_id='" + materials[x].inv_id + "' " +
+      //                 "data-heat_no='" + materials[x].heat_no + "' " +
+      //                 "data-mat_heat_no_text='" + materials[x].heat_no + rmw_length + rmw_qty + "' " +
+      //                 "data-uom='" + materials[x].uom + "'>" + 
+      //                     materials[x].heat_no + rmw_length + rmw_qty +
+      //             "</option>";
+      //     }
+      //     $('#material_heat_no_' + y).html(op);
+      //     var materialval = (joDetails_arr[y].material_heat_no != "") ? joDetails_arr[y].material_heat_no : "";
+      //     $('#material_heat_no_' + y).val(materialval);
+      //     getMaterialused(materialval, y);
+      //     op = "<option value=''></option>";
+      // }
+    }).fail(function (xhr, textStatus, errorThrown) {
+      ErrorMsg(xhr);
+    }).always(function () {
+      $('.loadingOverlay').hide();
+    });
+  });
+
+  if (materials.length > 0) {
+    msg($msg, $status);
+  }
 }
 
 function getMaterialHeatNoEdit() {
@@ -1199,7 +1240,8 @@ function sum_sched_qty() {
 
   for (var x = 0; x < rows; x++) {
     if ($('#tbl_jo_details')["0"].children[1].children[x].cells[8].children["0"].value != "") {
-      sum += parseFloat($('#tbl_jo_details')["0"].children[1].children[x].cells[8].children["0"].value);
+      var sched_qty = $('#tbl_jo_details')["0"].children[1].children[x].cells[8].children["0"].value;
+      sum += parseFloat(sched_qty == "" ? 0 : sched_qty);
     }
   }
 
@@ -1209,12 +1251,13 @@ function sum_sched_qty() {
 function SaveJODetails() {
   $('.loadingOverlay').show();
   var rows = $('#tbl_jo_details')["0"].rows.length - 1;
-  var ss = "";
+  var jo_no = "";
 
   if (EditMode) {
-    ss = $('#jono').val();
+    jo_no = $('#jono').val();
   }
 
+  console.log();
   $.ajax({
     url: savejodetailsURL,
     type: 'POST',
@@ -1225,6 +1268,9 @@ function SaveJODetails() {
         return $(this).val();
       }).get(),
       inv_id: $('input[name="inv_id[]"]').map(function () {
+        return $(this).val();
+      }).get(),
+      rmw_id: $('input[name="inv_id[]"]').map(function () {
         return $(this).val();
       }).get(),
       sc_no: $('input[name="sc_no[]"]').map(function () {
@@ -1246,7 +1292,7 @@ function SaveJODetails() {
         return $(this).val();
       }).get(),
       material_heat_no: $('.material_heat_no').map(function () {
-        return $(this).val();
+        return $(this).find('option:selected').attr('data-heat_no');
       }).get(),
       uom: $('.uom').map(function () {
         return $(this).val();
@@ -1260,7 +1306,7 @@ function SaveJODetails() {
       filtercount: rows,
       total_sched_qty: $('#total_sched_qty').val(),
       rmw_no: $('#rmw_no').val(),
-      jo_no: ss
+      jo_no: jo_no
     }
   }).done(function (data, textStatus, xhr) {
     EditMode = false;
@@ -1282,7 +1328,7 @@ function SaveJODetails() {
     makeJODetailsList(joDetails_arr);
     getTravelSheet();
   }).fail(function (xhr, textStatus, errorThrown) {
-    msg(errorThrown, textStatus);
+    ErrorMsg(xhr);
   }).always(function (xhr, textStatus) {
     $('#rmw_no').prop('readonly', false);
     $('.loadingOverlay').hide();
@@ -1340,48 +1386,47 @@ function getTables() {
     data: {
       _token: token,
       JOno: datas
-    },
-    success: function success(returnData) {
-      console.log(returnData);
-      var totalsched = 0;
-      joDetails_arr = [];
-      MainData = returnData;
-      EditMode = true;
-
-      for (var x = 0; x < returnData.length; x++) {
-        joDetails_arr.push({
-          count: x,
-          dataid: returnData[x].id,
-          id: returnData[x].id,
-          sc_no: returnData[x].sc_no,
-          prod_code: returnData[x].product_code,
-          description: returnData[x].description,
-          quantity: returnData[x].back_order_qty,
-          sched_qty: returnData[x].sched_qty,
-          totalsched_qty: 0,
-          material_used: returnData[x].material_used,
-          material_heat_no: returnData[x].material_heat_no,
-          uom: returnData[x].uom,
-          lot_no: returnData[x].lot_no,
-          inv_id: returnData[x].inv_id,
-          rmw_id: returnData[x].rmw_id
-        });
-        totalsched += returnData[x].sched_qty;
-        $('#created_by').val(returnData[x].create_user);
-        $('#created_date').val(returnData[x].created_at);
-        $('#updated_by').val(returnData[x].update_user);
-        $('#updated_date').val(returnData[x].updated_at);
-      }
-
-      $('#rmw_no').val(returnData[0].rmw_no);
-      $('#total_sched_qty').val(totalsched);
-      makeJODetailsList(joDetails_arr);
-      getMaterialHeatNoEdit();
-      var showform = document.getElementById('formbaba').style.display = 'inline';
-    },
-    error: function error(xhr, textStatus, errorThrown) {
-      msg(errorThrown, textStatus);
     }
+  }).done(function (data, textStatus, xhr) {
+    console.log(data);
+    var totalsched = 0;
+    joDetails_arr = [];
+    MainData = data;
+    EditMode = true;
+
+    for (var x = 0; x < data.length; x++) {
+      joDetails_arr.push({
+        count: x,
+        dataid: data[x].id,
+        id: data[x].id,
+        sc_no: data[x].sc_no,
+        prod_code: data[x].product_code,
+        description: data[x].description,
+        quantity: data[x].back_order_qty,
+        sched_qty: data[x].sched_qty,
+        totalsched_qty: 0,
+        material_used: data[x].material_used,
+        material_heat_no: data[x].material_heat_no,
+        uom: data[x].uom,
+        lot_no: data[x].lot_no,
+        inv_id: data[x].inv_id,
+        rmw_id: data[x].rmw_id
+      });
+      totalsched += data[x].sched_qty;
+      $('#created_by').val(data[x].create_user);
+      $('#created_date').val(data[x].created_at);
+      $('#updated_by').val(data[x].update_user);
+      $('#updated_date').val(data[x].updated_at);
+    }
+
+    $('#rmw_no').val(data[0].rmw_no);
+    $('#total_sched_qty').val(totalsched);
+    makeJODetailsList(joDetails_arr);
+    getMaterialHeatNoEdit();
+    var showform = document.getElementById('formbaba').style.display = 'inline';
+    makeTravelSheet(travel_Sheet);
+  }).fail(function (xhr, textStatus, errorThrown) {
+    ErrorMsg(xhr);
   });
 }
 

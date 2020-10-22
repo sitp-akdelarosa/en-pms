@@ -86,6 +86,7 @@ foreach ($user_accesses as $user_access){
 												<input type="checkbox" class="table-checkbox check_all_prods">
 											</th>
 											<th>Product Line</th>
+											<th>Type</th>
 										</tr>
 									</thead>
 									<tbody id="tbl_productline_body"></tbody>

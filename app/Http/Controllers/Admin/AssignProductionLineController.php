@@ -166,8 +166,8 @@ class AssignProductionLineController extends Controller
 	public function productline_selection()
 	{
 		$items = PpcDropdownItem::whereIn('dropdown_name_id',[7,8]) // product Line && Material Master
-								->select('dropdown_item')
-								->groupBy('dropdown_item')
+								->select('dropdown_item','dropdown_name')
+								->groupBy('dropdown_item','dropdown_name')
 								->orderby('dropdown_item','ASC')->get();
 		return response()->json($items);
 	}

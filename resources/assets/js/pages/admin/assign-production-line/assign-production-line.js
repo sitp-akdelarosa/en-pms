@@ -188,14 +188,14 @@ function get_assigned_prodline(user_id) {
 			user_id: user_id
 		},
 	}).done(function(data, textStatus, xhr) {
-		assignedProdlineTale(data);
+		assignedProdlineTable(data);
 	}).fail(function(xhr, textStatus, errorThrown) {
 		console.log("error");
 	});
 	
 }
 
-function assignedProdlineTale(arr) {
+function assignedProdlineTable(arr) {
 	$('#tbl_assign_productline').dataTable().fnClearTable();
 	$('#tbl_assign_productline').dataTable().fnDestroy();
 	$('#tbl_assign_productline').dataTable({
@@ -261,6 +261,7 @@ function selectProdlineTable(arr) {
 				return '<input type="checkbox" class="table-checkbox check_prod" value="'+data.dropdown_item+'">';
 			}, orderable: false, searchable: false},
 			{data: 'dropdown_item'},
+			{ data: 'dropdown_name' },
 			
 		],
 		initComplete: function () {

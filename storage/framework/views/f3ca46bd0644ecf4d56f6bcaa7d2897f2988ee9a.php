@@ -19,6 +19,9 @@ foreach ($user_accesses as $user_access){
     <h1>Production Schedule</h1>
 </section>
 <section class="content">
+
+    <div class="loadingOverlay"></div>
+
     <div class="nav-tabs-custom">
         <ul class="nav nav-tabs">
             <li><a class="active" href="#production_summary" data-toggle="tab">Production Summary</a></li>
@@ -116,9 +119,9 @@ foreach ($user_accesses as $user_access){
 
                 <div class="row justify-content-center mb-15">
                     <div class="col-md-12">
+                        
                         <div class="table-reponsive">
-                            <div class="loadingOverlay"></div>
-                            <table class="table table-sm table-striped dt-responsive nowrap" style="width:100%" id="tbl_jo_details">
+                            <table class="table table-sm table-bordered table-striped nowrap" style="width:100%" id="tbl_jo_details">
                                 <thead class="thead-dark">
                                     <tr>
                                         <th></th>
@@ -131,7 +134,6 @@ foreach ($user_accesses as $user_access){
                                         <th>Material Used</th>
                                         <th>Lot No.</th>
                                         <th>Sched. Qty.</th>
-                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbl_jo_details_body"></tbody>
