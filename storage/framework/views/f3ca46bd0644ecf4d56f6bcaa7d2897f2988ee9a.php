@@ -26,7 +26,7 @@ foreach ($user_accesses as $user_access){
         <ul class="nav nav-tabs">
             <li><a class="active" href="#production_summary" data-toggle="tab">Production Summary</a></li>
             <li><a href="#jo_details" data-toggle="tab">JO Details</a></li>
-            <li><a href="#travel_sheet" data-toggle="tab">JO Details List</a></li>
+            <li><a href="#travel_sheet" data-toggle="tab">J.O. Details List</a></li>
         </ul>
         <div class="tab-content">
 
@@ -62,21 +62,21 @@ foreach ($user_accesses as $user_access){
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-12">
+                <div class="row justify-content-center">
+                    <div class="col-md-10">
                         <div class="table-responsive">
-                            <table class="table table-sm table-hover table-striped dt-responsive nowrap" style="width: 100%" id="tbl_prod_sum">
+                            <table class="table table-sm table-hover table-striped table-bordered nowrap" style="width: 100%" id="tbl_prod_sum">
                                 <thead class="thead-dark">
                                     <tr>
-                                        <th width="5%"></th>
-                                        <th>SC No.</th>
-                                        <th>Product Code</th>
-                                        <th>Description</th>
-                                        <th>Order Qty</th>
-                                        <th>Sched Qty</th>
-                                        <th>P.O. No.</th>
-                                        <th>Status</th>
-                                        <th>Upload Date</th>
+                                        <th width="3%"></th>
+                                        <th width="11%">SC No.</th>
+                                        <th width="11%">Product Code</th>
+                                        <th width="19%">Description</th>
+                                        <th width="11%">Order Qty</th>
+                                        <th width="11%">Sched Qty</th>
+                                        <th width="11%">P.O. No.</th>
+                                        <th width="11%">Status</th>
+                                        <th width="11%">Upload Date</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbl_prod_sum_body"></tbody>
@@ -240,12 +240,6 @@ foreach ($user_accesses as $user_access){
                         <div class="col-md-1 col-sm-2 mb-5" id="btn_save_div">
                             <button type="button" id="btn_save" class="btn bg-green btn-block permission-button">
                                 <i class="fa fa-floppy-o"></i> Save
-                            </button>
-                        </div>
-
-                        <div class="col-md-2 col-sm-3 mb-5" id="btn_check_over_issuance_div">
-                            <button type="button" id="btn_check_over_issuance" class="btn bg-purple btn-block permission-button">
-                                <i class="fa fa-refresh"></i> Check Over Issuance
                             </button>
                         </div>
 

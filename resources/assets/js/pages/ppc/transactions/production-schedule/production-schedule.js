@@ -204,10 +204,10 @@ $(function () {
         var material_heat_no = $(this).val(); // rmw_id
 
         var material_used_code = $(this).find('option:selected').attr('data-item_code');
-        var material_used_size = ($(this).find('option:selected').attr('data-size')).toUpperCase().replace(/\s+/g, '');
+        var material_used_size = ($(this).find('option:selected').attr('data-size') == undefined)? "" : ($(this).find('option:selected').attr('data-size')).toString().toUpperCase().replace(/\s+/g, '');
         var material_used_schedule = $(this).find('option:selected').attr('data-schedule');
         var material_used_description = $(this).find('option:selected').attr('data-description');
-        var standard_material_used = ($(this).find('option:selected').attr('data-standard_material_used')).toUpperCase().replace(/\s+/g, '');
+        var standard_material_used = ($(this).find('option:selected').attr('data-standard_material_used') == undefined) ? "" : ($(this).find('option:selected').attr('data-standard_material_used')).toString().toUpperCase().replace(/\s+/g, '');
 
         var for_over_issuance = $(this).find('option:selected').attr('data-for_over_issuance');
         var material_type = $(this).find('option:selected').attr('data-material_type');
@@ -634,7 +634,7 @@ $(function () {
                 }).done(function(data, textStatus, xhr) {
                     if(data.status == 'success'){
                         swal("Successful", "The travel sheet has been cancelled.");
-                        ProdSummariesTable(prodSummariesURL);
+                        ProdSummaries(prodSummariesURL);
                         travel_Sheet = [];
                         getTravelSheet();
                     }else{ 
@@ -665,7 +665,7 @@ function initializePage() {
         if (output == 1) {}
     });
 
-    ProdSummariesTable(prodSummariesURL);
+    ProdSummaries(prodSummariesURL);
     $('#searchPS').on('click', getDatatablesearch)
     checkAllCheckboxesInTable('.check-all_prod_sum','.check_item');
     makeJODetailsList(joDetails_arr);
@@ -715,76 +715,21 @@ function ProdSummaries(PRODURL) {
     }).done(function(data, textStatus, xhr) {
         ProdSummariesTable(data);
     }).fail(function(xhr, textStatus, errorThrown) {
-        msg(errorThrown,textStatus);
-    }).always(function() {
         $('.loadingOverlay').hide();
+        ErrorMsg(xhr)
+    }).always(function() {
     });
 }
 
-function ProdSummariesTable(PRODURL) {
-    // $('#tbl_prod_sum').dataTable().fnClearTable();
-    // $('#tbl_prod_sum').dataTable().fnDestroy();
-    // $('#tbl_prod_sum').dataTable({
-    //     data: arr,
-    //     processing: true,
-    //     deferRender: true,
-    //     order: [[1,'asc']],
-    //     responsive: true,
-    //     language: {
-    //         aria: {
-    //             sortAscending: ": activate to sort column ascending",
-    //             sortDescending: ": activate to sort column descending"
-    //         },
-    //         emptyTable: "No data available in table",
-    //         info: "Showing _START_ to _END_ of _TOTAL_ records",
-    //         infoEmpty: "No records found",
-    //         infoFiltered: "(filtered1 from _MAX_ total records)",
-    //         lengthMenu: "Show _MENU_",
-    //         search: "Search:",
-    //         zeroRecords: "No matching records found",
-    //         paginate: {
-    //             "previous":"Prev",
-    //             "next": "Next",
-    //             "last": "Last",
-    //             "first": "First"
-    //         }
-    //     },
-
-
-    //     columns: [
-    //         { data: function(data) {
-    //             return "<input type='checkbox' class='table-checkbox check_item_prod_sum'"+
-    //                         "id='prod_sum_chk_"+data.id+"'"+
-    //                         "data-id='"+data.id+"'"+
-    //                         "data-sc_no='"+data.sc_no+"'"+
-    //                         "data-prod_code='"+data.prod_code+"'"+
-    //                         "data-description='"+data.description+"'"+
-    //                         "data-quantity='"+data.quantity+"'"+
-    //                         "data-status='"+data.status+"'"+
-    //                         "data-sched_qty='"+data.sched_qty+"'>";
-    //         }, name: 'id', 'searchable': false, 'orderable': false },
-    //         { data: 'sc_no', name: 'ps.sc_no' },
-    //         { data: 'prod_code', name: 'ps.prod_code' },
-    //         { data: 'description', name: 'ps.description' },
-    //         { data: 'quantity', name: 'ps.quantity' },
-    //         { data: 'sched_qty', name: 'ps.sched_qty' },
-    //         { data: 'po', name: 'ps.po' },
-    //         { data: 'status', name: 'ps.status' },
-    //         { data: 'date_upload', name: 'ps.date_upload' }
-    //     ]
-    // });
-
-    var table = $('#tbl_prod_sum');
-
-    table.dataTable().fnClearTable();
-    table.dataTable().fnDestroy();
-    table.dataTable({
+function ProdSummariesTable(arr) {
+    $('#tbl_prod_sum').dataTable().fnClearTable();
+    $('#tbl_prod_sum').dataTable().fnDestroy();
+    $('#tbl_prod_sum').dataTable({
+        data: arr,
         processing: true,
-        serverSide: true,
-        ajax: {
-            url: PRODURL,
-        }, 
         deferRender: true,
+        order: [[1,'asc']],
+        scrollX: true,
         language: {
             aria: {
                 sortAscending: ": activate to sort column ascending",
@@ -798,60 +743,48 @@ function ProdSummariesTable(PRODURL) {
             search: "Search:",
             zeroRecords: "No matching records found",
             paginate: {
-                "previous": "Prev",
+                "previous":"Prev",
                 "next": "Next",
                 "last": "Last",
                 "first": "First"
             }
         },
-        lengthMenu: [
-            [5, 10, 15, 20, -1],
-            [5, 10, 15, 20, "All"]
-        ],
-        pageLength: 10,
-        columnDefs: [{
-            orderable: false,
-            targets: 0
-        }, {
-            searchable: false,
-            targets: 0
-        }],
-        order: [[1, 'asc']],
-        // columns: [
-        //     {
-        //         data: 'id', name: 'id'
-        //         // data: function (data) {
-        //         //     return "<input type='checkbox' class='table-checkbox check_item_prod_sum'" +
-        //         //         "id='prod_sum_chk_" + data.id + "'" +
-        //         //         "data-id='" + data.id + "'" +
-        //         //         "data-sc_no='" + data.sc_no + "'" +
-        //         //         "data-prod_code='" + data.prod_code + "'" +
-        //         //         "data-description='" + data.description + "'" +
-        //         //         "data-quantity='" + data.quantity + "'" +
-        //         //         "data-status='" + data.status + "'" +
-        //         //         "data-sched_qty='" + data.sched_qty + "'>";
-        //         // }, name: 'id', 'searchable': false, 'orderable': false
-        //     },
-        //     { data: 'sc_no', name: 'sc_no' },
-        //     { data: 'prod_code', name: 'prod_code' },
-        //     { data: 'description', name: 'description' },
-        //     { data: 'quantity', name: 'quantity' },
-        //     { data: 'sched_qty', name: 'sched_qty' },
-        //     { data: 'po', name: 'po' },
-        //     { data: 'status', name: 'status' },
-        //     { data: 'date_upload', name: 'date_upload' }
-        // ]
 
+
+        columns: [
+            { data: function(data) {
+                return "<input type='checkbox' class='table-checkbox check_item_prod_sum'"+
+                            "id='prod_sum_chk_"+data.id+"'"+
+                            "data-id='"+data.id+"'"+
+                            "data-sc_no='"+data.sc_no+"'"+
+                            "data-prod_code='"+data.prod_code+"'"+
+                            "data-description='"+data.description+"'"+
+                            "data-quantity='"+data.quantity+"'"+
+                            "data-status='"+data.status+"'"+
+                            "data-sched_qty='"+data.sched_qty+"'>";
+            }, name: 'id', 'searchable': false, 'orderable': false },
+            { data: 'sc_no', name: 'ps.sc_no' },
+            { data: 'prod_code', name: 'ps.prod_code' },
+            { data: 'description', name: 'ps.description' },
+            { data: 'quantity', name: 'ps.quantity' },
+            { data: 'sched_qty', name: 'ps.sched_qty' },
+            { data: 'po', name: 'ps.po' },
+            { data: 'status', name: 'ps.status' },
+            { data: 'date_upload', name: 'ps.date_upload' }
+        ],
+        initComplete: function() {
+            $('.loadingOverlay').hide();
+        }
     });
 }
 
 function getDatatablesearch() {
     if($('#from').val() != "" && $('#to').val() != ""){
-        ProdSummariesTable(prodSummariesURL + '?fromvalue='+ $('#from').val()+'&tovalue='+ $('#to').val());
+        ProdSummaries(prodSummariesURL + '?fromvalue='+ $('#from').val()+'&tovalue='+ $('#to').val());
         // getDatatable('tbl_prod_sum',prodSummariesURL + '?fromvalue='+ $('#from').val()+'&tovalue='+ $('#to').val(),dataColumn,[],0);
     }
     else if($('#from').val() != ""){
-        ProdSummariesTable(prodSummariesURL + '?fromvalue='+ $('#from').val());
+        ProdSummaries(prodSummariesURL + '?fromvalue='+ $('#from').val());
         // getDatatable('tbl_prod_sum',prodSummariesURL + '?fromvalue='+ $('#from').val(),dataColumn,[],0);
     }
     else{
@@ -982,7 +915,7 @@ function getMaterialHeatNo(withdrawal_slip_no,state) {
                 _token: token, 
                 rmw_no: withdrawal_slip_no, 
                 prod_code: x.prod_code,
-                state: 'add'
+                state: state
             }
         }).done(function (data, textStatus, xhr) {
             materials = data.materials;
@@ -1338,7 +1271,7 @@ function SaveJODetails() {
             totalsched_qty: $('input[name="totalsched_qty[]"]').map(function () { return $(this).val(); }).get(),
             sched_qty: $('input[name="sched_qty[]"]').map(function(){return $(this).val();}).get(),
             material_type: $('input[name="material_type[]"]').map(function () { return $(this).val(); }).get(),
-            for_over_issuance: $('input[name="material_type[]"]').map(function () { return $(this).val(); }).get(),
+            for_over_issuance: $('input[name="for_over_issuance[]"]').map(function () { return $(this).val(); }).get(),
             rmw_id: $('input[name="rmw_id[]"]').map(function () { return $(this).val(); }).get(),
             heat_no_id: $('input[name="heat_no_id[]"]').map(function () { return $(this).val(); }).get(),
             inv_id: $('input[name="inv_id[]"]').map(function () { return $(this).val(); }).get(),
@@ -1362,7 +1295,7 @@ function SaveJODetails() {
         $('#btn_check_over_issuance_div').hide();
         $('#btn_edit_div').show();
         $('#btn_cancel_div').hide();
-        ProdSummariesTable(prodSummariesURL);
+        ProdSummaries(prodSummariesURL);
         joDetails_arr = [];
         makeJODetailsList(joDetails_arr);
         getTravelSheet();

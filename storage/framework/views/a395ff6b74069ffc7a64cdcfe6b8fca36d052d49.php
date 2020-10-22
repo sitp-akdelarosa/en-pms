@@ -1,3 +1,7 @@
+<?php $__env->startSection('title'); ?>
+	Production Output
+<?php $__env->stopSection(); ?>
+
 <?php $__env->startPush('styles'); ?>
 	<style>
 		.thead-dark {
