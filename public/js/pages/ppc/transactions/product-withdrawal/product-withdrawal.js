@@ -168,12 +168,11 @@ $(function () {
       total_pcs = parseInt($('#old_issued_qty').val()) + parseInt($('#inv_qty').val());
     }
 
-    $same_code_total_qty = 0;
-    $.each(product_arr, function (i, x) {
-      if (x.inv_id == $('#inv_id').val()) {
-        $same_code_total_qty = parseInt(x.issued_qty) + parseInt($('#issued_qty').val());
-      }
-    });
+    $same_code_total_qty = 0; // $.each(product_arr, function(i,x) {
+    //     if (x.inv_id == $('#inv_id').val()) {
+    //         $same_code_total_qty = (parseInt(x.issued_qty) + parseInt($('#issued_qty').val()));
+    //     }
+    // });
 
     if ($('#item_class').val() == '') {
       msg("Please select an Item Class.", "failed");

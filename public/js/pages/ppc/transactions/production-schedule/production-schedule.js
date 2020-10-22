@@ -703,7 +703,7 @@ $(function () {
         }).done(function (data, textStatus, xhr) {
           if (data.status == 'success') {
             swal("Successful", "The travel sheet has been cancelled.");
-            ProdSummaries(prodSummariesURL);
+            ProdSummariesTable(prodSummariesURL);
             travel_Sheet = [];
             getTravelSheet();
           } else {
@@ -730,7 +730,7 @@ function initializePage() {
   check_permission(code_permission, function (output) {
     if (output == 1) {}
   });
-  ProdSummaries(prodSummariesURL);
+  ProdSummariesTable(prodSummariesURL);
   $('#searchPS').on('click', getDatatablesearch);
   checkAllCheckboxesInTable('.check-all_prod_sum', '.check_item');
   makeJODetailsList(joDetails_arr);
@@ -782,15 +782,66 @@ function ProdSummaries(PRODURL) {
   });
 }
 
-function ProdSummariesTable(arr) {
-  $('#tbl_prod_sum').dataTable().fnClearTable();
-  $('#tbl_prod_sum').dataTable().fnDestroy();
-  $('#tbl_prod_sum').dataTable({
-    data: arr,
+function ProdSummariesTable(PRODURL) {
+  // $('#tbl_prod_sum').dataTable().fnClearTable();
+  // $('#tbl_prod_sum').dataTable().fnDestroy();
+  // $('#tbl_prod_sum').dataTable({
+  //     data: arr,
+  //     processing: true,
+  //     deferRender: true,
+  //     order: [[1,'asc']],
+  //     responsive: true,
+  //     language: {
+  //         aria: {
+  //             sortAscending: ": activate to sort column ascending",
+  //             sortDescending: ": activate to sort column descending"
+  //         },
+  //         emptyTable: "No data available in table",
+  //         info: "Showing _START_ to _END_ of _TOTAL_ records",
+  //         infoEmpty: "No records found",
+  //         infoFiltered: "(filtered1 from _MAX_ total records)",
+  //         lengthMenu: "Show _MENU_",
+  //         search: "Search:",
+  //         zeroRecords: "No matching records found",
+  //         paginate: {
+  //             "previous":"Prev",
+  //             "next": "Next",
+  //             "last": "Last",
+  //             "first": "First"
+  //         }
+  //     },
+  //     columns: [
+  //         { data: function(data) {
+  //             return "<input type='checkbox' class='table-checkbox check_item_prod_sum'"+
+  //                         "id='prod_sum_chk_"+data.id+"'"+
+  //                         "data-id='"+data.id+"'"+
+  //                         "data-sc_no='"+data.sc_no+"'"+
+  //                         "data-prod_code='"+data.prod_code+"'"+
+  //                         "data-description='"+data.description+"'"+
+  //                         "data-quantity='"+data.quantity+"'"+
+  //                         "data-status='"+data.status+"'"+
+  //                         "data-sched_qty='"+data.sched_qty+"'>";
+  //         }, name: 'id', 'searchable': false, 'orderable': false },
+  //         { data: 'sc_no', name: 'ps.sc_no' },
+  //         { data: 'prod_code', name: 'ps.prod_code' },
+  //         { data: 'description', name: 'ps.description' },
+  //         { data: 'quantity', name: 'ps.quantity' },
+  //         { data: 'sched_qty', name: 'ps.sched_qty' },
+  //         { data: 'po', name: 'ps.po' },
+  //         { data: 'status', name: 'ps.status' },
+  //         { data: 'date_upload', name: 'ps.date_upload' }
+  //     ]
+  // });
+  var table = $('#tbl_prod_sum');
+  table.dataTable().fnClearTable();
+  table.dataTable().fnDestroy();
+  table.dataTable({
     processing: true,
+    serverSide: true,
+    ajax: {
+      url: PRODURL
+    },
     deferRender: true,
-    order: [[1, 'asc']],
-    responsive: true,
     language: {
       aria: {
         sortAscending: ": activate to sort column ascending",
@@ -810,109 +861,48 @@ function ProdSummariesTable(arr) {
         "first": "First"
       }
     },
-    columns: [{
-      data: function data(_data) {
-        return "<input type='checkbox' class='table-checkbox check_item_prod_sum'" + "id='prod_sum_chk_" + _data.id + "'" + "data-id='" + _data.id + "'" + "data-sc_no='" + _data.sc_no + "'" + "data-prod_code='" + _data.prod_code + "'" + "data-description='" + _data.description + "'" + "data-quantity='" + _data.quantity + "'" + "data-status='" + _data.status + "'" + "data-sched_qty='" + _data.sched_qty + "'>";
-      },
-      name: 'id',
-      'searchable': false,
-      'orderable': false
+    lengthMenu: [[5, 10, 15, 20, -1], [5, 10, 15, 20, "All"]],
+    pageLength: 10,
+    columnDefs: [{
+      orderable: false,
+      targets: 0
     }, {
-      data: 'sc_no',
-      name: 'ps.sc_no'
-    }, {
-      data: 'prod_code',
-      name: 'ps.prod_code'
-    }, {
-      data: 'description',
-      name: 'ps.description'
-    }, {
-      data: 'quantity',
-      name: 'ps.quantity'
-    }, {
-      data: 'sched_qty',
-      name: 'ps.sched_qty'
-    }, {
-      data: 'po',
-      name: 'ps.po'
-    }, {
-      data: 'status',
-      name: 'ps.status'
-    }, {
-      data: 'date_upload',
-      name: 'ps.date_upload'
-    }]
-  }); // var table = $('#tbl_prod_sum');
-  // table.dataTable().fnClearTable();
-  // table.dataTable().fnDestroy();
-  // table.dataTable({
-  //     processing: true,
-  //     serverSide: true,
-  //     ajax: PRODURL,
-  //     deferRender: true,
-  //     language: {
-  //         aria: {
-  //             sortAscending: ": activate to sort column ascending",
-  //             sortDescending: ": activate to sort column descending"
-  //         },
-  //         emptyTable: "No data available in table",
-  //         info: "Showing _START_ to _END_ of _TOTAL_ records",
-  //         infoEmpty: "No records found",
-  //         infoFiltered: "(filtered1 from _MAX_ total records)",
-  //         lengthMenu: "Show _MENU_",
-  //         search: "Search:",
-  //         zeroRecords: "No matching records found",
-  //         paginate: {
-  //             "previous": "Prev",
-  //             "next": "Next",
-  //             "last": "Last",
-  //             "first": "First"
-  //         }
-  //     },
-  //     lengthMenu: [
-  //         [5, 10, 15, 20, -1],
-  //         [5, 10, 15, 20, "All"]
-  //     ],
-  //     pageLength: 10,
-  //     columnDefs: [{
-  //         orderable: false,
-  //         targets: 0
-  //     }, {
-  //         searchable: false,
-  //         targets: 0
-  //     }],
-  //     order: [[1, 'asc']],
-  //     columns: [
-  //         {
-  //             data: function (data) {
-  //                 return "<input type='checkbox' class='table-checkbox check_item_prod_sum'" +
-  //                     "id='prod_sum_chk_" + data.id + "'" +
-  //                     "data-id='" + data.id + "'" +
-  //                     "data-sc_no='" + data.sc_no + "'" +
-  //                     "data-prod_code='" + data.prod_code + "'" +
-  //                     "data-description='" + data.description + "'" +
-  //                     "data-quantity='" + data.quantity + "'" +
-  //                     "data-status='" + data.status + "'" +
-  //                     "data-sched_qty='" + data.sched_qty + "'>";
-  //             }, name: 'id', 'searchable': false, 'orderable': false
-  //         },
-  //         { data: 'sc_no', name: 'sc_no' },
-  //         { data: 'prod_code', name: 'prod_code' },
-  //         { data: 'description', name: 'description' },
-  //         { data: 'quantity', name: 'quantity' },
-  //         { data: 'sched_qty', name: 'sched_qty' },
-  //         { data: 'po', name: 'po' },
-  //         { data: 'status', name: 'status' },
-  //         { data: 'date_upload', name: 'date_upload' }
-  //     ]
-  // });
+      searchable: false,
+      targets: 0
+    }],
+    order: [[1, 'asc']] // columns: [
+    //     {
+    //         data: 'id', name: 'id'
+    //         // data: function (data) {
+    //         //     return "<input type='checkbox' class='table-checkbox check_item_prod_sum'" +
+    //         //         "id='prod_sum_chk_" + data.id + "'" +
+    //         //         "data-id='" + data.id + "'" +
+    //         //         "data-sc_no='" + data.sc_no + "'" +
+    //         //         "data-prod_code='" + data.prod_code + "'" +
+    //         //         "data-description='" + data.description + "'" +
+    //         //         "data-quantity='" + data.quantity + "'" +
+    //         //         "data-status='" + data.status + "'" +
+    //         //         "data-sched_qty='" + data.sched_qty + "'>";
+    //         // }, name: 'id', 'searchable': false, 'orderable': false
+    //     },
+    //     { data: 'sc_no', name: 'sc_no' },
+    //     { data: 'prod_code', name: 'prod_code' },
+    //     { data: 'description', name: 'description' },
+    //     { data: 'quantity', name: 'quantity' },
+    //     { data: 'sched_qty', name: 'sched_qty' },
+    //     { data: 'po', name: 'po' },
+    //     { data: 'status', name: 'status' },
+    //     { data: 'date_upload', name: 'date_upload' }
+    // ]
+
+  });
 }
 
 function getDatatablesearch() {
   if ($('#from').val() != "" && $('#to').val() != "") {
-    ProdSummaries(prodSummariesURL + '?fromvalue=' + $('#from').val() + '&tovalue=' + $('#to').val()); // getDatatable('tbl_prod_sum',prodSummariesURL + '?fromvalue='+ $('#from').val()+'&tovalue='+ $('#to').val(),dataColumn,[],0);
+    ProdSummariesTable(prodSummariesURL + '?fromvalue=' + $('#from').val() + '&tovalue=' + $('#to').val()); // getDatatable('tbl_prod_sum',prodSummariesURL + '?fromvalue='+ $('#from').val()+'&tovalue='+ $('#to').val(),dataColumn,[],0);
   } else if ($('#from').val() != "") {
-    ProdSummaries(prodSummariesURL + '?fromvalue=' + $('#from').val()); // getDatatable('tbl_prod_sum',prodSummariesURL + '?fromvalue='+ $('#from').val(),dataColumn,[],0);
+    ProdSummariesTable(prodSummariesURL + '?fromvalue=' + $('#from').val()); // getDatatable('tbl_prod_sum',prodSummariesURL + '?fromvalue='+ $('#from').val(),dataColumn,[],0);
   } else {
     msg("From Input is required", "warning");
   }
@@ -1410,7 +1400,7 @@ function SaveJODetails() {
     $('#btn_check_over_issuance_div').hide();
     $('#btn_edit_div').show();
     $('#btn_cancel_div').hide();
-    ProdSummaries(prodSummariesURL);
+    ProdSummariesTable(prodSummariesURL);
     joDetails_arr = [];
     makeJODetailsList(joDetails_arr);
     getTravelSheet();
@@ -1589,8 +1579,8 @@ function makeTravelSheet(arr) {
     data: arr,
     order: [[1, 'asc']],
     columns: [{
-      data: function data(_data2) {
-        return '<span class="cancel_travel_sheet"' + ' data-jo_no="' + _data2.jo_no + '" data-prod_code="' + _data2.product_code + '" ' + ' data-issued_qty="' + _data2.issued_qty + '"data-id="' + _data2.id + '" ' + ' data-status="' + _data2.status + '"  data-sched_qty="' + _data2.sched_qty + '" ' + ' data-qty_per_sheet="' + _data2.qty_per_sheet + '"  data-iso_code="' + _data2.iso_code + '"' + ' data-sc_no="' + _data2.sc_no + '" data-idJO="' + _data2.idJO + '"' + ' title="Cancel Travel Sheet"><i class="text-red fa fa-times"></i> </span>';
+      data: function data(_data) {
+        return '<span class="cancel_travel_sheet"' + ' data-jo_no="' + _data.jo_no + '" data-prod_code="' + _data.product_code + '" ' + ' data-issued_qty="' + _data.issued_qty + '"data-id="' + _data.id + '" ' + ' data-status="' + _data.status + '"  data-sched_qty="' + _data.sched_qty + '" ' + ' data-qty_per_sheet="' + _data.qty_per_sheet + '"  data-iso_code="' + _data.iso_code + '"' + ' data-sc_no="' + _data.sc_no + '" data-idJO="' + _data.idJO + '"' + ' title="Cancel Travel Sheet"><i class="text-red fa fa-times"></i> </span>';
       },
       name: 'action',
       orderable: false,
@@ -1623,8 +1613,8 @@ function makeTravelSheet(arr) {
       data: 'material_heat_no',
       name: 'jt.material_heat_no'
     }, {
-      data: function data(_data3) {
-        switch (_data3.status) {
+      data: function data(_data2) {
+        switch (_data2.status) {
           case 0:
             return 'No quantity issued';
             break;

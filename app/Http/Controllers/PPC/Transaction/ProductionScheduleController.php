@@ -48,133 +48,164 @@ class ProductionScheduleController extends Controller
         $TO = '';
         $FROM = '';
 
-        // $prod_sum = DB::table('ppc_production_summaries as ps')
-        //                 ->leftJoin('ppc_product_codes as pc','ps.prod_code','=','pc.product_code')
-        //                 ->leftJoin('admin_assign_production_lines as pl','pl.product_line','=','pc.product_type')
-        //                 ->where('pl.user_id',Auth::user()->id)
-        //                 ->where('ps.sched_qty','<','ps.quantity')
-        //                 ->groupBy("ps.id",
-        //                     "ps.sc_no",
-        //                     "ps.prod_code",
-        //                     "pc.code_description",
-        //                     "ps.description",
-        //                     "ps.sched_qty",
-        //                     "ps.quantity",
-        //                     "ps.po",
-        //                     "ps.status",
-        //                     "ps.date_upload")
-        //                 ->select([
-        //                     DB::raw("ps.id as id"),
-        //                     DB::raw("ps.sc_no as sc_no"),
-        //                     DB::raw("ps.prod_code as prod_code"),
-        //                     DB::raw("ifnull(pc.code_description,ps.description) as description"),
-        //                     DB::raw("ps.sched_qty as sched_qty"),
-        //                     DB::raw("ps.quantity as quantity"),
-        //                     DB::raw("ps.po as po"),
-        //                     DB::raw("ps.`status` as `status`"),
-        //                     DB::raw("DATE_FORMAT(ps.date_upload, '%Y-%m-%d') as date_upload")
-        //                 ]);
-        if (isset($req->fromvalue)) {
+        $prod_sum = DB::table('ppc_production_summaries as ps')
+                        ->join('ppc_product_codes as pc','ps.prod_code','=','pc.product_code')
+                        ->join('admin_assign_production_lines as pl','pl.product_line','=','pc.product_type')
+                        ->where('pl.user_id','=',Auth::user()->id)
+                        ->where('ps.sched_qty','<','ps.quantity')
+                        ->groupBy("ps.id",
+                            "ps.sc_no",
+                            "ps.prod_code",
+                            "pc.code_description",
+                            "ps.description",
+                            "ps.sched_qty",
+                            "ps.quantity",
+                            "ps.po",
+                            "ps.status",
+                            "ps.date_upload")
+                        ->select([
+                            DB::raw("ps.id as id"),
+                            DB::raw("ps.sc_no as sc_no"),
+                            DB::raw("ps.prod_code as prod_code"),
+                            DB::raw("ifnull(pc.code_description,ps.description) as description"),
+                            DB::raw("ps.sched_qty as sched_qty"),
+                            DB::raw("ps.quantity as quantity"),
+                            DB::raw("ps.po as po"),
+                            DB::raw("ps.`status` as `status`"),
+                            DB::raw("DATE_FORMAT(ps.date_upload, '%Y-%m-%d') as date_upload")
+                        ]);
 
-            $from1 = PpcProductionSummary::select('id')
-                ->where('sc_no', 'like', '%' . $req->fromvalue . '%')
-                ->where('create_user', Auth::user()->id)
-                ->orderBy('id', 'DESC')
-                ->first();
-            $from2 = PpcProductionSummary::select('id')
-                ->where('prod_code', 'like', '%' . $req->fromvalue . '%')
-                ->where('create_user', Auth::user()->id)
-                ->orderBy('id', 'DESC')
-                ->first();
-            $to1 = PpcProductionSummary::select(DB::raw("Max(id) as ids"))
-                ->where('sc_no', 'like', '%' . $req->tovalue . '%')
-                ->where('create_user', Auth::user()->id)
-                ->orderBy('id', 'DESC')
-                ->first();
-            $to2 = PpcProductionSummary::select('id')
-                ->where('prod_code', 'like', '%' . $req->tovalue . '%')
-                ->where('create_user', Auth::user()->id)
-                ->orderBy('id', 'DESC')
-                ->first();
 
-            if (isset($from1) && isset($to1)) {
-                $FROM = $from1->id;
-                $TO = $to1->ids;
+        $prod_sum1 = DB::table('ppc_production_summaries as ps')
+                        ->join('ppc_product_codes as pc','ps.prod_code','=','pc.product_code')
+                        ->join('admin_assign_production_lines as pl','pl.product_line','=','pc.product_type')
+                        ->where('pl.user_id','=',Auth::user()->id)
+                        ->where('ps.sched_qty','<','ps.quantity')
+                        ->groupBy("ps.id",
+                            "ps.sc_no",
+                            "ps.prod_code",
+                            "pc.code_description",
+                            "ps.description",
+                            "ps.sched_qty",
+                            "ps.quantity",
+                            "ps.po",
+                            "ps.status",
+                            "ps.date_upload")
+                        ->select(
+                            DB::raw("ps.id as id"),
+                            DB::raw("ps.sc_no as sc_no"),
+                            DB::raw("ps.prod_code as prod_code"),
+                            DB::raw("ifnull(pc.code_description,ps.description) as description"),
+                            DB::raw("ps.sched_qty as sched_qty"),
+                            DB::raw("ps.quantity as quantity"),
+                            DB::raw("ps.po as po"),
+                            DB::raw("ps.`status` as `status`"),
+                            DB::raw("DATE_FORMAT(ps.date_upload, '%Y-%m-%d') as date_upload")
+                        )->get();
 
-                if ($req->tovalue == '') {
-                    $toNULL = PpcProductionSummary::select(DB::raw("Max(id) as ids"))
-                        ->where('sc_no', 'like', '%' . $req->fromvalue . '%')
-                        ->where('create_user', Auth::user()->id)
-                        ->orderBy('id', 'DESC')
-                        ->first();
-                    $TO = $toNULL->ids;
-                }
+        // if (isset($req->fromvalue)) {
 
-            }
-            if (isset($from2) && isset($to2)) {
-                $FROM = $from2->id;
-                $TO = $to2->id;
+        //     $from1 = PpcProductionSummary::select('id')
+        //         ->where('sc_no', 'like', '%' . $req->fromvalue . '%')
+        //         ->where('create_user', Auth::user()->id)
+        //         ->orderBy('id', 'DESC')
+        //         ->first();
+        //     $from2 = PpcProductionSummary::select('id')
+        //         ->where('prod_code', 'like', '%' . $req->fromvalue . '%')
+        //         ->where('create_user', Auth::user()->id)
+        //         ->orderBy('id', 'DESC')
+        //         ->first();
+        //     $to1 = PpcProductionSummary::select(DB::raw("Max(id) as ids"))
+        //         ->where('sc_no', 'like', '%' . $req->tovalue . '%')
+        //         ->where('create_user', Auth::user()->id)
+        //         ->orderBy('id', 'DESC')
+        //         ->first();
+        //     $to2 = PpcProductionSummary::select('id')
+        //         ->where('prod_code', 'like', '%' . $req->tovalue . '%')
+        //         ->where('create_user', Auth::user()->id)
+        //         ->orderBy('id', 'DESC')
+        //         ->first();
 
-                if ($req->tovalue == '') {
-                    $TO = $FROM;
-                }
+        //     if (isset($from1) && isset($to1)) {
+        //         $FROM = $from1->id;
+        //         $TO = $to1->ids;
 
-            }
+        //         if ($req->tovalue == '') {
+        //             $toNULL = PpcProductionSummary::select(DB::raw("Max(id) as ids"))
+        //                 ->where('sc_no', 'like', '%' . $req->fromvalue . '%')
+        //                 ->where('create_user', Auth::user()->id)
+        //                 ->orderBy('id', 'DESC')
+        //                 ->first();
+        //             $TO = $toNULL->ids;
+        //         }
 
-            // $prod_sum->whereRaw(" and ps.id between '".$FROM."' and '".$TO."'");
+        //     }
+        //     if (isset($from2) && isset($to2)) {
+        //         $FROM = $from2->id;
+        //         $TO = $to2->id;
 
-            $Datalist = DB::select("SELECT ps.id as id,
-                                            ps.sc_no as sc_no,
-                                            ps.prod_code as prod_code,
-                                            ps.description as description,
-                                            ps.sched_qty as sched_qty,
-                                            ps.quantity as quantity,
-                                            ps.po as po,
-                                            ps.status as status,
-                                            DATE_FORMAT(ps.date_upload, '%m/%d/%Y') as date_upload
-                                    from ppc_production_summaries as ps
-                                    inner join ppc_product_codes as pc on ps.prod_code = pc.product_code
-                                    inner join admin_assign_production_lines as pl on pl.product_line = pc.product_type
-                                    where pl.user_id = ".Auth::user()->id."
-                                    and ps.sched_qty < ps.quantity
-                                    and ps.id between ".$FROM." and ".$TO."
-                                    group by ps.id,
-                                            ps.sc_no,
-                                            ps.prod_code,
-                                            ps.description,
-                                            ps.sched_qty,
-                                            ps.quantity,
-                                            ps.po,
-                                            ps.status,
-                                            DATE_FORMAT(ps.date_upload, '%m/%d/%Y')");
+        //         if ($req->tovalue == '') {
+        //             $TO = $FROM;
+        //         }
 
-            return response()->json($Datalist);
-        } else {
-            $Datalist = DB::select("SELECT ps.id as id,
-                                            ps.sc_no as sc_no,
-                                            ps.prod_code as prod_code,
-                                            ifnull(pc.code_description,ps.description) as description,
-                                            ps.sched_qty as sched_qty,
-                                            ps.quantity as quantity,
-                                            ps.po as po,
-                                            ps.status as status,
-                                            DATE_FORMAT(ps.date_upload, '%Y-%m-%d') as date_upload
-                                    from ppc_production_summaries as ps
-                                    left join ppc_product_codes as pc on ps.prod_code = pc.product_code
-                                    left join admin_assign_production_lines as pl on pl.product_line = pc.product_type
-                                    where pl.user_id = ".Auth::user()->id."
-                                    and ps.sched_qty < ps.quantity
-                                    group by ps.id,
-                                            ps.sc_no,
-                                            ps.prod_code,
-                                            ps.description,
-                                            ps.sched_qty,
-                                            ps.quantity,
-                                            ps.po,
-                                            ps.status,
-                                            DATE_FORMAT(ps.date_upload, '%m/%d/%Y')"); //and ps.sched_qty < ps.quantity
-            return response()->json($Datalist);
-        }
+        //     }
+
+        //     // $prod_sum->whereRaw(" and ps.id between '".$FROM."' and '".$TO."'");
+
+        //     $Datalist = DB::select("SELECT ps.id as id,
+        //                                     ps.sc_no as sc_no,
+        //                                     ps.prod_code as prod_code,
+        //                                     ifnull(pc.code_description,ps.description) as description,
+        //                                     ps.sched_qty as sched_qty,
+        //                                     ps.quantity as quantity,
+        //                                     ps.po as po,
+        //                                     ps.status as status,
+        //                                     DATE_FORMAT(ps.date_upload, '%Y-%m-%d') as date_upload
+        //                             from ppc_production_summaries as ps
+        //                             inner join ppc_product_codes as pc on ps.prod_code = pc.product_code
+        //                             inner join admin_assign_production_lines as pl on pl.product_line = pc.product_type
+        //                             where pl.user_id = ".Auth::user()->id."
+        //                             and ps.sched_qty < ps.quantity
+        //                             and ps.id between ".$FROM." and ".$TO."
+        //                             group by ps.id,
+        //                                     ps.sc_no,
+        //                                     ps.prod_code,
+        //                                     pc.code_description
+        //                                     ps.description,
+        //                                     ps.sched_qty,
+        //                                     ps.quantity,
+        //                                     ps.po,
+        //                                     ps.status,
+        //                                     DATE_FORMAT(ps.date_upload, '%Y-%m-%d')");
+
+        //     return response()->json($Datalist);
+        // } else {
+        //     $Datalist = DB::select("SELECT ps.id as id,
+        //                                     ps.sc_no as sc_no,
+        //                                     ps.prod_code as prod_code,
+        //                                     ifnull(pc.code_description,ps.description) as description,
+        //                                     ps.sched_qty as sched_qty,
+        //                                     ps.quantity as quantity,
+        //                                     ps.po as po,
+        //                                     ps.status as status,
+        //                                     DATE_FORMAT(ps.date_upload, '%Y-%m-%d') as date_upload
+        //                             from ppc_production_summaries as ps
+        //                             inner join ppc_product_codes as pc on ps.prod_code = pc.product_code
+        //                             inner join admin_assign_production_lines as pl on pl.product_line = pc.product_type
+        //                             where pl.user_id = ".Auth::user()->id."
+        //                             and ps.sched_qty < ps.quantity
+        //                             group by ps.id,
+        //                                     ps.sc_no,
+        //                                     ps.prod_code,
+        //                                     pc.code_description,
+        //                                     ps.description,
+        //                                     ps.sched_qty,
+        //                                     ps.quantity,
+        //                                     ps.po,
+        //                                     ps.status,
+        //                                     DATE_FORMAT(ps.date_upload, '%Y-%m-%d')"); //and ps.sched_qty < ps.quantity
+        //     return response()->json($Datalist);
+        // }
 
         // $prod_sum->groupBy("ps.id",
         //                 "ps.sc_no",
@@ -186,13 +217,13 @@ class ProductionScheduleController extends Controller
         //                 "ps.status",
         //                 "ps.date_upload");
 
-        // $datatable = DataTables::of($prod_sum)
-		// 				->editColumn('id', function($data) {
-		// 					return $data->id;
-		// 				})
-		// 				->make(true);
+        $datatable = DataTables::of($prod_sum)
+						->editColumn('id', function($data) {
+							return $data->id;
+						})
+						->make(true);
 
-        // return $datatable;
+        return $datatable;
     }
 
     public function SaveJODetails(Request $req)
