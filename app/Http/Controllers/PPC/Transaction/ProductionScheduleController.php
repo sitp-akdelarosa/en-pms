@@ -570,7 +570,7 @@ class ProductionScheduleController extends Controller
                                         ) as `text`,
                                         CASE
                                             WHEN pui.materials_type LIKE '%BAR%' THEN
-                                                pui.length / ((((SELECT cut_length from ppc_product_codes
+                                                pui.length / ((((SELECT cut_weight from ppc_product_codes
                                                 where product_code = '".$req->prod_code."') / TRIM(BOTH 'MM' FROM TRIM(BOTH 'mm' FROM pui.size )) / TRIM(BOTH 'MM' FROM TRIM(BOTH 'mm' FROM pui.size ))/6.2)*1000000)+1.5)
                                             WHEN pui.materials_type LIKE '%PIPE%' THEN
                                                 (pui.length / ((SELECT cut_length from ppc_product_codes

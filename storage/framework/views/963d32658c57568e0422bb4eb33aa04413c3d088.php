@@ -1,5 +1,5 @@
 <div id="modal_travel_sheet" class="modal fade " data-backdrop="static">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-full" role="document">
         <form method="POST" action="<?php echo e(url('/transaction/travel-sheet/set-up/save')); ?>" id="frm_travel_sheet">
             <div class="modal-content">
                 <div class="modal-header">
@@ -69,7 +69,7 @@
                                 <div class="col-sm-6">
                                     <textarea name="remarks" id="remarks" class="form-control form-control-sm" style="resize:none;height:60px" placeholder="Add remarks here"></textarea>
                                 </div>
-                                
+
                                 <div class="col-sm-6">
                                     <div class="row mb-3">
                                         <div class="col-sm-12">

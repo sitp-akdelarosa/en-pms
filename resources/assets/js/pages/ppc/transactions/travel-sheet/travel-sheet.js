@@ -313,7 +313,7 @@ function validateInput(){
 }
 
 function SaveTravelSheet(){
-	$('.loadingOverlay').show();
+	$('.loadingOverlay-modal').show();
 	$.ajax({
 		url: $('#frm_travel_sheet').attr('action'),
 		type: 'POST',
@@ -332,12 +332,12 @@ function SaveTravelSheet(){
 		var errors = xhr.responseJSON.errors;
 		showErrors(errors);
 	}).always(function() {
-		$('.loadingOverlay').hide();
+		$('.loadingOverlay-modal').hide();
 	});		
 }
 
 function getBom(set,prod_code,old_data) {
-	$('.loadingOverlay-modal').show();
+	
 	var pros = '<tr>'+
                     '<td colspan="2">No data</td>'+
                 '</tr>';
@@ -354,10 +354,14 @@ function getBom(set,prod_code,old_data) {
 		},
 	}).done(function(data, textStatus, xhr) {
 		if (data.length > 0) {
-			$('#tbl_process_body').html('');
+			pros = '<tr>' +
+						'<td colspan="2">Loading...</td>' +
+					'</tr>';
+			$('#tbl_process_body').html(pros);
+
+			pros = '';
 			$.each(data, function(i, x) {
-				console.log(x);
-				pros = '<tr>'+
+				pros += '<tr>'+
 							'<td>'+x.process[0]+
 								'<input type="hidden" name="processes[]" value="'+x.process[0]+'">'+
 								'<input type="hidden" name="sequence[]" value="'+x.process[2]+'">'+
@@ -387,6 +391,8 @@ function getBom(set,prod_code,old_data) {
 						'</tr>';
 				$('#tbl_process_body').append(pros);
 			});
+
+			$('#tbl_process_body').html(pros);
 		} else {
 			$('#tbl_process_body').html('<tr>'+
 						                    '<td colspan="2">No data displayed.</td>'+
@@ -395,11 +401,12 @@ function getBom(set,prod_code,old_data) {
 	}).fail(function(xhr, textStatus, errorThrown) {
 		ErrorMsg(xhr);
 	}).always( function() {
-		$('.loadingOverlay-modal').hide();
+		//$('.loadingOverlay-modal').hide();
 	});
 }
 
 function makeProdTable(arr,all_sc) {
+	$('.loadingOverlay-modal').show();
 	$('#tbl_product').dataTable().fnClearTable();
     $('#tbl_product').dataTable().fnDestroy();
     $('#tbl_product').dataTable({
@@ -454,7 +461,10 @@ function makeProdTable(arr,all_sc) {
                 		'</select>';
             }, searchable: false, orderable: false},
 
-        ]
+		],
+		initComplete: function() {
+			$('.loadingOverlay-modal').hide();
+		}
     });
     if(arr.length > 0){
 		getTotalIssuedQty();
@@ -492,7 +502,8 @@ function makeJODetailsTable(arr) {
     $('#tbl_jo_details').dataTable().fnDestroy();
     $('#tbl_jo_details').dataTable({
         data: arr,
-        order: [[2,'asc']],
+		order: [[10,'desc']],
+		scrollX: true,
         columns: [ 
             { data: function(data) {
 				return '<input type="checkbox" value="'+data.jo_no+'"  data-status="'+data.status+'" class="table-checkbox jo_check">';
@@ -513,7 +524,8 @@ function makeJODetailsTable(arr) {
 		    { data: 'sched_qty', name: 'jt.sched_qty' },
 		    { data: 'issued_qty', name: 'ts.issued_qty' },
 		    { data: 'material_used', name: 'jt.material_used' },
-		    { data: 'material_heat_no', name: 'jt.material_heat_no' },
+			{ data: 'material_heat_no', name: 'jt.material_heat_no' },
+			{ data: 'created_at', name: 'jt.created_at' },
 		    { data: function(data) {
 				switch (data.status) {
                                 case 0:
@@ -567,6 +579,8 @@ function get_set() {
 
 function getPreTravelSheetData(id) {
 	prod_arr = [];
+
+	$('.loadingOverlay-modal').show();
 	$.ajax({
 		url: getPreTravelSheetDataURL,
 		type: 'GET',
@@ -582,6 +596,8 @@ function getPreTravelSheetData(id) {
 		getBom(data.sets,data.prod_code,data.process)
 	}).fail(function(xhr, textStatus, errorThrown) {
 		msg(errorThrown,textStatus);
+	}).always(function () {
+		$('.loadingOverlay-modal').hide();
 	});
 }
 

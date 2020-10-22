@@ -82,7 +82,7 @@ foreach ($user_accesses as $user_access){
             <div class="box">
                 <div class="box-body">
             		<div class="table-responsive">
-            			<table class="table table-sm table-hover table-striped dt-responsive nowrap" style="width: 100%" id="tbl_jo_details">
+            			<table class="table table-sm table-hover table-striped table-bordered nowrap" style="width: 100%" id="tbl_jo_details">
             				<thead class="thead-dark">
                                 <tr>
                                     <th></th>
@@ -95,6 +95,7 @@ foreach ($user_accesses as $user_access){
                                     <th>Issued Qty.</th>
                                     <th>Material Used</th>
                                     <th>Material Heat No.</th>
+                                    <th>Date</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
@@ -107,11 +108,15 @@ foreach ($user_accesses as $user_access){
     </div>
 
     <div class="row justify-content-center">
-
-
-    	<div class="col-sm-2 mb-12">
+    	<div class="col-sm-2">
     		<button class="btn btn-lg bg-green btn-block mb-3" id="btn_travel_sheet_all_print_preview">
     			<i class="fa fa-file-text-o"></i> Travel Sheet
+    		</button>
+        </div>
+        
+        <div class="col-sm-2">
+    		<button class="btn btn-lg bg-blue btn-block mb-3" id="btn_proceed">
+    			<i class="fa fa-arrow-right"></i> Cutting Schedule
     		</button>
     	</div>
     </div>

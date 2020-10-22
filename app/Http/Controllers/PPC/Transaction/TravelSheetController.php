@@ -96,7 +96,7 @@ class TravelSheetController extends Controller
                         ->whereBetween('jt.id', [$FROM, $TO])
                         ->orderBy('jt.jo_no','desc')
                         ->groupBy(
-                            'jt.id',
+                            'jt.jo_summary_id',
                             'ts.id',
                             'ts.qty_per_sheet',
                             'ts.iso_code',
@@ -107,9 +107,10 @@ class TravelSheetController extends Controller
                             'ts.issued_qty',
                             'jt.material_used',
                             'jt.material_heat_no',
+                            'jt.created_at',
                             'ts.status')
                         ->select(
-                            DB::raw("jt.id as idJO"),
+                            DB::raw("jt.jo_summary_id as idJO"),
                             DB::raw("ts.qty_per_sheet as qty_per_sheet"),
                             DB::raw("ts.iso_code as iso_code"),
                             DB::raw("IFNULL(ts.id,'') as id"),
@@ -122,6 +123,7 @@ class TravelSheetController extends Controller
                             DB::raw("IFNULL(ts.issued_qty,0) as issued_qty"),
                             DB::raw("jt.material_used as material_used"),
                             DB::raw("jt.material_heat_no as material_heat_no"),
+                            DB::raw("DATE_FORMAT(jt.created_at,'%Y-%m-%d %H:%i:%s') AS created_at"),
                             DB::raw("IFNULL(ts.status,0) as status")
                         )->get();
 
@@ -140,6 +142,7 @@ class TravelSheetController extends Controller
                         'issued_qty' => $dt->issued_qty,
                         'material_used' => $dt->material_used,
                         'material_heat_no' => $dt->material_heat_no,
+                        'created_at' => $dt->created_at,
                         'status' => $dt->status
                     ]);
                 }
@@ -157,7 +160,7 @@ class TravelSheetController extends Controller
                         ->where('jt.status' , '!=',3)
                         ->orderBy('jt.jo_no','desc')
                         ->groupBy(
-                            'jt.id',
+                            'jt.jo_summary_id',
                             'ts.id',
                             'ts.qty_per_sheet',
                             'ts.iso_code',
@@ -168,9 +171,10 @@ class TravelSheetController extends Controller
                             'ts.issued_qty',
                             'jt.material_used',
                             'jt.material_heat_no',
+                            'jt.created_at',
                             'ts.status')
                         ->select(
-                            DB::raw("jt.id as idJO"),
+                            DB::raw("jt.jo_summary_id as idJO"),
                             DB::raw("ts.qty_per_sheet as qty_per_sheet"),
                             DB::raw("ts.iso_code as iso_code"),
                             DB::raw("IFNULL(ts.id,'') as id"),
@@ -183,6 +187,7 @@ class TravelSheetController extends Controller
                             DB::raw("IFNULL(ts.issued_qty,0) as issued_qty"),
                             DB::raw("jt.material_used as material_used"),
                             DB::raw("jt.material_heat_no as material_heat_no"),
+                            DB::raw("DATE_FORMAT(jt.created_at,'%Y-%m-%d %H:%i:%s') AS created_at"),
                             DB::raw("IFNULL(ts.status,0) as status")
                         )->get();
 
@@ -201,6 +206,7 @@ class TravelSheetController extends Controller
                         'issued_qty' => $dt->issued_qty,
                         'material_used' => $dt->material_used,
                         'material_heat_no' => $dt->material_heat_no,
+                        'created_at' => $dt->created_at,
                         'status' => $dt->status
                     ]);
                 }
@@ -228,6 +234,7 @@ class TravelSheetController extends Controller
                         'jt.material_heat_no',
                         'jt.order_qty',
                         'jt.sched_qty',
+                        'jt.created_at',
                         'ts.status')
                     ->select(
                         DB::raw("jt.jo_summary_id as idJO"),
@@ -245,6 +252,7 @@ class TravelSheetController extends Controller
                         DB::raw("IFNULL(ts.issued_qty,0) as issued_qty"),
                         DB::raw("jt.material_used as material_used"),
                         DB::raw("jt.material_heat_no as material_heat_no"),
+                        DB::raw("DATE_FORMAT(jt.created_at,'%Y-%m-%d %H:%i:%s') AS created_at"),
                         DB::raw("IFNULL(ts.status,0) as status")
                     )->get();
 
@@ -263,6 +271,7 @@ class TravelSheetController extends Controller
                     'issued_qty' => $dt->issued_qty,
                     'material_used' => $dt->material_used,
                     'material_heat_no' => $dt->material_heat_no,
+                    'created_at' => $dt->created_at,
                     'status' => $dt->status
                 ]);
             }
@@ -325,6 +334,7 @@ class TravelSheetController extends Controller
                     'issued_qty' => $dt->issued_qty,
                     'material_used' => $dt->material_used,
                     'material_heat_no' => $dt->material_heat_no,
+                    'created_at' => $dt->created_at,
                     'status' => $dt->status
                 ]);
             }
