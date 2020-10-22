@@ -116,7 +116,7 @@ foreach ($user_accesses as $user_access){
         
         <div class="col-sm-2">
     		<button class="btn btn-lg bg-blue btn-block mb-3" id="btn_proceed">
-    			<i class="fa fa-arrow-right"></i> Cutting Schedule
+    			<i class="fa fa-arrow-right"></i> Proceed to Production
     		</button>
     	</div>
     </div>

@@ -244,48 +244,6 @@ class PDFController extends Controller
 				'id' => $ts->id,
 				'date' => date('M d Y'),
 				'header' => DB::table('v_travel_sheet_pdf')->where('id', $ts->id)->get(),
-					// DB::table('ppc_pre_travel_sheet_products as tsp')
-					// 	->join('ppc_jo_travel_sheets as jts', 'tsp.jo_no', '=', 'jts.jo_no')
-					// 	->join('ppc_pre_travel_sheets as ts', 'tsp.pre_travel_sheet_id', '=', 'ts.id')
-					// 	// ->join('ppc_product_codes as pc','pc.product_code','=','tsp.prod_code')
-					// 	->where('tsp.pre_travel_sheet_id', $ts->id)
-					// // ->where('jts.jo_no',$ts->jo_no)
-					// // ->where('jts.prod_code',$ts->prod_code)
-					// 	->select(
-					// 		DB::raw('tsp.pre_travel_sheet_id as id'),
-					// 		DB::raw('tsp.prod_code as prod_code'),
-					// 		DB::raw('tsp.issued_qty_per_sheet as issued_qty'),
-					// 		DB::raw('tsp.jo_sequence as jo_sequence'),
-					// 		DB::raw('jts.jo_no as jo_no'),
-					// 		DB::raw('tsp.sc_no as sc_no'),
-					// 		DB::raw("(select back_order_qty from ppc_jo_details as jd
-					// 							join ppc_jo_details_summaries as jds
-					// 							on jd.jo_summary_id = jds.id
-					// 							where jd.sc_no = tsp.sc_no
-					// 							LIMIT 1) as order_qty"),
-							
-					// 		// DB::raw('jts.order_qty as order_qty'),
-					// 		DB::raw('jts.sched_qty as sched_qty'),
-					// 		DB::raw('jts.material_used as material_used'),
-					// 		DB::raw('jts.material_heat_no as material_heat_no'),
-					// 		DB::raw('jts.lot_no as prod_heat_no'),
-					// 		DB::raw("IF(LEFT(jts.prod_code,1) = 'Z','Finish','Semi-Finish') as type"),
-					// 		DB::raw("ts.iso_code as iso_code"),
-					// 		DB::raw("ts.iso_name as iso_name"),
-					// 		DB::raw("ts.iso_photo as iso_photo"),
-
-					// 		DB::raw('ifnull(select p.code_description
-					// 						from ppc_product_codes as p
-					// 						where p.product_code = tsp.prod_code),jts.description) as description'),
-							
-					// 		DB::raw("(select concat(p.cut_weight,p.cut_weight_uom)
-					// 						from ppc_product_codes as p
-					// 						where p.product_code = tsp.prod_code) as cut_weight"),
-					// 		DB::raw("(select size
-					// 						from ppc_material_codes as m
-					// 						where m.code_description = jts.material_used) as bar_size")
-					// 	)
-					// 	->get(),
 				'process' => DB::table('ppc_pre_travel_sheet_processes')
 								->where('pre_travel_sheet_id', $ts->id)
 								->select('pre_travel_sheet_id', 'process_name')

@@ -97,7 +97,7 @@ class TravelSheetController extends Controller
                         ->orderBy('jt.jo_no','desc')
                         ->groupBy(
                             'jt.jo_summary_id',
-                            'ts.id',
+                            // 'ts.id',
                             'ts.qty_per_sheet',
                             'ts.iso_code',
                             'jt.jo_no',
@@ -161,7 +161,7 @@ class TravelSheetController extends Controller
                         ->orderBy('jt.jo_no','desc')
                         ->groupBy(
                             'jt.jo_summary_id',
-                            'ts.id',
+                            // 'ts.id',
                             'ts.qty_per_sheet',
                             'ts.iso_code',
                             'jt.jo_no',
@@ -222,7 +222,7 @@ class TravelSheetController extends Controller
                     ->orderBy('jt.jo_no','desc')
                     ->groupBy(
                         'jt.jo_summary_id',
-                        'ts.id',
+                        // 'ts.id',
                         'ts.qty_per_sheet',
                         'ts.iso_code',
                         'jt.jo_no',
@@ -287,7 +287,7 @@ class TravelSheetController extends Controller
                         ->orderBy('jt.jo_no','desc')
                         ->groupBy(
                             'jt.id',
-                            'ts.id',
+                            // 'ts.id',
                             'ts.qty_per_sheet',
                             'ts.iso_code',
                             'jt.jo_no',
