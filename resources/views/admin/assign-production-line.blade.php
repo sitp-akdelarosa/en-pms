@@ -1,5 +1,10 @@
 @extends('layouts.app')
 
+@section('title')
+	Assign Product Line
+@endsection
+
+
 @section('content')
  <?php
 $exist = 0;

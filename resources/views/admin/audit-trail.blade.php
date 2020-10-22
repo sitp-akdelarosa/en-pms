@@ -1,5 +1,10 @@
 @extends('layouts.app')
 
+@section('title')
+	Audit Trail
+@endsection
+
+
 @section('content')
  <?php
 $exist = 0;

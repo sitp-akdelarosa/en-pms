@@ -1,3 +1,7 @@
+<?php $__env->startSection('title'); ?>
+	Upload Orders
+<?php $__env->stopSection(); ?>
+
 <?php $__env->startSection('content'); ?>
  <?php
  $exist = 0;

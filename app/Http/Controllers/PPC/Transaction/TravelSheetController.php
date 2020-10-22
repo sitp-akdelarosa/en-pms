@@ -56,7 +56,7 @@ class TravelSheetController extends Controller
                 $status = 'AND ts.status IS NULL';
                 break;
             case 2:
-                $status = 'AND ts.status = 1';
+                $status = 'AND ts.status = 1'; // 
                 break;
             case 3:
                 $status = 'AND ts.status = 2';

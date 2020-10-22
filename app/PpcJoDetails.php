@@ -20,6 +20,11 @@ class PpcJoDetails extends Model
 					'inv_id',
 					'create_user',
 					'update_user',
+					'rmw_id',
+					'rmw_issued_qty',
+					'material_type',
+					'for_over_issuance',
+					'heat_no_id'
     			];
 
     public function jo_summary()

@@ -1,5 +1,11 @@
 @extends('layouts.app')
 
+@section('title')
+	User Type
+@endsection
+
+
+
 @section('content')
  <?php
 $exist = 0;

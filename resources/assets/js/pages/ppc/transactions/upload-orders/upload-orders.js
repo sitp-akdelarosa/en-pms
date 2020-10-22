@@ -142,76 +142,76 @@ function initializePage(){
 						contentType: false,
 						cache: false,
 						processData:false,
-						data: formData,
-						success:function(returns){
-							
-							var return_datas = jQuery.parseJSON(returns);
+						data: formData
+					}).done(function (returns, textStatus, xhr) {
+						var return_datas = jQuery.parseJSON(returns);
 
-							if (return_datas.status == "warning") {
-								$('.loadingOverlay').hide();
-								msg(return_datas.msg,"warning");
-							} else {
+						if (return_datas.status == "warning") {
+							$('.loadingOverlay').hide();
+							msg(return_datas.msg, "warning");
+						} else {
 
-								if (return_datas["0"].scno != null && return_datas["0"].productcode != null &&
-									return_datas["0"].quantity != null && return_datas["0"].pono != null) {
-										$.ajax({
-											url: formURL,
-											type: 'POST',
-											data:  formData,
-											mimeType:"multipart/form-data",
-											contentType: false,
-											cache: false,
-											processData:false,
-											success:function(returnData)
-											{
-												$('.loadingOverlay').hide();
-												var return_data = jQuery.parseJSON(returnData);
-												if (return_data.status == "success") {
-													if(return_data.countAddedRow == 0){
-														msg('No record of data added','failed'); 
-													}else{
-														msg(return_data.msg,return_data.status); 	
-													}
-
-													primaryOverwrite = return_data.for_overwrite;
-													document.getElementById('filenamess').innerHTML = fileN;
-													getUploadedProducts();
-
-
-													var not_registedred = return_data.not_registered;
-													if (not_registedred.length > 0) {
-														notRegistered(not_registedred);
-													}
-
-													var Schedule = return_data.Schedule;
-													if (Schedule.length > 0) {
-														scheduletable(Schedule);
-													}
-													
-													var for_overwrite = return_data.for_overwrite
-													if (for_overwrite.length > 0) {
-														overwrite(for_overwrite);
-													}
-
-												} else {
-													msg(returnData.msg,"warning"); 
-													document.getElementById('filenamess').innerHTML = "Select file...";
-												}
-											},
-											error:function(returnData)
-											{
-												$('.loadingOverlay').hide();
-												var return_data = jQuery.parseJSON(returnData.responseText);
-											}
-										});
-								} else {
+							if (return_datas["0"].scno != null && return_datas["0"].productcode != null &&
+								return_datas["0"].quantity != null && return_datas["0"].pono != null) {
+								$.ajax({
+									url: formURL,
+									type: 'POST',
+									data: formData,
+									mimeType: "multipart/form-data",
+									contentType: false,
+									cache: false,
+									processData: false,
+								}).done(function (returns, textStatus, xhr) {
 									$('.loadingOverlay').hide();
-									msg("File is not applicable.","warning");
-									document.getElementById('filenamess').innerHTML = "Select file...";
-								}
-							}
+									var return_data = jQuery.parseJSON(returnData);
+									if (return_data.status == "success") {
+										if (return_data.countAddedRow == 0) {
+											msg('No record of data added', 'failed');
+										} else {
+											msg(return_data.msg, return_data.status);
+										}
 
-						},
+										primaryOverwrite = return_data.for_overwrite;
+										document.getElementById('filenamess').innerHTML = fileN;
+										getUploadedProducts();
+
+
+										var not_registedred = return_data.not_registered;
+										if (not_registedred.length > 0) {
+											notRegistered(not_registedred);
+										}
+
+										var Schedule = return_data.Schedule;
+										if (Schedule.length > 0) {
+											scheduletable(Schedule);
+										}
+
+										var for_overwrite = return_data.for_overwrite
+										if (for_overwrite.length > 0) {
+											overwrite(for_overwrite);
+										}
+
+									} else {
+										msg(returnData.msg, "warning");
+										document.getElementById('filenamess').innerHTML = "Select file...";
+									}
+								}).fail(function (xhr, textStatus, errorThrown) {
+									$('.loadingOverlay').hide();
+									ErrorMsg(xhr);
+								}).always(function () {
+									//$('.loadingOverlay').hide();
+								});
+							} else {
+								$('.loadingOverlay').hide();
+								msg("File is not applicable.", "warning");
+								document.getElementById('filenamess').innerHTML = "Select file...";
+							}
+						}
+					}).fail(function (xhr, textStatus, errorThrown) {
+						$('.loadingOverlay').hide();
+						ErrorMsg(xhr);
+					}).always(function () {
+						//$('.loadingOverlay').hide();
 					});
 				} else {
 					$('.loadingOverlay').hide();

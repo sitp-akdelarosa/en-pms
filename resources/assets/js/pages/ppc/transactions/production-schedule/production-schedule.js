@@ -56,6 +56,7 @@ $(function () {
                             inv_id: 0,
                             rmw_id: 0,
                             totalsched_qty: 0,
+                            heat_no_id: 0,
                         });
                     }else{
                         msg(Exist,'warning');
@@ -91,7 +92,8 @@ $(function () {
                             for_over_issuance: x.for_over_issuance,
                             inv_id: x.inv_id,
                             rmw_id: x.rmw_id,
-                            totalsched_qty: x.totalsched_qty
+                            totalsched_qty: x.totalsched_qty,
+                            heat_no_id: x.heat_no_id
                         });
                         counts++;
                     });
@@ -165,7 +167,8 @@ $(function () {
                 for_over_issuance: x.for_over_issuance,
                 inv_id: x.inv_id,
                 rmw_id: x.rmw_id,
-                totalsched_qty: x.totalsched_qty
+                totalsched_qty: x.totalsched_qty,
+                heat_no_id: x.heat_no_id
             });
             counts++;
         });
@@ -222,6 +225,7 @@ $(function () {
                 $('#uom_span_' + x.count).html(uom);
                 $('#inv_id_' + x.count).val(inv_id);
                 $('#rmw_id_' + x.count).val(rmw_id);
+                $('#heat_no_id_' + x.count).val(material_heat_no);
 
                 var selected_mat_used = "";
 
@@ -270,6 +274,7 @@ $(function () {
                 x.for_over_issuance = for_over_issuance;
                 x.inv_id = inv_id;
                 x.rmw_id = rmw_id;
+                x.heat_no_id = material_heat_no;
             });
         } else {
             
@@ -278,6 +283,7 @@ $(function () {
             $('#uom_span_' + table_index).html(uom);
             $('#inv_id_' + table_index).val(inv_id);
             $('#rmw_id_' + table_index).val(rmw_id);
+            $('#heat_no_id_' + table_index).val(material_heat_no);
 
             var selected_mat_used = "";
 
@@ -327,6 +333,7 @@ $(function () {
             joDetails_arr[table_index].for_over_issuance = for_over_issuance;
             joDetails_arr[table_index].inv_id = inv_id;
             joDetails_arr[table_index].rmw_id = rmw_id;
+            joDetails_arr[table_index].heat_no_id = material_heat_no;
                 
         }
 
@@ -766,6 +773,73 @@ function ProdSummariesTable(arr) {
             { data: 'date_upload', name: 'ps.date_upload' }
         ]
     });
+
+    // var table = $('#tbl_prod_sum');
+
+    // table.dataTable().fnClearTable();
+    // table.dataTable().fnDestroy();
+    // table.dataTable({
+    //     processing: true,
+    //     serverSide: true,
+    //     ajax: PRODURL,
+    //     deferRender: true,
+    //     language: {
+    //         aria: {
+    //             sortAscending: ": activate to sort column ascending",
+    //             sortDescending: ": activate to sort column descending"
+    //         },
+    //         emptyTable: "No data available in table",
+    //         info: "Showing _START_ to _END_ of _TOTAL_ records",
+    //         infoEmpty: "No records found",
+    //         infoFiltered: "(filtered1 from _MAX_ total records)",
+    //         lengthMenu: "Show _MENU_",
+    //         search: "Search:",
+    //         zeroRecords: "No matching records found",
+    //         paginate: {
+    //             "previous": "Prev",
+    //             "next": "Next",
+    //             "last": "Last",
+    //             "first": "First"
+    //         }
+    //     },
+    //     lengthMenu: [
+    //         [5, 10, 15, 20, -1],
+    //         [5, 10, 15, 20, "All"]
+    //     ],
+    //     pageLength: 10,
+    //     columnDefs: [{
+    //         orderable: false,
+    //         targets: 0
+    //     }, {
+    //         searchable: false,
+    //         targets: 0
+    //     }],
+    //     order: [[1, 'asc']],
+    //     columns: [
+    //         {
+    //             data: function (data) {
+    //                 return "<input type='checkbox' class='table-checkbox check_item_prod_sum'" +
+    //                     "id='prod_sum_chk_" + data.id + "'" +
+    //                     "data-id='" + data.id + "'" +
+    //                     "data-sc_no='" + data.sc_no + "'" +
+    //                     "data-prod_code='" + data.prod_code + "'" +
+    //                     "data-description='" + data.description + "'" +
+    //                     "data-quantity='" + data.quantity + "'" +
+    //                     "data-status='" + data.status + "'" +
+    //                     "data-sched_qty='" + data.sched_qty + "'>";
+    //             }, name: 'id', 'searchable': false, 'orderable': false
+    //         },
+    //         { data: 'sc_no', name: 'sc_no' },
+    //         { data: 'prod_code', name: 'prod_code' },
+    //         { data: 'description', name: 'description' },
+    //         { data: 'quantity', name: 'quantity' },
+    //         { data: 'sched_qty', name: 'sched_qty' },
+    //         { data: 'po', name: 'po' },
+    //         { data: 'status', name: 'status' },
+    //         { data: 'date_upload', name: 'date_upload' }
+    //     ]
+
+    // });
 }
 
 function getDatatablesearch() {
@@ -855,6 +929,7 @@ function makeJODetailsList(arr) {
                     "<input type='hidden' class='form-control form-control-sm' id='material_type_" + x.count + "' name='material_type[]' value='" + x.material_type + "'>"+
                     "<input type='hidden' class='form-control form-control-sm' id='for_over_issuance_" + x.count + "' name='for_over_issuance[]' value='" + x.for_over_issuance + "'>"+
                     "<input type='hidden' class='form-control form-control-sm' id='rmw_id_" + x.count + "' name='rmw_id[]' value='" + x.rmw_id + "'>"+
+                    "<input type='hidden' class='form-control form-control-sm' id='heat_no_id_" + x.count + "' name='heat_no_id[]' value='" + x.heat_no_id + "'>" +
                     "<input type='hidden' class='form-control form-control-sm' id='inv_id_"+x.count+"' name='inv_id[]' value='" + x.inv_id + "'>";
             }, searchable: false, orderable: false },
 
@@ -887,7 +962,7 @@ function makeJODetailsList(arr) {
     });
 }
 
-function getMaterialHeatNo(withdrawal_slip_no) {
+function getMaterialHeatNo(withdrawal_slip_no,state) {
     var materials = [];
     var $msg = "";
     var $status = "";
@@ -940,6 +1015,10 @@ function getMaterialHeatNo(withdrawal_slip_no) {
                 placeholder: 'Select a Heat No.',
                 width: '100%'
             });
+
+            if (state == 'edit') {
+                $('#material_heat_no_' + i).val(x.heat_no_id).trigger('change')
+            }
 
             // if (materials.length > 0) {
             //     if ($('#rmw_no').val() == "" && data.msg == "") {
@@ -1242,19 +1321,24 @@ function SaveJODetails() {
         dataType: 'JSON',
         data: {
             _token: token,
+
             id: $('input[name="dataid[]"]').map(function(){return $(this).val();}).get(),
-            inv_id: $('input[name="inv_id[]"]').map(function () { return $(this).val(); }).get(),
-            rmw_id: $('input[name="inv_id[]"]').map(function () { return $(this).val(); }).get(),
             sc_no: $('input[name="sc_no[]"]').map(function(){return $(this).val();}).get(),
             prod_code: $('input[name="prod_code[]"]').map(function(){return $(this).val();}).get(),
             description: $('input[name="description[]"]').map(function(){return $(this).val();}).get(),
             quantity: $('input[name="quantity[]"]').map(function(){return $(this).val();}).get(),
-            sched_qty: $('input[name="sched_qty[]"]').map(function(){return $(this).val();}).get(),
-            material_used: $('.material_used').map(function(){return $(this).val();}).get(),
             material_heat_no: $('.material_heat_no').map(function () { return $(this).find('option:selected').attr('data-heat_no'); }).get(),
+            rmw_issued_qty: $('.rmw_issued_qty').map(function () { return $(this).val(); }).get(),
             uom: $('.uom').map(function () { return $(this).val(); }).get(),
-            lot_no: $('input[name="lot_no[]"]').map(function(){return $(this).val();}).get(),
-            totalsched_qty:$('input[name="totalsched_qty[]"]').map(function(){return $(this).val();}).get(),
+            material_used: $('.material_used').map(function () { return $(this).val(); }).get(),
+            lot_no: $('input[name="lot_no[]"]').map(function () { return $(this).val(); }).get(),
+            totalsched_qty: $('input[name="totalsched_qty[]"]').map(function () { return $(this).val(); }).get(),
+            sched_qty: $('input[name="sched_qty[]"]').map(function(){return $(this).val();}).get(),
+            material_type: $('input[name="material_type[]"]').map(function () { return $(this).val(); }).get(),
+            for_over_issuance: $('input[name="material_type[]"]').map(function () { return $(this).val(); }).get(),
+            rmw_id: $('input[name="rmw_id[]"]').map(function () { return $(this).val(); }).get(),
+            heat_no_id: $('input[name="heat_no_id[]"]').map(function () { return $(this).val(); }).get(),
+            inv_id: $('input[name="inv_id[]"]').map(function () { return $(this).val(); }).get(),
             filtercount:rows,
             total_sched_qty:$('#total_sched_qty').val(),
             rmw_no: $('#rmw_no').val(),
@@ -1317,36 +1401,42 @@ function getTables(){
         joDetails_arr = [];
         MainData = data;
         EditMode = true;
-        for (var x = 0; x < data.length; x++) {
-            joDetails_arr.push({
-                count: x,
-                dataid: data[x].id,
-                id: data[x].id,
-                sc_no: data[x].sc_no,
-                prod_code: data[x].product_code,
-                description: data[x].description,
-                quantity: data[x].back_order_qty,
-                sched_qty: data[x].sched_qty,
-                totalsched_qty: 0,
-                material_used: data[x].material_used,
-                material_heat_no: data[x].material_heat_no,
-                uom: data[x].uom,
-                lot_no: data[x].lot_no,
-                inv_id: data[x].inv_id,
-                rmw_id: data[x].rmw_id,
-            });
-            totalsched += data[x].sched_qty;
-            $('#created_by').val(data[x].create_user);
-            $('#created_date').val(data[x].created_at);
-            $('#updated_by').val(data[x].update_user);
-            $('#updated_date').val(data[x].updated_at);
+        if (data.length > 0) {
+            for (var x = 0; x < data.length; x++) {
+                joDetails_arr.push({
+                    count: x,
+                    dataid: data[x].id,
+                    id: data[x].id,
+                    sc_no: data[x].sc_no,
+                    prod_code: data[x].product_code,
+                    description: data[x].description,
+                    quantity: data[x].back_order_qty,
+                    sched_qty: data[x].sched_qty,
+                    totalsched_qty: 0,
+                    material_used: data[x].material_used,
+                    material_heat_no: data[x].material_heat_no,
+                    uom: data[x].uom,
+                    lot_no: data[x].lot_no,
+                    inv_id: data[x].inv_id,
+                    rmw_id: data[x].rmw_id,
+                    heat_no_id: data[x].heat_no_id,
+                });
+                totalsched += data[x].sched_qty;
+                $('#created_by').val(data[x].create_user);
+                $('#created_date').val(data[x].created_at);
+                $('#updated_by').val(data[x].update_user);
+                $('#updated_date').val(data[x].updated_at);
+            }
+            $('#rmw_no').val(data[0].rmw_no);
+            $('#total_sched_qty').val(totalsched);
+            makeJODetailsList(joDetails_arr);
+            getMaterialHeatNo(data[0].rmw_no, 'edit');
+            var showform = document.getElementById('formbaba').style.display = 'inline';
+            makeTravelSheet(travel_Sheet);
+        } else {
+            msg('No J.O. details found.', 'failed');
         }
-        $('#rmw_no').val(data[0].rmw_no);
-        $('#total_sched_qty').val(totalsched);
-        makeJODetailsList(joDetails_arr);
-        getMaterialHeatNoEdit();
-        var showform = document.getElementById('formbaba').style.display = 'inline';
-        makeTravelSheet(travel_Sheet);
+        
     }).fail(function (xhr, textStatus, errorThrown) {
         ErrorMsg(xhr);
     });
@@ -1375,6 +1465,7 @@ function getTablesAll(){
                     lot_no: returnData[x].lot_no,
                     inv_id: returnData[x].inv_id,
                     rmw_id: returnData[x].rmw_id,
+                    heat_no_id: returnData[x].heat_no_id,
                 });
             }
             makeJODetailsList(joDetails_arr);  

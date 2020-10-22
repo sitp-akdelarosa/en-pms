@@ -47,6 +47,33 @@ class ProductionScheduleController extends Controller
     {
         $TO = '';
         $FROM = '';
+
+        // $prod_sum = DB::table('ppc_production_summaries as ps')
+        //                 ->leftJoin('ppc_product_codes as pc','ps.prod_code','=','pc.product_code')
+        //                 ->leftJoin('admin_assign_production_lines as pl','pl.product_line','=','pc.product_type')
+        //                 ->where('pl.user_id',Auth::user()->id)
+        //                 ->where('ps.sched_qty','<','ps.quantity')
+        //                 ->groupBy("ps.id",
+        //                     "ps.sc_no",
+        //                     "ps.prod_code",
+        //                     "pc.code_description",
+        //                     "ps.description",
+        //                     "ps.sched_qty",
+        //                     "ps.quantity",
+        //                     "ps.po",
+        //                     "ps.status",
+        //                     "ps.date_upload")
+        //                 ->select([
+        //                     DB::raw("ps.id as id"),
+        //                     DB::raw("ps.sc_no as sc_no"),
+        //                     DB::raw("ps.prod_code as prod_code"),
+        //                     DB::raw("ifnull(pc.code_description,ps.description) as description"),
+        //                     DB::raw("ps.sched_qty as sched_qty"),
+        //                     DB::raw("ps.quantity as quantity"),
+        //                     DB::raw("ps.po as po"),
+        //                     DB::raw("ps.`status` as `status`"),
+        //                     DB::raw("DATE_FORMAT(ps.date_upload, '%Y-%m-%d') as date_upload")
+        //                 ]);
         if (isset($req->fromvalue)) {
 
             $from1 = PpcProductionSummary::select('id')
@@ -94,6 +121,8 @@ class ProductionScheduleController extends Controller
 
             }
 
+            // $prod_sum->whereRaw(" and ps.id between '".$FROM."' and '".$TO."'");
+
             $Datalist = DB::select("SELECT ps.id as id,
                                             ps.sc_no as sc_no,
                                             ps.prod_code as prod_code,
@@ -104,8 +133,8 @@ class ProductionScheduleController extends Controller
                                             ps.status as status,
                                             DATE_FORMAT(ps.date_upload, '%m/%d/%Y') as date_upload
                                     from ppc_production_summaries as ps
-                                    left join ppc_product_codes as pc on ps.prod_code = pc.product_code
-                                    left join admin_assign_production_lines as pl on pl.product_line = pc.product_type
+                                    inner join ppc_product_codes as pc on ps.prod_code = pc.product_code
+                                    inner join admin_assign_production_lines as pl on pl.product_line = pc.product_type
                                     where pl.user_id = ".Auth::user()->id."
                                     and ps.sched_qty < ps.quantity
                                     and ps.id between ".$FROM." and ".$TO."
@@ -146,6 +175,24 @@ class ProductionScheduleController extends Controller
                                             DATE_FORMAT(ps.date_upload, '%m/%d/%Y')"); //and ps.sched_qty < ps.quantity
             return response()->json($Datalist);
         }
+
+        // $prod_sum->groupBy("ps.id",
+        //                 "ps.sc_no",
+        //                 "ps.prod_code",
+        //                 "ps.description",
+        //                 "ps.sched_qty",
+        //                 "ps.quantity",
+        //                 "ps.po",
+        //                 "ps.status",
+        //                 "ps.date_upload");
+
+        // $datatable = DataTables::of($prod_sum)
+		// 				->editColumn('id', function($data) {
+		// 					return $data->id;
+		// 				})
+		// 				->make(true);
+
+        // return $datatable;
     }
 
     public function SaveJODetails(Request $req)
@@ -229,7 +276,7 @@ class ProductionScheduleController extends Controller
             foreach ($req->id as $key => $id) {
                 PpcProductionSummary::where('id', $id)->increment('sched_qty', $req->sched_qty[$key]);
 
-                $rawmats = PpcRawMaterialWithdrawalDetails::where('material_heat_no', $req->material_heat_no[$key])
+                $rawmats = PpcRawMaterialWithdrawalDetails::where('id', $req->rmw_id[$key])
                     ->where('create_user', Auth::user()->id)
                     ->first();
                 if (isset($rawmats->id)) {
@@ -238,7 +285,7 @@ class ProductionScheduleController extends Controller
                         $Coma = ' ';
                     }
                     if (strpos($rawmats->sc_no, $req->sc_no[$key]) === false) {
-                        PpcRawMaterialWithdrawalDetails::where('material_heat_no', $req->material_heat_no[$key])
+                        PpcRawMaterialWithdrawalDetails::where('id', $req->rmw_id[$key])
                             ->where('create_user', Auth::user()->id)
                             ->update(['sc_no' => $req->sc_no[$key] . $Coma . $rawmats->sc_no]);
                     }
@@ -258,6 +305,12 @@ class ProductionScheduleController extends Controller
                         'lot_no' => $req->lot_no[$key],
                         'create_user' => Auth::user()->id,
                         'update_user' => Auth::user()->id,
+                        'inv_id' => $req->inv_id[$key],
+                        'rmw_id' => $req->rmw_id[$key],
+                        'rmw_issued_qty' => $req->rmw_issued_qty[$key],
+                        'material_type' => $req->material_type[$key],
+                        'for_over_issuance' => $req->for_over_issuance[$key],
+                        'heat_no_id' => $req->heat_no_id[$key]
                     ]);
 
                 } else {
@@ -275,6 +328,12 @@ class ProductionScheduleController extends Controller
                         'lot_no' => $req->lot_no[$key],
                         'create_user' => Auth::user()->id,
                         'update_user' => Auth::user()->id,
+                        'inv_id' => $req->inv_id[$key],
+                        'rmw_id' => $req->rmw_id[$key],
+                        'rmw_issued_qty' => $req->rmw_issued_qty[$key],
+                        'material_type' => $req->material_type[$key],
+                        'for_over_issuance' => $req->for_over_issuance[$key],
+                        'heat_no_id' => $req->heat_no_id[$key]
                     ]);
                 }
                 $prod_code_unique = $req->prod_code[$key];
@@ -339,6 +398,12 @@ class ProductionScheduleController extends Controller
                     'lot_no' => $req->lot_no[$key],
                     'create_user' => Auth::user()->id,
                     'update_user' => Auth::user()->id,
+                    'inv_id' => $req->inv_id[$key],
+                    'rmw_id' => $req->rmw_id[$key],
+                    'rmw_issued_qty' => $req->rmw_issued_qty[$key],
+                    'material_type' => $req->material_type[$key],
+                    'for_over_issuance' => $req->for_over_issuance[$key],
+                    'heat_no_id' => $req->heat_no_id[$key]
                 ]);
 
                 $back_order_qty_total += $req->quantity[$key];
@@ -357,6 +422,12 @@ class ProductionScheduleController extends Controller
                 'lot_no' => $req->lot_no[0],
                 'status' => 0,
                 'update_user' => Auth::user()->id,
+                'inv_id' => $req->inv_id[$key],
+                'rmw_id' => $req->rmw_id[$key],
+                'rmw_issued_qty' => $req->rmw_issued_qty[$key],
+                'material_type' => $req->material_type[$key],
+                'for_over_issuance' => $req->for_over_issuance[$key],
+                'heat_no_id' => $req->heat_no_id[$key]
             ]);
 
             $this->_audit->insert([
@@ -395,15 +466,20 @@ class ProductionScheduleController extends Controller
                                     d.update_user as update_user,
                                     d.updated_at as updated_at,
                                     s.rmw_no as rmw_no,
-                                    ifnull(pui.id,0) as inv_id
+                                    ifnull(pui.id,0) as inv_id,
+                                    d.rmw_id,
+                                    d.rmw_issued_qty,
+                                    d.material_type,
+                                    d.for_over_issuance,
+                                    d.heat_no_id
                             FROM ppc_jo_details_summaries as s
                             JOIN ppc_jo_details as d ON d.jo_summary_id = s.id
-                            LEFT JOIN ppc_jo_travel_sheets as ts ON ts.id = d.jo_summary_id
+                            LEFT JOIN ppc_jo_travel_sheets as ts ON ts.id = d.jo_summary_id and ts.sc_no = d.sc_no
                             LEFT JOIN ppc_product_codes as pc ON d.product_code = pc.product_code
                             LEFT JOIN admin_assign_production_lines as pl ON pl.product_line = pc.product_type
                             LEFT JOIN inventories as pui ON d.inv_id = pui.id
                             WHERE s.jo_no = '".$req->JOno."'
-                            AND ts.status IN (1,0)
+                            -- AND ts.status IN (1,0)
                             AND pl.user_id = ".Auth::user()->id."
                             GROUP BY d.sc_no,
                                     d.product_code,
@@ -419,6 +495,11 @@ class ProductionScheduleController extends Controller
                                     d.update_user,
                                     d.updated_at,
                                     s.rmw_no,
+                                    d.rmw_id,
+                                    d.rmw_issued_qty,
+                                    d.material_type,
+                                    d.for_over_issuance,
+                                    d.heat_no_id,
                                     pui.id");
 
         return response()->json($details);
