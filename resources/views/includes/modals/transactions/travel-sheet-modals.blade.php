@@ -10,7 +10,7 @@
                 </div>
 
                 <div class="modal-body">
-                    <div class="loadingOverlay"></div>
+                    <div class="loadingOverlay-modal"></div>
                     @csrf
                     <input type="hidden" name="idJO" id="idJO">
                     <input type="hidden" name="travel_sheet_id" id="travel_sheet_id">
@@ -34,7 +34,7 @@
 
                             <div class="form-group row">
                                 <div class="col-md-12">
-                                    <div class="input-group input-group-sm mb-3">
+                                    <div class="input-group input-group-sm">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">ISO Control No.:</span>
                                         </div>
@@ -44,8 +44,8 @@
                                 </div>
                             </div>
 
-                            <div class="form-group row mb-5">
-                                <div class="col-sm-6 mb-5">
+                            <div class="form-group row">
+                                <div class="col-sm-6">
                                     <div class="input-group input-group-sm">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">Issued Qty</span>
@@ -54,7 +54,7 @@
                                         <div id="issued_qty_feedback"></div>
                                     </div>
                                 </div>
-                                <div class="col-sm-6 mb-5">
+                                <div class="col-sm-6">
                                     <div class="input-group input-group-sm">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">Total Issued Qty</span>
@@ -65,23 +65,39 @@
                                 </div>
                             </div>
 
-                            <div class="form-group row mb-5">
-                                <div class="col-sm-6 mb-5">
-                                    <div class="input-group input-group-sm">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">Qty. per sheet</span>
+                            <div class="form-group row mb-3">
+                                <div class="col-sm-6">
+                                    <textarea name="remarks" id="remarks" class="form-control form-control-sm" style="resize:none;height:60px" placeholder="Add remarks here"></textarea>
+                                </div>
+                                
+                                <div class="col-sm-6">
+                                    <div class="row mb-3">
+                                        <div class="col-sm-12">
+                                            <div class="input-group input-group-sm">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Qty. per sheet</span>
+                                                </div>
+                                                <input type="number" class="form-control disableOnProduction" name="qty_per_sheet" id="qty_per_sheet">
+                                                <div id="qty_per_sheet_feedback"></div>
+                                            </div>
                                         </div>
-                                        <input type="number" class="form-control disableOnProduction" name="qty_per_sheet" id="qty_per_sheet">
-                                        <div id="qty_per_sheet_feedback"></div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <button type="button" class="btn btn-block bg-green mb-3 disableOnProduction" id="btn_add_prod">
+                                                <i class="fa fa-plus"></i> Add
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
+
+                                
                             </div>
 
-                                <div class="col-sm-3">
-                                    <button type="button" class="btn btn-block bg-green mb-3 disableOnProduction" id="btn_add_prod">
-                                        <i class="fa fa-plus"></i> Add
-                                    </button>
-                                </div>
+                            
+
+                                
 
                             <div class="row">
                                 <div class="col-sm-12">

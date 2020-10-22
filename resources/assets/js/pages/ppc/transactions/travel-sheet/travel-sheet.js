@@ -5,9 +5,7 @@ var scno_arr = [];
 var sched_qty_arr = [];
 
 $( function() {
-	get_set();
-	getISO('#iso_no');
-	joDetailsList();
+	
 	init();
 
 	$('#btn_cutting_schedule').on('click', function() {
@@ -66,6 +64,8 @@ $( function() {
 		}else if (issued_qty < 0 || qty_per_sheet < 0 || issued_qty == 0 || qty_per_sheet == 0) {
 			msg("Please input a valid number." , 'failed');
 		} else {
+
+			$('.loadingOverlay-modal').show();
 			$.ajax({
 				url: getSc_noURL,
 				type: 'POST',
@@ -142,6 +142,8 @@ $( function() {
 			}).fail(function(xhr, textStatus, errorThrown) {
 				var errors = xhr.responseJSON.errors;
 				showErrors(errors);
+			}).always( function() {
+				$('.loadingOverlay-modal').hide();
 			});
 
 			$('#issued_qty_table').val(issued_qty);
@@ -272,8 +274,13 @@ $( function() {
 });
 
 function init() {
+	$('.loadingOverlay').show();
 	check_permission(code_permission, function(output) {
 		if (output == 1) {}
+		joDetailsList();
+
+		get_set();
+		getISO('#iso_no');
 	});
 }
 
@@ -330,6 +337,7 @@ function SaveTravelSheet(){
 }
 
 function getBom(set,prod_code,old_data) {
+	$('.loadingOverlay-modal').show();
 	var pros = '<tr>'+
                     '<td colspan="2">No data</td>'+
                 '</tr>';
@@ -385,7 +393,9 @@ function getBom(set,prod_code,old_data) {
 						                '</tr>');
 		}
 	}).fail(function(xhr, textStatus, errorThrown) {
-		msg(errorThrown,textStatus);
+		ErrorMsg(xhr);
+	}).always( function() {
+		$('.loadingOverlay-modal').hide();
 	});
 }
 
@@ -456,6 +466,9 @@ function makeProdTable(arr,all_sc) {
 
 function joDetailsList(status,from,to) {
 	jo_details = [];
+
+	$('.loadingOverlay').show();
+
 	$.ajax({
 		url: joDetailsListURL,
 		type: 'GET',
@@ -523,11 +536,15 @@ function makeJODetailsTable(arr) {
 					                break;
                             }
 			}, name: 'ts.status'}
-        ]
+		],
+		initComplete: function() {
+			$('.loadingOverlay').hide();
+		}
     });
 }
 
 function get_set() {
+	$('.loadingOverlay').show();
 	var set = '<option value="None"></option>';
 	$('#set').html(set);
 	$.ajax({
@@ -542,7 +559,9 @@ function get_set() {
 			$('#set').append(set);
 		});
 	}).fail(function(xhr, textStatus, errorThrown) {
-		msg(errorThrown,textStatus);
+		ErrorMsg(xhr);
+	}).always( function() {
+		//$('.loadingOverlay').hide();
 	});
 }
 

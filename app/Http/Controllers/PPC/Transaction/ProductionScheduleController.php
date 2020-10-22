@@ -200,6 +200,7 @@ class ProductionScheduleController extends Controller
                 $jo_sum->save();
 
                 PpcJoTravelSheet::create([
+                    'jo_summary_id' => $jo_sum->id,
                     'jo_no' => $jocode,
                     'sc_no' => $req->sc_no[$key],
                     'prod_code' => $req->prod_code[$key],
@@ -365,7 +366,7 @@ class ProductionScheduleController extends Controller
                 $back_order_qty_total += $req->quantity[$key];
             }
 
-            PpcJoTravelSheet::where('jo_no', $jo_no)->update([
+            PpcJoTravelSheet::where('jo_summary_id', $jo_summary->id)->update([
                 'sc_no' => $req->sc_no[0],
                 'prod_code' => $req->prod_code[0],
                 'description' => $req->description[0],
@@ -624,7 +625,8 @@ class ProductionScheduleController extends Controller
                     ];
                 } else {
                     foreach ($materials as $key => $material) {
-                        $exists = PpcJoDetails::where('material_heat_no', $material->heat_no)
+                        $exists = PpcJoDetails::where('rmw_id', $material->rmw_id)
+                                                ->where('sched_qty',$material->rmw_issued_qty)
                                                 ->count();
                         if ($exists < 1) {
                             array_push($heat_no,[

@@ -1,3 +1,8 @@
+<?php $__env->startSection('title'); ?>
+	Travel Sheet
+<?php $__env->stopSection(); ?>
+
+
 <?php $__env->startPush('css'); ?>
 	<style>
         .header, .footer {

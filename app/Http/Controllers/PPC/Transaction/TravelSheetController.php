@@ -215,7 +215,7 @@ class TravelSheetController extends Controller
                     ->where('jt.status' , '!=',3)
                     ->orderBy('jt.jo_no','desc')
                     ->groupBy(
-                        'jt.id',
+                        'jt.jo_summary_id',
                         'ts.id',
                         'ts.qty_per_sheet',
                         'ts.iso_code',
@@ -230,7 +230,7 @@ class TravelSheetController extends Controller
                         'jt.sched_qty',
                         'ts.status')
                     ->select(
-                        DB::raw("jt.id as idJO"),
+                        DB::raw("jt.jo_summary_id as idJO"),
                         DB::raw("ts.qty_per_sheet as qty_per_sheet"),
                         DB::raw("ts.iso_code as iso_code"),
                         DB::raw("IFNULL(ts.id,'') as id"),

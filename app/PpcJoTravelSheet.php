@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class PpcJoTravelSheet extends Model
 {
     protected $fillable = [
+		'jo_summary_id',
     	'jo_no',
     	'sc_no',
     	'prod_code',
