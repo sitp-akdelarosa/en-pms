@@ -428,7 +428,7 @@ class TravelSheetController extends Controller
 
 
             if ($pre_ts->update()) {
-                PpcPreTravelSheetProducts::where('pre_travel_sheet_id',$req->travel_sheet_id)->delete();
+                PpcPreTravelSheetProducts::where('jo_no',$req->jo_no)->delete();
 
                 $jo_sequence = 0;
                 $page_count = count($req->issued_qty_per_sheet);
