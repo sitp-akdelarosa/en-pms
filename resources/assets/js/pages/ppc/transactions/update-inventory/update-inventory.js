@@ -793,7 +793,7 @@ function InventoryTable(arr) {
 	$('#tbl_materials').dataTable().fnDestroy();
 	$('#tbl_materials').dataTable({
 		data: arr,
-		order: [[21,'desc']],
+		order: [[24,'desc']],
 		scrollX: true,
 		columns: [
 			{
