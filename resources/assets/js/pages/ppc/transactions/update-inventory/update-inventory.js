@@ -844,9 +844,7 @@ function InventoryTable(arr) {
 				return (x.std_weight == null)? '' : x.std_weight.toFixed(2);
 			} },
 			{
-				data: function (x) {
-					return (x.std_weight_received == null) ? '' : x.std_weight_received.toFixed(2);
-				}
+				data: 'std_weight_received'
 			},
 			{
 				data: function (x) {

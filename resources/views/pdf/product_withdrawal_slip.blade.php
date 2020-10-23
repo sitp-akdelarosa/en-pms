@@ -45,7 +45,7 @@
 							<tr>
 								<th width="10%">No.</th>
 								<th width="40%">ITEM DESCRIPTION</th>
-								<th width="20%">HEAT NO.</th>
+								<th width="20%">LOT NO.</th>
 								<th width="10%">QUANTITY</th>
 								<th width="20%">REMARKS</th>
 							</tr>
@@ -56,7 +56,7 @@
 								<tr>
 									<td>{{ $row }}</td>
 									<td>{{ $p->item_code .':    '. $p->code_description }}</td>
-									<td>{{ $p->heat_no }}</td>
+									<td>{{ $p->lot_no }}</td>
 									<td>{{ $p->issued_qty }}</td>
 									<td>{{ $p->remarks }}</td>
                                 </tr>

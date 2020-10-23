@@ -666,7 +666,10 @@ class ProductionScheduleController extends Controller
                     }
                 }            
             }
-        }        
+        } else {
+            $rmw = DB::table('ppc_raw_material_withdrawal_infos')
+                    ->select('id')->where('trans_no',$req->rmw_no)->first();
+        }
         
         return response()->json($data);
     }
