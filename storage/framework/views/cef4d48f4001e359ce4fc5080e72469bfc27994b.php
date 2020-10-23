@@ -15,6 +15,10 @@
 .center {
     text-align: center;
 }
+.th {
+    text-align: center; 
+    vertical-align: middle;
+}
 </style>
 <?php $__env->stopPush(); ?>
 
@@ -30,41 +34,49 @@ for ($x = 1; $x <= $page; $x++) {
 <div class="container text-center">
     <div class="row center">
         <div class="col-xs-3" style="font-size:10px;">
-            <h5 class="center">CUTTING SCHEDULE</h5>
+            <h3 class="center" style="font-weight:900">CUTTING SCHEDULE</h3>
         </div>
     </div>
+    <br>
 
-    <div class="row">
-        <div class="col-xs-12">
-            <table class="table table-sm" style="font-size:10px;width:100%;">
+    <div class="row" style=" padding-bottom:5px">
+        <div class="col-xs-12" style="width:100%;">
+            <table class="table table-sm" style="font-size:14px;width:100%;">
                 <tr>
-                    <td width="5%">Date:</td>
-                    <td width="15%" style="border-bottom: 1px solid"><?php echo e($_date_issued); ?></td>
-                    <td width="60%"></td>
-                    <td width="5%">Machine:</td>
-                    <td width="15%" style="border-bottom: 1px solid"><?php echo e($machine_no); ?></td>
+                    <td width="5%"><strong>Date:</strong></td>
+                    <td width="15%" style="border-bottom: 1px solid"><strong><?php echo e($_date_issued); ?></strong></td>
+                    <td width="50%"></td>
+                    <td width="10%"><strong>Withdrawal Slip:</strong></td>
+                    <td width="15%" style="border-bottom: 1px solid"><strong><?php echo e($withdrawal_slip); ?></strong></td>
                 </tr>
             </table>
         </div>
     </div>
 
-    <br>
+   
 
     <div class="row">
-        <div class="col-xs-12">
-            <table class="table table-bordered table-sm" style="font-size:10px;width:100%;">
+        <div class="col-xs-12" style="width:100%;">
+            <table class="table table-bordered table-sm" style="font-size:14px;width:100%;">
                 <thead>
                     <tr>
-                        <th width="12.5%">JO NO.</th>
-                        <th width="5.5%">ALLOY</th>
-                        <th width="5.5%">SIZE</th>
-                        <th width="10.5%">ITEM</th>
-                        <th width="8.5%">CLASS</th>
-                        <th width="18.5%">PRODUCTION ORDER NO.</th>
-                        <th width="2.5%">ORDER QTY.</th>
-                        <th width="2.5%">QTY. NEEDED</th>
-                        <th width="4.5%">QTY. CUT</th>
-                        <th width="22%" colspan="2">MATERIAL DESCRIPTION</th>
+                        <th class="th" width="12.88%" height="50px">JO NO.</th>
+                        <th class="th" width="5.88%">ALLOY</th>
+                        <th class="th" width="5.88%">SIZE</th>
+                        <th class="th" width="5.88%">ITEM</th>
+                        <th class="th" width="5.88%">CLASS</th>
+                        <th class="th" width="5.88%">LOT #</th>
+                        <th class="th" width="0.88%"></th>
+                        <th class="th" width="5.88%">S/C #</th>
+                        <th class="th" width="5.88%">J.O. QTY.</th>
+                        <th class="th" width="3.88%">CUT WT.</th>
+                        <th class="th" width="3.88%">CUT LENGTH</th>
+                        <th class="th" width="3.88%">CUT WIDTH</th>
+                        <th class="th" width="0.88%"></th>
+                        <th class="th" width="13.88%">MATERIAL USED</th>
+                        <th class="th" width="5.88%">RM HEAT #</th>
+                        <th class="th" width="1.88%">SUPPLIER HEAT #</th>
+                        <th class="th" width="5.88%">QTY. NEEDED</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -124,26 +136,23 @@ for ($x = 1; $x <= $page; $x++) {
 						}
 					?>
                     <tr>
-                        <td rowspan="2"><?php echo e($rm->jo_no); ?></td>
-                        <td rowspan="2"><?php echo e($rm->p_alloy); ?></td>
-                        <td rowspan="2"><?php echo e($rm->p_size); ?></td>
-                        <td rowspan="2"><?php echo e($rm->p_item); ?></td>
-                        <td rowspan="2"><?php echo e($rm->p_class); ?></td>
-                        <td rowspan="2"><?php echo e($rm->sc_no); ?></td>
-                        <td rowspan="2"><?php echo e($rm->order_qty); ?></td>
-                        <?php
-							echo $plate_qty;
-							echo $needed_qty;
-							echo "<td rowspan='2'></td>";
-							echo $mat_description_upper ;
-						?>
-                    </tr>
-                    <tr>
-                        <?php
-							echo $mat_description_lower;
-						?>
-                        <td width="11%" style="border-right: none;"><?php echo e($mat_heat_no.$sup_heat_no); ?></td>
-                        <td width="11%" style="border-left: none;"><?php echo e($rm->lot_no); ?></td>
+                        <td height="50px"><?php echo e($rm->jo_no); ?></td>
+                        <td><?php echo e($rm->p_alloy); ?></td>
+                        <td><?php echo e($rm->p_size); ?></td>
+                        <td><?php echo e($rm->p_item); ?></td>
+                        <td><?php echo e($rm->p_class); ?></td>
+                        <td><?php echo e($rm->lot_no); ?></td>
+                        <td></td>
+                        <td><?php echo e($rm->sc_no); ?></td>
+                        <td><?php echo e($rm->jo_qty); ?></td>
+                        <td><?php echo e($rm->cut_weight); ?></td>
+                        <td><?php echo e($rm->cut_length); ?></td>
+                        <td><?php echo e($rm->cut_width); ?></td>
+                        <td></td>
+                        <td><?php echo e($rm->material_used); ?></td>
+                        <td><?php echo e($rm->material_heat_no); ?></td>
+                        <td><?php echo e($rm->supplier_heat_no); ?></td>
+                        <td><?php echo e($rm->needed_qty); ?></td>
                     </tr>
                     <?php
 						$cnt++;
@@ -154,21 +163,25 @@ for ($x = 1; $x <= $page; $x++) {
 					?>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
-                    <?php while($cnt <= 5): ?> <tr>
-                        <td rowspan="2" height="15"></td>
-                        <td rowspan="2"></td>
-                        <td rowspan="2"></td>
-                        <td rowspan="2"></td>
-                        <td rowspan="2"></td>
-                        <td rowspan="2"></td>
-                        <td rowspan="2"></td>
-                        <td rowspan="2"></td>
-                        <td rowspan="2"></td>
-                        <td colspan="2" height="15"></td>
-                        </tr>
+                    <?php while($cnt <= 5): ?> 
                         <tr>
-                            <td style="border-right: none;" height="15"></td>
-                            <td style="border-left: none;" height="15"></td>
+                            <td height="50px"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                         </tr>
                         <?php 
 								$cnt++;
@@ -178,35 +191,21 @@ for ($x = 1; $x <= $page; $x++) {
                 </tbody>
                 <tfoot>
                     <tr height="80px">
-                        <td colspan="5">
+                        <td colspan="8">
                             <p class="left"><strong>Prepared By:</strong></p>
-                            <p style="border-bottom: 1px solid"><?php echo e($prepared_by); ?></p>
-                            <p><strong>PPC Staff</strong></p>
+                            <p style="border-bottom: 1px solid; font-weight:700;font-size:16px"><?php echo e($prepared_by); ?></p>
+                            <p><strong>PPC STAFF</strong></p>
                         </td>
-                        <?php
-
-								if ($withdrawal_slip != '') {
-							?>
-                        <td colspan="6">
-                            <p class="left"><strong>Leader:</strong></p>
-                            <p style="border-bottom: 1px solid"><?php echo e($leader); ?></p>
-                            <p><?php echo e($withdrawal_slip); ?></p>
+                        <td colspan="9">
+                            <p class="left"><strong>Received By:</strong></p>
+                            <p style="border-bottom: 1px solid; font-weight:700;font-size:16px"><?php echo e($leader); ?></p>
+                            <p><strong>LEADER</strong></p>
                         </td>
-                        <?php
-								} else {
-							?>
-                        <td colspan="6">
-                            <p class="left"><strong>Leader:</strong></p>
-                            <p><?php echo e($leader); ?></p>
-                        </td>
-                        <?php
-								}
-							?>
 
                     </tr>
 
                     <tr>
-                        <td colspan="11" style="text-align: right;">
+                        <td colspan="17" style="text-align: right;">
                             <?php echo e($iso_control_no); ?>
 
                         </td>

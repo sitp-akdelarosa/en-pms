@@ -27,40 +27,6 @@ class PDFController extends Controller
 							->where('trans_id',$req->trans_id)
 							->get();
 
-		// if ($req->print_format == 'material_withdrawal') {
-		// 	$raw_material = DB::table('ppc_raw_material_withdrawal_details')
-		// 						->where('trans_id', $req->trans_id)
-		// 						->get();
-
-		// 	$raw_material = DB::table('v_raw_material_withdrawal_slip')
-		// 						->where('trans_id',$req->trans_id)
-		// 						->get();
-		// } else {
-			// $raw_material = DB::select("SELECT cs.alloy as alloy,
-			// 									cs.material_desc_item as item,
-			// 									cs.material_desc_size as size,
-			// 									cs.plate_qty as issued_qty,
-			// 									cs.qty_needed as needed_qty,
-			// 									cs.material_desc_lot_no as lot_no,
-			// 									concat(cs.material_desc_heat_no,'/',cs.material_desc_supplier_heat_no) as material_heat_no,
-			// 									cs.sc_no as sc_no,
-			// 									concat(cs.size,' ',cs.class) as remarks
-			// 							FROM ppc_raw_material_withdrawal_infos as rmw
-			// 							join ppc_cutting_schedule_details as cs
-			// 							where rmw.id = '" . $req->trans_id . "'
-			// 							group by cs.alloy,
-			// 									cs.material_desc_item,
-			// 									cs.material_desc_size,
-			// 									cs.plate_qty,
-			// 									cs.qty_needed,
-			// 									cs.material_desc_lot_no,
-			// 									cs.material_desc_heat_no,
-			// 									cs.material_desc_supplier_heat_no,
-			// 									cs.sc_no,
-			// 									cs.size,
-			// 									cs.class");
-		//}
-
 		$data = [
 			'date' => $this->_helper->convertDate($req->date, 'F d, Y'),
 			'raw_materials' => $raw_material,
@@ -74,33 +40,6 @@ class PDFController extends Controller
 		$pdf = PDF::loadView('pdf.raw_material_withdrawal_slip', $data);
 		return $pdf->inline();
 	}
-
-	// public function CuttingSchedule(Request $req)
-	// {
-	//     $ids = explode(',', $req->ids);
-	//     $cut_data = [];
-
-	//     $id = implode(',', $ids);
-	//     $cut_data = DB::select("SELECT * FROM vcuttingsched where id in (".$id.")");
-
-	//     $iso = AdminSettingIso::where('iso_code',$req->iso_control_no)->first();
-
-	//     $data = [
-	//         'date_issued' => $this->_helper->convertDate($req->date_issued,'F d, Y'),
-	//         'raw_materials' => $cut_data,
-	//         'machine_no' => $req->machine_no,
-	//         'prepared_by' => $req->prepared_by,
-	//         'leader' => $req->leader,
-	//         'iso_control_no' => $iso->iso_code,
-	//         'iso_photo' => $iso->photo,
-	//         'withdrawal_slip' => $req->withdrawal_slip,
-	//         'type' => $req->type
-	//     ];
-	//     // return dd($data);
-	//     // return response()->json();
-	//     $pdf = PDF::loadView('pdf.cutting_schedule', $data);
-	//     return $pdf->inline();
-	// }
 
 	public function CuttingSchedule(Request $req)
 	{
@@ -124,10 +63,11 @@ class PDFController extends Controller
 					'p_class' => $req->p_class[$key],
 					'cut_weight' => $req->cut_weight[$key],
 					'cut_length' => $req->cut_length[$key],
+					'cut_width' => $req->cut_width[$key],
 					'schedule' => $req->schedule[$key],
 					'qty_needed_inbox' => $req->qty_needed_inbox[$key],
 					'sc_no' => $req->sc_no[$key],
-					'order_qty' => $req->order_qty[$key],
+					'jo_qty' => $req->jo_qty[$key],
 					'needed_qty' => $req->needed_qty[$key],
 					'qty_cut' => '0',
 					'plate_qty' => $req->issued_qty[$key],
@@ -135,23 +75,27 @@ class PDFController extends Controller
 					'size' => $req->size[$key],
 					'material_heat_no' => $req->mat_heat_no[$key],
 					'lot_no' => $req->lot_no[$key],
-					'supplier_heat_no' => $req->supplier_heat_no[$key]
+					'supplier_heat_no' => $req->supplier_heat_no[$key],
+					'material_used' => $req->material_used[$key]
 				)
 			);
 		}
+
+		$leader = DB::table('users')->where('id',$req->leader)->select(DB::raw("CONCAT(firstname,' ',lastname) as fullname"))->first();
+
 		$data = [
 			'date_issued' => $this->_helper->convertDate($req->date_issued, 'F d, Y'),
 			'raw_materials' => (array)$cut_data,
 			'machine_no' => $req->machine_no,
 			'prepared_by' => $req->prepared_by,
-			'leader' => $req->leader,
+			'leader' => $leader->fullname,
 			'iso_control_no' => $iso->iso_code,
 			'iso_photo' => $iso->photo,
 			'withdrawal_slip' => $req->withdrawal_slip,
 			'type' => $req->type,
 		];
 		// return dd($data);
-		$pdf = PDF::loadView('pdf.cutting_schedule', $data);
+		$pdf = PDF::loadView('pdf.cutting_schedule', $data)->setPaper('a4', 'landscape');
 		return $pdf->inline();
 	}
 
@@ -187,17 +131,19 @@ class PDFController extends Controller
 									class AS p_class,
 									cut_weight,
 									cut_length,
+									cut_width,
 									schedule,
 									qty_needed_inbox,
 									sc_no,
-									order_qty,
+									jo_qty,
 									qty_needed AS needed_qty,
 									plate_qty,
 									material_desc_item AS item,
 									material_desc_size AS size,
 									material_desc_heat_no AS material_heat_no,
 									material_desc_lot_no AS lot_no,
-									material_desc_supplier_heat_no AS supplier_heat_no
+									material_desc_supplier_heat_no AS supplier_heat_no,
+									material_used
 								FROM ppc_cutting_schedule_details 
 								WHERE cutt_id=$req->id");
 		// $cut_data = DB::select("SELECT * FROM vcuttingsched where jo_no in (" . $jos . ")");
@@ -221,7 +167,7 @@ class PDFController extends Controller
 		];
 
 		// return dd($data);
-		$pdf = PDF::loadView('pdf.cutting_schedule', $data);
+		$pdf = PDF::loadView('pdf.cutting_schedule', $data)->setPaper('a4', 'landscape');
 		return $pdf->inline();
 
 	}

@@ -270,7 +270,28 @@ $( function() {
     	// 	msg('Issued quantity per sheet must not more than SC quantity.','failed');
     	// 	// $(this).val($(this).attr('data-old_qty'));
     	// }
-    });
+	});
+	
+	$('#btn_proceed').on('click', function() {
+		swal({
+			title: "Proceed to Production",
+			text: "Ready to proceed this Travel sheet to Production?",
+			type: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#f95454",
+			confirmButtonText: "Yes",
+			cancelButtonText: "No",
+			closeOnConfirm: true,
+			closeOnCancel: false
+		}, function (isConfirm) {
+			if (isConfirm) {
+				swal.close();
+				// ajax to update travel sheet status
+			} else {
+				swal.close();
+			}
+		});
+	});
 });
 
 function init() {
@@ -528,25 +549,28 @@ function makeJODetailsTable(arr) {
 			{ data: 'created_at', name: 'jt.created_at' },
 		    { data: function(data) {
 				switch (data.status) {
-                                case 0:
-                                    return 'No quantity issued';
-                                    break;
-                                case 1:
-                                    return 'Ready of printing';
-                                    break;
-                                case 2:
-                                    return 'On Production';
-                                    break;
-                                case 3:
-                                    return 'CANCELLED';
-                                    break;
-                                case 5:
-                                    return 'CLOSED';
-                                    break;
-                                default:
-					                return data.status;
-					                break;
-                            }
+					case 0:
+						return 'No quantity issued'; //No quantity issued
+						break;
+					case 1:
+						return 'Ready to Issue';
+						break;
+					case 2:
+						return 'On-going Process';
+						break;
+					case 3:
+						return 'CANCELLED';
+						break;
+					case 5:
+						return 'CLOSED';
+						break;
+					case 6:
+						return 'In Production';
+						break;
+					default:
+						return data.status;
+						break;
+				}
 			}, name: 'ts.status'}
 		],
 		initComplete: function() {

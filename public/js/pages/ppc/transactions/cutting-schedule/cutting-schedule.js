@@ -114,7 +114,7 @@ $(function () {
   getISO('#iso_control_no');
   getLeaders();
   init();
-  checkAllCheckboxesInTable('.check_all_items', '.check_items');
+  checkAllCheckboxesInTable('#tbl_cut_sched', '.check_all_items', '.check_items');
   $('#btn_save').on('click', function () {
     saveCutSched();
   });
@@ -190,13 +190,14 @@ $(function () {
               alloy: $(this).attr('data-alloy'),
               code_description: $(this).attr('data-code_description'),
               sc_no: $(this).attr('data-sc_no'),
-              order_qty: $(this).attr('data-order_qty'),
+              jo_qty: $(this).attr('data-jo_qty'),
               issued_qty: needed_qty,
               needed_qty: $(this).attr('data-needed_qty'),
               item: $(this).attr('data-item'),
               schedule: $(this).attr('data-schedule'),
               cut_weight: $(this).attr('data-cut_weight'),
               cut_length: $(this).attr('data-cut_length'),
+              cut_width: $(this).attr('data-cut_width'),
               size: $(this).attr('data-size'),
               lot_no: $(this).attr('data-lot_no'),
               mat_heat_no: $(this).attr('data-mat_heat_no'),
@@ -206,6 +207,7 @@ $(function () {
               p_alloy: $(this).attr('data-p_alloy'),
               p_size: $(this).attr('data-p_size'),
               supplier_heat_no: $(this).attr('data-supplier_heat_no'),
+              material_used: $(this).attr('data-material_used'),
               type: 'JO'
             }); // $('#withdrawal_slip').val('');
             // $('#withdrawal_slip').prop('readonly', true);
@@ -429,6 +431,7 @@ function getMaterialsForCuttingSched(trans_no) {
     }
   }).done(function (data, textStatus, xhr) {
     if (data.length > 0) {
+      $('#withdrawal_slip').val(data[0].rmwi_no);
       $('.check_all_items').prop('checked', false);
       var tbl_cut_sched_body = '';
       $('#tbl_cut_sched_body').html(tbl_cut_sched_body);
@@ -479,54 +482,14 @@ function getMaterialsForCuttingSched(trans_no) {
               schedule = "";
             }
 
-            tbl_cut_sched_body = "<tr>" + "<td rowspan='2'>" + "<input type='checkbox' class='table-checkbox check_items' data-trans_no='" + trans_no + "' " + "data-no='" + x.jo_no + "' " + "data-id='" + x.id + "' " + "data-alloy='" + x.alloy + "' " + "data-cut_weight='" + x.cut_weight + "' " + "data-cut_length='" + x.cut_length + "' " + "data-code_description='" + x.code_description + "' " + "data-sc_no='" + x.sc_no + "' " + "data-order_qty='" + x.order_qty + "' " + "data-issued_qty='" + x.issued_qty + "' " + "data-needed_qty='" + x.needed_qty + "' " + "data-item='" + x.item + "' " + "data-size='" + x.size + "' " + "data-schedule='" + x.schedule + "' " + "data-lot_no='" + x.lot_no + "' " + "data-product_code='" + x.product_code + "' " + "data-p_item='" + x.p_item + "' " + "data-p_alloy='" + x.p_alloy + "' " + "data-p_size='" + x.p_size + "' " + "data-p_class='" + x.p_class + "' " + "data-supplier_heat_no='" + x.supplier_heat_no + "' " + "data-mat_heat_no='" + mat_heat_no + "'>" + "</td>" + "<td rowspan='2'>" + x.p_alloy + "</td>" + "<td rowspan='2'>" + x.p_size + "</td>" + "<td rowspan='2'>" + x.p_item + "</td>" + "<td rowspan='2'>" + x.p_class + "</td>" + "<td rowspan='2'>" + x.sc_no + "</td>" + "<td rowspan='2'>" + x.order_qty + "</td>" + "<td>" + plate_qty + "</td>" + "<td rowspan='2'></td>" + "<td><span class='pull-left'>" + x.item + "</span><span class='pull-right'>" + schedOrSize + cut + "</span></td>" + "</tr>" + "<tr>" + // "<td>"+x.product_code+"</td>"+
-            // "<td>" + x.needed_qty + "</td>" +
-            needed_qty + "<td><span class='pull-left'>" + x.lot_no + "</span><span class='pull-right'>" + mat_heat_no + " / " + x.supplier_heat_no + "</span></td>" + "</tr>";
+            tbl_cut_sched_body = "<tr>" + "<td rowspan='2'>" + "<input type='checkbox' class='table-checkbox check_items' data-trans_no='" + trans_no + "' " + "data-no='" + x.jo_no + "' " + "data-id='" + x.id + "' " + "data-alloy='" + x.alloy + "' " + "data-cut_weight='" + x.cut_weight + "' " + "data-cut_length='" + x.cut_length + "' " + "data-cut_width='" + x.cut_width + "' " + "data-code_description='" + x.code_description + "' " + "data-sc_no='" + x.sc_no + "' " + "data-jo_qty='" + x.jo_qty + "' " + "data-issued_qty='" + x.issued_qty + "' " + "data-needed_qty='" + x.needed_qty + "' " + "data-item='" + x.item + "' " + "data-size='" + x.size + "' " + "data-schedule='" + x.schedule + "' " + "data-lot_no='" + x.lot_no + "' " + "data-product_code='" + x.product_code + "' " + "data-p_item='" + x.p_item + "' " + "data-p_alloy='" + x.p_alloy + "' " + "data-p_size='" + x.p_size + "' " + "data-p_class='" + x.p_class + "' " + "data-material_used='" + x.material_used + "' " + "data-supplier_heat_no='" + x.supplier_heat_no + "' " + "data-mat_heat_no='" + mat_heat_no + "'>" + "</td>" + "<td rowspan='2'>" + x.p_alloy + "</td>" + "<td rowspan='2'>" + x.p_size + "</td>" + "<td rowspan='2'>" + x.p_item + "</td>" + "<td rowspan='2'>" + x.p_class + "</td>" + "<td rowspan='2'>" + x.sc_no + "</td>" + "<td rowspan='2'>" + x.jo_qty + "</td>" + "<td>" + plate_qty + "</td>" + "<td rowspan='2'></td>" + "<td><span class='pull-left'>" + x.item + "</span><span class='pull-right'>" + schedOrSize + cut + "</span></td>" + "</tr>" + "<tr>" + needed_qty + "<td><span class='pull-left'>" + x.lot_no + "</span><span class='pull-right'>" + mat_heat_no + " / " + x.supplier_heat_no + "</span></td>" + "</tr>";
             $('#tbl_cut_sched_body').append(tbl_cut_sched_body);
           } else {
             plate_qty = x.needed_qty;
             needed_qty = "<td></td>";
-            tbl_cut_sched_body = "<tr>" + "<td rowspan='2'>" + "<input type='checkbox' class='table-checkbox check_items' data-trans_no='" + trans_no + "' " + "data-id='" + x.id + "' " + "data-alloy='" + x.alloy + "' " + "data-code_description='" + x.code_description + "' " + "data-sc_no='" + x.sc_no + "' " + "data-order_qty='" + x.order_qty + "' " + "data-needed_qty='" + x.needed_qty + "' " + "data-cut_weight='" + x.cut_weight + "' " + "data-cut_length='" + x.cut_length + "' " + "data-size='" + x.size + "' " + "data-item='" + x.item + "' " + "data-schedule='" + x.schedule + "' " + "data-lot_no='" + x.lot_no + "' " + "data-p_item='" + x.p_item + "' " + "data-p_alloy='" + x.p_alloy + "' " + "data-p_size='" + x.p_size + "' " + "data-p_class='" + x.p_class + "' " + "data-product_code='" + x.product_code + "' " + "data-supplier_heat_no='' " + "data-mat_heat_no='" + mat_heat_no + "'>" + "</td>" + "<td rowspan='2'>" + x.p_alloy + "</td>" + "<td rowspan='2'>" + x.p_size + "</td>" + "<td rowspan='2'>" + x.p_item + "</td>" + "<td rowspan='2'>" + x.p_class + "</td>" + "<td rowspan='2'>" + x.sc_no + "</td>" + "<td rowspan='2'>" + x.order_qty + "</td>" + "<td rowspan='2'>" + plate_qty + "</td>" + "<td rowspan='2'></td>" + //"<td class='text-center'>"+x.cut_weight+" x "+x.cut_length+"</td>"+
-            "<td class='text-center'>" + schedOrSize + cut + "</td>" + "</tr>" + "<tr>" + "<td><span class='pull-left'>-------</span><span class='pull-right'>" + x.lot_no + "</span></td>" + "</tr>";
+            tbl_cut_sched_body = "<tr>" + "<td rowspan='2'>" + "<input type='checkbox' class='table-checkbox check_items' data-trans_no='" + trans_no + "' " + "data-id='" + x.id + "' " + "data-alloy='" + x.alloy + "' " + "data-code_description='" + x.code_description + "' " + "data-sc_no='" + x.sc_no + "' " + "data-jo_qty='" + x.jo_qty + "' " + "data-needed_qty='" + x.needed_qty + "' " + "data-cut_weight='" + x.cut_weight + "' " + "data-cut_length='" + x.cut_length + "' " + "data-cut_width='" + x.cut_width + "' " + "data-size='" + x.size + "' " + "data-item='" + x.item + "' " + "data-schedule='" + x.schedule + "' " + "data-lot_no='" + x.lot_no + "' " + "data-p_item='" + x.p_item + "' " + "data-p_alloy='" + x.p_alloy + "' " + "data-p_size='" + x.p_size + "' " + "data-p_class='" + x.p_class + "' " + "data-product_code='" + x.product_code + "' " + "data-material_used='" + x.material_used + "' " + "data-supplier_heat_no='" + x.supplier_heat_no + "' " + "data-mat_heat_no='" + mat_heat_no + "'>" + "</td>" + "<td rowspan='2'>" + x.p_alloy + "</td>" + "<td rowspan='2'>" + x.p_size + "</td>" + "<td rowspan='2'>" + x.p_item + "</td>" + "<td rowspan='2'>" + x.p_class + "</td>" + "<td rowspan='2'>" + x.sc_no + "</td>" + "<td rowspan='2'>" + x.jo_qty + "</td>" + "<td rowspan='2'>" + plate_qty + "</td>" + "<td rowspan='2'></td>" + "<td class='text-center'>" + schedOrSize + cut + "</td>" + "</tr>" + "<tr>" + "<td><span class='pull-left'>-------</span><span class='pull-right'>" + x.lot_no + "</span></td>" + "</tr>";
             $('#tbl_cut_sched_body').append(tbl_cut_sched_body);
-          } // tbl_cut_sched_body = "<tr>" +
-          // 	"<td rowspan='2'>" +
-          // 	"<input type='checkbox' class='table-checkbox check_items' data-trans_no='" + trans_no + "' " +
-          // 	"data-id='" + x.id + "' " +
-          // 	"data-alloy='" + x.alloy + "' " +
-          // 	"data-code_description='" + x.code_description + "' " +
-          // 	"data-sc_no='" + x.sc_no + "' " +
-          // 	"data-order_qty='" + x.order_qty + "' " +
-          // 	"data-needed_qty='" + x.needed_qty + "' " +
-          // 	"data-cut_weight='" + x.cut_weight + "' " +
-          // 	"data-cut_length='" + x.cut_length + "' " +
-          // 	"data-size='" + x.size + "' " +
-          // 	"data-item='" + x.item + "' " +
-          // 	"data-schedule='" + x.schedule + "' " +
-          // 	"data-lot_no='" + x.lot_no + "' " +
-          // 	"data-p_item='" + x.p_item + "' " +
-          // 	"data-p_alloy='" + x.p_alloy + "' " +
-          // 	"data-p_size='" + x.p_size + "' " +
-          // 	"data-p_class='" + x.p_class + "' " +
-          // 	"data-product_code='" + x.product_code + "' " +
-          // 	"data-mat_heat_no='" + mat_heat_no + "'>" +
-          // 	"</td>" +
-          // 	"<td rowspan='2'>" + x.p_alloy + "</td>" +
-          // 	"<td rowspan='2'>" + x.p_size + "</td>" +
-          // 	"<td rowspan='2'>" + x.p_item + "</td>" +
-          // 	"<td rowspan='2'>" + x.p_class + "</td>" +
-          // 	"<td rowspan='2'>" + x.sc_no + "</td>" +
-          // 	"<td rowspan='2'>" + x.order_qty + "</td>" +
-          // 	"<td rowspan='2'>" + plate_qty + "</td>" +
-          // 	"<td rowspan='2'></td>" +
-          // 	//"<td class='text-center'>"+x.cut_weight+" x "+x.cut_length+"</td>"+
-          // 	"<td class='text-center'>" + x.size + " x " + $cut + "</td>" +
-          // 	"</tr>" +
-          // 	"<tr>" +
-          // 	"<td><span class='pull-left'>-------</span><span class='pull-right'>" + x.lot_no + "</span></td>" +
-          // 	"</tr>";
-          // $('#tbl_cut_sched_body').append(tbl_cut_sched_body);
-
+          }
 
           var jo_item_id = jo_items.map(function (x) {
             return x.id;
@@ -545,88 +508,10 @@ function getMaterialsForCuttingSched(trans_no) {
       } else {
         tbl_cut_sched_body = "<tr>" + "<td colspan='11' class='text-center'>No data displayed.</td>" + "</tr>";
         $('#tbl_cut_sched_body').append(tbl_cut_sched_body);
-      } //  else {
-      // 	var errormsg = false;
-      // 	$.each(data, function (i, x) {
-      // 		total_issued_qty = total_issued_qty + x.issued_qty
-      // 		allowed_issued_qty = allowed_issued_qty + x.needed_qty;
-      // 		if (x.id != null) {
-      // 			var mat_heat_no = '';
-      // 			var sc_no = '';
-      // 			var order_qty = 0;
-      // 			var plate_qty;
-      // 			if (x.material_heat_no == undefined) {
-      // 				mat_heat_no = '';
-      // 			} else {
-      // 				mat_heat_no = x.material_heat_no;
-      // 			}
-      // 			if (!x.sc_no || x.sc_no == "null") {
-      // 				sc_no = '';
-      // 			} else {
-      // 				sc_no = x.sc_no;
-      // 			}
-      // 			if (x.order_qty !== null) {
-      // 				order_qty = x.order_qty;
-      // 			}
-      // 			if (qty_needed_inbox) {
-      // 				plate_qty = "<input type='number' class='needed_qty' data-id='" + x.id + "' placeholder='Qty of Plate'></input>";
-      // 			} else {
-      // 				plate_qty = x.issued_qty
-      // 			}
-      // 			tbl_cut_sched_body = "<tr>" +
-      // 				"<td rowspan='2'>" +
-      // 				"<input type='checkbox' class='table-checkbox check_items' data-trans_no='" + trans_no + "' " +
-      // 				"data-no='" + x.jo_no + "' " +
-      // 				"data-id='" + x.id + "' " +
-      // 				"data-alloy='" + x.alloy + "' " +
-      // 				"data-code_description='" + x.code_description + "' " +
-      // 				"data-sc_no='" + sc_no + "' " +
-      // 				"data-order_qty='" + order_qty + "' " +
-      // 				"data-issued_qty='" + x.issued_qty + "' " +
-      // 				"data-needed_qty='" + x.needed_qty + "' " +
-      // 				"data-item='" + x.item + "' " +
-      // 				"data-size='" + x.size + "' " +
-      // 				"data-schedule='" + x.schedule + "' " +
-      // 				"data-lot_no='" + x.lot_no + "' " +
-      // 				"data-product_code='" + x.product_code + "' " +
-      // 				"data-p_item='" + x.p_item + "' " +
-      // 				"data-p_alloy='" + x.p_alloy + "' " +
-      // 				"data-p_size='" + x.p_size + "' " +
-      // 				"data-p_class='" + x.p_class + "' " +
-      // 				"data-mat_heat_no='" + mat_heat_no + "'>" +
-      // 				"</td>" +
-      // 				"<td rowspan='2'>" + x.p_alloy + "</td>" +
-      // 				"<td rowspan='2'>" + x.p_size + "</td>" +
-      // 				"<td rowspan='2'>" + x.p_item + "</td>" +
-      // 				"<td rowspan='2'>" + x.p_class + "</td>" +
-      // 				"<td rowspan='2'>" + sc_no + "</td>" +
-      // 				"<td rowspan='2'>" + order_qty + "</td>" +
-      // 				"<td>" + plate_qty + "</td>" +
-      // 				"<td rowspan='2'></td>" +
-      // 				"<td><span class='pull-left'>" + x.item + "</span><span class='pull-right'>" + x.size + "</span></td>" +
-      // 				"</tr>" +
-      // 				"<tr>" +
-      // 				// "<td>"+x.product_code+"</td>"+
-      // 				"<td>" + x.needed_qty + "</td>" +
-      // 				"<td><span class='pull-left'>" + mat_heat_no + "</span><span class='pull-right'>" + x.lot_no + "</span></td>" +
-      // 				"</tr>";
-      // 			$('#tbl_cut_sched_body').append(tbl_cut_sched_body);
-      // 		} else {
-      // 			errormsg = true;
-      // 		}
-      // 	});
-      // }
-      // if (errormsg) {
-      // 	msg("Some Heat Number is not yet scheduled or wrong input of sc no", "warning");
-      // }
-
+      }
     } else {
       msg(data.msg, data.status);
-    } //if (data.msg != undefined) {
-    //} else {
-    //msg(data.msg,data.status);
-    //}
-
+    }
   }).fail(function (xhr, textStatus, errorThrown) {
     msg(errorThrown, textStatus);
   });
@@ -669,11 +554,13 @@ function makeCutDetailsTable(arr) {
 
         if (qty_needed_inbox) {
           needed_qty = "<td>" + x.needed_qty + "<input type='hidden' name='needed_qty[]' value='" + x.needed_qty + "'>" + "</td>";
-          tbl_cut_details_body = "<tr>" + "<td rowspan='2'>" + x.no + "<input type='hidden' name='no[]' value='" + x.no + "'>" + "<input type='hidden' name='id[]' value='" + x.id + "'>" + "</td>" + "<td rowspan='2'>" + x.p_alloy + "<input type='hidden' name='p_alloy[]' value='" + x.p_alloy + "'>" + "</td>" + "<td rowspan='2'>" + x.p_size + "<input type='hidden' name='p_size[]' value='" + x.p_size + "'>" + "</td>" + "</td>" + "<td rowspan='2'>" + x.p_item + "<input type='hidden' name='p_item[]' value='" + x.p_item + "'>" + "</td>" + "</td>" + "<td rowspan='2'>" + x.p_class + "<input type='hidden' name='p_class[]' value='" + x.p_class + "'>" + "</td>" + "<td rowspan='2'>" + x.sc_no + "<input type='hidden' name='sc_no[]' value='" + x.sc_no + "'>" + "</td>" + "<td rowspan='2'>" + x.order_qty + "<input type='hidden' name='order_qty[]' value='" + x.order_qty + "'>" + "</td>" + "<td>" + x.issued_qty + "<input type='hidden' name='issued_qty[]' value='" + x.issued_qty + "'>" + "</td>" + "<td rowspan='2'></td>" + "<td><span class='pull-left'>" + x.item + "</span><span class='pull-right'>" + schedOrSize + cut + "</span>" + "<input type='hidden' name='item[]' value='" + x.item + "'>" + "<input type='hidden' name='schedule[]' value='" + x.schedule + "'>" + "<input type='hidden' name='qty_needed_inbox[]' value='" + qty_needed_inbox + "'>" + "<input type='hidden' name='size[]' value='" + x.size + "'>" + "</td>" + "<td rowspan='2'>" + "<a href='javascript:;' style='color:#940000' class='fa fa-times btn_remove' data-id='" + x.id + "' data-issued_qty='" + x.issued_qty + "' data-count='" + count + "'></a>" + "</td>" + "</tr>" + "<tr>" + needed_qty + "<td><span class='pull-left'>" + x.lot_no + "</span><span class='pull-right'>" + x.mat_heat_no + " / " + x.supplier_heat_no + "</span></td>" + "<input type='hidden' name='mat_heat_no[]' value='" + x.mat_heat_no + "'>" + "<input type='hidden' name='supplier_heat_no[]' value='" + x.supplier_heat_no + "'>" + "<input type='hidden' name='lot_no[]' value='" + x.lot_no + "'>" + "<input type='hidden' name='cut_weight[]' value='" + x.cut_weight + "'>" + "<input type='hidden' name='cut_length[]' value='" + x.cut_length + "'>" + "</tr>";
+          tbl_cut_details_body = "<tr>" + "<td rowspan='2'>" + x.no + "<input type='hidden' name='no[]' value='" + x.no + "'>" + "<input type='hidden' name='id[]' value='" + x.id + "'>" + "</td>" + "<td rowspan='2'>" + x.p_alloy + "<input type='hidden' name='p_alloy[]' value='" + x.p_alloy + "'>" + "</td>" + "<td rowspan='2'>" + x.p_size + "<input type='hidden' name='p_size[]' value='" + x.p_size + "'>" + "</td>" + "</td>" + "<td rowspan='2'>" + x.p_item + "<input type='hidden' name='p_item[]' value='" + x.p_item + "'>" + "</td>" + "</td>" + "<td rowspan='2'>" + x.p_class + "<input type='hidden' name='p_class[]' value='" + x.p_class + "'>" + "</td>" + "<td rowspan='2'>" + x.sc_no + "<input type='hidden' name='sc_no[]' value='" + x.sc_no + "'>" + "</td>" + "<td rowspan='2'>" + x.jo_qty + "<input type='hidden' name='jo_qty[]' value='" + x.jo_qty + "'>" + "</td>" + "<td>" + x.issued_qty + "<input type='hidden' name='issued_qty[]' value='" + x.issued_qty + "'>" + "</td>" + "<td rowspan='2'></td>" + "<td><span class='pull-left'>" + x.item + "</span><span class='pull-right'>" + schedOrSize + cut + "</span>" + "<input type='hidden' name='item[]' value='" + x.item + "'>" + "<input type='hidden' name='schedule[]' value='" + x.schedule + "'>" + "<input type='hidden' name='qty_needed_inbox[]' value='" + qty_needed_inbox + "'>" + "<input type='hidden' name='size[]' value='" + x.size + "'>" + "<input type='hidden' name='material_used[]' value='" + x.material_used + "'>" + "</td>" + "<td rowspan='2'>" + "<a href='javascript:;' style='color:#940000' class='fa fa-times btn_remove' data-id='" + x.id + "' data-issued_qty='" + x.issued_qty + "' data-count='" + count + "'></a>" + "</td>" + "</tr>" + "<tr>" + needed_qty + "<td><span class='pull-left'>" + x.lot_no + "</span><span class='pull-right'>" + x.mat_heat_no + " / " + x.supplier_heat_no + "</span></td>" + "<input type='hidden' name='mat_heat_no[]' value='" + x.mat_heat_no + "'>" + "<input type='hidden' name='supplier_heat_no[]' value='" + x.supplier_heat_no + "'>" + "<input type='hidden' name='lot_no[]' value='" + x.lot_no + "'>" + "<input type='hidden' name='cut_weight[]' value='" + x.cut_weight + "'>" + "<input type='hidden' name='cut_length[]' value='" + x.cut_length + "'>" + "<input type='hidden' name='cut_width[]' value='" + x.cut_width + "'>" + "</tr>";
           count++;
         } else {
           needed_qty = "<td></td>";
-          tbl_cut_details_body = "<tr>" + "<td rowspan='2'>" + x.no + "<input type='hidden' name='no[]' value='" + x.no + "'>" + "<input type='hidden' name='id[]' value='" + x.id + "'>" + "</td>" + "<td rowspan='2'>" + x.p_alloy + "<input type='hidden' name='p_alloy[]' value='" + x.p_alloy + "'>" + "</td>" + "<td rowspan='2'>" + x.p_size + "<input type='hidden' name='p_size[]' value='" + x.p_size + "'>" + "</td>" + "<td rowspan='2'>" + x.p_item + "<input type='hidden' name='p_item[]' value='" + x.p_item + "'>" + "</td>" + "<td rowspan='2'>" + x.p_class + "<input type='hidden' name='p_class[]' value='" + x.p_class + "'>" + "</td>" + "<td rowspan='2'>" + x.sc_no + "<input type='hidden' name='sc_no[]' value='" + x.sc_no + "'>" + "</td>" + "</td>" + "<td rowspan='2'>" + x.order_qty + "<input type='hidden' name='order_qty[]' value='" + x.order_qty + "'>" + "</td>" + "<td rowspan='2'>" + x.needed_qty + "<input type='hidden' name='needed_qty[]' value='" + x.needed_qty + "'>" + "</td>" + "<td rowspan='2'></td>" + "<td class='text-center'>" + schedOrSize + cut + "<input type='hidden' name='cut_weight[]' value='" + x.cut_weight + "'>" + "<input type='hidden' name='cut_length[]' value='" + x.cut_length + "'>" + "<input type='hidden' name='schedule[]' value='" + x.schedule + "'>" + "<input type='hidden' name='size[]' value='" + x.size + "'>" + "</td>" + "<td rowspan='2'>" + "<a href='javascript:;' style='color:#940000' class='fa fa-times btn_remove' data-id='" + x.id + "' data-issued_qty='" + x.needed_qty + "' data-count='" + count + "'></a>" + "</td>" + "</tr>" + "<tr>" + "<td><span class='pull-left'>-------</span><span class='pull-right'>" + x.lot_no + "</span></td>" + "<input type='hidden' name='mat_heat_no[]' value='" + x.mat_heat_no + "'>" + "<input type='hidden' name='supplier_heat_no[]' value='" + x.supplier_heat_no + "'>" + "<input type='hidden' name='lot_no[]' value='" + x.lot_no + "'>" + "</tr>";
+          tbl_cut_details_body = "<tr>" + "<td rowspan='2'>" + x.no + "<input type='hidden' name='no[]' value='" + x.no + "'>" + "<input type='hidden' name='id[]' value='" + x.id + "'>" + "</td>" + "<td rowspan='2'>" + x.p_alloy + "<input type='hidden' name='p_alloy[]' value='" + x.p_alloy + "'>" + "</td>" + "<td rowspan='2'>" + x.p_size + "<input type='hidden' name='p_size[]' value='" + x.p_size + "'>" + "</td>" + "<td rowspan='2'>" + x.p_item + "<input type='hidden' name='p_item[]' value='" + x.p_item + "'>" + "</td>" + "<td rowspan='2'>" + x.p_class + "<input type='hidden' name='p_class[]' value='" + x.p_class + "'>" + "</td>" + "<td rowspan='2'>" + x.sc_no + "<input type='hidden' name='sc_no[]' value='" + x.sc_no + "'>" + "</td>" + "</td>" + "<td rowspan='2'>" + x.jo_qty + "<input type='hidden' name='jo_qty[]' value='" + x.jo_qty + "'>" + "</td>" + "<td rowspan='2'>" + x.needed_qty + "<input type='hidden' name='needed_qty[]' value='" + x.needed_qty + "'>" + "</td>" + "<td rowspan='2'></td>" + "<td class='text-center'>" + schedOrSize + cut + "<input type='hidden' name='cut_weight[]' value='" + x.cut_weight + "'>" + "<input type='hidden' name='cut_length[]' value='" + x.cut_length + "'>" + "<input type='hidden' name='cut_width[]' value='" + x.cut_width + "'>" + "<input type='hidden' name='schedule[]' value='" + x.schedule + "'>" + "<input type='hidden' name='size[]' value='" + x.size + "'>" + "</td>" + "<td rowspan='2'>" + "<button class='btn btn-sm btn_remove bg-red' data-id='" + x.id + "' data-issued_qty='" + x.needed_qty + "' data-count='" + count + "'>" + "<i class='fa fa-times '></i>";
+          "</button>" + // "<a href='javascript:;' style='color:#940000' class='fa fa-times btn_remove' ></a>" +
+          "</td>" + "</tr>" + "<tr>" + "<td><span class='pull-left'>-------</span><span class='pull-right'>" + x.lot_no + "</span></td>" + "<input type='hidden' name='mat_heat_no[]' value='" + x.mat_heat_no + "'>" + "<input type='hidden' name='supplier_heat_no[]' value='" + x.supplier_heat_no + "'>" + "<input type='hidden' name='lot_no[]' value='" + x.lot_no + "'>" + "<input type='hidden' name='material_used[]' value='" + x.material_used + "'>" + "</tr>";
           count++;
         }
       } else {

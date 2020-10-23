@@ -56,7 +56,7 @@ foreach ($user_accesses as $user_access){
                     </div>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-2">
                     <div class="input-group input-group-sm mb-5">
                         <div class="input-group-prepend">
                             <span class="input-group-text">Status</span>
@@ -65,7 +65,9 @@ foreach ($user_accesses as $user_access){
                             <option value="null">All</option>
                             <option value="1">No quantity issued</option>
                             <option value="2">Ready for printing</option>
-                            <option value="3">On Production</option>
+                            <option value="3">On-going Process</option>
+                            <option value="5">Closed</option>
+                            <option value="6">In Production</option>
                         </select>
                     </div>
                 </div>
@@ -110,13 +112,13 @@ foreach ($user_accesses as $user_access){
     </div>
 
     <div class="row justify-content-center">
-    	<div class="col-sm-2">
+    	<div class="col-lg-1 col-md-2 col-sm-2">
     		<button class="btn btn-lg bg-green btn-block mb-3" id="btn_travel_sheet_all_print_preview">
     			<i class="fa fa-file-text-o"></i> Travel Sheet
     		</button>
         </div>
         
-        <div class="col-sm-2">
+        <div class="col-lg-2 col-md-2 col-sm-2">
     		<button class="btn btn-lg bg-blue btn-block mb-3" id="btn_proceed">
     			<i class="fa fa-arrow-right"></i> Proceed to Production
     		</button>

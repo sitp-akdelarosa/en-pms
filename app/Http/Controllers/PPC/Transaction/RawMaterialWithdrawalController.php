@@ -661,9 +661,14 @@ class RawMaterialWithdrawalController extends Controller
     public function material_details(Request $req)
     {
         $with_inv_id = "";
+        $qty_cond = " AND i.qty_pcs <> 0";
 
         if (!is_null($req->inv_id)) {
             $with_inv_id = " AND i.id = '". $req->inv_id ."' ";
+        }
+
+        if ($req->state == 'edit') {
+            $qty_cond = "";
         }
 
         $materials = DB::table('ppc_update_inventories as pui')
@@ -691,8 +696,8 @@ class RawMaterialWithdrawalController extends Controller
                         ->where('apl.user_id' ,Auth::user()->id)
                         ->where('pui.heat_no',$req->material_heat_no)
                         ->where('pui.deleted','<>','1')
-                        ->where('i.qty_pcs','<>','0')
-                        ->whereRaw("1=1 ".$with_inv_id)
+                        // ->whereRaw('i.qty_pcs','<>','0')
+                        ->whereRaw("1=1 ".$with_inv_id.$qty_cond)
                         ->get();
 
         return response()->json($materials);

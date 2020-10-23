@@ -108,13 +108,13 @@ foreach ($user_accesses as $user_access){
     </div>
 
     <div class="row justify-content-center">
-    	<div class="col-sm-2">
+    	<div class="col-lg-1 col-md-2 col-sm-2">
     		<button class="btn btn-lg bg-green btn-block mb-3" id="btn_travel_sheet_all_print_preview">
     			<i class="fa fa-file-text-o"></i> Travel Sheet
     		</button>
         </div>
         
-        <div class="col-sm-2">
+        <div class="col-lg-2 col-md-2 col-sm-2">
     		<button class="btn btn-lg bg-blue btn-block mb-3" id="btn_proceed">
     			<i class="fa fa-arrow-right"></i> Proceed to Production
     		</button>

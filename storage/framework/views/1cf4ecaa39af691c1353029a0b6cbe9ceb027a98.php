@@ -88,18 +88,9 @@ if ($exist == 0) {
                     <div class="col-md-7">
 
                         <form id="frm_cut_sched">
-                            <div class="form-group row">
-                                <div class="col-md-12">
-                                    <div class="input-group input-group-sm mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">Withdrawal Slip #:</span>
-                                        </div>
-                                        <input type="text" class="form-control validate clear" name="withdrawal_slip"
-                                            id="withdrawal_slip" maxlength="16">
-                                        <div id="withdrawal_slip_feedback"></div>
-                                    </div>
-                                </div>
-                            </div>
+                            
+
+                            <input type="hidden" class="form-control validate clear" name="withdrawal_slip" id="withdrawal_slip" maxlength="16">
 
                             <div class="form-group row mb-10">
                                 <div class="col-md-6">
@@ -209,19 +200,19 @@ if ($exist == 0) {
                 </div>
             </div>
             <div id="cutting_sched_reprint" class="tab-pane">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <table class="table table-sm table-bordered dt-responsive nowrap mb-5" width="100%" id="tbl_cut_sched_reprint">
-                            <thead>
-                                <th></th>
-                                <th>J.O Number/s</th>
-                                <th>Withdrawal Slip #</th>
-                                <th>ISO Ctrl #</th>
-                                <th>Date Issued</th>
-                                <th>Machine #</th>
-                                <th>Leader</th>
-                                <th>Prepared By</th>
-                                <th>Date Created</th>
+                <div class="row justify-content-center">
+                    <div class="col-sm-10">
+                        <table class="table table-sm table-hover table-striped table-bordered nowrap mb-5" width="100%" id="tbl_cut_sched_reprint">
+                            <thead class="thead-dark">
+                                <th width="3.11%"></th>
+                                <th width="13.11%">J.O Number/s</th>
+                                <th width="13.11%">Withdrawal Slip #</th>
+                                <th width="11.11%">ISO Ctrl #</th>
+                                <th width="11.11%">Date Issued</th>
+                                <th width="11.11%">Machine #</th>
+                                <th width="13.11%">Leader</th>
+                                <th width="13.11%">Prepared By</th>
+                                <th width="11.11%">Date Created</th>
                             </thead>
                             <tbody id="tbl_cut_sched_reprint_body">
                                 <tr>

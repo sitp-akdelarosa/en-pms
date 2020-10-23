@@ -346,6 +346,25 @@ $(function () {
     // 	// $(this).val($(this).attr('data-old_qty'));
     // }
   });
+  $('#btn_proceed').on('click', function () {
+    swal({
+      title: "Proceed to Production",
+      text: "Ready to proceed this Travel sheet to Production?",
+      type: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#f95454",
+      confirmButtonText: "Yes",
+      cancelButtonText: "No",
+      closeOnConfirm: true,
+      closeOnCancel: false
+    }, function (isConfirm) {
+      if (isConfirm) {
+        swal.close(); // ajax to update travel sheet status
+      } else {
+        swal.close();
+      }
+    });
+  });
 });
 
 function init() {
@@ -614,15 +633,16 @@ function makeJODetailsTable(arr) {
       data: function data(_data3) {
         switch (_data3.status) {
           case 0:
-            return 'No quantity issued';
+            return 'No quantity issued'; //No quantity issued
+
             break;
 
           case 1:
-            return 'Ready of printing';
+            return 'Ready to Issue';
             break;
 
           case 2:
-            return 'On Production';
+            return 'On-going Process';
             break;
 
           case 3:
@@ -631,6 +651,10 @@ function makeJODetailsTable(arr) {
 
           case 5:
             return 'CLOSED';
+            break;
+
+          case 6:
+            return 'In Production';
             break;
 
           default:
