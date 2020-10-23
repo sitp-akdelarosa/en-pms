@@ -144,6 +144,7 @@ $(function () {
 			$('#product_line').val($(this).attr('data-item_type_line')).trigger('change.select2');
 			getItemCode($(this).attr('data-item_code'), '', 'product');
 			$('#lot_no').val($(this).attr('data-lot_no'));
+			$('#finish_weight').val($(this).attr('data-finish_weight'));
 		}
 
 		$('#description').val($(this).attr('data-description'));
@@ -414,6 +415,8 @@ $(function () {
 				finished_weight = (parseFloat($(this).val()) * parseFloat($('#finish_weight').val()));
 				$('#qty_weight').val(finished_weight.toFixed(2));
 			}
+
+			console.log(finished_weight);
 		}		
 	});
 
