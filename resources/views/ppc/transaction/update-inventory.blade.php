@@ -70,11 +70,7 @@ foreach ($user_accesses as $user_access){
                                     <th>Item Type / Line</th>
                                     <th>Item Code</th>
                                     <th>Description</th>
-                                    <th>Item</th>
-                                    <th>Alloy</th>
-                                    <th>Schedule/Class</th>
-                                    <th>Size</th>
-                                    <th>Width</th>
+                                    
                                     <th>Length</th>
                                     <th>Std. Material Wt.</th>
                                     <th>Std. wt. Received</th>
@@ -84,10 +80,18 @@ foreach ($user_accesses as $user_access){
                                     <th>Stock(PCS)</th>
                                     <th>Heat No.</th>
                                     <th>Lot No.</th>
+                                    
+                                    <th>Item</th>
+                                    <th>Alloy</th>
+                                    <th>Schedule/Class</th>
+                                    <th>Size</th>
+                                    <th>Width</th>
+                                    
                                     <th>Invoice No.</th>
                                     <th>Received Date</th>
                                     <th>Supplier</th>
                                     <th>Supplier Heat No.</th>
+                                    <th>Update Date</th>
                                 </tr>
                             </thead>
                             <tbody id="tbl_materials_body"></tbody>

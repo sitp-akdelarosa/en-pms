@@ -824,6 +824,7 @@ function InventoryTable(arr) {
 						// "data-thickness='" + data.thickness + "' " +
 						"data-length='" + data.length + "' " +
 						"data-supplier_heat_no='" + data.supplier_heat_no + "' " +
+						"data-updated_at='" + data.updated_at + "' " +
 						"data-supplier='" + data.supplier + "'>" +
 						"<i class='fa fa-edit'></i> " +
 						"</button>";
@@ -834,13 +835,11 @@ function InventoryTable(arr) {
 			{ data: 'item_type_line' },
 			{ data: 'item_code' },
 			{ data: 'description' },
-			{ data: 'item' },
-			{ data: 'alloy' },
-			{ data: 'schedule' },
-			{ data: 'size' },
-			{ data: 'width' },
+
 			{ data: 'length' },
-			{ data: 'std_weight' },
+			{ data: function(x) {
+				return (x.std_weight == null)? '' : x.std_weight.toFixed(2);
+			} },
 			{ data: 'std_weight_received' },
 			{ data: 'finish_weight' },
 			{ data: 'qty_weight' },
@@ -848,10 +847,18 @@ function InventoryTable(arr) {
 			{ data: 'current_stock' },
 			{ data: 'heat_no' },
 			{ data: 'lot_no' },
+
+			{ data: 'item' },
+			{ data: 'alloy' },
+			{ data: 'schedule' },
+			{ data: 'size' },
+			{ data: 'width' },
+			
 			{ data: 'invoice_no' },
 			{ data: 'received_date' },
 			{ data: 'supplier' },
-			{ data: 'supplier_heat_no' }
+			{ data: 'supplier_heat_no' },
+			{ data: 'updated_at' }
 		],
 		createdRow: function (row, data, dataIndex) {
 			if (data.description == "N/A") {

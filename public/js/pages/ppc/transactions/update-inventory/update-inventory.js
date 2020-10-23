@@ -831,7 +831,7 @@ function InventoryTable(arr) {
     columns: [{
       data: function data(_data) {
         return "<button type='button' name='edit-mainEdit' class='btn btn-sm btn-primary edit-mainEdit'" + "id='editinventory'" + "data-id= '" + _data.id + "' " + "data-item_class='" + _data.item_class + "' " + "data-receive_jo_no='" + _data.receive_jo_no + "' " + "data-item_type_line='" + _data.item_type_line + "' " + "data-item_code='" + _data.item_code + "'" + "data-description='" + _data.description + "'" + "data-item='" + _data.item + "'" + "data-alloy='" + _data.alloy + "'" + "data-schedule='" + _data.schedule + "'" + "data-size='" + _data.size + "'" + "data-std_weight='" + _data.std_weight + "'" + "data-std_weight_received='" + _data.std_weight_received + "'" + "data-finish_weight='" + _data.finish_weight + "'" + "data-qty_weight='" + _data.qty_weight + "'" + "data-qty_pcs='" + _data.qty_pcs + "'" + "data-current_stock='" + _data.current_stock + "'" + "data-heat_no='" + _data.heat_no + "' " + "data-lot_no='" + _data.lot_no + "' " + "data-invoice_no='" + _data.invoice_no + "'" + "data-received_date='" + _data.received_date + "'" + "data-width='" + _data.width + "' " + // "data-thickness='" + data.thickness + "' " +
-        "data-length='" + _data.length + "' " + "data-supplier_heat_no='" + _data.supplier_heat_no + "' " + "data-supplier='" + _data.supplier + "'>" + "<i class='fa fa-edit'></i> " + "</button>";
+        "data-length='" + _data.length + "' " + "data-supplier_heat_no='" + _data.supplier_heat_no + "' " + "data-updated_at='" + _data.updated_at + "' " + "data-supplier='" + _data.supplier + "'>" + "<i class='fa fa-edit'></i> " + "</button>";
       },
       searchable: false,
       orderable: false
@@ -846,19 +846,11 @@ function InventoryTable(arr) {
     }, {
       data: 'description'
     }, {
-      data: 'item'
-    }, {
-      data: 'alloy'
-    }, {
-      data: 'schedule'
-    }, {
-      data: 'size'
-    }, {
-      data: 'width'
-    }, {
       data: 'length'
     }, {
-      data: 'std_weight'
+      data: function data(x) {
+        return x.std_weight == null ? '' : x.std_weight.toFixed(2);
+      }
     }, {
       data: 'std_weight_received'
     }, {
@@ -874,6 +866,16 @@ function InventoryTable(arr) {
     }, {
       data: 'lot_no'
     }, {
+      data: 'item'
+    }, {
+      data: 'alloy'
+    }, {
+      data: 'schedule'
+    }, {
+      data: 'size'
+    }, {
+      data: 'width'
+    }, {
       data: 'invoice_no'
     }, {
       data: 'received_date'
@@ -881,6 +883,8 @@ function InventoryTable(arr) {
       data: 'supplier'
     }, {
       data: 'supplier_heat_no'
+    }, {
+      data: 'updated_at'
     }],
     createdRow: function createdRow(row, data, dataIndex) {
       if (data.description == "N/A") {
