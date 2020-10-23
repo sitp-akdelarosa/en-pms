@@ -633,7 +633,7 @@ function makeCutDetailsTable(arr) {
 						"</td>" +
 						"<td rowspan='2'>" +
 						"<button class='btn btn-sm btn_remove bg-red' data-id='" + x.id + "' data-issued_qty='" + x.needed_qty + "' data-count='" + count + "'>"+
-							"<i class='fa fa-times '></i>"
+							"<i class='fa fa-times '></i>"+
 						"</button>" +
 						// "<a href='javascript:;' style='color:#940000' class='fa fa-times btn_remove' ></a>" +
 						"</td>" +
