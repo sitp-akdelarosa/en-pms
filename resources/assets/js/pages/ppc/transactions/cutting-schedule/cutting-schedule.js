@@ -631,7 +631,7 @@ function makeCutDetailsTable(arr) {
 						"<input type='hidden' name='schedule[]' value='" + x.schedule + "'>" +
 						"<input type='hidden' name='size[]' value='" + x.size + "'>" +
 						"</td>" +
-						"<td rowspan='2'>" +
+						"<td>" +
 						"<button class='btn btn-sm btn_remove bg-red' data-id='" + x.id + "' data-issued_qty='" + x.needed_qty + "' data-count='" + count + "'>"+
 							"<i class='fa fa-times '></i>"+
 						"</button>" +

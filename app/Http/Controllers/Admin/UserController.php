@@ -80,7 +80,7 @@ class UserController extends Controller
 			'lastname' => 'required|string|max:50|min:1',
 			'password' => 'required|string|min:5|confirmed',
 			'user_type' => 'required',
-			'email' => 'unique:users',
+			// 'email' => 'unique:users',
 			// 'div_code' => 'required',
 			'photo' => 'image|mimes:jpeg,png,jpg,gif,svg',
 		]);
