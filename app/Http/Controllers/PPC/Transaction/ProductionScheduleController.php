@@ -557,6 +557,7 @@ class ProductionScheduleController extends Controller
                                         pui.length as rmw_length,
                                         pui.id as upd_inv_id,
                                         pui.item_code as item_code,
+                                        '' as lot_no,
                                         CASE 
                                             WHEN pui.materials_type LIKE '%BAR%' THEN 'BAR'
                                             WHEN pui.materials_type LIKE '%PIPE%' THEN 'PIPE'
@@ -616,7 +617,77 @@ class ProductionScheduleController extends Controller
                                         pui.materials_type
                                     ORDER BY pui.id desc");
 
-            if ($this->_helper->check_if_exists($materials) > 0) {
+            
+        } else {
+            $pw = DB::table('ppc_product_withdrawal_infos')
+                    ->select('id')->where('trans_no',$req->rmw_no)->first();
+
+            if (count((array)$pw) > 0) {
+                $heat_no = [];
+
+                $materials = DB::select("SELECT pwi.trans_no,
+                                            pw.trans_id,
+                                            pui.heat_no as heat_no,
+                                            ifnull(pw.issued_uom,'') as uom,
+                                            ifnull(pw.issued_qty,0) as rmw_issued_qty,
+                                            ifnull(pw.scheduled_qty,0) as rmw_scheduled_qty,
+                                            pw.id as rmw_id,
+                                            pw.inv_id as inv_id,
+                                            pui.length as rmw_length,
+                                            pui.id as upd_inv_id,
+                                            pui.item_code as item_code,
+                                            pui.item_class as material_type,
+                                            pui.lot_no as lot_no,
+                                            CONCAT(
+                                                pui.heat_no,
+                                                IF(pui.length = 'N/A','', CONCAT(' | (',pui.length,')') ),
+                                                CONCAT( ' | (' ,ifnull(pw.issued_qty,0), ')' )
+                                            ) as `text`,
+                                            '0' as for_over_issuance,
+                                            ppc.standard_material_used as standard_material_used,
+                                            pui.description as description,
+                                            pui.size as size,
+                                            pui.`schedule` as `schedule`
+                                        FROM ppc_update_inventories as pui
+                                        inner join ppc_product_codes as ppc
+                                        on pui.item_code = ppc.product_code
+
+                                        left join admin_assign_production_lines as apl 
+                                        on apl.product_line = ppc.product_type
+
+                                        inner join ppc_product_withdrawal_details as pw 
+                                        on pui.heat_no = pw.heat_no
+                                        and pui.id = pw.inv_id
+
+                                        inner join ppc_product_withdrawal_infos as pwi 
+                                        on pw.trans_id = pwi.id
+
+                                        WHERE pw.issued_qty <> 0 
+                                        AND apl.user_id = ".Auth::user()->id."
+                                        AND pwi.trans_no = '".$req->rmw_no."'
+
+                                        group by pwi.trans_no,
+                                            pw.trans_id,
+                                            pui.id,
+                                            pui.heat_no,
+                                            pw.issued_qty,
+                                            pw.scheduled_qty,
+                                            pw.id,
+                                            pw.inv_id,
+                                            pui.item_code,
+                                            pui.length,
+                                            pui.description,
+                                            pui.size,
+                                            pui.`schedule`,
+                                            ppc.standard_material_used,
+                                            pui.item_class,
+                                            pui.lot_no
+                                        ORDER BY pui.id desc");
+                
+            }
+        }
+
+        if ($this->_helper->check_if_exists($materials) > 0) {
                 if ($req->state == 'edit') {
                     $data = [
                         'msg' => '',
@@ -646,7 +717,8 @@ class ProductionScheduleController extends Controller
                                 'description' => $material->description,
                                 'size' => $material->size,
                                 'schedule' => $material->schedule,
-                                'item_code' => $material->item_code
+                                'item_code' => $material->item_code,
+                                'lot_no' => $material->lot_no
                             ]);
                         }
                     }
@@ -666,10 +738,6 @@ class ProductionScheduleController extends Controller
                     }
                 }            
             }
-        } else {
-            $rmw = DB::table('ppc_raw_material_withdrawal_infos')
-                    ->select('id')->where('trans_no',$req->rmw_no)->first();
-        }
         
         return response()->json($data);
     }

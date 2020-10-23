@@ -211,6 +211,7 @@ $(function () {
 
         var for_over_issuance = $(this).find('option:selected').attr('data-for_over_issuance');
         var material_type = $(this).find('option:selected').attr('data-material_type');
+        var lot_no = $(this).find('option:selected').attr('data-lot_no');
 
         var table_index = $(this).attr('data-count');
         
@@ -230,37 +231,43 @@ $(function () {
                 var selected_mat_used = "";
 
                 // check standard material used
-                switch (standard_material_used) {
-                    case material_used_code:
-                        selected_mat_used = material_used_code;
-                        break;
+                if (material_type !== 'FINISHED' && material_type !== 'CRUDE') {
+                    switch (standard_material_used) {
+                        case material_used_code:
+                            selected_mat_used = material_used_code;
+                            break;
 
-                    case material_used_size:
-                        selected_mat_used = material_used_size;
-                        break;
+                        case material_used_size:
+                            selected_mat_used = material_used_size;
+                            break;
 
-                    case material_used_schedule:
-                        selected_mat_used = material_used_schedule;
-                        break;
-                
-                    default:
-                        selected_mat_used = material_used_description
-                        break;
-                }
+                        case material_used_schedule:
+                            selected_mat_used = material_used_schedule;
+                            break;
 
-                $('#material_used_' + x.count).val(material_used_description);
+                        default:
+                            selected_mat_used = material_used_description
+                            break;
+                    }
 
-                if (standard_material_used != selected_mat_used) {
-                    var error = "This is not the Product's Standard Material";
+                    $('#material_used_' + x.count).val(material_used_description);
 
-                    $('#material_used_' + x.count).addClass('is-invalid');
-                    $('#material_used_' + x.count + '_feedback').addClass('invalid-feedback');
-                    $('#material_used_' + x.count + '_feedback').html(error);
+                    if (standard_material_used != selected_mat_used) {
+                        var error = "This is not the Product's Standard Material";
+
+                        $('#material_used_' + x.count).addClass('is-invalid');
+                        $('#material_used_' + x.count + '_feedback').addClass('invalid-feedback');
+                        $('#material_used_' + x.count + '_feedback').html(error);
+                    } else {
+                        $('#material_used_' + x.count).removeClass('is-invalid');
+                        $('#material_used_' + x.count + '_feedback').removeClass('invalid-feedback');
+                        $('#material_used_' + x.count + '_feedback').html('');
+                    }
                 } else {
-                    $('#material_used_' + x.count).removeClass('is-invalid');
-                    $('#material_used_' + x.count + '_feedback').removeClass('invalid-feedback');
-                    $('#material_used_' + x.count + '_feedback').html('');
+                    $('#material_used_' + x.count).val(material_used_description);
+                    $('#lot_no_' + x.count).val(lot_no);
                 }
+                
 
                 // alot material type and comparison for over issuance
                 $('#for_over_issuance_' + x.count).val(for_over_issuance);
@@ -287,53 +294,58 @@ $(function () {
 
             var selected_mat_used = "";
 
-            // check standard material used
-            switch (standard_material_used) {
-                case material_used_code:
-                    selected_mat_used = material_used_code;
-                    break;
+            if (material_type !== 'FINISHED' && material_type !== 'CRUDE') {
+                // check standard material used
+                switch (standard_material_used) {
+                    case material_used_code:
+                        selected_mat_used = material_used_code;
+                        break;
 
-                case material_used_size:
-                    selected_mat_used = material_used_size;
-                    break;
+                    case material_used_size:
+                        selected_mat_used = material_used_size;
+                        break;
 
-                case material_used_schedule:
-                    selected_mat_used = material_used_schedule;
-                    break;
+                    case material_used_schedule:
+                        selected_mat_used = material_used_schedule;
+                        break;
 
-                default:
-                    selected_mat_used = material_used_description
-                    break;
-            }
+                    default:
+                        selected_mat_used = material_used_description
+                        break;
+                }
 
-            $('#material_used_' + table_index).val(material_used_description);
+                $('#material_used_' + table_index).val(material_used_description);
 
-            if (standard_material_used != selected_mat_used) {
-                var error = "This is not the Product's Standard Material";
+                if (standard_material_used != selected_mat_used) {
+                    var error = "This is not the Product's Standard Material";
 
-                $('#material_used_' + table_index).addClass('is-invalid');
-                $('#material_used_' + table_index + '_feedback').addClass('invalid-feedback');
-                $('#material_used_' + table_index + '_feedback').html(error);
+                    $('#material_used_' + table_index).addClass('is-invalid');
+                    $('#material_used_' + table_index + '_feedback').addClass('invalid-feedback');
+                    $('#material_used_' + table_index + '_feedback').html(error);
+                } else {
+                    $('#material_used_' + table_index).removeClass('is-invalid');
+                    $('#material_used_' + table_index + '_feedback').removeClass('invalid-feedback');
+                    $('#material_used_' + table_index + '_feedback').html('');
+                }
+
+                // alot material type and comparison for over issuance
+                $('#for_over_issuance_' + table_index).val(for_over_issuance);
+                $('#material_type_' + table_index).val(material_type);
+
+
+                joDetails_arr[table_index].material_heat_no = heat_no;
+                joDetails_arr[table_index].rmw_issued_qty = rmw_issued_qty;
+                joDetails_arr[table_index].uom = uom;
+                joDetails_arr[table_index].material_used = selected_mat_used;
+                joDetails_arr[table_index].material_type = material_type;
+                joDetails_arr[table_index].for_over_issuance = for_over_issuance;
+                joDetails_arr[table_index].inv_id = inv_id;
+                joDetails_arr[table_index].rmw_id = rmw_id;
+                joDetails_arr[table_index].heat_no_id = material_heat_no;
             } else {
-                $('#material_used_' + table_index).removeClass('is-invalid');
-                $('#material_used_' + table_index + '_feedback').removeClass('invalid-feedback');
-                $('#material_used_' + table_index + '_feedback').html('');
+                $('#material_used_' + x.count).val(material_used_description);
+                $('#lot_no_' + x.count).val(lot_no);
             }
-
-            // alot material type and comparison for over issuance
-            $('#for_over_issuance_' + table_index).val(for_over_issuance);
-            $('#material_type_' + table_index).val(material_type);
-
-
-            joDetails_arr[table_index].material_heat_no = heat_no;
-            joDetails_arr[table_index].rmw_issued_qty = rmw_issued_qty;
-            joDetails_arr[table_index].uom = uom;
-            joDetails_arr[table_index].material_used = selected_mat_used;
-            joDetails_arr[table_index].material_type = material_type;
-            joDetails_arr[table_index].for_over_issuance = for_over_issuance;
-            joDetails_arr[table_index].inv_id = inv_id;
-            joDetails_arr[table_index].rmw_id = rmw_id;
-            joDetails_arr[table_index].heat_no_id = material_heat_no;
                 
         }
 
@@ -474,32 +486,40 @@ $(function () {
             var material_type = $('#material_type_' + table_count).val();
             var over = $('#for_over_issuance_' + table_count).val();
 
-            switch (material_type) {
-                case 'BAR':
-                    var bar_length = parseFloat(over);
-                    var bar_pcs = sched_qty / bar_length;
-                    over_qty = bar_pcs - rmw_issued_qty;
-                    if (over_qty > 0) {
-                        is_over = true;
-                    }
-                    break;
+            // check type of withdrawal if MATERIAL or PRODUCT
+            if (material_type !== 'FINISHED' && material_type !== 'CRUDE') {
+                switch (material_type) {
+                    case 'BAR':
+                        var bar_length = parseFloat(over);
+                        var bar_pcs = sched_qty / bar_length;
+                        over_qty = bar_pcs - rmw_issued_qty;
+                        if (over_qty > 0) {
+                            is_over = true;
+                        }
+                        break;
 
-                case 'PIPE':
-                    var pipe_pcs = parseFloat(over);
-                    if (sched_qty > pipe_pcs) {
-                        is_over = true;
-                    }
-                    break;
+                    case 'PIPE':
+                        var pipe_pcs = parseFloat(over);
+                        if (sched_qty > pipe_pcs) {
+                            is_over = true;
+                        }
+                        break;
 
-                case 'PLATE':
-                    var stock = parseFloat(over);
-                    if (sched_qty > stock) {
-                        is_over = true;
-                    }
-                    break;
+                    case 'PLATE':
+                        var stock = parseFloat(over);
+                        if (sched_qty > stock) {
+                            is_over = true;
+                        }
+                        break;
 
-                default:
-                    break;
+                    default:
+                        break;
+                }
+            } else {
+                if (sched_qty > rmw_issued_qty) {
+                    over_qty = sched_qty - rmw_issued_qty;
+                    is_over = true;
+                }
             }
 
             if (is_over) {
@@ -939,6 +959,7 @@ function getMaterialHeatNo(withdrawal_slip_no,state) {
                     "data-size='" + mat.size + "' " +
                     "data-item_code='" + mat.item_code + "' " +
                     "data-schedule='" + mat.schedule + "' " +
+                    "data-lot_no='" + mat.lot_no + "' " +
                     "'>" +
                     mat.text +
                     "</option>";
