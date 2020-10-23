@@ -855,11 +855,17 @@ function InventoryTable(arr) {
         return x.std_weight == null ? '' : x.std_weight.toFixed(2);
       }
     }, {
-      data: 'std_weight_received'
+      data: function data(x) {
+        return x.std_weight_received == null ? '' : x.std_weight_received.toFixed(2);
+      }
     }, {
-      data: 'finish_weight'
+      data: function data(x) {
+        return x.finish_weight == null ? '' : x.finish_weight.toFixed(2);
+      }
     }, {
-      data: 'qty_weight'
+      data: function data(x) {
+        return x.qty_weight == null ? '' : x.qty_weight.toFixed(2);
+      }
     }, {
       data: 'qty_pcs'
     }, {

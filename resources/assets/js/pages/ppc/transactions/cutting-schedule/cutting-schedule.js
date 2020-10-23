@@ -390,30 +390,30 @@ function getMaterialsForCuttingSched(trans_no) {
 
 						tbl_cut_sched_body = "<tr>" +
 							"<td rowspan='2'>" +
-							"<input type='checkbox' class='table-checkbox check_items' data-trans_no='" + trans_no + "' " +
-							"data-no='" + x.jo_no + "' " +
-							"data-id='" + x.id + "' " +
-							"data-alloy='" + x.alloy + "' " +
-							"data-cut_weight='" + x.cut_weight + "' " +
-							"data-cut_length='" + x.cut_length + "' " +
-							"data-cut_width='" + x.cut_width + "' " +
-							"data-code_description='" + x.code_description + "' " +
-							"data-sc_no='" + x.sc_no + "' " +
-							"data-jo_qty='" + x.jo_qty + "' " +
-							"data-issued_qty='" + x.issued_qty + "' " +
-							"data-needed_qty='" + x.needed_qty + "' " +
-							"data-item='" + x.item + "' " +
-							"data-size='" + x.size + "' " +
-							"data-schedule='" + x.schedule + "' " +
-							"data-lot_no='" + x.lot_no + "' " +
-							"data-product_code='" + x.product_code + "' " +
-							"data-p_item='" + x.p_item + "' " +
-							"data-p_alloy='" + x.p_alloy + "' " +
-							"data-p_size='" + x.p_size + "' " +
-							"data-p_class='" + x.p_class + "' " +
-							"data-material_used='" + x.material_used + "' " +
-							"data-supplier_heat_no='" + x.supplier_heat_no + "' " +
-							"data-mat_heat_no='" + mat_heat_no + "'>" +
+								"<input type='checkbox' class='table-checkbox check_items' data-trans_no='" + trans_no + "' " +
+								"data-no='" + x.jo_no + "' " +
+								"data-id='" + x.id + "' " +
+								"data-alloy='" + x.alloy + "' " +
+								"data-cut_weight='" + x.cut_weight + "' " +
+								"data-cut_length='" + x.cut_length + "' " +
+								"data-cut_width='" + x.cut_width + "' " +
+								"data-code_description='" + x.code_description + "' " +
+								"data-sc_no='" + x.sc_no + "' " +
+								"data-jo_qty='" + x.jo_qty + "' " +
+								"data-issued_qty='" + x.issued_qty + "' " +
+								"data-needed_qty='" + x.needed_qty + "' " +
+								"data-item='" + x.item + "' " +
+								"data-size='" + x.size + "' " +
+								"data-schedule='" + x.schedule + "' " +
+								"data-lot_no='" + x.lot_no + "' " +
+								"data-product_code='" + x.product_code + "' " +
+								"data-p_item='" + x.p_item + "' " +
+								"data-p_alloy='" + x.p_alloy + "' " +
+								"data-p_size='" + x.p_size + "' " +
+								"data-p_class='" + x.p_class + "' " +
+								"data-material_used='" + x.material_used + "' " +
+								"data-supplier_heat_no='" + x.supplier_heat_no + "' " +
+								"data-mat_heat_no='" + mat_heat_no + "'>" +
 							"</td>" +
 
 
@@ -438,28 +438,28 @@ function getMaterialsForCuttingSched(trans_no) {
 
 						tbl_cut_sched_body = "<tr>" +
 							"<td rowspan='2'>" +
-							"<input type='checkbox' class='table-checkbox check_items' data-trans_no='" + trans_no + "' " +
-							"data-id='" + x.id + "' " +
-							"data-alloy='" + x.alloy + "' " +
-							"data-code_description='" + x.code_description + "' " +
-							"data-sc_no='" + x.sc_no + "' " +
-							"data-jo_qty='" + x.jo_qty + "' " +
-							"data-needed_qty='" + x.needed_qty + "' " +
-							"data-cut_weight='" + x.cut_weight + "' " +
-							"data-cut_length='" + x.cut_length + "' " +
-							"data-cut_width='" + x.cut_width + "' " +
-							"data-size='" + x.size + "' " +
-							"data-item='" + x.item + "' " +
-							"data-schedule='" + x.schedule + "' " +
-							"data-lot_no='" + x.lot_no + "' " +
-							"data-p_item='" + x.p_item + "' " +
-							"data-p_alloy='" + x.p_alloy + "' " +
-							"data-p_size='" + x.p_size + "' " +
-							"data-p_class='" + x.p_class + "' " +
-							"data-product_code='" + x.product_code + "' " +
-							"data-material_used='" + x.material_used + "' " +
-							"data-supplier_heat_no='" + x.supplier_heat_no + "' " +
-							"data-mat_heat_no='" + mat_heat_no + "'>" +
+								"<input type='checkbox' class='table-checkbox check_items' data-trans_no='" + trans_no + "' " +
+								"data-id='" + x.id + "' " +
+								"data-alloy='" + x.alloy + "' " +
+								"data-code_description='" + x.code_description + "' " +
+								"data-sc_no='" + x.sc_no + "' " +
+								"data-jo_qty='" + x.jo_qty + "' " +
+								"data-needed_qty='" + x.needed_qty + "' " +
+								"data-cut_weight='" + x.cut_weight + "' " +
+								"data-cut_length='" + x.cut_length + "' " +
+								"data-cut_width='" + x.cut_width + "' " +
+								"data-size='" + x.size + "' " +
+								"data-item='" + x.item + "' " +
+								"data-schedule='" + x.schedule + "' " +
+								"data-lot_no='" + x.lot_no + "' " +
+								"data-p_item='" + x.p_item + "' " +
+								"data-p_alloy='" + x.p_alloy + "' " +
+								"data-p_size='" + x.p_size + "' " +
+								"data-p_class='" + x.p_class + "' " +
+								"data-product_code='" + x.product_code + "' " +
+								"data-material_used='" + x.material_used + "' " +
+								"data-supplier_heat_no='" + x.supplier_heat_no + "' " +
+								"data-mat_heat_no='" + mat_heat_no + "'>" +
 
 							"</td>" +
 							"<td rowspan='2'>" + x.p_alloy + "</td>" +

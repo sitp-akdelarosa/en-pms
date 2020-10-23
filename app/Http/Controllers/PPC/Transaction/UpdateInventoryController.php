@@ -639,7 +639,10 @@ class UpdateInventoryController extends Controller
                                                                'item',
                                                                'alloy',
                                                                'class',
-                                                               'size' )
+                                                               'size',
+                                                               DB::raw("IF(finish_weight = 0.00,
+                                                                        0.00,
+                                                                        finish_weight) AS finish_weight") )
                                                         ->where('product_code',$itemcode)
                                                         ->first();
 
@@ -657,7 +660,7 @@ class UpdateInventoryController extends Controller
                                         'alloy' =>  $PpcProductCode->alloy,
                                         'schedule' => $PpcProductCode->class,
                                         'size' =>  $PpcProductCode->size,
-                                        'qty_weight' => $qty_weight,
+                                        'qty_weight' => ($PpcProductCode->finish_weight * $qty_pcs),
                                         'qty_pcs' => $qty_pcs,
                                         'weight_uom' => 'KGS',
                                         'pcs_uom' => 'PCS',
@@ -689,7 +692,7 @@ class UpdateInventoryController extends Controller
                             'width' => 'N/A',
                             'length' => 'N/A',
                             'orig_quantity' => $qty_pcs,
-                            'qty_weight' => $qty_weight,
+                            'qty_weight' => ($PpcProductCode->finish_weight * $qty_pcs),
                             'qty_pcs' => $qty_pcs,
                             'weight_uom' => 'KGS',
                             'pcs_uom' => 'PCS',
