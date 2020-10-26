@@ -253,7 +253,11 @@ class DivisionMasterController extends Controller
 
 	public function getProductline(Request $req)
 	{
-		$pro = PpcDivisionProductline::where('division_id',$req->division_id)->get();
+		$pro = DB::table('ppc_division_productlines')
+					->select('productline','division_id')
+					->where('division_id',$req->division_id)
+					->groupBy('productline','division_id')
+					->get();
 		return response()->json($pro);
 	} 
 
