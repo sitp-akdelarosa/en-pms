@@ -1105,29 +1105,23 @@ class UpdateInventoryController extends Controller
         return response()->json(['msg'=>"Data was successfully saved.",'status' => 'success']);
     }
 
-    public function getProductLine()
+    public function GetMaterialType()
     {
         $data = DB::table('ppc_dropdown_items as pdt')
-                    ->leftjoin('admin_assign_production_lines as apl', 'apl.product_line', '=', 'pdt.dropdown_item')
+                    ->leftjoin('admin_assign_material_types as amt', 'amt.material_type', '=', 'pdt.dropdown_item')
                     ->select([
-                        'apl.product_line as id',
-                        'apl.product_line as text',
+                        'amt.material_type as id',
+                        'amt.material_type as text',
                     ])
-                    ->where('pdt.dropdown_name_id', 7) // material type
-                    ->where('apl.user_id' , Auth::user()->id)
-                    ->groupBy('apl.product_line')
+                    ->where('pdt.dropdown_name_id', 8) // material type
+                    ->where('amt.user_id' , Auth::user()->id)
+                    ->groupBy('amt.material_type')
                     ->get();
-
-                    // DB::table('ppc_material_codes as pmc')
-                    // ->leftjoin('admin_assign_production_lines as apl', 'apl.product_line', '=', 'pmc.material_type')
-                    // ->select(['pmc.material_type as material_type'])
-                    // ->where('apl.user_id' ,Auth::user()->id)
-                    // ->groupBy('pmc.material_type')->get();
 
         return $data;
     }
 
-    public function GetMaterialType()
+    public function getProductLine()
     {
         $data = DB::table('ppc_dropdown_items as pdt')
                     ->leftjoin('admin_assign_production_lines as apl', 'apl.product_line', '=', 'pdt.dropdown_item')
@@ -1135,16 +1129,10 @@ class UpdateInventoryController extends Controller
                         'apl.product_line as id',
                         'apl.product_line as text'
                     ])
-                    ->where('pdt.dropdown_name_id', 8) // material type
+                    ->where('pdt.dropdown_name_id', 7) // product line
                     ->where('apl.user_id' , Auth::user()->id)
                     ->groupBy('apl.product_line')
                     ->get();
-
-                    // DB::table('ppc_material_codes as pmc')
-                    // ->leftjoin('admin_assign_production_lines as apl', 'apl.product_line', '=', 'pmc.material_type')
-                    // ->select(['pmc.material_type as material_type'])
-                    // ->where('apl.user_id' ,Auth::user()->id)
-                    // ->groupBy('pmc.material_type')->get();
 
         return $data;
     }
@@ -1156,11 +1144,11 @@ class UpdateInventoryController extends Controller
             $code = DB::select("select pmc.material_code as id,
                                     pmc.material_code as `text`,
                                     pmc.material_type as material_type,
-                                    apl.user_id
+                                    amt.user_id
                             from ppc_material_codes as pmc
-                            left join admin_assign_production_lines as apl
-                            on apl.product_line = pmc.material_type
-                            where apl.user_id = '".Auth::user()->id."'
+                            left join admin_assign_material_types as amt
+                            on amt.material_type = pmc.material_type
+                            where amt.user_id = '".Auth::user()->id."'
                             and pmc.material_type = '".$req->type."'
                             order by pmc.id desc");
         } else {
