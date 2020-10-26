@@ -53,7 +53,7 @@ class RawMaterialWithdrawalController extends Controller
     public function getHeatNo()
     {
         $heat_no = DB::table('ppc_update_inventories as pui')
-                        ->leftjoin('admin_assign_production_lines as apl', 'apl.product_line', '=', 'pui.materials_type')
+                        ->leftjoin('admin_assign_material_types as apl', 'apl.material_type', '=', 'pui.materials_type')
                         ->select([ 'pui.heat_no as heat_no' ])
                         ->where('apl.user_id' ,Auth::user()->id)->get();
         return response()->json($heat_no);
@@ -648,7 +648,7 @@ class RawMaterialWithdrawalController extends Controller
         $scno = DB::table('ppc_jo_details as jd')
                         ->join('ppc_jo_travel_sheets as ts', 'ts.id' ,'=','jd.jo_summary_id')
                         ->leftjoin('ppc_product_codes as pc', 'jd.product_code', '=', 'pc.product_code')
-                        ->leftjoin('admin_assign_production_lines as pl', 'pl.product_line', '=', 'pc.product_type')
+                        ->leftjoin('admin_assign_material_types as pl', 'pl.product_line', '=', 'pc.product_type')
                         ->where('pl.user_id' ,Auth::user()->id)
                         ->where('jd.material_heat_no' , $req->heat_no)
                         ->whereIn('ts.status',array(0,1,2))
@@ -672,7 +672,7 @@ class RawMaterialWithdrawalController extends Controller
         }
 
         $materials = DB::table('ppc_update_inventories as pui')
-                        ->leftJoin('admin_assign_production_lines as apl', 'apl.product_line', '=', 'pui.materials_type')
+                        ->leftJoin('admin_assign_material_types as apl', 'apl.material_type', '=', 'pui.materials_type')
                         ->leftJoin('inventories as i','pui.id','=','i.received_id')
                         ->select([
                             'i.id as inv_id',
