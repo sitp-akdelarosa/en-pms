@@ -128,26 +128,7 @@ foreach ($user_accesses as $user_access){
 
 
                             <div class="row mb-10">
-                                <div class="col-sm-12">
-                                    <div id="sortable_process" class="list-group"></div>
-                                    {{-- <div class="table-reponsive">
-                                        <table class="table table-striped table-sm mb-10 table-hover" id="tbl_selected_process" style="width:100%">
-                                            <thead class="thead-dark">
-                                                <tr>
-                                                    <th width="10%"></th>
-                                                    <th width="10%">#</th>
-                                                    <th width="70%">Process Name</th>
-                                                    <th width="10%"></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="tbl_selected_process_body">
-                                                <tr>
-                                                    <td colspan="4" class="text-center">No data available.</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div> --}}
-                                </div>
+                                <div class="col-sm-12" id="sortable_process"></div>
                             </div>
 
                             <div class="row justify-content-center">

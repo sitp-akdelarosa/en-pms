@@ -118,10 +118,7 @@ foreach ($user_accesses as $user_access){
 
 
                             <div class="row mb-10">
-                                <div class="col-sm-12">
-                                    <div id="sortable_process" class="list-group"></div>
-                                    
-                                </div>
+                                <div class="col-sm-12" id="sortable_process"></div>
                             </div>
 
                             <div class="row justify-content-center">

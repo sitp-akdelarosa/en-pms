@@ -4302,7 +4302,8 @@ $( function() {
 					selected_process_arr.push({
 						count: cnt,
 						sequence: cnt,
-						process: x
+						process: x,
+						remarks: ''
 					});
 				});
 				selectedProcessTable(selected_process_arr);
@@ -4328,7 +4329,8 @@ $( function() {
 				data.push({
 					count: cnt,
 					sequence: cnt,
-					process: $(x).attr('data-process')
+					process: $(x).attr('data-process'),
+					remarks: $(x).attr('data-remarks')
 				});
 				cnt++;
 				console.log($(x).attr('data-process'));
@@ -4389,7 +4391,8 @@ $( function() {
 			data.push({
 				count: cnt,
 				sequence: cnt,
-				process: x.process
+				process: x.process,
+				remarks: x.remarks
 			});
 			cnt++;
 		});
@@ -4602,7 +4605,8 @@ function selectedProcess(set_id) {
 			selected_process_arr.push({
 				count: cnt,
 				sequence: x.sequence,
-				process: x.process
+				process: x.process,
+				remarks: x.remarks
 			});
 			cnt++;
 		});
@@ -4622,12 +4626,17 @@ function selectedProcessTable(arr) {
 		$('#sortable_process').html(list);
 
 		$.each(arr, function (i, x) {
-			list += '<div class="list-group-item process_name" data-process="' + x.process + '">' +
-				x.process +
-				'<button type="button" class="btn btn-sm bg-red delete pull-right" data-count="' + x.count + '">' +
-				'<i class="fa fa-times" ></i> ' +
-				'</button> ' +
-				'</div>';
+			var remarks = (x.remarks == null) ? '' : x.remarks;
+
+			list += '<div class="form-group row process_name" data-process="' + x.process + '" data-remarks="' + remarks + '">' +
+						'<div class="col-sm-5">' + x.process + '</div>'+
+						'<div class="col-sm-6">'+
+							'<input type="text" class="form-control form-control-sm" name="remarks" placeholder="Remarks.." value="' + remarks + '">' +
+						'</div>'+
+						'<button type="button" class="btn btn-sm bg-red delete col-sm-1 btn-block" data-count="' + x.count + '">' +
+							'<i class="fa fa-times" ></i> ' +
+						'</button> ' +
+					'</div>';
 		});
 		$('#sortable_process').html(list);
 		$('.loadingOverlay').hide();
