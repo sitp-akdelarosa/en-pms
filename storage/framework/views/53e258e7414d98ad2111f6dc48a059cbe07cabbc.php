@@ -54,7 +54,7 @@ foreach ($user_accesses as $user_access){
                     </div>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-2">
                     <div class="input-group input-group-sm mb-5">
                         <div class="input-group-prepend">
                             <span class="input-group-text">Status</span>
@@ -63,7 +63,9 @@ foreach ($user_accesses as $user_access){
                             <option value="null">All</option>
                             <option value="1">No quantity issued</option>
                             <option value="2">Ready for printing</option>
-                            <option value="3">On Production</option>
+                            <option value="3">On-going Process</option>
+                            <option value="5">Closed</option>
+                            <option value="6">In Production</option>
                         </select>
                     </div>
                 </div>

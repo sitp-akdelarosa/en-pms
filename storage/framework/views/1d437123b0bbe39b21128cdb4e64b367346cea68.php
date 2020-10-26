@@ -1,3 +1,8 @@
+<?php $__env->startSection('title'); ?>
+	Users
+<?php $__env->stopSection(); ?>
+
+
 <?php $__env->startPush('styles'); ?>
 <?php $__env->stopPush(); ?>
 

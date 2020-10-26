@@ -1,3 +1,7 @@
+<?php $__env->startSection('title'); ?>
+	Process Master
+<?php $__env->stopSection(); ?>
+
 <?php $__env->startSection('content'); ?>
  <?php
  $exist = 0;

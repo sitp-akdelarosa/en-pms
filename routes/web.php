@@ -536,6 +536,21 @@ Route::group(['prefix' => 'admin', 'middleware' => ['ajax-session-expired', 'aut
 			->name('admin.assign-production-line.productline-select');
 	});
 
+	Route::group(['prefix' => 'assign-material-type'], function () {
+		Route::get('/', 'Admin\AssignMaterialTypeController@index')
+			->name('admin.assign-material-type');
+		Route::get('/users', 'Admin\AssignMaterialTypeController@users')
+			->name('admin.assign-material-type.users');
+		Route::get('/list', 'Admin\AssignMaterialTypeController@materialtype_list')
+			->name('admin.assign-material-type.list');
+		Route::post('/save', 'Admin\AssignMaterialTypeController@save')
+			->name('admin.assign-material-type.save');
+		Route::post('/destroy', 'Admin\AssignMaterialTypeController@destroy')
+			->name('admin.assign-material-type.destroy');
+		Route::get('/materialtype-select', 'Admin\AssignMaterialTypeController@material_type_selection')
+			->name('admin.assign-material-type.materialtype-select');
+	});
+
 	Route::group(['prefix' => 'settings'], function () {
 		Route::get('/', 'Admin\SettingsController@index')
 			->name('admin.settings');

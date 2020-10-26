@@ -88,9 +88,19 @@ if ($exist == 0) {
                     <div class="col-md-7">
 
                         <form id="frm_cut_sched">
-                            
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <div class="input-group input-group-sm mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Withdrawal Slip #:</span>
+                                        </div>
+                                        <input type="text" class="form-control validate clear" name="withdrawal_slip" id="withdrawal_slip" maxlength="16">
+                                        <div id="withdrawal_slip_feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
 
-                            <input type="hidden" class="form-control validate clear" name="withdrawal_slip" id="withdrawal_slip" maxlength="16">
+                            
 
                             <div class="form-group row mb-10">
                                 <div class="col-md-6">

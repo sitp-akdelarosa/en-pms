@@ -85,6 +85,7 @@ mix.js('resources/assets/js/app.js', 'public/js')
     // Admin
     .js('resources/assets/js/pages/admin/user-master/user-master.js', 'public/js/pages/admin/user-master')
     .js('resources/assets/js/pages/admin/assign-production-line/assign-production-line.js', 'public/js/pages/admin/assign-production-line')
+    .js('resources/assets/js/pages/admin/assign-material-type/assign-material-type.js', 'public/js/pages/admin/assign-material-type')
     .js('resources/assets/js/pages/admin/user-type/user-type.js', 'public/js/pages/admin/user-type/')
     .js('resources/assets/js/pages/admin/audit-trail/audit-trail.js', 'public/js/pages/admin/audit-trail/')
     .js('resources/assets/js/pages/admin/settings/settings.js', 'public/js/pages/admin/settings/')

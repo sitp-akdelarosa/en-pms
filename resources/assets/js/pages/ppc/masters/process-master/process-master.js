@@ -465,7 +465,7 @@ function setTable(dataArr) {
 		data: dataArr,
 		processing: true,
 		deferRender: true,
-		searching: false,
+		// searching: false,
 		pageLength: 10,
 		bLengthChange : false,
 		order: [[1,'desc']],

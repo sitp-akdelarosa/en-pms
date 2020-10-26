@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 14);
+/******/ 	return __webpack_require__(__webpack_require__.s = 15);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -956,7 +956,7 @@ function sameMaterialTable(arr) {
 
 /***/ }),
 
-/***/ 14:
+/***/ 15:
 /*!***********************************************************************************************!*\
   !*** multi ./resources/assets/js/pages/ppc/transactions/update-inventory/update-inventory.js ***!
   \***********************************************************************************************/

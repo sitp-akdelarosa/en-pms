@@ -81,23 +81,23 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 7);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ "./resources/assets/js/pages/admin/assign-production-line/assign-production-line.js":
-/*!******************************************************************************************!*\
-  !*** ./resources/assets/js/pages/admin/assign-production-line/assign-production-line.js ***!
-  \******************************************************************************************/
+/***/ "./resources/assets/js/pages/admin/assign-material-type/assign-material-type.js":
+/*!**************************************************************************************!*\
+  !*** ./resources/assets/js/pages/admin/assign-material-type/assign-material-type.js ***!
+  \**************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
 $(function () {
   $('.loadingOverlay').show();
-  get_select_prodline();
+  get_select_materialtype();
   get_users();
-  get_assigned_prodline([0]);
+  get_assigned_materialtype([0]);
   init();
   $('.select-validate').on('change', function (e) {
     var no_error = $(this).attr('id');
@@ -105,7 +105,7 @@ $(function () {
   });
   $('#btn_save').on('click', function () {
     var user_id = [];
-    var product_line = [];
+    var material_type = [];
     var utable = $('#tbl_users').DataTable();
 
     for (var x = 0; x < utable.context[0].aoData.length; x++) {
@@ -116,29 +116,29 @@ $(function () {
       }
     }
 
-    var ptable = $('#tbl_productline').DataTable();
+    var ptable = $('#tbl_materialtype').DataTable();
 
     for (var x = 0; x < ptable.context[0].aoData.length; x++) {
       var cells = ptable.context[0].aoData[x].anCells;
 
       if (cells !== null && cells[0].firstChild.checked == true) {
-        product_line.push(cells[0].firstChild.value);
+        material_type.push(cells[0].firstChild.value);
       }
     }
 
-    if (user_id.length == 0 && product_line.length == 0) {
+    if (user_id.length == 0 && material_type.length == 0) {
       msg('Please select User and Product Lines to assign.', 'warning');
     }
 
-    if (user_id.length > 0 && product_line.length == 0) {
+    if (user_id.length > 0 && material_type.length == 0) {
       msg('Please select Product Lines to assign to user.', 'warning');
     }
 
-    if (user_id.length == 0 && product_line.length > 0) {
+    if (user_id.length == 0 && material_type.length > 0) {
       msg('Please select User to whom to assign the Product Line.', 'warning');
     }
 
-    if (user_id.length > 0 && product_line.length > 0) {
+    if (user_id.length > 0 && material_type.length > 0) {
       $('.loadingOverlay').show();
       $.ajax({
         url: SaveURL,
@@ -147,11 +147,11 @@ $(function () {
         data: {
           _token: token,
           user_id: user_id,
-          product_line: product_line
+          material_type: material_type
         }
       }).done(function (data, textStatus, xhr) {
         msg(data.msg, data.status);
-        get_assigned_prodline(data.user_id);
+        get_assigned_materialtype(data.user_id);
         clear();
         $('#btn_save').html('<i class="fa fa-floppy-o"></i> Save');
       }).fail(function (xhr, textStatus, errorThrown) {
@@ -160,23 +160,23 @@ $(function () {
       });
     }
   });
-  $('#tbl_assign_productline_body').on('click', '.btn_edit_prodline', function (e) {
+  $('#tbl_assign_materialtype_body').on('click', '.btn_edit_materialtype', function (e) {
     e.preventDefault();
     $('#id').val($(this).attr('data-id'));
     $('#user_id').val($(this).attr('data-user_id'));
-    $('#product_line').val($(this).attr('data-product_line'));
+    $('#material_type').val($(this).attr('data-material_type'));
     $('#btn_save').html('<i class="fa fa-check"></i> Update');
   });
   $('#btn_clear').on('click', function (e) {
     clear();
-    get_assigned_prodline([0]);
+    get_assigned_materialtype([0]);
     $('#btn_save').html('<i class="fa fa-floppy-o"></i> Save');
   });
   $('#btn_delete').on('click', function (e) {
-    delete_items('.check_item', prodLineDeleteURL);
+    delete_items('.check_item', MaterialTypeDeleteURL);
   });
-  $('#tbl_users').on('click', '.btn_view_prod', function () {
-    get_assigned_prodline([$(this).attr('data-user_id')]);
+  $('#tbl_users').on('click', '.btn_view_mat', function () {
+    get_assigned_materialtype([$(this).attr('data-user_id')]);
   });
   $('#tbl_users').on('change', '.check_all_users', function () {
     $('input:checkbox.check_user').not(this).prop('checked', this.checked);
@@ -203,9 +203,9 @@ $(function () {
       $(tr).removeClass('selected');
     }
   });
-  $('#tbl_productline').on('change', '.check_all_prods', function () {
-    $('input:checkbox.check_prod').not(this).prop('checked', this.checked);
-    var table = $('#tbl_productline').DataTable();
+  $('#material_type').on('change', '.check_all_types', function () {
+    $('input:checkbox.check_type').not(this).prop('checked', this.checked);
+    var table = $('#tbl_materialtype').DataTable();
 
     for (var x = 0; x < table.context[0].aoData.length; x++) {
       var aoData = table.context[0].aoData[x];
@@ -219,7 +219,7 @@ $(function () {
       }
     }
   });
-  $('#tbl_productline_body').on('change', '.check_prod', function () {
+  $('#tbl_materialtype_body').on('change', '.check_type', function () {
     var tr = $(this).parent().parent()[0];
 
     if ($(this).is(':checked')) {
@@ -228,9 +228,9 @@ $(function () {
       $(tr).removeClass('selected');
     }
   });
-  $('#tbl_assign_productline').on('change', '.check_all', function () {
+  $('#tbl_assign_materialtype').on('change', '.check_all', function () {
     $('input:checkbox.check_item').not(this).prop('checked', this.checked);
-    var table = $('#tbl_assign_productline').DataTable();
+    var table = $('#tbl_assign_materialtype').DataTable();
 
     for (var x = 0; x < table.context[0].aoData.length; x++) {
       var aoData = table.context[0].aoData[x];
@@ -244,7 +244,7 @@ $(function () {
       }
     }
   });
-  $('#tbl_assign_productline_body').on('change', '.check_item', function () {
+  $('#tbl_assign_materialtype_body').on('change', '.check_item', function () {
     var tr = $(this).parent().parent()[0];
 
     if ($(this).is(':checked')) {
@@ -265,10 +265,10 @@ function init() {
   });
 }
 
-function get_assigned_prodline(user_id) {
+function get_assigned_materialtype(user_id) {
   $('.loadingOverlay').show();
   $.ajax({
-    url: prodLineListURL,
+    url: MaterialTypeListURL,
     type: 'GET',
     dataType: 'JSON',
     data: {
@@ -282,9 +282,9 @@ function get_assigned_prodline(user_id) {
 }
 
 function assignedProdlineTable(arr) {
-  $('#tbl_assign_productline').dataTable().fnClearTable();
-  $('#tbl_assign_productline').dataTable().fnDestroy();
-  $('#tbl_assign_productline').dataTable({
+  $('#tbl_assign_materialtype').dataTable().fnClearTable();
+  $('#tbl_assign_materialtype').dataTable().fnDestroy();
+  $('#tbl_assign_materialtype').dataTable({
     data: arr,
     processing: true,
     deferRender: true,
@@ -300,7 +300,7 @@ function assignedProdlineTable(arr) {
       orderable: false,
       searchable: false
     }, {
-      data: 'product_line'
+      data: 'material_type'
     }, {
       data: 'fullname'
     }, {
@@ -311,35 +311,32 @@ function assignedProdlineTable(arr) {
       $('.check_all_items').prop('checked', false);
     },
     fnDrawCallback: function fnDrawCallback() {
-      checkAllCheckboxesInTable("#tbl_assign_productline", ".check_all", ".check_item", "#btn_delete");
+      checkAllCheckboxesInTable("#tbl_assign_materialtype", ".check_all", ".check_item", "#btn_delete");
     }
   });
 }
 
-function get_select_prodline() {
+function get_select_materialtype() {
   var opt = "<option value=''></option>";
-  $("#product_line").html(opt);
+  $("#material_type").html(opt);
   $.ajax({
-    url: dropdownProduct,
+    url: dropdownMaterial,
     type: 'GET',
     dataType: 'JSON',
     data: {
       _token: token
     }
   }).done(function (data, textStatus, xhr) {
-    selectProdlineTable(data); // $.each(data, function(i, x) {
-    //     opt = "<option value='"+x.dropdown_item+"'>"+x.dropdown_item+"</option>";
-    //     $("#product_line").append(opt);
-    // });
+    selectMaterialTypeTable(data);
   }).fail(function (xhr, textStatus, errorThrown) {
     msg(errorThrown, textStatus);
   });
 }
 
-function selectProdlineTable(arr) {
-  $('#tbl_productline').dataTable().fnClearTable();
-  $('#tbl_productline').dataTable().fnDestroy();
-  $('#tbl_productline').dataTable({
+function selectMaterialTypeTable(arr) {
+  $('#tbl_materialtype').dataTable().fnClearTable();
+  $('#tbl_materialtype').dataTable().fnDestroy();
+  $('#tbl_materialtype').dataTable({
     data: arr,
     processing: true,
     deferRender: true,
@@ -349,7 +346,7 @@ function selectProdlineTable(arr) {
     order: [[1, 'asc']],
     columns: [{
       data: function data(_data2) {
-        return '<input type="checkbox" class="table-checkbox check_prod" value="' + _data2.dropdown_item + '">';
+        return '<input type="checkbox" class="table-checkbox check_type" value="' + _data2.dropdown_item + '">';
       },
       orderable: false,
       searchable: false
@@ -360,10 +357,10 @@ function selectProdlineTable(arr) {
     }],
     initComplete: function initComplete() {
       $('.loadingOverlay').hide();
-      $('.check_all_prods').prop('checked', false);
+      $('.check_all_types').prop('checked', false);
     },
     fnDrawCallback: function fnDrawCallback() {
-      checkAllCheckboxesInTable('#tbl_productline', '.check_all_prods', '.check_prod');
+      checkAllCheckboxesInTable('#tbl_materialtype', '.check_all_types', '.check_type');
     }
   });
 }
@@ -408,7 +405,7 @@ function usersTable(arr) {
       data: 'fullname'
     }, {
       data: function data(_data4) {
-        return '<button class="btn btn-blue btn-flat btn-sm btn_view_prod" data-user_id="' + _data4.id + '">' + '<i class="fa fa-laptop"></i>' + '</button>';
+        return '<button class="btn btn-blue btn-flat btn-sm btn_view_mat" data-user_id="' + _data4.id + '">' + '<i class="fa fa-laptop"></i>' + '</button>';
       },
       orderable: false,
       searchable: false
@@ -425,7 +422,7 @@ function usersTable(arr) {
 
 function delete_items(checkboxClass, deleteURL) {
   var chkArray = [];
-  var table = $('#tbl_assign_productline').DataTable();
+  var table = $('#tbl_assign_materialtype').DataTable();
 
   for (var x = 0; x < table.context[0].aoData.length; x++) {
     var aoData = table.context[0].aoData[x];
@@ -458,7 +455,7 @@ function delete_items(checkboxClass, deleteURL) {
             id: chkArray
           }
         }).done(function (data, textStatus, xhr) {
-          get_assigned_prodline([0]);
+          get_assigned_materialtype([0]);
 
           if (data.status == 'success') {
             msg(data.msg, data.status);
@@ -486,20 +483,20 @@ function delete_items(checkboxClass, deleteURL) {
 
 function clear() {
   $('.clear').val('');
-  get_select_prodline();
+  get_select_materialtype();
   get_users();
 }
 
 /***/ }),
 
-/***/ 6:
-/*!************************************************************************************************!*\
-  !*** multi ./resources/assets/js/pages/admin/assign-production-line/assign-production-line.js ***!
-  \************************************************************************************************/
+/***/ 7:
+/*!********************************************************************************************!*\
+  !*** multi ./resources/assets/js/pages/admin/assign-material-type/assign-material-type.js ***!
+  \********************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\laragon\www\en-pms\resources\assets\js\pages\admin\assign-production-line\assign-production-line.js */"./resources/assets/js/pages/admin/assign-production-line/assign-production-line.js");
+module.exports = __webpack_require__(/*! C:\laragon\www\en-pms\resources\assets\js\pages\admin\assign-material-type\assign-material-type.js */"./resources/assets/js/pages/admin/assign-material-type/assign-material-type.js");
 
 
 /***/ })

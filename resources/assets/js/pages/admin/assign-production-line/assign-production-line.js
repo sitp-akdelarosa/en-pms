@@ -179,7 +179,7 @@ function init() {
 }
 
 function get_assigned_prodline(user_id) {
-	
+	$('.loadingOverlay').show();
 	$.ajax({
 		url: prodLineListURL,
 		type: 'GET',

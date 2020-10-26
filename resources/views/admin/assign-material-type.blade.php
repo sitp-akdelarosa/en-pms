@@ -1,13 +1,15 @@
-<?php $__env->startSection('title'); ?>
-	Assign Product Line
-<?php $__env->stopSection(); ?>
+@extends('layouts.app')
+
+@section('title')
+	Assign Material Type
+@endsection
 
 
-<?php $__env->startSection('content'); ?>
+@section('content')
  <?php
 $exist = 0;
 foreach ($user_accesses as $user_access){
-		if($user_access->code == "A0002" ){
+		if($user_access->code == "A0006" ){
 			$exist++;
 		}
 }
@@ -19,7 +21,7 @@ foreach ($user_accesses as $user_access){
 
 
 <section class="content-header">
-	<h1>Assign Product Line</h1>
+	<h1>Assign Material Type</h1>
 </section>
 
 <section class="content">
@@ -44,40 +46,38 @@ foreach ($user_accesses as $user_access){
 									</thead>
 									<tbody id="tbl_users_body"></tbody>
 								</table>
-
-								
 							</div>
 
 							<div class="col-md-3">
-								<h5>Assign user to Product Line</h5>
-								<table class="table table-striped table-sm dt-responsive" id="tbl_productline" style="width:100%">
+								<h5>Assign user to Material Type</h5>
+								<table class="table table-striped table-sm dt-responsive" id="tbl_materialtype" style="width:100%">
 									<thead class="thead-dark">
 										<tr>
 											<th>
-												<input type="checkbox" class="table-checkbox check_all_prods">
+												<input type="checkbox" class="table-checkbox check_all_types">
 											</th>
-											<th>Product Line</th>
+											<th>Material Type</th>
 											<th>Type</th>
 										</tr>
 									</thead>
-									<tbody id="tbl_productline_body"></tbody>
+									<tbody id="tbl_materialtype_body"></tbody>
 								</table>
 							</div>
 
 							<div class="col-md-5">
-								<h5>Assiged Product Line</h5>
-								<table class="table table-striped table-sm dt-responsive" id="tbl_assign_productline" style="width:100%">
+								<h5>Assiged Material Type</h5>
+								<table class="table table-striped table-sm dt-responsive" id="tbl_assign_materialtype" style="width:100%">
 									<thead class="thead-dark">
 										<tr>
 											<th>
 												<input type="checkbox" class="table-checkbox check_all">
 											</th>
-											<th>Product Line</th>
+											<th>Material Type</th>
 											<th>Assigned To</th>
 											<th>Assigned Date</th>
 										</tr>
 									</thead>
-									<tbody id="tbl_assign_productline_body"></tbody>
+									<tbody id="tbl_assign_materialtype_body"></tbody>
 								</table>
 							</div>
 						</div>
@@ -107,19 +107,17 @@ foreach ($user_accesses as $user_access){
 	</div>
 
 </section>
-<?php $__env->stopSection(); ?>
-<?php $__env->startPush('scripts'); ?>
+@endsection
+@push('scripts')
 	<script type="text/javascript">
 		var token = $('meta[name="csrf-token"]').attr('content');
-		var getUserURL = "<?php echo e(url('/admin/assign-production-line/users')); ?>";
-		var prodLineListURL = "<?php echo e(url('/admin/assign-production-line/list')); ?>";
-		var prodLineDeleteURL = "<?php echo e(url('/admin/assign-production-line/destroy')); ?>";
-		var dropdownProduct = "<?php echo e(url('/admin/assign-production-line/productline-select')); ?>";
-		var SaveURL = "<?php echo e(route('admin.assign-production-line.save')); ?>";
+		var getUserURL = "{{ url('/admin/assign-material-type/users') }}";
+		var MaterialTypeListURL = "{{ url('/admin/assign-material-type/list') }}";
+		var MaterialTypeDeleteURL = "{{ url('/admin/assign-material-type/destroy') }}";
+		var dropdownMaterial = "{{ url('/admin/assign-material-type/materialtype-select') }}";
+		var SaveURL = "{{ route('admin.assign-material-type.save') }}";
 		var code_permission = "A0002";
 
 	</script>
-	<script type="text/javascript" src="<?php echo e(asset('/js/pages/admin/assign-production-line/assign-production-line.js')); ?>"></script>
-<?php $__env->stopPush(); ?>
-
-<?php echo $__env->make('layouts.app', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+	<script type="text/javascript" src="{{ asset('/js/pages/admin/assign-material-type/assign-material-type.js') }}"></script>
+@endpush

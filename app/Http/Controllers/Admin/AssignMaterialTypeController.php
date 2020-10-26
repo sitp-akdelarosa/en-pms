@@ -8,14 +8,14 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HelpersController;
 use App\Http\Controllers\Admin\AuditTrailController;
 use DataTables;
-use App\AdminAssignProductionLine;
+use App\AdminAssignMaterialType;
 use App\User;
 use App\PpcDropdownItem;
 use DB;
 
-class AssignProductionLineController extends Controller
+class AssignMaterialTypeController extends Controller
 {
-	protected $_helper;
+   protected $_helper;
 	protected $_audit;
 	protected $_moduleID;
 
@@ -26,37 +26,37 @@ class AssignProductionLineController extends Controller
 		$this->_helper = new HelpersController;
 		$this->_audit = new AuditTrailController;
 
-		$this->_moduleID = $this->_helper->moduleID('A0002');
+		$this->_moduleID = $this->_helper->moduleID('A0006');
 	}
 
 	public function index()
 	{
 		$user_accesses = $this->_helper->UserAccess();
-		return view('admin.assign-production-line',['user_accesses' => $user_accesses]);
+		return view('admin.assign-material-type',['user_accesses' => $user_accesses]);
 	}
 
-	public function productline_list(Request $req)
+	public function materialtype_list(Request $req)
 	{
-		$prodline = DB::table('admin_assign_production_lines as a')
+		$mat_type = DB::table('admin_assign_material_types as a')
 						->join('users as u','a.user_id','=','u.id')
 						->whereIn('a.user_id',$req->user_id)
 						->select(
 							'a.id',
 							'a.user_id',
-							'a.product_line',
+							'a.material_type',
 							DB::raw("DATE_FORMAT(a.updated_at, '%Y/%m/%d %h:%i %p') as updated_at"),
 							DB::raw("CONCAT(u.firstname,' ',u.lastname) as fullname")
 						)
 						->groupBy(
 							'a.id',
 							'a.user_id',
-							'a.product_line',
+							'a.material_type',
 							DB::raw("DATE_FORMAT(a.updated_at, '%Y/%m/%d %h:%i %p')"),
 							DB::raw("CONCAT(u.firstname,' ',u.lastname)")
 						)
 						->orderby('id','desc')->get();
 
-		return response()->json($prodline);
+		return response()->json($mat_type);
 	}
 
 	public function save(Request $req)
@@ -71,16 +71,16 @@ class AssignProductionLineController extends Controller
 		$last_user = 0;
 
 		foreach ($req->user_id as $key => $user_id) {
-			//AdminAssignProductionLine::where('user_id',$user_id)->delete();
+			//AdminAssignMaterialType::where('user_id',$user_id)->delete();
 
-			foreach ($req->product_line as $key => $product_line) {
+			foreach ($req->material_type as $key => $material_type) {
 				
-				if ($product_line !== '' || !empty($product_line)) {
-					AdminAssignProductionLine::where('user_id',$user_id)
-											->where('product_line',$product_line)->delete();
+				if ($material_type !== '' || !empty($material_type)) {
+					AdminAssignMaterialType::where('user_id',$user_id)
+											->where('material_type',$material_type)->delete();
 					array_push($params, [
 						'user_id' => $user_id,
-						'product_line' => $product_line,
+						'material_type' => $material_type,
 						'create_user' => Auth::user()->id,
 						'update_user' => Auth::user()->id,
 						'created_at' => date('Y-m-d H:i:s'),
@@ -93,7 +93,7 @@ class AssignProductionLineController extends Controller
 		$insert = array_chunk($params, 1000);
 
 		foreach ($insert as $batch) {
-			AdminAssignProductionLine::insert($batch);
+			AdminAssignMaterialType::insert($batch);
 
 			$data = [
 				'msg' => "Successfully saved.",
@@ -105,8 +105,8 @@ class AssignProductionLineController extends Controller
 		$this->_audit->insert([
 			'user_type' => Auth::user()->user_type,
 			'module_id' => $this->_moduleID,
-			'module' => 'Assign Production Line',
-			'action' => 'Edited data user ID '.$user_id.', Production Line: '.implode(',', $req->product_line),
+			'module' => 'Assign Material Type',
+			'action' => 'Edited data user ID '.$user_id.', Material Type: '.implode(',', $req->material_type),
 			'user' => Auth::user()->id
 		]);
 
@@ -124,7 +124,7 @@ class AssignProductionLineController extends Controller
 
 		if (is_array($req->id)) {
 			foreach ($req->id as $key => $id) {
-				$prod = AdminAssignProductionLine::find($id);
+				$prod = AdminAssignMaterialType::find($id);
 				$prod->delete();
 
 				$data = [
@@ -133,7 +133,7 @@ class AssignProductionLineController extends Controller
 				];
 			}
 		} else {
-			$prod = AdminAssignProductionLine::find($id);
+			$prod = AdminAssignMaterialType::find($id);
 			$prod->delete();
 
 			$data = [
@@ -147,7 +147,7 @@ class AssignProductionLineController extends Controller
 		$this->_audit->insert([
 			'user_type' => Auth::user()->user_type,
 			'module_id' => $this->_moduleID,
-			'module' => 'Assign Production Line',
+			'module' => 'Assign Material Type',
 			'action' => 'Deleted data ID '.$ids,
 			'user' => Auth::user()->id
 		]);
@@ -163,9 +163,9 @@ class AssignProductionLineController extends Controller
 		return response()->json($users);
 	}
 
-	public function productline_selection()
+	public function material_type_selection()
 	{
-		$items = PpcDropdownItem::whereIn('dropdown_name_id',[7]) // product Line && Material Master
+		$items = PpcDropdownItem::whereIn('dropdown_name_id',[8]) // product Line && Material Master
 								->select('dropdown_item','dropdown_name')
 								->groupBy('dropdown_item','dropdown_name')
 								->orderby('dropdown_item','ASC')->get();
