@@ -8,7 +8,8 @@ class PpcProcess extends Model
 {
     protected $fillable = [
     	'process',
-    	'sequence',
+		'sequence',
+		'remarks',
 		'set',
 		'set_id',
 		'create_user',

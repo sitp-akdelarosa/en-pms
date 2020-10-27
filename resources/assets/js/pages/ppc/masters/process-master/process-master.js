@@ -95,13 +95,15 @@ $( function() {
 
 			data = [];
 			var cnt = 1;
+			var remarks = $('input[name=remarks]');
 
 			$.each($('.process_name'), function(i,x) {
+				console.log($(remarks[i]).val());
 				data.push({
 					count: cnt,
 					sequence: cnt,
 					process: $(x).attr('data-process'),
-					remarks: $(x).attr('data-remarks')
+					remarks: $(remarks[i]).val()
 				});
 				cnt++;
 				console.log($(x).attr('data-process'));
