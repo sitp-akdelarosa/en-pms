@@ -127,15 +127,15 @@ $(function () {
     }
 
     if (user_id.length == 0 && material_type.length == 0) {
-      msg('Please select User and Product Lines to assign.', 'warning');
+      msg('Please select User and Material Type to assign.', 'warning');
     }
 
     if (user_id.length > 0 && material_type.length == 0) {
-      msg('Please select Product Lines to assign to user.', 'warning');
+      msg('Please select Material Type to assign to user.', 'warning');
     }
 
     if (user_id.length == 0 && material_type.length > 0) {
-      msg('Please select User to whom to assign the Product Line.', 'warning');
+      msg('Please select User to whom to assign the Material Type.', 'warning');
     }
 
     if (user_id.length > 0 && material_type.length > 0) {
