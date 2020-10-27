@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 20);
+/******/ 	return __webpack_require__(__webpack_require__.s = 21);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -700,7 +700,7 @@ function searchDataTable(arr) {
 
 /***/ }),
 
-/***/ 20:
+/***/ 21:
 /*!***************************************************************************************************!*\
   !*** multi ./resources/assets/js/pages/ppc/transactions/product-withdrawal/product-withdrawal.js ***!
   \***************************************************************************************************/

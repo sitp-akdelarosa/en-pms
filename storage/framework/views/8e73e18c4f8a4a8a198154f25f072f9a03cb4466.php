@@ -1,3 +1,8 @@
+<?php $__env->startSection('title'); ?>
+	Audit Trail
+<?php $__env->stopSection(); ?>
+
+
 <?php $__env->startSection('content'); ?>
  <?php
 $exist = 0;

@@ -2,6 +2,7 @@
     "/js/app.js": "/js/app.js",
     "/js/pages/admin/assign-material-type/assign-material-type.js": "/js/pages/admin/assign-material-type/assign-material-type.js",
     "/js/pages/admin/assign-production-line/assign-production-line.js": "/js/pages/admin/assign-production-line/assign-production-line.js",
+    "/js/pages/admin/assign-warehouse/assign-warehouse.js": "/js/pages/admin/assign-warehouse/assign-warehouse.js",
     "/js/pages/admin/audit-trail/audit-trail.js": "/js/pages/admin/audit-trail/audit-trail.js",
     "/js/pages/admin/settings/settings.js": "/js/pages/admin/settings/settings.js",
     "/js/pages/admin/user-master/user-master.js": "/js/pages/admin/user-master/user-master.js",

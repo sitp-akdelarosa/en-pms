@@ -302,6 +302,7 @@ class ProductionScheduleController extends Controller
                 'module' => 'Production Schedule',
                 'action' => 'Inserted data Jo_No:' . $jo_no,
                 'user' => Auth::user()->id,
+                'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
             ]);
 
         } else {
@@ -393,6 +394,7 @@ class ProductionScheduleController extends Controller
                 'module' => 'Production Schedule',
                 'action' => 'Edited data Jo_No: ' . $jo_no,
                 'user' => Auth::user()->id,
+                'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
             ]);
         }
         return response()->json(['jocode' => $jo_no, 'result' => $result]);

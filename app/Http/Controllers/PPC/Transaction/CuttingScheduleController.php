@@ -146,7 +146,8 @@ class CuttingScheduleController extends Controller
 				'module_id' => $this->_moduleID,
 				'module' => 'Cutting Schedule',
 				'action' => 'Added a new Cutting Schedule ID:'.$cut_sched->id,
-				'user' => Auth::user()->id
+				'user' => Auth::user()->id,
+				'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
 			]);
 		}
 

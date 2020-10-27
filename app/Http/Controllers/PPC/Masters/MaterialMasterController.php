@@ -108,7 +108,8 @@ class MaterialMasterController extends Controller
 				'action' => 'Edited data ID: '.$req->assembly_id.', 
 							Material Type: '.$req->mat_type.', 
 							Character Code: '.$req->character_code,
-				'user' => Auth::user()->id
+				'user' => Auth::user()->id,
+				'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
 			]);
 		} else {
 			$check = PpcMaterialAssembly::where('mat_type',$req->mat_type)
@@ -135,7 +136,8 @@ class MaterialMasterController extends Controller
 				'module' => 'Material Master',
 				'action' => 'Inserted data Material Type: '.$req->mat_type.', 
 							Character Code: '.$req->character_code,
-				'user' => Auth::user()->id
+				'user' => Auth::user()->id,
+				'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
 			]);
 		}
 
@@ -176,7 +178,8 @@ class MaterialMasterController extends Controller
 			'module_id' => $this->_moduleID,
 			'module' => 'Material Master',
 			'action' => 'Deleted data Material Assembly ID: '.$ids,
-			'user' => Auth::user()->id
+			'user' => Auth::user()->id,
+			'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
 		]);
 
 		return response()->json($data);
@@ -350,7 +353,8 @@ class MaterialMasterController extends Controller
 					'module' => 'Material Master',
 					'action' => 'Edited data ID: '.$req->material_id.', 
 								Material Code: '.$mat->material_code,
-					'user' => Auth::user()->id
+					'user' => Auth::user()->id,
+					'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
 				]);
 			}else{
 				return response()->json(['msg'=>"Material Code already taken",'status' => 'failed']);
@@ -406,7 +410,8 @@ class MaterialMasterController extends Controller
 				'module_id' => $this->_moduleID,
 				'module' => 'Material Master',
 				'action' => 'Inserted data Material Code: '.$req->material_code,
-				'user' => Auth::user()->id
+				'user' => Auth::user()->id,
+				'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
 			]);
 		}
 		return response()->json(['msg'=>"Data was successfully saved.",'status' => 'success']);
@@ -445,7 +450,8 @@ class MaterialMasterController extends Controller
 			'module_id' => $this->_moduleID,
 			'module' => 'Material Master',
 			'action' => 'Deleted data Material Code ID: '.$ids,
-			'user' => Auth::user()->id
+			'user' => Auth::user()->id,
+			'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
 		]);
 
 		return response()->json($data);

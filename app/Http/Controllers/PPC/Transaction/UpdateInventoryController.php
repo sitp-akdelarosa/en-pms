@@ -560,7 +560,8 @@ class UpdateInventoryController extends Controller
                 'module_id' => $this->_moduleID,
                 'module' => 'Update Inventory Module',
                 'action' => 'Uploaded Inventory.',
-                'user' => Auth::user()->id
+                'user' => Auth::user()->id,
+                'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
             ]);
             $data = [
                 'msg' => "Upload Successful.",
@@ -730,7 +731,8 @@ class UpdateInventoryController extends Controller
                 'module_id' => $this->_moduleID,
                 'module' => 'Update Inventory Module',
                 'action' => 'Uploaded Inventory.',
-                'user' => Auth::user()->id
+                'user' => Auth::user()->id,
+                'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
             ]);
             $data = [
                 'msg' => "Upload Successful.",
@@ -848,7 +850,8 @@ class UpdateInventoryController extends Controller
                     'module' => 'Update Inventory Module',
                     'action' => 'Updated Inventory data ID: '.$req->item_id.',
                                 Material Code: '.$req->item_code.' manually.',
-                    'user' => Auth::user()->id
+                    'user' => Auth::user()->id,
+                    'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
                 ]);
         }else {
             $this->validate($req, [
@@ -930,7 +933,8 @@ class UpdateInventoryController extends Controller
                 'module_id' => $this->_moduleID,
                 'module' => 'Update Inventory Module',
                 'action' => 'Inserted Inventory data Material Code: '.$req->item_code.' manually.',
-                'user' => Auth::user()->id
+                'user' => Auth::user()->id,
+                'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
             ]);
         }
            
@@ -1016,7 +1020,8 @@ class UpdateInventoryController extends Controller
                     'module' => 'Update Inventory Module',
                     'action' => 'Updated Inventory data ID: '.$req->item_id.',
                                 Material Code: '.$req->item_code.' manually.',
-                    'user' => Auth::user()->id
+                    'user' => Auth::user()->id,
+                    'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
                 ]);
         }else {
             $this->validate($req, [
@@ -1098,7 +1103,8 @@ class UpdateInventoryController extends Controller
                 'module_id' => $this->_moduleID,
                 'module' => 'Update Inventory Module',
                 'action' => 'Inserted Inventory data Material Code: '.$req->item_code.' manually.',
-                'user' => Auth::user()->id
+                'user' => Auth::user()->id,
+                'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
             ]);
         }
            

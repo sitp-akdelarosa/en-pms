@@ -85,7 +85,10 @@ class ProcessMasterController extends Controller
                 'module_id' => $this->_moduleID,
                 'module' => 'Process Master',
                 'action' => 'Saved data Process set: '.$req->sets,
-                'user' => Auth::user()->id
+                'user' => Auth::user()->id,
+                'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname,
+                'updated_at' => date('Y-m-d H:i:S'),
+                'created_at' => date('Y-m-d H:i:S')
             ]);
 
 
@@ -209,7 +212,10 @@ class ProcessMasterController extends Controller
             'module_id' => $this->_moduleID,
             'module' => 'Process Master',
             'action' => 'Deleted data Process Set ID: '.$ids,
-            'user' => Auth::user()->id
+            'user' => Auth::user()->id,
+            'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname,
+            'updated_at' => date('Y-m-d H:i:S'),
+            'created_at' => date('Y-m-d H:i:S')
         ]);
 
         return response()->json($data);

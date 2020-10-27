@@ -551,6 +551,21 @@ Route::group(['prefix' => 'admin', 'middleware' => ['ajax-session-expired', 'aut
 			->name('admin.assign-material-type.materialtype-select');
 	});
 
+	Route::group(['prefix' => 'assign-warehouse'], function () {
+		Route::get('/', 'Admin\AssignWarehouseController@index')
+			->name('admin.assign-warehouse');
+		Route::get('/users', 'Admin\AssignWarehouseController@users')
+			->name('admin.assign-warehouse.users');
+		Route::get('/list', 'Admin\AssignWarehouseController@warehouse_list')
+			->name('admin.assign-warehouse.list');
+		Route::post('/save', 'Admin\AssignWarehouseController@save')
+			->name('admin.assign-warehouse.save');
+		Route::post('/destroy', 'Admin\AssignWarehouseController@destroy')
+			->name('admin.assign-warehouse.destroy');
+		Route::get('/warehouse-select', 'Admin\AssignWarehouseController@warehouse_selection')
+			->name('admin.assign-warehouse.warehouse-select');
+	});
+
 	Route::group(['prefix' => 'settings'], function () {
 		Route::get('/', 'Admin\SettingsController@index')
 			->name('admin.settings');

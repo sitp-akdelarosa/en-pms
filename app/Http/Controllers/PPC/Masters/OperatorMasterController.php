@@ -65,7 +65,8 @@ class OperatorMasterController extends Controller
                     'module_id' => $this->_moduleID,
                     'module' => 'Operator Master',
                     'action' => 'Editing ID '.$request->operator_id,
-                    'user' => Auth::user()->id
+                    'user' => Auth::user()->id,
+					'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
                 ]);
             }else{
                 $PpcOperator = new PpcOperator();
@@ -81,7 +82,8 @@ class OperatorMasterController extends Controller
                     'module_id' => $this->_moduleID,
                     'module' => 'Operator Master',
                     'action' => 'Inserting ID '.$request->operator_id,
-                    'user' => Auth::user()->id
+                    'user' => Auth::user()->id,
+					'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
                 ]);
             }
 
@@ -148,7 +150,8 @@ class OperatorMasterController extends Controller
             'module_id' => $this->_moduleID,
             'module' => 'Operator Master',
             'action' => 'Deleted data ID '.$ids,
-            'user' => Auth::user()->id
+            'user' => Auth::user()->id,
+            'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
         ]);
 
         return response()->json($data);

@@ -474,7 +474,8 @@ class RawMaterialWithdrawalController extends Controller
                 'module_id' => $this->_moduleID,
                 'module' => 'Raw Material Withdrawal',
                 'action' => 'Inserted data Transfer ID: '.$info->trans_no,
-                'user' => Auth::user()->id
+                'user' => Auth::user()->id,
+                'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
             ]);
 
         } else {
@@ -597,7 +598,8 @@ class RawMaterialWithdrawalController extends Controller
                 'module_id' => $this->_moduleID,
                 'module' => 'Raw Material Withdrawal',
                 'action' => 'Edited data Transfer ID: '.$req->trans_no,
-                'user' => Auth::user()->id
+                'user' => Auth::user()->id,
+                'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
             ]);
         }
         $details = PpcRawMaterialWithdrawalDetails::where('trans_id',$info->id)->get();
@@ -637,7 +639,8 @@ class RawMaterialWithdrawalController extends Controller
             'module_id' => $this->_moduleID,
             'module' => 'Raw Material Withdrawal',
             'action' => 'Deleted data ID: '.$req->id,
-            'user' => Auth::user()->id
+            'user' => Auth::user()->id,
+            'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
         ]);
         return response()->json($data);
     }

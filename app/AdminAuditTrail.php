@@ -11,6 +11,7 @@ class AdminAuditTrail extends Model
     				'module_id',
     				'module',
     				'action',
-    				'user'
+					'user',
+					'fullname'
     			];
 }

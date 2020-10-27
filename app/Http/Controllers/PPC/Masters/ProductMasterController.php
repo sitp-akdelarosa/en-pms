@@ -113,6 +113,7 @@ class ProductMasterController extends Controller
                             Product Type: ' . $req->prod_type . ',
                             Character Code: ' . $req->character_code,
                 'user' => Auth::user()->id,
+                'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
             ]);
         } else {
             $check = PpcProductCodeAssembly::where('prod_type', $req->prod_type)
@@ -141,6 +142,7 @@ class ProductMasterController extends Controller
                 'action' => 'Inserted data Product Type: ' . $req->prod_type . ',
                             Character Code: ' . $req->character_code,
                 'user' => Auth::user()->id,
+                'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
             ]);
         }
 
@@ -182,6 +184,7 @@ class ProductMasterController extends Controller
             'module' => 'Product Master',
             'action' => 'Deleted data Product Code Assembly ID: ' . $ids,
             'user' => Auth::user()->id,
+            'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
         ]);
 
         return response()->json($data);
@@ -326,6 +329,7 @@ class ProductMasterController extends Controller
                 'module' => 'Product Master',
                 'action' => 'Assigned Process in Product Code: ' . $req->prod_code, //[0],
                 'user' => Auth::user()->id,
+                'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
             ]);
             $data = PpcProductProcess::where('prod_id', $req->prod_id)->get();
         }
@@ -428,6 +432,8 @@ class ProductMasterController extends Controller
                 'action' => 'Edited data ID: ' . $req->product_id . ',
                             Product Code: ' . $prod->product_code,
                 'user' => Auth::user()->id,
+                'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
+                
             ]);
 
         } else {
@@ -486,6 +492,7 @@ class ProductMasterController extends Controller
                 'module' => 'Product Master',
                 'action' => 'Inserted data Product Code: ' . $req->product_code,
                 'user' => Auth::user()->id,
+                'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
             ]);
         }
 
@@ -526,6 +533,7 @@ class ProductMasterController extends Controller
             'module' => 'Product Master',
             'action' => 'Deleted data Product Code ID: ' . $ids,
             'user' => Auth::user()->id,
+            'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
         ]);
 
         return response()->json($data);
@@ -564,6 +572,7 @@ class ProductMasterController extends Controller
             'module' => 'Product Master',
             'action' => 'Deleted data Process ID: ' . $req->id,
             'user' => Auth::user()->id,
+            'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
         ]);
 
         return response()->json($data);

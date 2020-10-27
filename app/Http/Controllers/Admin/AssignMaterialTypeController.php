@@ -15,7 +15,7 @@ use DB;
 
 class AssignMaterialTypeController extends Controller
 {
-   protected $_helper;
+	protected $_helper;
 	protected $_audit;
 	protected $_moduleID;
 

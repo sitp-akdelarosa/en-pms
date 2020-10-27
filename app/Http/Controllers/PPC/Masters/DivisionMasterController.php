@@ -122,7 +122,8 @@ class DivisionMasterController extends Controller
 					'module_id' => $this->_moduleID,
 					'module' => 'Division Master',
 					'action' => 'Edited data ID '.$req->id.', Division Code: '.$div->div_code,
-					'user' => Auth::user()->id
+					'user' => Auth::user()->id,
+					'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
 				]);
 
 			} else {
@@ -161,7 +162,8 @@ class DivisionMasterController extends Controller
 					'module_id' => $this->_moduleID,
 					'module' => 'Division Master',
 					'action' => 'Inserted data Division Code: '.$div->div_code,
-					'user' => Auth::user()->id
+					'user' => Auth::user()->id,
+					'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
 				]);
 			}
 
@@ -225,7 +227,8 @@ class DivisionMasterController extends Controller
 			'module_id' => $this->_moduleID,
 			'module' => 'Division Master',
 			'action' => 'Deleted data ID: '.$ids,
-			'user' => Auth::user()->id
+			'user' => Auth::user()->id,
+			'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
 		]);
 
 		}else{

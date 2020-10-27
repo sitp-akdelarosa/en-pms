@@ -42,7 +42,8 @@ mix.js('resources/assets/js/app.js', 'public/js')
         'resources/assets/plugins/jquery-mask/jquery.mask.min.js',
 	    'resources/assets/js/template.js',
 	    'resources/assets/plugins/DataTables/js/datatables.min.js',
-	    'resources/assets/plugins/DataTables/js/dataTables.bootstrap4.min.js',
+        'resources/assets/plugins/DataTables/js/dataTables.bootstrap4.min.js',
+        'resources/assets/plugins/DataTables/js/datatable-row-show.js',
         'resources/assets/plugins/timeago/timeago.min.js',
         'resources/assets/plugins/select2/dist/js/select2.full.js',
         'resources/assets/plugins//moment/min/moment.min.js',
@@ -86,6 +87,7 @@ mix.js('resources/assets/js/app.js', 'public/js')
     .js('resources/assets/js/pages/admin/user-master/user-master.js', 'public/js/pages/admin/user-master')
     .js('resources/assets/js/pages/admin/assign-production-line/assign-production-line.js', 'public/js/pages/admin/assign-production-line')
     .js('resources/assets/js/pages/admin/assign-material-type/assign-material-type.js', 'public/js/pages/admin/assign-material-type')
+    .js('resources/assets/js/pages/admin/assign-warehouse/assign-warehouse.js', 'public/js/pages/admin/assign-warehouse')
     .js('resources/assets/js/pages/admin/user-type/user-type.js', 'public/js/pages/admin/user-type/')
     .js('resources/assets/js/pages/admin/audit-trail/audit-trail.js', 'public/js/pages/admin/audit-trail/')
     .js('resources/assets/js/pages/admin/settings/settings.js', 'public/js/pages/admin/settings/')

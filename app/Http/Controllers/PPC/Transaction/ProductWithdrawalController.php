@@ -524,6 +524,18 @@ class ProductWithdrawalController extends Controller
                     ];
                 }
 
+                $pw = DB::table('ppc_product_withdrawal_infos')->select('trans_no')
+                        ->where('id',$req->id)->first();
+
+                $this->_audit->insert([
+                    'user_type' => Auth::user()->user_type,
+                    'module_id' => $this->_moduleID,
+                    'module' => 'Product Withdrawal',
+                    'action' => 'Updated data Product Withdrawal #: ' . $pw->trans_no,
+                    'user' => Auth::user()->id,
+                    'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
+                ]);
+
                 return $data;
             } else {
                 $info = DB::table('ppc_product_withdrawal_infos as i')
@@ -551,6 +563,8 @@ class ProductWithdrawalController extends Controller
                     'details' => $details
                 ];
             }
+
+            
         } else {
             $inserted_data = 0;
             # add transaction
@@ -625,6 +639,15 @@ class ProductWithdrawalController extends Controller
 
 
             if ($inserted_data > 0) {
+                $this->_audit->insert([
+                    'user_type' => Auth::user()->user_type,
+                    'module_id' => $this->_moduleID,
+                    'module' => 'Product Withdrawal',
+                    'action' => 'Inserted data Product Withdrawal #: ' . $trans_no,
+                    'user' => Auth::user()->id,
+                    'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
+                ]);
+
                 $data = [
                     'msg' => 'Transaction was successfully saved.',
                     'status' => 'success',

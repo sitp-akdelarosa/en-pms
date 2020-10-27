@@ -54,6 +54,10 @@ class AuditTrailController extends Controller
     public function insert(array $params)
     {
         AdminAuditTrail::create($params);
+        $ut = DB::table('admin_user_types')->select('description')->where('id',Auth::user()->user_type)->first();
+
+        $params['user_type'] = $ut->description;
+
         event(new AuditTrail($params));
     }
 }

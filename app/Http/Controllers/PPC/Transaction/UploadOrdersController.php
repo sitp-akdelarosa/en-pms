@@ -231,7 +231,8 @@ class UploadOrdersController extends Controller
             'module_id' => $this->_moduleID,
             'module' => 'Upload Orders Module',
             'action' => 'Uploaded Back Orders.',
-            'user' => Auth::user()->id
+            'user' => Auth::user()->id,
+            'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
         ]);
        
         $data = [

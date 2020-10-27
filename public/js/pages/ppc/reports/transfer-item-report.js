@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 22);
+/******/ 	return __webpack_require__(__webpack_require__.s = 23);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -189,7 +189,7 @@ function makeTransferItemTable(arr) {
 
 /***/ }),
 
-/***/ 22:
+/***/ 23:
 /*!*****************************************************************************!*\
   !*** multi ./resources/assets/js/pages/ppc/reports/transfer-item-report.js ***!
   \*****************************************************************************/

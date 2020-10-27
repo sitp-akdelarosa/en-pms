@@ -155,7 +155,8 @@ class ProductionOutputController extends Controller
             'module_id' => $this->_moduleID,
             'module' => 'Production Output',
             'action' => 'Inputted data for Travel Sheet JO # '.$req->jo_no.', Product Code: '.strtoupper($req->prod_code).', for Process: '.strtoupper($req->current_process),
-            'user' => Auth::user()->id
+            'user' => Auth::user()->id,
+            'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
         ]);
 
         
@@ -373,7 +374,8 @@ class ProductionOutputController extends Controller
             'module_id' => $this->_moduleID,
             'module' => 'Product Output',
             'action' => 'Deleted data ID ',
-            'user' => Auth::user()->id
+            'user' => Auth::user()->id,
+            'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
         ]);
 
         return response()->json($data);

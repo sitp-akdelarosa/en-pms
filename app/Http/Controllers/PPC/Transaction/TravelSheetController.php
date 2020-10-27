@@ -477,7 +477,8 @@ class TravelSheetController extends Controller
                 'module_id' => $this->_moduleID,
                 'module' => 'Travel Sheet',
                 'action' => 'Edited Travel Sheet Jo_No: '.strtoupper($req->jo_no),
-                'user' => Auth::user()->id
+                'user' => Auth::user()->id,
+                'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
             ]);
         } else {
             $this->validate($req, [
@@ -544,7 +545,8 @@ class TravelSheetController extends Controller
                 'module_id' => $this->_moduleID,
                 'module' => 'Travel Sheet',
                 'action' => 'Preparation for Travel Sheet Jo_No: '.strtoupper($req->jo_no),
-                'user' => Auth::user()->id
+                'user' => Auth::user()->id,
+                'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
             ]);
         }
             $data = [ 

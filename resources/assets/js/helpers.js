@@ -4,13 +4,14 @@ Echo.channel('audit-trail')
 	.listen('AuditTrail', function(e) {
 		var audit = e.audit;
 		audit_arr.push({
-			action: audit.action,
-			created_at: '',
 			id: '',
+			user_type: audit.user_type,
 			module: audit.module,
-			updated_at: '',
+			action: audit.action,
 			user: audit.user,
-			user_type: audit.user_type
+			fullname: audit.fullname,
+			created_at: dateToday(),
+			updated_at: dateToday()
 		});
 
 		console.log(audit_arr);
@@ -461,8 +462,6 @@ function ellipsis(string,string_count){
 		return string;
 };
 
-
-
 function getAuditTrailData() {
 	$.ajax({
 		url: getAuditTrailDataURL,
@@ -482,7 +481,7 @@ function makeAuditTrailTable(arr) {
 	$('#tbl_audit').dataTable().fnDestroy();
 	$('#tbl_audit').dataTable({
 		data: arr,
-		//bLengthChange : false,
+		scrollX:true,
 		bDestroy: true,
 		deferRender: true,
 		lengthMenu: [
@@ -496,7 +495,7 @@ function makeAuditTrailTable(arr) {
 			{ data: 'user_type', orderable: false, width: '15%' },
 			{ data: 'module', orderable: false, width: '15%' },
 			{ data: function(data) {
-				return ellipsis(data.action,80);
+				return data.action;//ellipsis(data.action,80);
 			}, orderable: false, width: '40%'},
 			{ data: 'fullname', orderable: false, width: '10%'},
 			{ data: 'created_at', orderable: false, width: '15%'}
@@ -660,4 +659,18 @@ function ErrorMsg(xhr) {
 
 	$('#msg_content').html(msg);
 	$('#modalMsg').modal('show');
+}
+
+function dateToday() {
+	var today = new Date();
+	var dd = String(today.getDate()).padStart(2, '0');
+	var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+	var yyyy = today.getFullYear();
+	var curHour = today.getHours();
+	var curMinute = today.getMinutes();
+	var curSeconds = today.getSeconds(),
+
+	today = yyyy + '/' + mm + '/' + dd + ' ' + curHour + ':' + curMinute + ':' + curSeconds;
+
+	return today;
 }

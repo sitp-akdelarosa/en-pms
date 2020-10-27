@@ -90,7 +90,8 @@ class TransferItemController extends Controller
                     'module_id' => $this->_moduleID,
                     'module' => 'Transfer Item',
                     'action' => 'Edited Transfer Item JO: '.$req->jo_no.', Product Code: '.strtoupper($req->prod_code),
-                    'user' => Auth::user()->id
+                    'user' => Auth::user()->id,
+                    'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
                 ]);
 
                 $data = [
@@ -127,7 +128,8 @@ class TransferItemController extends Controller
                 'module_id' => $this->_moduleID,
                 'module' => 'Transfer Item',
                 'action' => 'Transfered Item JO: '.$req->jo_no.', Product Code: '.strtoupper($req->prod_code),
-                'user' => Auth::user()->id
+                'user' => Auth::user()->id,
+                'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
             ]);
 
             $to_notify = DB::table('ppc_divisions as d')
@@ -330,7 +332,8 @@ class TransferItemController extends Controller
             'module_id' => $this->_moduleID,
             'module' => 'Transfer Item',
             'action' => 'Deleted data ID '.$ids,
-            'user' => Auth::user()->id
+            'user' => Auth::user()->id,
+            'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
         ]);
 
         return response()->json($data);
@@ -518,7 +521,8 @@ class TransferItemController extends Controller
             'module_id' => $this->_moduleID,
             'module' => 'Received Items',
             'action' => 'Item Received Job number '.$req->jo_no,
-            'user' => Auth::user()->id
+            'user' => Auth::user()->id,
+            'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
         ]);
 
         return response()->json($data);

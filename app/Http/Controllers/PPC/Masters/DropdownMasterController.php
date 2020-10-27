@@ -87,7 +87,8 @@ class DropdownMasterController extends Controller
                 'module_id' => $this->_moduleID,
                 'module' => 'Dropdown Master',
                 'action' => 'Edited items of : '.$req->selected_dropdown_name,
-                'user' => Auth::user()->id
+                'user' => Auth::user()->id,
+                'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
             ]);
 
         } else {
@@ -106,7 +107,8 @@ class DropdownMasterController extends Controller
                 'module_id' => $this->_moduleID,
                 'module' => 'Dropdown Master',
                 'action' => 'Inserted items of : '.$req->selected_dropdown_name,
-                'user' => Auth::user()->id
+                'user' => Auth::user()->id,
+                'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
             ]);
         }
 

@@ -1,3 +1,7 @@
+<?php $__env->startSection('title'); ?>
+	Operator Master
+<?php $__env->stopSection(); ?>
+
 <?php $__env->startSection('content'); ?>
 <section class="content-header">
     <h1>Operator Master</h1>
