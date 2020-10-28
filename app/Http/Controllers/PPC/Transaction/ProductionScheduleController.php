@@ -107,7 +107,7 @@ class ProductionScheduleController extends Controller
                                     from ppc_production_summaries as ps
                                     inner join ppc_product_codes as pc on ps.prod_code = pc.product_code
                                     inner join admin_assign_production_lines as pl on pl.product_line = pc.product_type
-                                    where pl.user_id = ".Auth::user()->id." AND ps.create_user = ".Auth::user()->id."
+                                    where pl.user_id = ".Auth::user()->id."
                                      and ps.sched_qty < ps.quantity
                                     and ps.id between ".$FROM." and ".$TO."
                                     group by ps.id,
@@ -135,7 +135,7 @@ class ProductionScheduleController extends Controller
                                     from ppc_production_summaries as ps
                                     inner join ppc_product_codes as pc on ps.prod_code = pc.product_code
                                     inner join admin_assign_production_lines as pl on pl.product_line = pc.product_type
-                                    where pl.user_id = ".Auth::user()->id." AND ps.create_user = ".Auth::user()->id."
+                                    where pl.user_id = ".Auth::user()->id."
                                      and ps.sched_qty < ps.quantity
                                     group by ps.id,
                                             ps.sc_no,
