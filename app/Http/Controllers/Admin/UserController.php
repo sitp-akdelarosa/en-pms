@@ -126,7 +126,8 @@ class UserController extends Controller
 					'module_id' => $this->_moduleID,
 					'module' => 'User Master',
 					'action' => 'Inserted data User ID: '.$req->user_id,
-					'user' => Auth::user()->id
+					'user' => Auth::user()->id,
+					'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
 				]);
 
 				return response()->json($user);
@@ -202,7 +203,8 @@ class UserController extends Controller
 				'module_id' => $this->_moduleID,
 				'module' => 'User Master',
 				'action' => 'Edited data ID '.$req->id.', User ID: '.$req->user_id,
-				'user' => Auth::user()->id
+				'user' => Auth::user()->id,
+				'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
 			]);
 
 			return response()->json($user);
@@ -345,7 +347,8 @@ class UserController extends Controller
 				'module_id' => $this->_moduleID,
 				'module' => 'User Master',
 				'action' => 'Deleted data ID '.$req->id,
-				'user' => Auth::user()->id
+				'user' => Auth::user()->id,
+				'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
 			]);
 		}
 

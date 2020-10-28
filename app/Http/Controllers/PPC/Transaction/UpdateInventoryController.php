@@ -64,6 +64,7 @@ class UpdateInventoryController extends Controller
                     !array_key_exists('receiveddate',$fields[0]) AND 
                     !array_key_exists('invoiceno',$fields[0]) AND 
                     !array_key_exists('supplier',$fields[0]) AND 
+                    !array_key_exists('warehouse',$fields[0]) AND 
                     !array_key_exists('receiving_no',$fields[0])) {
                     $data = [
                         'status' => 'failed',
@@ -80,6 +81,7 @@ class UpdateInventoryController extends Controller
                 if (!array_key_exists('itemcode',$fields[0]) AND 
                         !array_key_exists('lotnumber',$fields[0]) AND 
                         !array_key_exists('product_line',$fields[0]) AND 
+                        !array_key_exists('warehouse',$fields[0]) AND 
                         !array_key_exists('jo_no',$fields[0])) {
                     $data = [
                         'status' => 'failed',
@@ -130,6 +132,11 @@ class UpdateInventoryController extends Controller
                 if (empty($field['qty_pcs']) && is_null($field['qty_pcs'])) {
                     $failed++;
                     array_push($msg, 'Please provide Quantity PCS for Line '.$line.'.');
+                }
+
+                if (empty($field['warehouse']) && is_null($field['warehouse'])) {
+                    $failed++;
+                    array_push($msg, 'Please provide Warehouse for Line '.$line.'.');
                 }
 
                 // if (empty($field['uom']) && is_null($field['uom'])) {
@@ -258,6 +265,11 @@ class UpdateInventoryController extends Controller
                 if (empty($field['qty_pcs']) && is_null($field['qty_pcs'])) {
                     $failed++;
                     array_push($msg, 'Please provide Quantity PCS for Line '.$line.'.');
+                }
+
+                if (empty($field['warehouse']) && is_null($field['warehouse'])) {
+                    $failed++;
+                    array_push($msg, 'Please provide Warehouse for Line '.$line.'.');
                 }
 
                 // if (empty($field['uom']) && is_null($field['uom'])) {
@@ -412,6 +424,7 @@ class UpdateInventoryController extends Controller
                 (!empty($field['receiveddate']) && !is_null($field['receiveddate'])) ||
                 (!empty($field['receiving_no']) && !is_null($field['receiving_no'])) ||
                 (!empty($field['invoiceno']) && !is_null($field['invoiceno'])) ||
+                (!empty($field['warehouse']) && !is_null($field['warehouse'])) ||
                 (!empty($field['supplier']) && !is_null($field['supplier'])) ) {
 
                 //$uom = preg_replace('/[0-9]+/', '', strtoupper($field['uom']));
@@ -419,6 +432,7 @@ class UpdateInventoryController extends Controller
 
                 $receiving_no = preg_replace("/\s+/", "", $field['receiving_no']);
                 $materialstype = $field['materialstype'];
+                $warehouse = $field['warehouse'];
                 $itemcode = preg_replace("/\s+/", "", $field['itemcode']);
                 $qty_weight = $field['qty_weight'];
                 $qty_pcs = $field['qty_pcs'];
@@ -443,6 +457,16 @@ class UpdateInventoryController extends Controller
                                     ['dropdown_item', strtoupper($materialstype)]
                                 ]) 
                                 ->first();
+                    
+                    $wh =  DB::table('ppc_dropdown_items')
+                                ->select([
+                                    'dropdown_item as warehouse',
+                                ])
+                                ->where([
+                                    ['dropdown_name_id', 9],
+                                    ['dropdown_item', strtoupper($warehouse)]
+                                ]) 
+                                ->first();
 
                     NotRegisteredMaterial::where('item_code',$itemcode)
                                         ->where('heat_no',$heatnumber)
@@ -452,6 +476,7 @@ class UpdateInventoryController extends Controller
                         'item_class' => $item_class,
                         'receiving_no' => strtoupper($receiving_no),
                         'materials_type' => (isset($mat->material_type))? $mat->material_type: strtoupper($materialstype),
+                        'warehouse' => (isset($wh->warehouse))? $wh->warehouse: strtoupper($warehouse),
                         'item_code' => strtoupper($itemcode),
                         'qty_weight' => $qty_weight,
                         'qty_pcs' => $qty_pcs,
@@ -485,6 +510,7 @@ class UpdateInventoryController extends Controller
                         $received_id = PpcUpdateInventory::insertGetId([
                                         'item_class' => $item_class,
                                         'receiving_no' => strtoupper($receiving_no),
+                                        'warehouse' => strtoupper($warehouse),
                                         'materials_type' =>   $PpcMaterialCode->material_type,
                                         'item_code' => strtoupper($itemcode),
                                         'description' =>  $PpcMaterialCode->code_description,
@@ -514,6 +540,7 @@ class UpdateInventoryController extends Controller
                             'item_class' => $item_class,
                             'receiving_no' => strtoupper($receiving_no),
                             'materials_type' => $PpcMaterialCode->material_type,
+                            'warehouse' => strtoupper($warehouse),
                             'item_code' => strtoupper($itemcode),
                             'description' =>  $PpcMaterialCode->code_description,
                             'item' =>  $PpcMaterialCode->item,
@@ -583,12 +610,14 @@ class UpdateInventoryController extends Controller
                 (!empty($field['qty_pcs']) && !is_null($field['qty_pcs'])) ||
                 (!empty($field['heatnumber']) && !is_null($field['heatnumber'])) ||
                 (!empty($field['lotnumber']) && !is_null($field['lotnumber'])) ||
+                (!empty($field['warehouse']) && !is_null($field['warehouse'])) ||
                 (!empty($field['product_line']) && !is_null($field['product_line']))) {
 
                 $jo_no = preg_replace("/\s+/", "", $field['jo_no']); 
                 $product_line = preg_replace("/\s+/", "", $field['product_line']); 
                 $itemcode = preg_replace("/\s+/", "", $field['itemcode']); 
-                $qty_weight = $field['qty_weight']; 
+                $qty_weight = $field['qty_weight'];
+                $warehouse = $field['warehouse']; 
                 $qty_pcs = $field['qty_pcs']; 
                 $heatnumber = preg_replace("/\s+/", "", $field['heatnumber']); 
                 $lotnumber = preg_replace("/\s+/", "", $field['lotnumber']); 
@@ -608,6 +637,16 @@ class UpdateInventoryController extends Controller
                                 ]) 
                                 ->first();
 
+                    $wh =  DB::table('ppc_dropdown_items')
+                                ->select([
+                                    'dropdown_item as warehouse',
+                                ])
+                                ->where([
+                                    ['dropdown_name_id', 9],
+                                    ['dropdown_item', strtoupper($warehouse)]
+                                ]) 
+                                ->first();
+
                     NotRegisteredMaterial::where('item_code',$itemcode)
                                         ->where('heat_no',$heatnumber)
                                         ->delete();
@@ -618,6 +657,7 @@ class UpdateInventoryController extends Controller
                         'item_class' => $iclass,
                         'jo_no' => (isset($jo_no))? strtoupper($jo_no): 'N/A',
                         'product_line' => (isset($prod->product_line))? $prod->product_line: strtoupper($product_line),
+                        'warehouse' => (isset($wh->warehouse))? $wh->warehouse: strtoupper($warehouse),
                         'item_code' => strtoupper($itemcode),
                         'qty_weight' => $qty_weight,
                         'qty_pcs' => $qty_pcs,
@@ -655,6 +695,7 @@ class UpdateInventoryController extends Controller
                                         'item_class' => $iclass,
                                         'jo_no' => (isset($jo_no))? strtoupper($jo_no): 'N/A',
                                         'product_line' =>   $PpcProductCode->product_type,
+                                        'warehouse' => strtoupper($warehouse),
                                         'item_code' => strtoupper($itemcode),
                                         'description' =>  $PpcProductCode->code_description,
                                         'item' =>  $PpcProductCode->item,
@@ -685,6 +726,7 @@ class UpdateInventoryController extends Controller
                             'jo_no' => (isset($jo_no))? strtoupper($jo_no): 'N/A',
                             'product_line' =>   $PpcProductCode->product_type,
                             'item_code' => strtoupper($itemcode),
+                            'warehouse' => strtoupper($warehouse),
                             'description' =>  $PpcProductCode->code_description,
                             'item' =>  $PpcProductCode->item,
                             'alloy' =>  $PpcProductCode->alloy,
@@ -779,6 +821,7 @@ class UpdateInventoryController extends Controller
                 'receiving_no' => 'required',
                 'materials_type' => 'required',
                 'item_code' => 'required',
+                'warehouse' => 'required',
                 'qty_weight' => 'required|numeric',
                 'qty_pcs' => 'required|numeric',
                 'heat_no' => 'required',
@@ -794,6 +837,7 @@ class UpdateInventoryController extends Controller
                 $UP->receiving_no = strtoupper($req->receiving_no);
                 $UP->received_date = $req->received_date.' '.date('H:i:s');
                 $UP->materials_type = strtoupper($req->materials_type);
+                $UP->warehouse = strtoupper($req->warehouse);
                 $UP->item_code = strtoupper($req->item_code);
                 $UP->description = strtoupper($req->description);
                 $UP->item = strtoupper($req->item);
@@ -820,6 +864,7 @@ class UpdateInventoryController extends Controller
                                 'receiving_no' => strtoupper($req->receiving_no),
                                 'received_date' => $req->received_date.' '.date('H:i:s'),
                                 'materials_type' => strtoupper($req->materials_type),
+                                'warehouse' => strtoupper($req->warehouse),
                                 'item_code' => strtoupper($req->item_code),
                                 'description' => strtoupper($req->description),
                                 'item' => strtoupper($req->item),
@@ -857,6 +902,7 @@ class UpdateInventoryController extends Controller
             $this->validate($req, [
                 'receiving_no' => 'required',
                 'materials_type' => 'required',
+                'warehouse' => 'required',
                 'item_code' => 'required',
                 'qty_weight' => 'required|numeric',
                 'qty_pcs' => 'required|numeric',
@@ -871,6 +917,7 @@ class UpdateInventoryController extends Controller
                             'receiving_no' => strtoupper($req->receiving_no),
                             'received_date' => $req->received_date.' '.date('H:i:s'),
                             'materials_type' => strtoupper($req->materials_type),
+                            'warehouse' => strtoupper($req->warehouse),
                             'item_code' => strtoupper($req->item_code),
                             'description' => strtoupper($req->description),
                             'item' => strtoupper($req->item),
@@ -901,6 +948,7 @@ class UpdateInventoryController extends Controller
                 $inv->receiving_no = strtoupper($req->receiving_no);
                 $inv->received_date = $req->received_date.' '.date('H:i:s');
                 $inv->materials_type = strtoupper($req->materials_type);
+                $inv->warehouse = strtoupper($req->warehouse);
                 $inv->item_code = strtoupper($req->item_code);
                 $inv->description = strtoupper($req->description);
                 $inv->item = strtoupper($req->item);
@@ -949,6 +997,7 @@ class UpdateInventoryController extends Controller
             $this->validate($req, [
                 // 'jo_no' => 'required',
                 'product_line' => 'required',
+                'warehouse' => 'required',
                 'item_code' => 'required',
                 'qty_weight' => 'required|numeric',
                 'qty_pcs' => 'required|numeric',
@@ -962,6 +1011,7 @@ class UpdateInventoryController extends Controller
                 $UP->item_class = $req->item_class;
                 $UP->jo_no = (!is_null($req->jo_no))? strtoupper($req->jo_no): 'N/A';
                 $UP->product_line = strtoupper($req->product_line);
+                $UP->warehouse = strtoupper($req->warehouse);
                 $UP->item_code = strtoupper($req->item_code);
                 $UP->description = strtoupper($req->description);
                 $UP->item = strtoupper($req->item);
@@ -988,6 +1038,7 @@ class UpdateInventoryController extends Controller
                                 'item_class' => $req->item_class,
                                 'jo_no' => (!is_null($req->jo_no))? strtoupper($req->jo_no): 'N/A',
                                 'product_line' => strtoupper($req->product_line),
+                                'warehouse' => strtoupper($req->warehouse),
                                 'item_code' => strtoupper($req->item_code),
                                 'description' => strtoupper($req->description),
                                 'item' => strtoupper($req->item),
@@ -1027,6 +1078,7 @@ class UpdateInventoryController extends Controller
             $this->validate($req, [
                 'jo_no' => 'required',
                 'product_line' => 'required',
+                'warehouse' => 'required',
                 'item_code' => 'required',
                 'qty_weight' => 'required|numeric',
                 'qty_pcs' => 'required|numeric',
@@ -1038,6 +1090,7 @@ class UpdateInventoryController extends Controller
                             'item_class' => $req->item_class,
                             'jo_no' => (!is_null($req->jo_no))? strtoupper($req->jo_no): 'N/A',
                             'product_line' => strtoupper($req->product_line),
+                            'warehouse' => strtoupper($req->warehouse),
                             'item_code' => strtoupper($req->item_code),
                             'description' => strtoupper($req->description),
                             'item' => strtoupper($req->item),
@@ -1069,6 +1122,7 @@ class UpdateInventoryController extends Controller
                 $inv->item_class = $req->item_class;
                 $inv->jo_no = (!is_null($req->jo_no))? strtoupper($req->jo_no): 'N/A';
                 $inv->product_line = strtoupper($req->product_line);
+                $inv->warehouse = strtoupper($req->warehouse);
                 $inv->item_code = strtoupper($req->item_code);
                 $inv->description = strtoupper($req->description);
                 $inv->item = strtoupper($req->item);
@@ -1109,6 +1163,34 @@ class UpdateInventoryController extends Controller
         }
            
         return response()->json(['msg'=>"Data was successfully saved.",'status' => 'success']);
+    }
+
+    public function GetWarehouse(Request $req)
+    {
+        $data = [];
+        if ($req->state == 'search') {
+            $data = DB::table('ppc_dropdown_items as pdt')
+                    ->select([
+                        'pdt.dropdown_item as id',
+                        'pdt.dropdown_item as text',
+                    ])
+                    ->where('pdt.dropdown_name_id', 9) // warehouse
+                    ->groupBy('pdt.dropdown_item')
+                    ->get();
+        } else {
+            $data = DB::table('ppc_dropdown_items as pdt')
+                    ->leftjoin('admin_assign_warehouses as w', 'w.warehouse', '=', 'pdt.dropdown_item')
+                    ->select([
+                        'w.warehouse as id',
+                        'w.warehouse as text',
+                    ])
+                    ->where('pdt.dropdown_name_id', 9) // warehouse
+                    ->where('w.user_id' , Auth::user()->id)
+                    ->groupBy('w.warehouse')
+                    ->get();
+        }
+
+        return $data;
     }
 
     public function GetMaterialType()
@@ -1402,6 +1484,7 @@ class UpdateInventoryController extends Controller
                 $sheet->cell('O1', "width");
                 $sheet->cell('P1', "length");
                 $sheet->cell('Q1', "supplierheatno");
+                $sheet->cell('R1', "warehouse");
                 
             });
         })->download('xlsx');
@@ -1415,7 +1498,7 @@ class UpdateInventoryController extends Controller
             $excel->sheet('products', function($sheet)
             {
                 $sheet->setHeight(6, 15);
-                $sheet->cells('A1:R1', function($cells) {
+                $sheet->cells('A1:M1', function($cells) {
                     $cells->setFont([
                         'family'     => 'Calibri',
                         'size'       => '11',
@@ -1434,6 +1517,7 @@ class UpdateInventoryController extends Controller
                 $sheet->cell('J1', "qty_pcs");
                 $sheet->cell('K1', "heatnumber");
                 $sheet->cell('L1', "lotnumber");
+                $sheet->cell('M1', "warehouse");
                 
             });
         })->download('xlsx');
@@ -1464,6 +1548,7 @@ class UpdateInventoryController extends Controller
         $srch_invoice_no = "";
         $srch_supplier = "";
         $srch_supplier_heat_no = "";
+        $srch_warehouse = "";
 
         if (!is_null($req->srch_received_date_from) && !is_null($req->srch_received_date_to)) {
             $srch_received_date = " AND DATE_FORMAT(pui.received_date,'%Y-%m-%d') BETWEEN '".$req->srch_received_date_from."' AND '".$req->srch_received_date_to."'";
@@ -1489,6 +1574,17 @@ class UpdateInventoryController extends Controller
                 $_value = str_replace("*","%",$req->srch_jo_no);
             }
             $srch_jo_no = " AND receive_jo_no ".$equal."'".$_value."'";
+        }
+
+        if (!is_null($req->srch_warehouse)) {
+            $equal = "= ";
+            $_value = $req->srch_warehouse;
+
+            if (Str::contains($req->srch_warehouse, '*')){
+                $equal = "LIKE ";
+                $_value = str_replace("*","%",$req->srch_warehouse);
+            }
+            $srch_warehouse = " AND warehouse ".$equal."'".$_value."'";
         }
 
         if (!is_null($req->srch_receiving_no)) {
@@ -1674,7 +1770,8 @@ class UpdateInventoryController extends Controller
                         .$srch_lot_no
                         .$srch_invoice_no
                         .$srch_supplier
-                        .$srch_supplier_heat_no)
+                        .$srch_supplier_heat_no
+                        .$srch_warehouse)
                     ->where('user_id' ,Auth::user()->id)->get();
                         
         return $data;
@@ -1691,8 +1788,8 @@ class UpdateInventoryController extends Controller
             {
 
                 $sheet->setHeight(4, 20);
-                $sheet->mergeCells('A2:S2');
-                $sheet->cells('A2:S2', function($cells) {
+                $sheet->mergeCells('A2:T2');
+                $sheet->cells('A2:T2', function($cells) {
                     $cells->setAlignment('center');
                     $cells->setFont([
                         'family'     => 'Calibri',
@@ -1704,7 +1801,7 @@ class UpdateInventoryController extends Controller
                 $sheet->cell('A2',"INVENTORY");
 
                 $sheet->setHeight(6, 15);
-                $sheet->cells('A4:S4', function($cells) {
+                $sheet->cells('A4:T4', function($cells) {
                     $cells->setFont([
                         'family'     => 'Calibri',
                         'size'       => '11',
@@ -1805,21 +1902,26 @@ class UpdateInventoryController extends Controller
                 });
 
                 $sheet->cell('P4', function($cell) {
-                    $cell->setValue("Invoice No.");
+                    $cell->setValue("Warehouse");
                     $cell->setBorder('thin','thin','thin','thin');
                 });
 
                 $sheet->cell('Q4', function($cell) {
-                    $cell->setValue("Supplier");
+                    $cell->setValue("Invoice No.");
                     $cell->setBorder('thin','thin','thin','thin');
                 });
 
                 $sheet->cell('R4', function($cell) {
-                    $cell->setValue("Supplier Heat No.");
+                    $cell->setValue("Supplier");
                     $cell->setBorder('thin','thin','thin','thin');
                 });
 
                 $sheet->cell('S4', function($cell) {
+                    $cell->setValue("Supplier Heat No.");
+                    $cell->setBorder('thin','thin','thin','thin');
+                });
+
+                $sheet->cell('T4', function($cell) {
                     $cell->setValue("Received Date");
                     $cell->setBorder('thin','thin','thin','thin');
                 });
@@ -1890,19 +1992,23 @@ class UpdateInventoryController extends Controller
                         $cell->setBorder('thin','thin','thin','thin');
                     });
                     $sheet->cell('P'.$row, function($cell) use($dt) {
-                        $cell->setValue($dt->invoice_no);
+                        $cell->setValue($dt->warehouse);
                         $cell->setBorder('thin','thin','thin','thin');
                     });
                     $sheet->cell('Q'.$row, function($cell) use($dt) {
-                        $cell->setValue($dt->supplier);
+                        $cell->setValue($dt->invoice_no);
                         $cell->setBorder('thin','thin','thin','thin');
                     });
                     $sheet->cell('R'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->supplier);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('S'.$row, function($cell) use($dt) {
                         $cell->setValue($dt->supplier_heat_no);
                         $cell->setBorder('thin','thin','thin','thin');
                     });
 
-                    $sheet->cell('S'.$row, function($cell) use($dt) {
+                    $sheet->cell('T'.$row, function($cell) use($dt) {
                         $cell->setValue($dt->received_date);
                         $cell->setBorder('thin','thin','thin','thin');
                     });

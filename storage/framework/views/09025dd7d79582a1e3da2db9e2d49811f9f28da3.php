@@ -78,6 +78,8 @@ foreach ($user_accesses as $user_access){
                                     <th>Stock(PCS)</th>
                                     <th>Heat No.</th>
                                     <th>Lot No.</th>
+
+                                    <th>Warehouse</th>
                                     
                                     <th>Item</th>
                                     <th>Alloy</th>
@@ -142,6 +144,7 @@ foreach ($user_accesses as $user_access){
         var AddManual = "<?php echo e(url('/transaction/update-inventory/AddManual')); ?>";
         var materialTypeURL = "<?php echo e(url('/transaction/update-inventory/material-type')); ?>";
         var productLineURL = "<?php echo e(url('/transaction/update-inventory/prod-lines')); ?>";
+        var warehouseURL = "<?php echo e(url('/transaction/update-inventory/warehouse')); ?>";
         var GetItemCodeURL = "<?php echo e(url('/transaction/update-inventory/GetItemCode')); ?>";
         var getItemCodeDetailsurl = "<?php echo e(url('/transaction/update-inventory/GetItemCodeDetails')); ?>";
         var code_permission = 'T0001';

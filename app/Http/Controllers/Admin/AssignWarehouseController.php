@@ -26,7 +26,7 @@ class AssignWarehouseController extends Controller
 		$this->_helper = new HelpersController;
 		$this->_audit = new AuditTrailController;
 
-		$this->_moduleID = $this->_helper->moduleID('A0007');
+		$this->_moduleID = $this->_helper->moduleID('A0006');
     }
     
     public function index()
@@ -107,7 +107,8 @@ class AssignWarehouseController extends Controller
 			'module_id' => $this->_moduleID,
 			'module' => 'Assign Warehouse',
 			'action' => 'Edited data user ID '.$user_id.', Warehouse: '.implode(',', $req->warehouse),
-			'user' => Auth::user()->id
+			'user' => Auth::user()->id,
+			'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
 		]);
 
 		
@@ -149,7 +150,8 @@ class AssignWarehouseController extends Controller
 			'module_id' => $this->_moduleID,
 			'module' => 'Assign Warehouse',
 			'action' => 'Deleted data ID '.$ids,
-			'user' => Auth::user()->id
+			'user' => Auth::user()->id,
+			'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
 		]);
 
 		return response()->json($data);

@@ -96,6 +96,15 @@
 
                         <div class="col-md-4">
                             <div class="form-group row">
+                                <label for="warehouse" class="col-sm-3 control-label mt-5">Warehouse:</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control select-validate srch-clear" name="warehouse" style="width:100%;" id="warehouse">
+                                        <option value=""></option>
+                                    </select>
+                                    <div id="warehouse_feedback"></div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
                                 <label for="item" class="col-sm-3 control-label mt-5">Item:</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control validate clear" name="item" id="item" readonly>
@@ -399,6 +408,16 @@
                         </div>
 
                         <div class="col-md-4">
+                            <div class="form-group row">
+                                <label for="srch_warehouse" class="col-sm-3 control-label mt-5">Warehouse:</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control select-validate srch-clear" name="srch_warehouse" style="width:100%;" id="srch_warehouse">
+                                        <option value=""></option>
+                                    </select>
+                                    <div id="srch_warehouse_feedback"></div>
+                                </div>
+                            </div>
+
                             <div class="form-group row">
                                 <label for="srch_item" class="col-sm-3 control-label mt-5">Item:</label>
                                 <div class="col-sm-9">

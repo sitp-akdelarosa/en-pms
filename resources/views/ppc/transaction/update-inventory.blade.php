@@ -80,6 +80,8 @@ foreach ($user_accesses as $user_access){
                                     <th>Stock(PCS)</th>
                                     <th>Heat No.</th>
                                     <th>Lot No.</th>
+
+                                    <th>Warehouse</th>
                                     
                                     <th>Item</th>
                                     <th>Alloy</th>
@@ -144,6 +146,7 @@ foreach ($user_accesses as $user_access){
         var AddManual = "{{ url('/transaction/update-inventory/AddManual') }}";
         var materialTypeURL = "{{ url('/transaction/update-inventory/material-type') }}";
         var productLineURL = "{{ url('/transaction/update-inventory/prod-lines') }}";
+        var warehouseURL = "{{ url('/transaction/update-inventory/warehouse') }}";
         var GetItemCodeURL = "{{ url('/transaction/update-inventory/GetItemCode') }}";
         var getItemCodeDetailsurl = "{{ url('/transaction/update-inventory/GetItemCodeDetails') }}";
         var code_permission = 'T0001';

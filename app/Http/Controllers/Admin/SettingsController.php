@@ -68,7 +68,8 @@ class SettingsController extends Controller
                     'module_id' => $this->_moduleID,
                     'module' => 'Admin ISO Settings',
                     'action' => 'Editing ISO '.$req->iso_name,
-                    'user' => Auth::user()->id
+                    'user' => Auth::user()->id,
+					'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
                 ]);
             } else {
                  $error = ['errors' => ['iso_name' => 'The ISO Name has already been taken.']];
@@ -95,7 +96,8 @@ class SettingsController extends Controller
                 'module_id' => $this->_moduleID,
                 'module' => 'Admin Setting',
                 'action' => 'Inserting ID '.$req->iso_name,
-                'user' => Auth::user()->id
+                'user' => Auth::user()->id,
+				'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
             ]);
         }
 
@@ -150,7 +152,8 @@ class SettingsController extends Controller
             'module_id' => $this->_moduleID,
             'module' => 'Admin Settings',
             'action' => 'Deleted data ID '.$ids,
-            'user' => Auth::user()->id
+            'user' => Auth::user()->id,
+			'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
         ]);
 
         $data = [

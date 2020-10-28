@@ -116,7 +116,7 @@ foreach ($user_accesses as $user_access){
 		var WarehouseDeleteURL = "{{ url('/admin/assign-warehouse/destroy') }}";
 		var dropdownWarehouse = "{{ url('/admin/assign-warehouse/warehouse-select') }}";
 		var SaveURL = "{{ route('admin.assign-warehouse.save') }}";
-		var code_permission = "A0002";
+		var code_permission = "A0006";
 
 	</script>
 	<script type="text/javascript" src="{{ asset('/js/pages/admin/assign-warehouse/assign-warehouse.js') }}"></script>

@@ -99,7 +99,8 @@ class UserTypeController extends Controller
 					'module_id' => $this->_moduleID,
 					'module' => 'User Type',
 					'action' => 'Edited data ID: '.$req->id.', User Type: '.$type->description.' and Category: '.$type->category,
-					'user' => Auth::user()->id
+					'user' => Auth::user()->id,
+					'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
 				]);
 			}
 		} else {
@@ -146,7 +147,8 @@ class UserTypeController extends Controller
 				'module_id' => $this->_moduleID,
 				'module' => 'User Type',
 				'action' => 'Inserted data User Type: '.$req->description.' and Category: '.$type->category,
-				'user' => Auth::user()->id
+				'user' => Auth::user()->id,
+				'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
 			]);
 		}
 
@@ -187,7 +189,8 @@ class UserTypeController extends Controller
 			'module_id' => $this->_moduleID,
 			'module' => 'User Type',
 			'action' => 'Deleted data ID: '.$ids,
-			'user' => Auth::user()->id
+			'user' => Auth::user()->id,
+			'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
 		]);
 
 		return response()->json($data);

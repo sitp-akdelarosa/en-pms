@@ -208,8 +208,11 @@ Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', '
 			Route::get('/material-type', 'PPC\Transaction\UpdateInventoryController@GetMaterialType')
 				->name('transaction.update-inventory.material-type');
 			
-				Route::get('/prod-lines', 'PPC\Transaction\UpdateInventoryController@getProductLine')
+			Route::get('/prod-lines', 'PPC\Transaction\UpdateInventoryController@getProductLine')
 				->name('transaction.update-inventory.prod-lines');
+
+			Route::get('/warehouse', 'PPC\Transaction\UpdateInventoryController@GetWarehouse')
+				->name('transaction.update-inventory.warehouse');
 
 			Route::get('/GetItemCode', 'PPC\Transaction\UpdateInventoryController@GetItemCode')
 				->name('transaction.update-inventory.GetItemCode');

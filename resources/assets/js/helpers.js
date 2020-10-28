@@ -81,6 +81,10 @@ $( function() {
 	$('#notification_list_header').on('click', '.view_notification', function() {
 		readNotification($(this).attr('data-id'),$(this).attr('data-link'));
 	});
+
+	// $('.modal').draggable({
+	// 	handle: ".modal-header"
+	// }); 
 });
 
 jQuery.fn.extend({

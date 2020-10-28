@@ -3,6 +3,7 @@ var _with_zero = 0;
 $(function () {
 	getProdLine('');
 	getMaterials('');
+	getWarehouse('');
 	getInventory(_with_zero);
 	init();
 
@@ -147,6 +148,7 @@ $(function () {
 			$('#finish_weight').val($(this).attr('data-finish_weight'));
 		}
 
+		$('#warehouse').val($(this).attr('data-warehouse')).trigger('change.select2');
 		$('#description').val($(this).attr('data-description'));
 		$('#item').val($(this).attr('data-item'));
 		$('#alloy').val($(this).attr('data-alloy'));
@@ -222,29 +224,6 @@ $(function () {
 							}).always(function () {
 								$('.loadingOverlay').hide();
 							});
-							
-							// $.ajax({
-							// 	url: uploadInventory,
-							// 	type: 'POST',
-							// 	data: formData,
-							// 	mimeType: "multipart/form-data",
-							// 	contentType: false,
-							// 	cache: false,
-							// 	processData: false,
-							// 	success: function (returnData) {
-							// 		$('.loadingOverlay').hide();
-							// 		var return_data = jQuery.parseJSON(returnData);
-
-							// 		msg(return_data.msg, return_data.status);
-							// 		document.getElementById('file_inventory_label').innerHTML = fileN;
-							// 		getInventory(_with_zero);
-							// 		var not_registedred = return_data.Material;
-							// 		if (not_registedred.length > 0) {
-							// 			GetMateriialsNotExisting(not_registedred);
-							// 		}
-
-							// 	}
-							// });
 						}
 						else if (return_datas.status == "validateRequired") {
 							$('.loadingOverlay').hide();
@@ -291,80 +270,6 @@ $(function () {
 					}).always( function() {
 						//$('.loadingOverlay').hide();
 					});
-					
-
-					// $.ajax({
-					// 	url: checkfile,
-					// 	type: 'POST',
-					// 	mimeType: "multipart/form-data",
-					// 	contentType: false,
-					// 	cache: false,
-					// 	processData: false,
-					// 	data: formData,
-					// 	success: function (returns) {
-					// 		var return_datas = jQuery.parseJSON(returns);
-					// 		if (return_datas.status == "success") {
-					// 			$.ajax({
-					// 				url: uploadInventory,
-					// 				type: 'POST',
-					// 				data: formData,
-					// 				mimeType: "multipart/form-data",
-					// 				contentType: false,
-					// 				cache: false,
-					// 				processData: false,
-					// 				success: function (returnData) {
-					// 					$('.loadingOverlay').hide();
-					// 					var return_data = jQuery.parseJSON(returnData);
-
-					// 					msg(return_data.msg, return_data.status);
-					// 					document.getElementById('file_inventory_label').innerHTML = fileN;
-					// 					getInventory(_with_zero);
-					// 					var not_registedred = return_data.Material;
-					// 					if (not_registedred.length > 0) {
-					// 						GetMateriialsNotExisting(not_registedred);
-					// 					}
-
-					// 				}
-					// 			});
-					// 		}
-					// 		else if (return_datas.status == "validateRequired") {
-					// 			$('.loadingOverlay').hide();
-					// 			msg("Fill up correctly the record in line " + return_datas.line, "warning");
-					// 			document.getElementById('file_inventory_label').innerHTML = "Select file...";
-					// 		}
-					// 		else if (return_datas.status == "heatnumber error") {
-					// 			$('.loadingOverlay').hide();
-					// 			msg(return_datas.msg, "warning");
-					// 			document.getElementById('file_inventory_label').innerHTML = "Select file...";
-					// 		}
-					// 		else if (return_datas.status == "not num") {
-					// 			$('.loadingOverlay').hide();
-					// 			msg("Invalid input of Quantity", "warning");
-					// 			document.getElementById('file_inventory_label').innerHTML = "Select file...";
-					// 		}
-					// 		else if (return_datas.status == "failed") {
-					// 			$('.loadingOverlay').hide();
-					// 			console.log(return_datas.fields);
-					// 			msg("Please maintain data as 1 sheet only.", "warning");
-					// 			document.getElementById('file_inventory_label').innerHTML = "Select file...";
-					// 		}
-					// 		else {
-					// 			$('.loadingOverlay').hide();
-					// 			msg("Upload failed", "warning");
-					// 			document.getElementById('file_inventory_label').innerHTML = "Select file...";
-					// 		}
-					// 	},
-					// 	statusCode: {
-					// 		500: function(data) {
-					// 			$('.loadingOverlay').hide();
-					// 			console.log(data);
-					// 			//msg('','error');
-					// 		}
-					// 	}
-					// 	// error: function() {
-					// 	// 	$('.loadingOverlay').hide();
-					// 	// }
-					// });
 				} else {
 					$('.loadingOverlay').hide();
 					msg("File Format not supported.", "warning");
@@ -460,6 +365,7 @@ $(function () {
 		$('.srch-clear').val('');
 		getMaterials('search');
 		getProdLine('search');
+		getWarehouse('search');
 		$('#modal_search').modal('show');
 	});
 
@@ -568,14 +474,6 @@ function getMaterials(state) {
 			width: 'resolve',
 			data: data
 		}).val(null).trigger('change');
-
-		// var code = '<option></option>';
-		// mat_type.html(code);
-
-		// $.each(data.type, function (i, x) {
-		// 	code = '<option value="' + x.material_type + '">' + x.material_type + '</option>';
-		// 	mat_type.append(code);
-		// });
 	}).fail(function (xhr, textStatus, errorThrown) {
 		msg(errorThrown, textStatus);
 	}).always( function() {
@@ -603,14 +501,34 @@ function getProdLine(state) {
 			width: 'resolve',
 			data: data
 		}).val(null).trigger('change');
+	}).fail(function (xhr, textStatus, errorThrown) {
+		msg(errorThrown, textStatus);
+	}).always(function () {
+		$('.loadingOverlay-modal').hide();
+	});
+}
 
-		// var code = '<option></option>';
-		// type.html(code);
+function getWarehouse(state) {
+	$('.loadingOverlay-modal').show();
 
-		// $.each(data.type, function (i, x) {
-		// 	code = '<option value="' + x.product_line + '">' + x.product_line + '</option>';
-		// 	type.append(code);
-		// });
+	$.ajax({
+		url: warehouseURL,
+		type: 'GET',
+		dataType: 'JSON',
+		data: { _token: token, state: state },
+	}).done(function (data, textStatus, xhr) {
+		var prod_line = $('#warehouse');
+		
+		if (state == 'search') {
+			prod_line = $('#srch_warehouse');
+		}
+
+		prod_line.select2({
+			allowClear: true,
+			placeholder: 'Select a Warehouse',
+			width: 'resolve',
+			data: data
+		}).val(null).trigger('change');
 	}).fail(function (xhr, textStatus, errorThrown) {
 		msg(errorThrown, textStatus);
 	}).always(function () {
@@ -796,7 +714,7 @@ function InventoryTable(arr) {
 	$('#tbl_materials').dataTable().fnDestroy();
 	$('#tbl_materials').dataTable({
 		data: arr,
-		order: [[24,'desc']],
+		order: [[25,'desc']],
 		scrollX: true,
 		columns: [
 			{
@@ -824,7 +742,7 @@ function InventoryTable(arr) {
 						"data-invoice_no='" + data.invoice_no + "'" +
 						"data-received_date='" + data.received_date + "'" +
 						"data-width='" + data.width + "' " +
-						// "data-thickness='" + data.thickness + "' " +
+						"data-warehouse='" + data.warehouse + "' " +
 						"data-length='" + data.length + "' " +
 						"data-supplier_heat_no='" + data.supplier_heat_no + "' " +
 						"data-updated_at='" + data.updated_at + "' " +
@@ -860,6 +778,8 @@ function InventoryTable(arr) {
 			{ data: 'current_stock' },
 			{ data: 'heat_no' },
 			{ data: 'lot_no' },
+
+			{ data: 'warehouse' },
 
 			{ data: 'item' },
 			{ data: 'alloy' },

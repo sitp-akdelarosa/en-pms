@@ -107,7 +107,8 @@ class AssignProductionLineController extends Controller
 			'module_id' => $this->_moduleID,
 			'module' => 'Assign Production Line',
 			'action' => 'Edited data user ID '.$user_id.', Production Line: '.implode(',', $req->product_line),
-			'user' => Auth::user()->id
+			'user' => Auth::user()->id,
+			'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
 		]);
 
 		
@@ -149,7 +150,8 @@ class AssignProductionLineController extends Controller
 			'module_id' => $this->_moduleID,
 			'module' => 'Assign Production Line',
 			'action' => 'Deleted data ID '.$ids,
-			'user' => Auth::user()->id
+			'user' => Auth::user()->id,
+			'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
 		]);
 
 		return response()->json($data);
