@@ -50,7 +50,7 @@ foreach ($user_accesses as $user_access){
                 <div class="box-body">
                     
                     <div class="table-responsive">
-                        <table class="table table-sm table-hover table-striped dt-responsive nowrap mb-10" id="tbl_Upload" style="width: 100%">
+                        <table class="table table-sm table-hover table-striped table-bordered nowrap mb-10" id="tbl_Upload" style="width: 100%">
                             <thead class="thead-dark">
                                 <tr>
                                     
@@ -59,6 +59,7 @@ foreach ($user_accesses as $user_access){
                                     <th>Description</th>
                                     <th>Quantity</th>
                                     <th>PO Number</th>
+                                    <th>Uploader</th>
                                     <th>Date Uploaded</th>
                                 </tr>
                             </thead>

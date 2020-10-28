@@ -280,17 +280,32 @@ class UploadOrdersController extends Controller
 
     public function DatatableUpload()
     {
-        $Datalist = PpcUploadOrder::orderBy('id','DESC')
-                                    ->where('create_user',Auth::user()->id)
-                                    ->select(
-                                        'id',
-                                        'sc_no',
-                                        'prod_code',
-                                        'description',
-                                        'quantity',
-                                        'po',
-                                        'date_upload'
-                                    )->get();
+        $Datalist = DB::select("SELECT uo.id,
+                                        uo.sc_no,
+                                        uo.prod_code,
+                                        uo.description,
+                                        uo.quantity,
+                                        uo.po,
+                                        u.nickname as uploader,
+                                        uo.date_upload 
+                                FROM enpms.ppc_upload_orders as uo
+                                inner join users as u
+                                on uo.uploader = u.id
+                                left join ppc_product_codes as ppc
+                                on ppc.product_code = uo.prod_code
+                                left join admin_assign_production_lines as apl
+                                on apl.product_line = ppc.product_type
+                                where apl.user_id = ".Auth::user()->id."
+                                group by uo.id,
+                                        uo.sc_no,
+                                        uo.prod_code,
+                                        uo.description,
+                                        uo.quantity,
+                                        uo.po,
+                                        u.nickname,
+                                        uo.date_upload
+                                order by uo.id desc");
+
         return response()->json($Datalist);
     }
 
@@ -465,15 +480,32 @@ class UploadOrdersController extends Controller
             $srch_po = " AND po ".$equal."'".$_value."'";
         }
 
-        $Datalist = DB::select("select sc_no,
-                                    prod_code,
-                                    description,
-                                    quantity,
-                                    sched_qty,
-                                    po,
-                                    date_upload
-                            from enpms.ppc_upload_orders
-                            where create_user='".Auth::user()->id."'".$srch_date_upload.$srch_sc_no.$srch_prod_code.$srch_description.$srch_po);
+        $Datalist = DB::select("SELECT uo.id,
+                                        uo.sc_no,
+                                        uo.prod_code,
+                                        uo.description,
+                                        uo.quantity,
+                                        uo.po,
+                                        u.nickname as uploader,
+                                        uo.date_upload 
+                                FROM enpms.ppc_upload_orders as uo
+                                inner join users as u
+                                on uo.uploader = u.id
+                                left join ppc_product_codes as ppc
+                                on ppc.product_code = uo.prod_code
+                                left join admin_assign_production_lines as apl
+                                on apl.product_line = ppc.product_type
+                                where apl.user_id = ".Auth::user()->id
+                                .$srch_date_upload.$srch_sc_no.$srch_prod_code.$srch_description.$srch_po.
+                                "group by uo.id,
+                                        uo.sc_no,
+                                        uo.prod_code,
+                                        uo.description,
+                                        uo.quantity,
+                                        uo.po,
+                                        u.nickname,
+                                        uo.date_upload
+                                order by uo.date_upload desc");
 
         return $Datalist;
     }

@@ -322,6 +322,7 @@ function scheduletable(arr) {
 }
 
 function getUploadedProducts() {
+	$('.loadingOverlay').show();
 	$.ajax({
 		url: datatableUpload,
 		type: 'GET',
@@ -337,13 +338,16 @@ function uploadedProductsTable(arr) {
 	$('#tbl_Upload').dataTable().fnClearTable();
     $('#tbl_Upload').dataTable().fnDestroy();
     $('#tbl_Upload').dataTable({
-    	data: arr,
+		data: arr,
+		scrollX: true,
+		order: [[6,'desc']],
     	columns: [
 	    	{ data: 'sc_no' },
 			{ data: 'prod_code' },
 			{ data: 'description' },
 			{ data: 'quantity' },
 			{ data: 'po' },
+			{ data: 'uploader' },
 			{ data: 'date_upload' },
     	],
     	createdRow: function (row, data, dataIndex) {
@@ -351,7 +355,10 @@ function uploadedProductsTable(arr) {
                 $(row).css('background-color', '#ff6266');
                 $(row).css('color', '#fff');
             }
-        }
+		},
+		initComplete: function() {
+			$('.loadingOverlay').hide();
+		}
     });
 }
 
