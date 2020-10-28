@@ -1,13 +1,13 @@
 var dataColumn = [
     {data: function(data) {
     	return '<input type="checkbox" class="table-checkbox check_item" value="'+data.id+'">';
-    }, name: 'pma.id', 'orderable': false, 'searchable': false},
+    }, name: 'id', 'orderable': false, 'searchable': false},
     {data: 'action', name: 'action', 'orderable': false, 'searchable': false},
-    {data: 'mat_type', name: 'pma.mat_type'},
-    {data: 'character_num', name: 'pma.character_num'},
-    {data: 'character_code', name: 'pma.character_code'},
-    {data: 'description', name: 'pma.description'},
-    {data: 'created_at', name: 'pma.created_at'},
+    {data: 'mat_type', name: 'mat_type'},
+    {data: 'character_num', name: 'character_num'},
+    {data: 'character_code', name: 'character_code'},
+    {data: 'description', name: 'description'},
+    {data: 'created_at', name: 'created_at'},
 ];
 
 $( function() {
@@ -155,7 +155,7 @@ function get_dropdown_material_type_assembly() {
         data: {_token: token},
     }).done(function(data, textStatus, xhr) {
         $.each(data, function(i, x) {
-            opt = "<option value='"+x.product_line+"'>"+x.product_line+"</option>";
+			opt = "<option value='" + x.material_type + "'>" + x.material_type+"</option>";
             $('#mat_type').append(opt);
         });
     }).fail(function(xhr, textStatus, errorThrown) {

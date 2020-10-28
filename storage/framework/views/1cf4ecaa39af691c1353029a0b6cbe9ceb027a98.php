@@ -28,7 +28,7 @@ if ($exist == 0) {
         <div class="tab-content">
             <div id="cutting_sched_entry" class="tab-pane active">
                 <div class="row">
-                    <div class="col-md-5">
+                    <div class="col-md-6">
 
                         <div class="form-group row">
                             <div class="col-md-12">
@@ -85,11 +85,12 @@ if ($exist == 0) {
 
 
 
-                    <div class="col-md-7">
+                    <div class="col-md-6">
 
-                        <form id="frm_cut_sched">
-                            <div class="form-group row">
-                                <div class="col-md-12">
+                        <form id="frm_cut_sched">                            
+
+                            <div class="form-group row mb-10">
+                                <div class="col-md-6">
                                     <div class="input-group input-group-sm mb-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">Withdrawal Slip #:</span>
@@ -98,11 +99,7 @@ if ($exist == 0) {
                                         <div id="withdrawal_slip_feedback"></div>
                                     </div>
                                 </div>
-                            </div>
 
-                            
-
-                            <div class="form-group row mb-10">
                                 <div class="col-md-6">
                                     <div class="input-group input-group-sm mb-3">
                                         <div class="input-group-prepend">
@@ -111,17 +108,6 @@ if ($exist == 0) {
                                         <input type="date" class="form-control validate" name="date_issued"
                                             id="date_issued">
                                         <div id="date_issued_feedback"></div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-sm mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">Machine No.:</span>
-                                        </div>
-                                        <input type="text" class="form-control validate clear" name="machine_no"
-                                            id="machine_no">
-                                        <div id="machine_no_feedback"></div>
                                     </div>
                                 </div>
                             </div>

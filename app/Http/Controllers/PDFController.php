@@ -95,7 +95,19 @@ class PDFController extends Controller
 			'type' => $req->type,
 		];
 		// return dd($data);
-		$pdf = PDF::loadView('pdf.cutting_schedule', $data)->setPaper('a4', 'landscape');
+		$options = [
+			'margin-top'    => 5,
+			'margin-right'  => 5,
+			'margin-bottom' => 10,
+			'margin-left'   => 5,
+		];
+
+		$pdf = PDF::loadView('pdf.cutting_schedule', $data)->setPaper('a4', 'portrait');
+
+		foreach ($options as $margin => $value) {
+			$pdf->setOption($margin, $value);
+		}
+
 		return $pdf->inline();
 	}
 
@@ -166,8 +178,19 @@ class PDFController extends Controller
 			'type' => '',
 		];
 
-		// return dd($data);
-		$pdf = PDF::loadView('pdf.cutting_schedule', $data)->setPaper('a4', 'landscape');
+		$options = [
+			'margin-top'    => 5,
+			'margin-right'  => 5,
+			'margin-bottom' => 10,
+			'margin-left'   => 5,
+		];
+
+		$pdf = PDF::loadView('pdf.cutting_schedule', $data)->setPaper('a4', 'portrait');
+
+		foreach ($options as $margin => $value) {
+			$pdf->setOption($margin, $value);
+		}
+
 		return $pdf->inline();
 
 	}

@@ -421,6 +421,7 @@ function init() {
 }
 
 function getMaterialsForCuttingSched(trans_no) {
+  $('.loadingOverlay').show();
   $.ajax({
     url: materialCuttingSchedURL,
     type: 'GET',
@@ -514,6 +515,8 @@ function getMaterialsForCuttingSched(trans_no) {
     }
   }).fail(function (xhr, textStatus, errorThrown) {
     msg(errorThrown, textStatus);
+  }).always(function () {
+    $('.loadingOverlay').hide();
   });
 }
 
@@ -558,7 +561,7 @@ function makeCutDetailsTable(arr) {
           count++;
         } else {
           needed_qty = "<td></td>";
-          tbl_cut_details_body = "<tr>" + "<td rowspan='2'>" + x.no + "<input type='hidden' name='no[]' value='" + x.no + "'>" + "<input type='hidden' name='id[]' value='" + x.id + "'>" + "</td>" + "<td rowspan='2'>" + x.p_alloy + "<input type='hidden' name='p_alloy[]' value='" + x.p_alloy + "'>" + "</td>" + "<td rowspan='2'>" + x.p_size + "<input type='hidden' name='p_size[]' value='" + x.p_size + "'>" + "</td>" + "<td rowspan='2'>" + x.p_item + "<input type='hidden' name='p_item[]' value='" + x.p_item + "'>" + "</td>" + "<td rowspan='2'>" + x.p_class + "<input type='hidden' name='p_class[]' value='" + x.p_class + "'>" + "</td>" + "<td rowspan='2'>" + x.sc_no + "<input type='hidden' name='sc_no[]' value='" + x.sc_no + "'>" + "</td>" + "</td>" + "<td rowspan='2'>" + x.jo_qty + "<input type='hidden' name='jo_qty[]' value='" + x.jo_qty + "'>" + "</td>" + "<td rowspan='2'>" + x.needed_qty + "<input type='hidden' name='needed_qty[]' value='" + x.needed_qty + "'>" + "</td>" + "<td rowspan='2'></td>" + "<td class='text-center'>" + schedOrSize + cut + "<input type='hidden' name='cut_weight[]' value='" + x.cut_weight + "'>" + "<input type='hidden' name='cut_length[]' value='" + x.cut_length + "'>" + "<input type='hidden' name='cut_width[]' value='" + x.cut_width + "'>" + "<input type='hidden' name='schedule[]' value='" + x.schedule + "'>" + "<input type='hidden' name='size[]' value='" + x.size + "'>" + "</td>" + "<td>" + "<button class='btn btn-sm btn_remove bg-red' data-id='" + x.id + "' data-issued_qty='" + x.needed_qty + "' data-count='" + count + "'>" + "<i class='fa fa-times '></i>" + "</button>" + // "<a href='javascript:;' style='color:#940000' class='fa fa-times btn_remove' ></a>" +
+          tbl_cut_details_body = "<tr>" + "<td rowspan='2'>" + x.no + "<input type='hidden' name='no[]' value='" + x.no + "'>" + "<input type='hidden' name='id[]' value='" + x.id + "'>" + "</td>" + "<td rowspan='2'>" + x.p_alloy + "<input type='hidden' name='p_alloy[]' value='" + x.p_alloy + "'>" + "</td>" + "<td rowspan='2'>" + x.p_size + "<input type='hidden' name='p_size[]' value='" + x.p_size + "'>" + "</td>" + "<td rowspan='2'>" + x.p_item + "<input type='hidden' name='p_item[]' value='" + x.p_item + "'>" + "</td>" + "<td rowspan='2'>" + x.p_class + "<input type='hidden' name='p_class[]' value='" + x.p_class + "'>" + "</td>" + "<td rowspan='2'>" + x.sc_no + "<input type='hidden' name='sc_no[]' value='" + x.sc_no + "'>" + "</td>" + "</td>" + "<td rowspan='2'>" + x.jo_qty + "<input type='hidden' name='jo_qty[]' value='" + x.jo_qty + "'>" + "</td>" + "<td rowspan='2'>" + x.needed_qty + "<input type='hidden' name='needed_qty[]' value='" + x.needed_qty + "'>" + "</td>" + "<td rowspan='2'></td>" + "<td class='text-center'>" + schedOrSize + cut + "<input type='hidden' name='cut_weight[]' value='" + x.cut_weight + "'>" + "<input type='hidden' name='cut_length[]' value='" + x.cut_length + "'>" + "<input type='hidden' name='cut_width[]' value='" + x.cut_width + "'>" + "<input type='hidden' name='schedule[]' value='" + x.schedule + "'>" + "<input type='hidden' name='size[]' value='" + x.size + "'>" + "</td>" + "<td  rowspan='2'>" + "<button class='btn btn-sm btn_remove bg-red' data-id='" + x.id + "' data-issued_qty='" + x.needed_qty + "' data-count='" + count + "'>" + "<i class='fa fa-times '></i>" + "</button>" + // "<a href='javascript:;' style='color:#940000' class='fa fa-times btn_remove' ></a>" +
           "</td>" + "</tr>" + "<tr>" + "<td><span class='pull-left'>-------</span><span class='pull-right'>" + x.lot_no + "</span></td>" + "<input type='hidden' name='mat_heat_no[]' value='" + x.mat_heat_no + "'>" + "<input type='hidden' name='supplier_heat_no[]' value='" + x.supplier_heat_no + "'>" + "<input type='hidden' name='lot_no[]' value='" + x.lot_no + "'>" + "<input type='hidden' name='material_used[]' value='" + x.material_used + "'>" + "</tr>";
           count++;
         }

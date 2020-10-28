@@ -47,8 +47,8 @@ for ($x = 1; $x <= $page; $x++) {
                 <tr>
                     <td width="5%"><strong>Date:</strong></td>
                     <td width="15%" style="border-bottom: 1px solid"><strong>{{ $_date_issued }}</strong></td>
-                    <td width="50%"></td>
-                    <td width="10%"><strong>Withdrawal Slip:</strong></td>
+                    <td width="40%"></td>
+                    <td width="15%"><strong>Withdrawal Slip:</strong></td>
                     <td width="15%" style="border-bottom: 1px solid"><strong>{{$withdrawal_slip}}</strong></td>
                 </tr>
             </table>
@@ -59,23 +59,21 @@ for ($x = 1; $x <= $page; $x++) {
 
     <div class="row">
         <div class="col-xs-12" style="width:100%;">
-            <table class="table table-bordered table-sm" style="font-size:14px;width:100%;">
+            <table class="table table-bordered table-sm" style="font-size:13px;width:100%;">
                 <thead>
                     <tr>
-                        <th class="th" width="12.88%" height="50px">JO NO.</th>
+                        <th class="th" width="15.88%" height="50px">JO NO.</th>
                         <th class="th" width="5.88%">ALLOY</th>
                         <th class="th" width="5.88%">SIZE</th>
                         <th class="th" width="5.88%">ITEM</th>
                         <th class="th" width="5.88%">CLASS</th>
                         <th class="th" width="5.88%">LOT #</th>
-                        <th class="th" width="0.88%"></th>
                         <th class="th" width="5.88%">S/C #</th>
                         <th class="th" width="5.88%">J.O. QTY.</th>
                         <th class="th" width="3.88%">CUT WT.</th>
                         <th class="th" width="3.88%">CUT LENGTH</th>
                         <th class="th" width="3.88%">CUT WIDTH</th>
-                        <th class="th" width="0.88%"></th>
-                        <th class="th" width="13.88%">MATERIAL USED</th>
+                        <th class="th" width="10.88%">MATERIAL USED</th>
                         <th class="th" width="5.88%">RM HEAT #</th>
                         <th class="th" width="1.88%">SUPPLIER HEAT #</th>
                         <th class="th" width="5.88%">QTY. NEEDED</th>
@@ -144,17 +142,22 @@ for ($x = 1; $x <= $page; $x++) {
                         <td>{{ $rm->p_item }}</td>
                         <td>{{ $rm->p_class }}</td>
                         <td>{{ $rm->lot_no }}</td>
-                        <td></td>
                         <td>{{ $rm->sc_no }}</td>
                         <td>{{ $rm->jo_qty }}</td>
                         <td>{{ $rm->cut_weight }}</td>
                         <td>{{ $rm->cut_length }}</td>
                         <td>{{ $rm->cut_width }}</td>
-                        <td></td>
                         <td>{{ $rm->material_used }}</td>
                         <td>{{ $rm->material_heat_no }}</td>
                         <td>{{ $rm->supplier_heat_no }}</td>
-                        <td>{{ $rm->needed_qty }}</td>
+                        <td>
+                            @if ($rm->qty_needed_inbox !== '' && $rm->qty_needed_inbox !== 0 && !isset($rm->qty_needed_inbox))
+                                {{ $rm->needed_qty }}
+                            @else
+                                {{ $rm->needed_qty. '('.$rm->plate_qty.')' }}
+                            @endif
+                            
+                        </td>
                     </tr>
                     <?php
 						$cnt++;
@@ -168,8 +171,6 @@ for ($x = 1; $x <= $page; $x++) {
                     @while ($cnt <= 5) 
                         <tr>
                             <td height="50px"></td>
-                            <td></td>
-                            <td></td>
                             <td></td>
                             <td></td>
                             <td></td>

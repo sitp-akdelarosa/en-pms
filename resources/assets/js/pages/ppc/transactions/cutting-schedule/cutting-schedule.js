@@ -331,6 +331,7 @@ function init() {
 
 function getMaterialsForCuttingSched(trans_no) {
 
+	$('.loadingOverlay').show();
 	$.ajax({
 		url: materialCuttingSchedURL,
 		type: 'GET',
@@ -501,6 +502,8 @@ function getMaterialsForCuttingSched(trans_no) {
 		}
 	}).fail(function (xhr, textStatus, errorThrown) {
 		msg(errorThrown, textStatus);
+	}).always( function() {
+		$('.loadingOverlay').hide();
 	});
 }
 
@@ -631,7 +634,7 @@ function makeCutDetailsTable(arr) {
 						"<input type='hidden' name='schedule[]' value='" + x.schedule + "'>" +
 						"<input type='hidden' name='size[]' value='" + x.size + "'>" +
 						"</td>" +
-						"<td>" +
+						"<td  rowspan='2'>" +
 						"<button class='btn btn-sm btn_remove bg-red' data-id='" + x.id + "' data-issued_qty='" + x.needed_qty + "' data-count='" + count + "'>"+
 							"<i class='fa fa-times '></i>"+
 						"</button>" +

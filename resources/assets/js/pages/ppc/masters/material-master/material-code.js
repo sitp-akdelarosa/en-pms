@@ -549,7 +549,7 @@ function get_dropdown_material_type() {
         data: {_token: token},
     }).done(function(data, textStatus, xhr) {
         $.each(data, function(i, x) {
-            opt = "<option value='"+x.product_line+"'>"+x.product_line+"</option>";
+            opt = "<option value='"+x.material_type+"'>"+x.material_type+"</option>";
             $('#material-type').append(opt);
         });
     }).fail(function(xhr, textStatus, errorThrown) {

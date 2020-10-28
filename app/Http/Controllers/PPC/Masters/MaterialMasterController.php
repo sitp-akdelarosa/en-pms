@@ -40,18 +40,16 @@ class MaterialMasterController extends Controller
 
 	public function material_assembly_list()
 	{   
-		$assembly = DB::table('ppc_material_assemblies as pma')
-						->leftjoin('admin_assign_material_types as apl', 'apl.material_type', '=', 'pma.mat_type')
+		$assembly = DB::table('ppc_material_assemblies')
 						->select([
-							'pma.id as id',
-							'pma.mat_type as mat_type',
-							'pma.character_num as character_num',
-							'pma.character_code as character_code',
-							'pma.description as description',
-							'pma.created_at as created_at'
+							'id as id',
+							'mat_type as mat_type',
+							'character_num as character_num',
+							'character_code as character_code',
+							'description as description',
+							'created_at as created_at'
 						])
-						->where('apl.user_id' ,Auth::user()->id)
-						->orderBy('pma.id','desc');
+						->orderBy('id','desc');
 
 		return DataTables::of($assembly)
 						->editColumn('id', function($data) {
@@ -254,7 +252,7 @@ class MaterialMasterController extends Controller
 	public function mat_code_list()
 	{
 		$mat = DB::table('ppc_material_codes as pmc')
-						->leftjoin('admin_assign_material_types as apl', 'apl.material_type', '=', 'pmc.material_type')
+						// ->leftjoin('admin_assign_material_types as apl', 'apl.material_type', '=', 'pmc.material_type')
 						->leftjoin('users as u','u.id','pmc.create_user')
 						->select([
 							'pmc.id as id',
@@ -269,7 +267,7 @@ class MaterialMasterController extends Controller
 							'pmc.std_weight as std_weight',
 							'pmc.created_at as created_at'
 						])
-						->where('apl.user_id' ,Auth::user()->id)
+						// ->where('apl.user_id' ,Auth::user()->id)
 						->orderBy('pmc.id','desc');
 
 		return DataTables::of($mat)
@@ -460,13 +458,13 @@ class MaterialMasterController extends Controller
 	public function get_dropdown_material_type()
 	{
 		$process = DB::table('ppc_dropdown_items as pdt')
-					->leftjoin('admin_assign_material_types as apl', 'apl.material_type', '=', 'pdt.dropdown_item')
+					// ->leftjoin('admin_assign_material_types as apl', 'apl.material_type', '=', 'pdt.dropdown_item')
 					->select([
-						'apl.material_type as material_type',
+						'pdt.dropdown_item as material_type',
 					])
 					->where('pdt.dropdown_name_id', 8) // material type
-					->where('apl.user_id' , Auth::user()->id)
-					->groupBy('apl.material_type')
+					// ->where('apl.user_id' , Auth::user()->id)
+					->groupBy('pdt.dropdown_item')
 					->get();
 		return response()->json($process);
 	}

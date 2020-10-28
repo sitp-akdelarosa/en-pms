@@ -84,7 +84,6 @@ class CuttingScheduleController extends Controller
 	public function save(Request $req)
 	{
 		$this->validate($req, [
-			'machine_no' => 'required|string|max:255',
 			'prepared_by' => 'required|string|max:255',
 			'leader' => 'required|string|max:255',
 			'iso_control_no' => 'required|string|max:255',
@@ -95,7 +94,7 @@ class CuttingScheduleController extends Controller
 		$cut_sched = new PpcCuttingSchedule;
 		$cut_sched->withdrawal_slip_no = $req->withdrawal_slip;
 		$cut_sched->date_issued = $req->date_issued;
-		$cut_sched->machine_no = $req->machine_no;
+		$cut_sched->machine_no = 'N/A';
 		$cut_sched->prepared_by = $req->prepared_by;
 		$cut_sched->leader = $this->LeaderName($req->leader);
 		$cut_sched->leader_id = $req->leader;

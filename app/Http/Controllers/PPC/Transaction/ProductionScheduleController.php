@@ -592,8 +592,8 @@ class ProductionScheduleController extends Controller
                                         pui.size as size,
                                         pui.`schedule` as `schedule`
                                     FROM ppc_update_inventories as pui
-                                    left join admin_assign_production_lines as apl 
-                                    on apl.product_line = pui.materials_type
+                                    left join admin_assign_material_types as apl 
+                                    on apl.material_type = pui.materials_type
 
                                     inner join ppc_raw_material_withdrawal_details as rmw 
                                     on pui.heat_no = rmw.material_heat_no
