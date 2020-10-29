@@ -95,58 +95,61 @@ class ProductionScheduleController extends Controller
 
             }
 
-            $Datalist = DB::select("SELECT ps.id as id,
-                                            ps.sc_no as sc_no,
-                                            ps.prod_code as prod_code,
-                                            ifnull(pc.code_description,ps.description) as description,
-                                            ps.sched_qty as sched_qty,
-                                            ps.quantity as quantity,
-                                            ps.po as po,
-                                            ps.status as status,
-                                            DATE_FORMAT(ps.date_upload, '%Y-%m-%d') as date_upload
-                                    from ppc_production_summaries as ps
-                                    inner join ppc_product_codes as pc on ps.prod_code = pc.product_code
-                                    inner join admin_assign_production_lines as pl on pl.product_line = pc.product_type
-                                    where pl.user_id = ".Auth::user()->id."
-                                     and ps.sched_qty < ps.quantity
-                                    and ps.id between ".$FROM." and ".$TO."
-                                    group by ps.id,
-                                            ps.sc_no,
-                                            ps.prod_code,
-                                            pc.code_description,
-                                            ps.description,
-                                            ps.sched_qty,
-                                            ps.quantity,
-                                            ps.po,
-                                            ps.status,
-                                            DATE_FORMAT(ps.date_upload, '%Y-%m-%d')");
+            $Datalist = DB::select(DB::raw("CALL GET_production_summaries(".Auth::user()->id.",".$FROM.",".$TO.")"));
+
+            // $Datalist = DB::select("SELECT ps.id as id,
+            //                                 ps.sc_no as sc_no,
+            //                                 ps.prod_code as prod_code,
+            //                                 ifnull(pc.code_description,ps.description) as description,
+            //                                 ps.sched_qty as sched_qty,
+            //                                 ps.quantity as quantity,
+            //                                 ps.po as po,
+            //                                 ps.status as status,
+            //                                 DATE_FORMAT(ps.date_upload, '%Y-%m-%d') as date_upload
+            //                         from ppc_production_summaries as ps
+            //                         inner join ppc_product_codes as pc on ps.prod_code = pc.product_code
+            //                         inner join admin_assign_production_lines as pl on pl.product_line = pc.product_type
+            //                         where pl.user_id = ".Auth::user()->id."
+            //                          and ps.sched_qty < ps.quantity
+            //                         and ps.id between ".$FROM." and ".$TO."
+            //                         group by ps.id,
+            //                                 ps.sc_no,
+            //                                 ps.prod_code,
+            //                                 pc.code_description,
+            //                                 ps.description,
+            //                                 ps.sched_qty,
+            //                                 ps.quantity,
+            //                                 ps.po,
+            //                                 ps.status,
+            //                                 DATE_FORMAT(ps.date_upload, '%Y-%m-%d')");
 
             return response()->json($Datalist);
         } else {
-            $Datalist = DB::select("SELECT ps.id as id,
-                                            ps.sc_no as sc_no,
-                                            ps.prod_code as prod_code,
-                                            ifnull(pc.code_description,ps.description) as description,
-                                            ps.sched_qty as sched_qty,
-                                            ps.quantity as quantity,
-                                            ps.po as po,
-                                            ps.status as status,
-                                            DATE_FORMAT(ps.date_upload, '%Y-%m-%d') as date_upload
-                                    from ppc_production_summaries as ps
-                                    inner join ppc_product_codes as pc on ps.prod_code = pc.product_code
-                                    inner join admin_assign_production_lines as pl on pl.product_line = pc.product_type
-                                    where pl.user_id = ".Auth::user()->id."
-                                     and ps.sched_qty < ps.quantity
-                                    group by ps.id,
-                                            ps.sc_no,
-                                            ps.prod_code,
-                                            pc.code_description,
-                                            ps.description,
-                                            ps.sched_qty,
-                                            ps.quantity,
-                                            ps.po,
-                                            ps.status,
-                                            DATE_FORMAT(ps.date_upload, '%Y-%m-%d')"); //and ps.sched_qty < ps.quantity
+            $Datalist = DB::select(DB::raw("CALL GET_production_summaries(".Auth::user()->id.",NULL,NULL)"));
+            // $Datalist = DB::select("SELECT ps.id as id,
+            //                                 ps.sc_no as sc_no,
+            //                                 ps.prod_code as prod_code,
+            //                                 ifnull(pc.code_description,ps.description) as description,
+            //                                 ps.sched_qty as sched_qty,
+            //                                 ps.quantity as quantity,
+            //                                 ps.po as po,
+            //                                 ps.status as status,
+            //                                 DATE_FORMAT(ps.date_upload, '%Y-%m-%d') as date_upload
+            //                         from ppc_production_summaries as ps
+            //                         inner join ppc_product_codes as pc on ps.prod_code = pc.product_code
+            //                         inner join admin_assign_production_lines as pl on pl.product_line = pc.product_type
+            //                         where pl.user_id = ".Auth::user()->id."
+            //                          and ps.sched_qty < ps.quantity
+            //                         group by ps.id,
+            //                                 ps.sc_no,
+            //                                 ps.prod_code,
+            //                                 pc.code_description,
+            //                                 ps.description,
+            //                                 ps.sched_qty,
+            //                                 ps.quantity,
+            //                                 ps.po,
+            //                                 ps.status,
+            //                                 DATE_FORMAT(ps.date_upload, '%Y-%m-%d')"); //and ps.sched_qty < ps.quantity
             return response()->json($Datalist);
         }
     }

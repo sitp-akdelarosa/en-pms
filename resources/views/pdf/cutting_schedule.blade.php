@@ -19,7 +19,6 @@
 }
 .th {
     text-align: center; 
-    vertical-align: middle;
 }
 </style>
 @endpush
@@ -36,14 +35,14 @@ for ($x = 1; $x <= $page; $x++) {
 <div class="container text-center">
     <div class="row center">
         <div class="col-xs-3" style="font-size:10px;">
-            <h3 class="center" style="font-weight:900">CUTTING SCHEDULE</h3>
+            <h4 class="center" style="font-weight:900">CUTTING SCHEDULE</h4>
         </div>
     </div>
     <br>
 
     <div class="row" style=" padding-bottom:5px">
         <div class="col-xs-12" style="width:100%;">
-            <table class="table table-sm" style="font-size:14px;width:100%;">
+            <table class="table table-sm" style="font-size:12px;width:100%;">
                 <tr>
                     <td width="5%"><strong>Date:</strong></td>
                     <td width="15%" style="border-bottom: 1px solid"><strong>{{ $_date_issued }}</strong></td>
@@ -59,10 +58,10 @@ for ($x = 1; $x <= $page; $x++) {
 
     <div class="row">
         <div class="col-xs-12" style="width:100%;">
-            <table class="table table-bordered table-sm" style="font-size:13px;width:100%;">
+            <table class="table table-bordered table-sm" style="font-size:12px;width:100%;">
                 <thead>
                     <tr>
-                        <th class="th" width="15.88%" height="50px">JO NO.</th>
+                        <th class="th" width="15.88%">JO NO.</th>
                         <th class="th" width="5.88%">ALLOY</th>
                         <th class="th" width="5.88%">SIZE</th>
                         <th class="th" width="5.88%">ITEM</th>
@@ -219,9 +218,9 @@ for ($x = 1; $x <= $page; $x++) {
     </div>
 </div>
 @if($x%2 == 0)
-<br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+<br />
 @else
-<br /><br /><br /><br /><br />
+<br />
 @endif
 <?php } ?>
 @endsection
