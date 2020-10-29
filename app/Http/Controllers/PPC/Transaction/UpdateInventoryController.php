@@ -818,6 +818,7 @@ class UpdateInventoryController extends Controller
         if (isset($req->item_id)) {
             
             $this->validate($req, [
+                'item_class' => 'required',
                 'receiving_no' => 'required',
                 'materials_type' => 'required',
                 'item_code' => 'required',
@@ -900,6 +901,7 @@ class UpdateInventoryController extends Controller
                 ]);
         }else {
             $this->validate($req, [
+                'item_class' => 'required',
                 'receiving_no' => 'required',
                 'materials_type' => 'required',
                 'warehouse' => 'required',
@@ -995,7 +997,7 @@ class UpdateInventoryController extends Controller
         if (isset($req->item_id)) {
             
             $this->validate($req, [
-                // 'jo_no' => 'required',
+                'item_class' => 'required',
                 'product_line' => 'required',
                 'warehouse' => 'required',
                 'item_code' => 'required',
@@ -1076,7 +1078,7 @@ class UpdateInventoryController extends Controller
                 ]);
         }else {
             $this->validate($req, [
-                'jo_no' => 'required',
+                'item_class' => 'required',
                 'product_line' => 'required',
                 'warehouse' => 'required',
                 'item_code' => 'required',
@@ -1241,7 +1243,7 @@ class UpdateInventoryController extends Controller
                             order by pmc.id desc");
         } else {
             $code_type = " AND LEFT(ppc.product_code,1) = 'Z'";
-            if ($req->item_class == 'crude') {
+            if ($req->item_class == 'CRUDE') {
                 $code_type = " AND LEFT(ppc.product_code,1) = 'Y'";
             }
             $code = DB::select("select ppc.product_code as id,

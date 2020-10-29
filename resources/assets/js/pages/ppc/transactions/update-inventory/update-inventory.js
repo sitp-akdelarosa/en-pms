@@ -102,9 +102,10 @@ $(function () {
 
 		$('#item_class').val('RAW MATERIAL');
 
-		$('#modal_material_inventory').modal('show');
 		clear();
-		getItemCode('');
+		$('#modal_material_inventory').modal('show');
+		
+		// getItemCode('');
 	});
 
 	$('#btn_zero').on('click', function () {
@@ -143,7 +144,7 @@ $(function () {
 		} else {
 			$('#jo_no').val($(this).attr('data-receive_jo_no'));
 			$('#product_line').val($(this).attr('data-item_type_line')).trigger('change.select2');
-			getItemCode($(this).attr('data-item_code'), '', 'product');
+			getItemCode($(this).attr('data-item_code'), '', $(this).attr('data-item_class'));
 			$('#lot_no').val($(this).attr('data-lot_no'));
 			$('#finish_weight').val($(this).attr('data-finish_weight'));
 		}
@@ -363,6 +364,10 @@ $(function () {
 
 	$('#btn_search_filter').on('click', function() {
 		$('.srch-clear').val('');
+		$('#srch_materials_type').val(null).trigger('change.select2');
+		$('#srch_product_line').val(null).trigger('change.select2');
+		$('#srch_item_code').val(null).trigger('change.select2');
+		$('#srch_warehouse').val(null).trigger('change.select2');
 		getMaterials('search');
 		getProdLine('search');
 		getWarehouse('search');
@@ -707,6 +712,10 @@ function getInventory(with_zero) {
 
 function clear() {
 	$('.clear').val('');
+	$('#materials_type').val(null).trigger('change.select2');
+	$('#product_line').val(null).trigger('change.select2');
+	$('#item_code').val(null).trigger('change.select2');
+	$('#warehouse').val(null).trigger('change.select2');
 }
 
 function InventoryTable(arr) {
