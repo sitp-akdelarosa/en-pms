@@ -312,13 +312,12 @@ class UpdateInventoryController extends Controller
                     $length = (isset($field['length']))? $field['length'] : 'N/A';
 
                     $received_items = DB::table('ppc_update_inventories')
-                                        ->Where('item_code',$field['itemcode'])
-                                        ->where('heat_no',$field['heatnumber'])
-                                        ->where('lot_no',$field['lotnumber'])
+                                        ->where('item_code',(isset($field['itemcode']))? strtoupper($field['itemcode']): 'N/A')
+                                        ->where('heat_no',(isset($field['heatnumber']))? strtoupper($field['heatnumber']): 'N/A')
+                                        ->where('lot_no',(isset($field['lotnumber']))? strtoupper($field['lotnumber']): 'N/A')
                                         ->where('qty_weight', $field['qty_weight'])
                                         ->where('qty_pcs', $field['qty_pcs'])
-                                        ->where('jo_no', $field['jo_no'])
-                                        ->where('create_user',Auth::user()->id)
+                                        ->where('jo_no', (isset($field['jo_no']))? strtoupper($field['jo_no']): '')
                                         ->first();
 
                     if ($this->_helper->check_if_exists($received_items) > 0) {
@@ -694,36 +693,36 @@ class UpdateInventoryController extends Controller
 
                     $iclass = (mb_substr($itemcode, 0, 1, "UTF-8") == 'Y')? 'CRUDE': 'FINISHED';
                 
-                    $received_items = DB::table('ppc_update_inventories')
-                                        ->where('item_class',$iclass)
-                                        ->where('item_code',(isset($field['itemcode']))? strtoupper($field['itemcode']): 'N/A')
-                                        ->where('heat_no',(isset($field['heatnumber']))? strtoupper($field['heatnumber']): 'N/A')
-                                        ->where('lot_no',(isset($field['lotnumber']))? strtoupper($field['lotnumber']): 'N/A')
-                                        ->where('qty_weight', $field['qty_weight'])
-                                        ->where('qty_pcs', $field['qty_pcs'])
-                                        ->where('jo_no', (isset($field['jo_no']))? strtoupper($field['jo_no']): '')
-                                        ->where('create_user',Auth::user()->id)
-                                        ->first();
+                    // $received_items = DB::table('ppc_update_inventories')
+                    //                     ->where('item_class',$iclass)
+                    //                     ->where('item_code',(isset($field['itemcode']))? strtoupper($field['itemcode']): 'N/A')
+                    //                     ->where('heat_no',(isset($field['heatnumber']))? strtoupper($field['heatnumber']): 'N/A')
+                    //                     ->where('lot_no',(isset($field['lotnumber']))? strtoupper($field['lotnumber']): 'N/A')
+                    //                     ->where('qty_weight', $field['qty_weight'])
+                    //                     ->where('qty_pcs', $field['qty_pcs'])
+                    //                     ->where('jo_no', (isset($field['jo_no']))? strtoupper($field['jo_no']): '')
+                    //                     ->where('create_user',Auth::user()->id)
+                    //                     ->first();
 
-                    if ($this->_helper->check_if_exists($received_items) > 0) {
-                        PpcUpdateInventory::where('item_class',$iclass)
-                                        ->where('item_code',(isset($field['itemcode']))? strtoupper($field['itemcode']): 'N/A')
-                                        ->where('heat_no',(isset($field['heatnumber']))? strtoupper($field['heatnumber']): 'N/A')
-                                        ->where('lot_no',(isset($field['lotnumber']))? strtoupper($field['lotnumber']): 'N/A')
-                                        ->where('qty_weight', $field['qty_weight'])
-                                        ->where('qty_pcs', $field['qty_pcs'])
-                                        ->where('jo_no', (isset($field['jo_no']))? strtoupper($field['jo_no']): '')
-                                        ->where('create_user',Auth::user()->id)->delete();
+                    // if ($this->_helper->check_if_exists($received_items) > 0) {
+                    //     PpcUpdateInventory::where('item_class',$iclass)
+                    //                     ->where('item_code',(isset($field['itemcode']))? strtoupper($field['itemcode']): 'N/A')
+                    //                     ->where('heat_no',(isset($field['heatnumber']))? strtoupper($field['heatnumber']): 'N/A')
+                    //                     ->where('lot_no',(isset($field['lotnumber']))? strtoupper($field['lotnumber']): 'N/A')
+                    //                     ->where('qty_weight', $field['qty_weight'])
+                    //                     ->where('qty_pcs', $field['qty_pcs'])
+                    //                     ->where('jo_no', (isset($field['jo_no']))? strtoupper($field['jo_no']): '')
+                    //                     ->where('create_user',Auth::user()->id)->delete();
 
-                        Inventory::where('item_class',$iclass)
-                                        ->where('item_code',(isset($field['itemcode']))? strtoupper($field['itemcode']): 'N/A')
-                                        ->where('heat_no',(isset($field['heatnumber']))? strtoupper($field['heatnumber']): 'N/A')
-                                        ->where('lot_no',(isset($field['lotnumber']))? strtoupper($field['lotnumber']): 'N/A')
-                                        ->where('qty_weight', $field['qty_weight'])
-                                        ->where('qty_pcs', $field['qty_pcs'])
-                                        ->where('jo_no', (isset($field['jo_no']))? strtoupper($field['jo_no']): '')
-                                        ->where('create_user',Auth::user()->id)->delete();
-                    }
+                    //     Inventory::where('item_class',$iclass)
+                    //                     ->where('item_code',(isset($field['itemcode']))? strtoupper($field['itemcode']): 'N/A')
+                    //                     ->where('heat_no',(isset($field['heatnumber']))? strtoupper($field['heatnumber']): 'N/A')
+                    //                     ->where('lot_no',(isset($field['lotnumber']))? strtoupper($field['lotnumber']): 'N/A')
+                    //                     ->where('qty_weight', $field['qty_weight'])
+                    //                     ->where('qty_pcs', $field['qty_pcs'])
+                    //                     ->where('jo_no', (isset($field['jo_no']))? strtoupper($field['jo_no']): '')
+                    //                     ->where('create_user',Auth::user()->id)->delete();
+                    // }
 
                     $received_id = PpcUpdateInventory::insertGetId([
                                 'item_class' => $iclass,
