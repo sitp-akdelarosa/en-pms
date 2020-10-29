@@ -577,7 +577,8 @@ function joDetailsList(status, from, to) {
     jo_details = data;
     makeJODetailsTable(jo_details);
   }).fail(function (xhr, textStatus, errorThrown) {
-    msg(errorThrown, textStatus);
+    $('.loadingOverlay').hide();
+    ErrorMsg(xhr);
   });
 }
 

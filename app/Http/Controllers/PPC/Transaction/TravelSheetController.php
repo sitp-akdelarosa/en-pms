@@ -316,6 +316,7 @@ class TravelSheetController extends Controller
                             DB::raw("IFNULL(ts.issued_qty,0) as issued_qty"),
                             DB::raw("jt.material_used as material_used"),
                             DB::raw("jt.material_heat_no as material_heat_no"),
+                            DB::raw("DATE_FORMAT(jt.created_at,'%Y-%m-%d %H:%i:%s') AS created_at"),
                             DB::raw("IFNULL(ts.status,0) as status")
                         )->get();
 

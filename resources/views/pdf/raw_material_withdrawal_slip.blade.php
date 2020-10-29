@@ -54,11 +54,11 @@
 									<td width="8.3%">{{ $rm->heat_no }}</td>
 									<td width="8.3%">{{ $rm->suplier_heat_no }}</td>
 									<th width="0.01%"></th>
-									<td width="8.3%" class="left-double-border"></td>
+									<td width="8.3%" class="left-double-border">{{ ($rm->lot_no == null)? '' : $rm->lot_no }}</td>
 									
-									<td width="8.3%"></td>
-									<td width="12.3%"></td>
-									<td width="4.3%"></td>
+									<td width="8.3%">{{ ($rm->sc_no == null)? '' : $rm->sc_no }}</td>
+									<td width="12.3%">{{ ($rm->product_code == null)? '' : $rm->product_code }}</td>
+									<td width="4.3%">{{ ($rm->sched_qty == null)? '' : $rm->sched_qty }}</td>
 								</tr>
 							@endforeach
 							@while ($row <= 20)
