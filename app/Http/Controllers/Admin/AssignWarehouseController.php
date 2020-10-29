@@ -160,7 +160,8 @@ class AssignWarehouseController extends Controller
 	public function users()
 	{
 		$users = User::select('id','user_id',DB::raw("CONCAT(firstname,' ',lastname) as fullname"))
-					->whereIn('user_category',['OFFICE','ALL'])
+					// ->whereIn('user_category',['OFFICE','ALL'])
+					->where('deleted','<>','1')
 					->get();
 		return response()->json($users);
 	}
