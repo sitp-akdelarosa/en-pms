@@ -771,7 +771,7 @@ function InventoryTable(arr) {
   $('#tbl_materials').dataTable().fnDestroy();
   $('#tbl_materials').dataTable({
     data: arr,
-    order: [[25, 'desc']],
+    order: [[26, 'desc']],
     scrollX: true,
     scrollCollapse: true,
     // destroy: true,
@@ -838,6 +838,8 @@ function InventoryTable(arr) {
       data: 'supplier'
     }, {
       data: 'supplier_heat_no'
+    }, {
+      data: 'nickname'
     }, {
       data: 'updated_at'
     }],

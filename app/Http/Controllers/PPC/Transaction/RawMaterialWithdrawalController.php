@@ -675,7 +675,7 @@ class RawMaterialWithdrawalController extends Controller
         }
 
         $materials = DB::table('ppc_update_inventories as pui')
-                        ->leftJoin('admin_assign_material_types as apl', 'apl.material_type', '=', 'pui.materials_type')
+                        ->leftJoin('admin_assign_warehouses as aw', 'aw.warehouse', '=', 'pui.warehouse')
                         ->leftJoin('inventories as i','pui.id','=','i.received_id')
                         ->select([
                             'i.id as inv_id',
@@ -696,7 +696,7 @@ class RawMaterialWithdrawalController extends Controller
                             'pui.received_date as received_date',
                             'pui.supplier as supplier'
                         ])
-                        ->where('apl.user_id' ,Auth::user()->id)
+                        ->where('aw.user_id' ,Auth::user()->id)
                         ->where('pui.heat_no',$req->material_heat_no)
                         ->where('pui.deleted','<>','1')
                         // ->whereRaw('i.qty_pcs','<>','0')
