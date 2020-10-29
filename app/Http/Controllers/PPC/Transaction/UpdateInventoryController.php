@@ -604,6 +604,7 @@ class UpdateInventoryController extends Controller
     {
         $materialeArr = [];
         $countAdded = 0;
+
         foreach ($fields as $key => $field) {
             if((!empty($field['itemcode']) && !is_null($field['itemcode'])) || 
                 (!empty($field['qty_weight']) && !is_null($field['qty_weight'])) || 
@@ -614,7 +615,7 @@ class UpdateInventoryController extends Controller
                 (!empty($field['product_line']) && !is_null($field['product_line']))) {
 
                 $jo_no = preg_replace("/\s+/", "", $field['jo_no']); 
-                $product_line = preg_replace("/\s+/", "", $field['product_line']); 
+                $product_line = $field['product_line']; 
                 $itemcode = preg_replace("/\s+/", "", $field['itemcode']); 
                 $qty_weight = $field['qty_weight'];
                 $warehouse = $field['warehouse']; 
@@ -674,6 +675,9 @@ class UpdateInventoryController extends Controller
                 } else {
                     $countAdded++;
                     $received_id = 0;
+
+                    NotRegisteredMaterial::where('item_code',$itemcode)
+                                        ->where('heat_no',$heatnumber)->delete();
 
                     $PpcProductCode = PpcProductCode::select('product_type',
                                                                'code_description',
@@ -1773,8 +1777,7 @@ class UpdateInventoryController extends Controller
                         .$srch_invoice_no
                         .$srch_supplier
                         .$srch_supplier_heat_no
-                        .$srch_warehouse)
-                    ->where('user_id' ,Auth::user()->id)->get();
+                        .$srch_warehouse)->get();
                         
         return $data;
     }

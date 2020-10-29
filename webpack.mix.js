@@ -43,6 +43,7 @@ mix.js('resources/assets/js/app.js', 'public/js')
 	    'resources/assets/js/template.js',
 	    'resources/assets/plugins/DataTables/js/datatables.min.js',
         'resources/assets/plugins/DataTables/js/dataTables.bootstrap4.min.js',
+        'resources/assets/plugins/DataTables/js/datatable-fixedColumns.min.js',
         'resources/assets/plugins/DataTables/js/datatable-row-show.js',
         'resources/assets/plugins/timeago/timeago.min.js',
         'resources/assets/plugins/select2/dist/js/select2.full.js',

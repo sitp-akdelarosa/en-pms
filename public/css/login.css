@@ -34407,6 +34407,10 @@ div.dataTables_scrollBody table thead .sorting_asc:before,
 div.dataTables_scrollBody table thead .sorting_desc:before {
     display: none;
 }
+
+.DTFC_LeftBodyLiner {
+    overflow-x: hidden;
+}
 /*------------------------------------------------------------------
 [All Skin Stylesheet]
 

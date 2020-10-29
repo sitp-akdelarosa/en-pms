@@ -725,6 +725,11 @@ function InventoryTable(arr) {
 		data: arr,
 		order: [[25,'desc']],
 		scrollX: true,
+		scrollCollapse: true,
+		// destroy: true,
+		// fixedColumns: {
+		// 	leftColumns: 4
+		// },
 		columns: [
 			{
 				data: function (data) {
@@ -761,15 +766,16 @@ function InventoryTable(arr) {
 				}, searchable: false, orderable: false
 			},
 			{ data: 'item_class' },
-			{ data: 'receive_jo_no' },
+			
 			{ data: 'item_type_line' },
 			{ data: 'item_code' },
-			{ data: 'description' },
 
 			{ data: 'length' },
-			{ data: function(x) {
-				return (x.std_weight == null)? '' : x.std_weight.toFixed(2);
-			} },
+			{
+				data: function (x) {
+					return (x.std_weight == null) ? '' : x.std_weight.toFixed(2);
+				}
+			},
 			{
 				data: 'std_weight_received'
 			},
@@ -787,6 +793,12 @@ function InventoryTable(arr) {
 			{ data: 'current_stock' },
 			{ data: 'heat_no' },
 			{ data: 'lot_no' },
+
+			{ data: 'receive_jo_no' },
+
+			{ data: 'description' },
+
+			
 
 			{ data: 'warehouse' },
 

@@ -27,7 +27,7 @@ foreach ($user_accesses as $user_access){
             <form id="frm_update_inventory" role="form" method="post" files="true" enctype="multipart/form-data" action="">
                 <?php echo csrf_field(); ?>
                 <div class="form-group row">
-                    <label for="item_class" class="col-md-1 control-label mt-5">Item Class:</label>
+                    <label for="item_class" class="col-md-2 control-label mt-5">Item Class:</label>
                     <div class="col-md-3">
                         <select class="form-control select-validate clear" name="up_item_class" id="up_item_class">
                             <option value=""></option>
@@ -64,11 +64,10 @@ foreach ($user_accesses as $user_access){
                                 <tr>
                                     <th></th>
                                     <th>Item Class</th>
-                                    <th>J.O. / Receiving No.</th>
+                                    
                                     <th>Item Type / Line</th>
                                     <th>Item Code</th>
-                                    <th>Description</th>
-                                    
+
                                     <th>Length</th>
                                     <th>Std. Material Wt.</th>
                                     <th>Std. wt. Received</th>
@@ -78,6 +77,10 @@ foreach ($user_accesses as $user_access){
                                     <th>Stock(PCS)</th>
                                     <th>Heat No.</th>
                                     <th>Lot No.</th>
+
+                                    <th>J.O. / Receiving No.</th>
+
+                                    <th>Description</th>
 
                                     <th>Warehouse</th>
                                     
