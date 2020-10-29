@@ -566,8 +566,6 @@ class UpdateInventoryController extends Controller
                             'update_user' => Auth::user()->id,
                             'mode' => 'Inserted from Upload'
                         ]);
-                    //}
-
                     
                 }
             }
@@ -691,73 +689,103 @@ class UpdateInventoryController extends Controller
                                                         ->where('product_code',$itemcode)
                                                         ->first();
 
-
-                        $iclass = (mb_substr($itemcode, 0, 1, "UTF-8") == 'Y')? 'CRUDE': 'FINISHED';
                     
 
-                        $received_id = PpcUpdateInventory::insertGetId([
-                                        'item_class' => $iclass,
-                                        'jo_no' => (isset($jo_no))? strtoupper($jo_no): 'N/A',
-                                        'product_line' =>   $PpcProductCode->product_type,
-                                        'warehouse' => strtoupper($warehouse),
-                                        'item_code' => strtoupper($itemcode),
-                                        'description' =>  $PpcProductCode->code_description,
-                                        'item' =>  $PpcProductCode->item,
-                                        'alloy' =>  $PpcProductCode->alloy,
-                                        'schedule' => $PpcProductCode->class,
-                                        'size' =>  $PpcProductCode->size,
-                                        'qty_weight' => ($PpcProductCode->finish_weight * $qty_pcs),
-                                        'qty_pcs' => $qty_pcs,
-                                        'weight_uom' => 'KGS',
-                                        'pcs_uom' => 'PCS',
-                                        'heat_no' => strtoupper($heatnumber),
-                                        'lot_no' => strtoupper($lotnumber),
-                                        'invoice_no' => 'N/A',
-                                        //'received_date' => DATE_FORMAT($receiveddate, 'Y-m-d').' '.date('H:i:s'),
-                                        'supplier' => 'N/A',
-                                        'width' => 'N/A',
-                                        'length' => 'N/A',
-                                        'supplier_heat_no' => 'N/A',
-                                        'created_at' => date("Y-m-d H:i:s"),
-                                        'updated_at' => date("Y-m-d H:i:s"),
-                                        'create_user' => Auth::user()->id,
-                                        'update_user' => Auth::user()->id,
-                                        'mode' => 'Inserted from Upload'
-                                    ]);
 
-                        Inventory::insert([
-                            'item_class' => $iclass,
-                            'jo_no' => (isset($jo_no))? strtoupper($jo_no): 'N/A',
-                            'product_line' =>   $PpcProductCode->product_type,
-                            'item_code' => strtoupper($itemcode),
-                            'warehouse' => strtoupper($warehouse),
-                            'description' =>  $PpcProductCode->code_description,
-                            'item' =>  $PpcProductCode->item,
-                            'alloy' =>  $PpcProductCode->alloy,
-                            'schedule' => $PpcProductCode->class,
-                            'size' =>  $PpcProductCode->size,
-                            'width' => 'N/A',
-                            'length' => 'N/A',
-                            'orig_quantity' => $qty_pcs,
-                            'qty_weight' => ($PpcProductCode->finish_weight * $qty_pcs),
-                            'qty_pcs' => $qty_pcs,
-                            'weight_uom' => 'KGS',
-                            'pcs_uom' => 'PCS',
-                            'heat_no' => strtoupper($heatnumber),
-                            'lot_no' => strtoupper($lotnumber),
-                            'invoice_no' => 'N/A',
-                            // 'received_date' => DATE_FORMAT($field['receiveddate'], 'Y-m-d').' '.date('H:i:s'),
-                            'supplier' => 'N/A',
-                            'supplier_heat_no' => 'N/A',
-                            'received_id' => $received_id,
-                            'created_at' => date("Y-m-d H:i:s"),
-                            'updated_at' => date("Y-m-d H:i:s"),
-                            'create_user' => Auth::user()->id,
-                            'update_user' => Auth::user()->id,
-                            'mode' => 'Inserted from Upload'
-                        ]);
-                    //}
+                    $iclass = (mb_substr($itemcode, 0, 1, "UTF-8") == 'Y')? 'CRUDE': 'FINISHED';
+                
+                    $received_items = DB::table('ppc_update_inventories')
+                                        ->where('item_class',$iclass)
+                                        ->where('item_code',(isset($field['itemcode']))? strtoupper($field['itemcode']): 'N/A')
+                                        ->where('heat_no',(isset($field['heatnumber']))? strtoupper($field['heatnumber']): 'N/A')
+                                        ->where('lot_no',(isset($field['lotnumber']))? strtoupper($field['lotnumber']): 'N/A')
+                                        ->where('qty_weight', $field['qty_weight'])
+                                        ->where('qty_pcs', $field['qty_pcs'])
+                                        ->where('jo_no', (isset($field['jo_no']))? strtoupper($field['jo_no']): '')
+                                        ->where('create_user',Auth::user()->id)
+                                        ->first();
 
+                    if ($this->_helper->check_if_exists($received_items) > 0) {
+                        PpcUpdateInventory::where('item_class',$iclass)
+                                        ->where('item_code',(isset($field['itemcode']))? strtoupper($field['itemcode']): 'N/A')
+                                        ->where('heat_no',(isset($field['heatnumber']))? strtoupper($field['heatnumber']): 'N/A')
+                                        ->where('lot_no',(isset($field['lotnumber']))? strtoupper($field['lotnumber']): 'N/A')
+                                        ->where('qty_weight', $field['qty_weight'])
+                                        ->where('qty_pcs', $field['qty_pcs'])
+                                        ->where('jo_no', (isset($field['jo_no']))? strtoupper($field['jo_no']): '')
+                                        ->where('create_user',Auth::user()->id)->delete();
+
+                        Inventory::where('item_class',$iclass)
+                                        ->where('item_code',(isset($field['itemcode']))? strtoupper($field['itemcode']): 'N/A')
+                                        ->where('heat_no',(isset($field['heatnumber']))? strtoupper($field['heatnumber']): 'N/A')
+                                        ->where('lot_no',(isset($field['lotnumber']))? strtoupper($field['lotnumber']): 'N/A')
+                                        ->where('qty_weight', $field['qty_weight'])
+                                        ->where('qty_pcs', $field['qty_pcs'])
+                                        ->where('jo_no', (isset($field['jo_no']))? strtoupper($field['jo_no']): '')
+                                        ->where('create_user',Auth::user()->id)->delete();
+                    }
+
+                    $received_id = PpcUpdateInventory::insertGetId([
+                                'item_class' => $iclass,
+                                'jo_no' => (isset($jo_no))? strtoupper($jo_no): 'N/A',
+                                'product_line' =>   $PpcProductCode->product_type,
+                                'warehouse' => strtoupper($warehouse),
+                                'item_code' => strtoupper($itemcode),
+                                'description' =>  $PpcProductCode->code_description,
+                                'item' =>  $PpcProductCode->item,
+                                'alloy' =>  $PpcProductCode->alloy,
+                                'schedule' => $PpcProductCode->class,
+                                'size' =>  $PpcProductCode->size,
+                                'qty_weight' => ($PpcProductCode->finish_weight * $qty_pcs),
+                                'qty_pcs' => $qty_pcs,
+                                'weight_uom' => 'KGS',
+                                'pcs_uom' => 'PCS',
+                                'heat_no' => strtoupper($heatnumber),
+                                'lot_no' => strtoupper($lotnumber),
+                                'invoice_no' => 'N/A',
+                                //'received_date' => DATE_FORMAT($receiveddate, 'Y-m-d').' '.date('H:i:s'),
+                                'supplier' => 'N/A',
+                                'width' => 'N/A',
+                                'length' => 'N/A',
+                                'supplier_heat_no' => 'N/A',
+                                'created_at' => date("Y-m-d H:i:s"),
+                                'updated_at' => date("Y-m-d H:i:s"),
+                                'create_user' => Auth::user()->id,
+                                'update_user' => Auth::user()->id,
+                                'mode' => 'Inserted from Upload'
+                            ]);
+
+                    Inventory::insert([
+                        'item_class' => $iclass,
+                        'jo_no' => (isset($jo_no))? strtoupper($jo_no): 'N/A',
+                        'product_line' =>   $PpcProductCode->product_type,
+                        'item_code' => strtoupper($itemcode),
+                        'warehouse' => strtoupper($warehouse),
+                        'description' =>  $PpcProductCode->code_description,
+                        'item' =>  $PpcProductCode->item,
+                        'alloy' =>  $PpcProductCode->alloy,
+                        'schedule' => $PpcProductCode->class,
+                        'size' =>  $PpcProductCode->size,
+                        'width' => 'N/A',
+                        'length' => 'N/A',
+                        'orig_quantity' => $qty_pcs,
+                        'qty_weight' => ($PpcProductCode->finish_weight * $qty_pcs),
+                        'qty_pcs' => $qty_pcs,
+                        'weight_uom' => 'KGS',
+                        'pcs_uom' => 'PCS',
+                        'heat_no' => strtoupper($heatnumber),
+                        'lot_no' => strtoupper($lotnumber),
+                        'invoice_no' => 'N/A',
+                        // 'received_date' => DATE_FORMAT($field['receiveddate'], 'Y-m-d').' '.date('H:i:s'),
+                        'supplier' => 'N/A',
+                        'supplier_heat_no' => 'N/A',
+                        'received_id' => $received_id,
+                        'created_at' => date("Y-m-d H:i:s"),
+                        'updated_at' => date("Y-m-d H:i:s"),
+                        'create_user' => Auth::user()->id,
+                        'update_user' => Auth::user()->id,
+                        'mode' => 'Inserted from Upload'
+                    ]);
                     
                 }
             }
@@ -792,13 +820,18 @@ class UpdateInventoryController extends Controller
 
     public function materialDataTable(Request $req)
     {
-        $Datalist = DB::table('v_inventories')->where('user_id', Auth::user()->id);
+        // $Datalist = DB::table('v_inventories')->where('user_id', Auth::user()->id);
+        $Datalist = DB::select(
+                        DB::raw("CALL GET_inventories(".Auth::user()->id.",".$req->with_zero.")")
+                    );
 
-        if ((int)$req->with_zero == 0) {
-            $Datalist->where('current_stock','>',0);
-        }
+        return $Datalist;
+
+        // if ((int)$req->with_zero == 0) {
+        //     $Datalist->where('current_stock','>',0);
+        // }
                                 
-        return $Datalist->get();
+        // return $Datalist->get();
     }
 
     public function AddManual(Request $req)

@@ -237,14 +237,14 @@
         <form>
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">These Material Code are not registered in Material Master</h5>
+                    <h5 class="modal-title">These Codes are not registered in Material/Product Master</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 
                 <div class="modal-body">
-                    <p>Most of data are uploaded but these material are not registered in Material Master.</p>
+                    <p>Most of data are uploaded but these codes are not registered in Material/Product Master.</p>
                     <br>
                     <div class="table-responsive">
                         <table class="table table-sm table-striped table-bordered nowrap" id="tbl_material_not_existing" style="width:100%">
@@ -291,7 +291,9 @@
                         <thead class="thead-dark">
                             <th>Receiving No.</th>
                             <th>Material Type</th>
-                            <th>Material Code</th>
+                            <th>Product Line</th>
+                            <th>Item Code</th>
+                            <th>Warehouse</th>
                             <th>Qty(KGS)</th>
                             <th>Qty(PCS)</th>
                             <th>Heat No.</th>

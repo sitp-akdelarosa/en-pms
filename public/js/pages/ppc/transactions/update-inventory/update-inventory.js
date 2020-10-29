@@ -883,7 +883,11 @@ function sameMaterialTable(arr) {
     }, {
       data: 'materials_type'
     }, {
-      data: 'materials_code'
+      data: 'product_line'
+    }, {
+      data: 'item_code'
+    }, {
+      data: 'warehouse'
     }, {
       data: 'qty_weight'
     }, {

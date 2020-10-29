@@ -851,7 +851,9 @@ function sameMaterialTable(arr) {
 		columns: [
 			{ data: 'receiving_no' },
 			{ data: 'materials_type' },
-			{ data: 'materials_code' },
+			{ data: 'product_line' },
+			{ data: 'item_code' },
+			{ data: 'warehouse' },
 			{ data: 'qty_weight' },
 			{ data: 'qty_pcs' },
 			{ data: 'heat_no' },
