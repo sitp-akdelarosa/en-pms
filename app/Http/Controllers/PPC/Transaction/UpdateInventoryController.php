@@ -257,10 +257,10 @@ class UpdateInventoryController extends Controller
                     array_push($msg, 'Please provide Product Code for Line '.$line.'.');
                 }
 
-                if (empty($field['qty_weight']) && is_null($field['qty_weight'])) {
-                    $failed++;
-                    array_push($msg, 'Please provide Quantity Weight for Line '.$line.'.');
-                }
+                // if (empty($field['qty_weight']) && is_null($field['qty_weight'])) {
+                //     $failed++;
+                //     array_push($msg, 'Please provide Quantity Weight for Line '.$line.'.');
+                // }
 
                 if (empty($field['qty_pcs']) && is_null($field['qty_pcs'])) {
                     $failed++;
