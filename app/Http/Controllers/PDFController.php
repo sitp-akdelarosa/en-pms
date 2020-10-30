@@ -216,11 +216,17 @@ class PDFController extends Controller
 				'process' => DB::select("SELECT tp.pre_travel_sheet_id,
 												tp.process_name,
 												pd.div_name,
+												pd.div_code,
 												tp.sequence
 										FROM enpms.ppc_pre_travel_sheet_processes as tp
 										inner join ppc_divisions as pd
 										on tp.div_code = pd.div_code
 										where pre_travel_sheet_id = ". $ts->id."
+										group by tp.pre_travel_sheet_id,
+												tp.process_name,
+												pd.div_name,
+												pd.div_code,
+												tp.sequence
 										order by sequence ASC"),
 				'iso' => $iso,
 			]);

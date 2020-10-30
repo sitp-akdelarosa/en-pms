@@ -773,6 +773,7 @@ function InventoryTable(arr) {
     data: arr,
     order: [[26, 'desc']],
     scrollX: true,
+    deferRender: true,
     scrollCollapse: true,
     // destroy: true,
     // fixedColumns: {
@@ -795,21 +796,27 @@ function InventoryTable(arr) {
     }, {
       data: function data(x) {
         return x.std_weight == null ? '' : x.std_weight.toFixed(2);
-      }
+      },
+      className: "text-right"
     }, {
-      data: 'std_weight_received'
+      data: 'std_weight_received',
+      className: "text-right"
     }, {
       data: function data(x) {
         return x.finish_weight == null ? '' : x.finish_weight.toFixed(2);
-      }
+      },
+      className: "text-right"
     }, {
       data: function data(x) {
-        return x.qty_weight == null ? '' : x.qty_weight.toFixed(2);
-      }
+        return x.qty_weight == null ? '' : formatNumber(x.qty_weight.toFixed(2));
+      },
+      className: "text-right"
     }, {
-      data: 'qty_pcs'
+      data: 'qty_pcs',
+      className: "text-right"
     }, {
-      data: 'current_stock'
+      data: 'current_stock',
+      className: "text-right"
     }, {
       data: 'heat_no'
     }, {

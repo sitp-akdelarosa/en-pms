@@ -224,7 +224,8 @@ $( function() {
             $(this).attr('data-item_class'), 
             $(this).attr('data-item_code'), 
             $(this).attr('data-issued_qty'), 
-            $(this).attr('data-inv_id')
+            $(this).attr('data-inv_id'),
+            'edit'
         );
 
         $('#btn_add').html('<i class="fa fa-edit"></i> Update');
@@ -611,7 +612,7 @@ function ProductDataTable(arr) {
     });
 }
 
-function getInventory(item_class,item_code, issued_qty,inv_id) {
+function getInventory(item_class,item_code, issued_qty,inv_id,state) {
     $('.loadingOverlay-modal').show();
     $.ajax({
         url: getInventoryURL,
@@ -621,7 +622,8 @@ function getInventory(item_class,item_code, issued_qty,inv_id) {
             item_class: item_class,
             item_code: item_code,
             issued_qty: issued_qty,
-            inv_id: inv_id
+            inv_id: inv_id,
+            state: state
         },
     }).done(function (data, textStatus, xhr) {
         console.log(data);

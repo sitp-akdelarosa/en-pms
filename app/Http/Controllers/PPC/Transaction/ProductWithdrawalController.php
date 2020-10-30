@@ -311,6 +311,7 @@ class ProductWithdrawalController extends Controller
     {
         $item_code = "";
         $inv_id = "";
+        $with_0 = " AND qty_pcs > 0 ";
 
         if (!is_null($req->item_code)) {
             $equal = "= ";
@@ -325,6 +326,10 @@ class ProductWithdrawalController extends Controller
 
         if (!is_null($req->inv_id)) {
             $inv_id = " AND id = '". $req->inv_id ."' ";
+        }
+
+        if ($req->state == 'edit') {
+            $with_0 = " AND qty_pcs > -1 ";
         }
 
         $data = DB::select("SELECT id,
@@ -346,7 +351,7 @@ class ProductWithdrawalController extends Controller
                             FROM inventories
                             where deleted <> 1 
                             AND item_class = '". $req->item_class ."'
-                            AND qty_pcs > 0 ".$item_code.$inv_id);
+                            ".$with_0.$item_code.$inv_id);
 
         return $data;
     }

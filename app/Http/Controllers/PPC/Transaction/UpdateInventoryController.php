@@ -604,7 +604,7 @@ class UpdateInventoryController extends Controller
 
         foreach ($fields as $key => $field) {
             if((!empty($field['itemcode']) && !is_null($field['itemcode'])) || 
-                (!empty($field['qty_weight']) && !is_null($field['qty_weight'])) || 
+                // (!empty($field['qty_weight']) && !is_null($field['qty_weight'])) || 
                 (!empty($field['qty_pcs']) && !is_null($field['qty_pcs'])) ||
                 (!empty($field['heatnumber']) && !is_null($field['heatnumber'])) ||
                 (!empty($field['lotnumber']) && !is_null($field['lotnumber'])) ||

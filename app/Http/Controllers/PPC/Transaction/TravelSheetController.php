@@ -349,12 +349,17 @@ class TravelSheetController extends Controller
         $processes = [];
         $div_ids = [];
         if($req->sets == 'None'){
-             $prod_processes = PpcProductProcess::where('prod_code',$req->prod_code)
-                                    ->select('process','sequence')
-                                    ->get();
+            $product = DB::table('ppc_product_codes')->select('id')->where('product_code',$req->prod_code)->first();
+            $prod_processes = PpcProductProcess::where('prod_id',$product->id)
+                                ->select('process','sequence')
+                                ->groupBy('process','sequence')
+                                ->orderBy('sequence','asc')
+                                ->get();
         }else{
             $prod_processes = PpcProcess::where('set_id',$req->sets)
                                     ->select('process','sequence')
+                                    ->groupBy('process','sequence')
+                                    ->orderBy('sequence','asc')
                                     ->get();
         }
 

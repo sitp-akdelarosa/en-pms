@@ -132,8 +132,8 @@
 										?>
 													<tr>
 														<td><?php echo e($proc->process_name); ?></td>
-														<td colspan="2"><?php echo e('Lorem ipsum dolor sit amet, consectetur adipiscing elit. '); ?></td>
-														<td><?php echo e($proc->div_name); ?></td>
+														<td colspan="2"></td>
+														<td><?php echo e($proc->div_name."(".$proc->div_code.")"); ?></td>
 														<td></td>
 														<td></td>
 														<td></td>

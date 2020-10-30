@@ -260,7 +260,7 @@ $(function () {
     $('#update_user').val($(this).attr('data-update_user'));
     $('#created_at').val($(this).attr('data-created_at'));
     $('#updated_at').val($(this).attr('data-updated_at'));
-    getInventory($(this).attr('data-item_class'), $(this).attr('data-item_code'), $(this).attr('data-issued_qty'), $(this).attr('data-inv_id'));
+    getInventory($(this).attr('data-item_class'), $(this).attr('data-item_code'), $(this).attr('data-issued_qty'), $(this).attr('data-inv_id'), 'edit');
     $('#btn_add').html('<i class="fa fa-edit"></i> Update');
   });
   $('#tbl_product_body').on('click', '.btn_withdrawal_detail_delete', function () {
@@ -534,7 +534,7 @@ function ProductDataTable(arr) {
   });
 }
 
-function getInventory(item_class, item_code, issued_qty, inv_id) {
+function getInventory(item_class, item_code, issued_qty, inv_id, state) {
   $('.loadingOverlay-modal').show();
   $.ajax({
     url: getInventoryURL,
@@ -544,7 +544,8 @@ function getInventory(item_class, item_code, issued_qty, inv_id) {
       item_class: item_class,
       item_code: item_code,
       issued_qty: issued_qty,
-      inv_id: inv_id
+      inv_id: inv_id,
+      state: state
     }
   }).done(function (data, textStatus, xhr) {
     console.log(data);
