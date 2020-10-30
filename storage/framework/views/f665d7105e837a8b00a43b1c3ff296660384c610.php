@@ -109,15 +109,16 @@
 										</tr>
 										<tr>
 											<td class="text-center" rowspan="2">Process</td>
-											<td class="text-center" rowspan="2">Division No.</td>
+											<td class="text-center" rowspan="2" colspan="2">Remarks</td>
+											<td class="text-center" rowspan="2">Division Name</td>
 											<td class="text-center" rowspan="2">Date Process</td>
-											<td class="text-center" rowspan="2">Input Qty.</td>
+											<td class="text-center" rowspan="2">Received Qty.</td>
 											<td class="text-center" rowspan="2">Output Qty.</td>
 											<td class="text-center" rowspan="2">Qty. NC.</td>
 											<td class="text-center" colspan="2">Disposition</td>
-											<td class="text-center" rowspan="2">Date Returned</td>
-											<td class="text-center" rowspan="2">Operator's Name</td>
-											<td class="text-center" rowspan="2">Signature</td>
+											
+											<td class="text-center" rowspan="2">Operator's Name & Signature</td>
+											
 										</tr>
 										<tr>
 											<td>A/B/C</td>
@@ -131,9 +132,8 @@
 										?>
 													<tr>
 														<td><?php echo e($proc->process_name); ?></td>
-														<td></td>
-														<td></td>
-														<td></td>
+														<td colspan="2"><?php echo e('Lorem ipsum dolor sit amet, consectetur adipiscing elit. '); ?></td>
+														<td><?php echo e($proc->div_name); ?></td>
 														<td></td>
 														<td></td>
 														<td></td>

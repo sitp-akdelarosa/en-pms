@@ -835,6 +835,12 @@ function InventoryTable(arr) {
 				$(row).css('background-color', 'rgb(139 241 191)'); // GREEN
 				$(row).css('color', '#000000');
 			}
+
+			if (data.my_warehouse == 0) {
+				var dataRow = $(row);
+				var button = $(dataRow[0].cells[0].firstChild);
+				button.prop('disabled', true);
+			}
 		},
 		initComplete: function() {
 			$('.loadingOverlay').hide();

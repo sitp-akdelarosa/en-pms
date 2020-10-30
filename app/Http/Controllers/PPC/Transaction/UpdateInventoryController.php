@@ -1568,249 +1568,372 @@ class UpdateInventoryController extends Controller
 
     private function getFilteredData($req)
     {
-        $srch_item_class = "";
-        $srch_received_date = "";
-        $srch_receiving_no = "";
-        $srch_jo_no = "";
-        $srch_materials_type = "";
-        $srch_product_line = "";
-        $srch_item_code = "";
-        $srch_item = "";
-        $srch_alloy = "";
-        $srch_schedule = "";
-        $srch_size = "";
-        $srch_width = "";
-        $srch_length = "";
-        $srch_heat_no = "";
-        $srch_lot_no = "";
-        $srch_invoice_no = "";
-        $srch_supplier = "";
-        $srch_supplier_heat_no = "";
-        $srch_warehouse = "";
+        // $srch_item_class = "";
+        // $srch_received_date = "";
+        // $srch_receiving_no = "";
+        // $srch_jo_no = "";
+        // $srch_materials_type = "";
+        // $srch_product_line = "";
+        // $srch_item_code = "";
+        // $srch_item = "";
+        // $srch_alloy = "";
+        // $srch_schedule = "";
+        // $srch_size = "";
+        // $srch_width = "";
+        // $srch_length = "";
+        // $srch_heat_no = "";
+        // $srch_lot_no = "";
+        // $srch_invoice_no = "";
+        // $srch_supplier = "";
+        // $srch_supplier_heat_no = "";
+        // $srch_warehouse = "";
 
-        if (!is_null($req->srch_received_date_from) && !is_null($req->srch_received_date_to)) {
-            $srch_received_date = " AND DATE_FORMAT(pui.received_date,'%Y-%m-%d') BETWEEN '".$req->srch_received_date_from."' AND '".$req->srch_received_date_to."'";
-        }
+        // if (!is_null($req->srch_received_date_from) && !is_null($req->srch_received_date_to)) {
+        //     $srch_received_date = " AND DATE_FORMAT(pui.received_date,'%Y-%m-%d') BETWEEN '".$req->srch_received_date_from."' AND '".$req->srch_received_date_to."'";
+        // }
+
+        // if (!is_null($req->srch_item_class)) {
+        //     $equal = "= ";
+        //     $_value = $req->srch_item_class;
+
+        //     if (Str::contains($req->srch_item_class, '*')){
+        //         $equal = "LIKE ";
+        //         $_value = str_replace("*","%",$req->srch_item_class);
+        //     }
+        //     $srch_item_class = " AND item_class ".$equal."'".$_value."'";
+        // }
+
+        // if (!is_null($req->srch_jo_no)) {
+        //     $equal = "= ";
+        //     $_value = $req->srch_jo_no;
+
+        //     if (Str::contains($req->srch_jo_no, '*')){
+        //         $equal = "LIKE ";
+        //         $_value = str_replace("*","%",$req->srch_jo_no);
+        //     }
+        //     $srch_jo_no = " AND receive_jo_no ".$equal."'".$_value."'";
+        // }
+
+        // if (!is_null($req->srch_warehouse)) {
+        //     $equal = "= ";
+        //     $_value = $req->srch_warehouse;
+
+        //     if (Str::contains($req->srch_warehouse, '*')){
+        //         $equal = "LIKE ";
+        //         $_value = str_replace("*","%",$req->srch_warehouse);
+        //     }
+        //     $srch_warehouse = " AND warehouse ".$equal."'".$_value."'";
+        // }
+
+        // if (!is_null($req->srch_receiving_no)) {
+        //     $equal = "= ";
+        //     $_value = $req->srch_receiving_no;
+
+        //     if (Str::contains($req->srch_receiving_no, '*')){
+        //         $equal = "LIKE ";
+        //         $_value = str_replace("*","%",$req->srch_receiving_no);
+        //     }
+        //     $srch_receiving_no = " AND receive_jo_no ".$equal."'".$_value."'";
+        // }
+
+        // if (!is_null($req->srch_materials_type) && $req->srch_materials_type !== "null") {
+        //     $equal = "= ";
+        //     $_value = $req->srch_materials_type;
+            
+        //     if (Str::contains($req->srch_materials_type, '*')){
+        //         $equal = "LIKE ";
+        //         $_value = str_replace("*","%",$req->srch_materials_type);
+        //     }
+        //     $srch_materials_type = " AND item_type_line ".$equal." '".$_value."'";
+        // }
+
+        // if (!is_null($req->srch_product_line) && $req->srch_product_line !== "null") {
+        //     $equal = "= ";
+        //     $_value = $req->srch_product_line;
+            
+        //     if (Str::contains($req->srch_product_line, '*')){
+        //         $equal = "LIKE ";
+        //         $_value = str_replace("*","%",$req->srch_product_line);
+        //     }
+        //     $srch_product_line = " AND item_type_line ".$equal." '".$_value."'";
+        // }
+
+        // if (!is_null($req->srch_item_code) && $req->srch_item_code !== "null") {
+        //     $equal = "= ";
+        //     $_value = $req->srch_item_code;
+            
+        //     if (Str::contains($req->srch_item_code, '*')){
+        //         $equal = "LIKE ";
+        //         $_value = str_replace("*","%",$req->srch_item_code);
+        //     }
+        //     $srch_item_code = " AND item_code ".$equal." '".$_value."'";
+        // }
+
+        // if (!is_null($req->srch_item)) {
+        //     $equal = "= ";
+        //     $_value = $req->srch_item;
+            
+        //     if (Str::contains($req->srch_item, '*')){
+        //         $equal = "LIKE ";
+        //         $_value = str_replace("*","%",$req->srch_item);
+        //     }
+        //     $srch_item = " AND item ".$equal." '".$_value."'";
+        // }
+
+        // if (!is_null($req->srch_alloy)) {
+        //     $equal = "= ";
+        //     $_value = $req->srch_alloy;
+            
+        //     if (Str::contains($req->srch_alloy, '*')){
+        //         $equal = "LIKE ";
+        //         $_value = str_replace("*","%",$req->srch_alloy);
+        //     }
+        //     $srch_alloy = " AND alloy ".$equal." '".$_value."'";
+        // }
+
+        // if (!is_null($req->srch_schedule)) {
+        //     $equal = "= ";
+        //     $_value = $req->srch_schedule;
+            
+        //     if (Str::contains($req->srch_schedule, '*')){
+        //         $equal = "LIKE ";
+        //         $_value = str_replace("*","%",$req->srch_schedule);
+        //     }
+        //     $srch_schedule = " AND schedule ".$equal." '".$_value."'";
+        // }
+
+        // if (!is_null($req->srch_size)) {
+        //     $equal = "= ";
+        //     $_value = $req->srch_size;
+            
+        //     if (Str::contains($req->srch_size, '*')){
+        //         $equal = "LIKE ";
+        //         $_value = str_replace("*","%",$req->srch_size);
+        //     }
+        //     $srch_size = " AND size ".$equal." '".$_value."'";
+        // }
+
+        // if (!is_null($req->srch_width)) {
+        //     $equal = "= ";
+        //     $_value = $req->srch_width;
+            
+        //     if (Str::contains($req->srch_width, '*')){
+        //         $equal = "LIKE ";
+        //         $_value = str_replace("*","%",$req->srch_width);
+        //     }
+        //     $srch_width = " AND width ".$equal." '".$_value."'";
+        // }
+
+        // if (!is_null($req->srch_length)) {
+        //     $equal = "= ";
+        //     $_value = $req->srch_length;
+            
+        //     if (Str::contains($req->srch_length, '*')){
+        //         $equal = "LIKE ";
+        //         $_value = str_replace("*","%",$req->srch_length);
+        //     }
+        //     $srch_length = " AND `length` ".$equal." '".$_value."'";
+        // }
+
+        // if (!is_null($req->srch_heat_no)) {
+        //     $equal = "= ";
+        //     $_value = $req->srch_heat_no;
+            
+        //     if (Str::contains($req->srch_heat_no, '*')){
+        //         $equal = "LIKE ";
+        //         $_value = str_replace("*","%",$req->srch_heat_no);
+        //     }
+        //     $srch_heat_no = " AND heat_no ".$equal." '".$_value."'";
+        // }
+
+        // if (!is_null($req->srch_lot_no)) {
+        //     $equal = "= ";
+        //     $_value = $req->srch_lot_no;
+            
+        //     if (Str::contains($req->srch_lot_no, '*')){
+        //         $equal = "LIKE ";
+        //         $_value = str_replace("*","%",$req->srch_lot_no);
+        //     }
+        //     $srch_lot_no = " AND lot_no ".$equal." '".$_value."'";
+        // }
+
+        // if (!is_null($req->srch_invoice_no)) {
+        //     $equal = "= ";
+        //     $_value = $req->srch_invoice_no;
+            
+        //     if (Str::contains($req->srch_invoice_no, '*')){
+        //         $equal = "LIKE ";
+        //         $_value = str_replace("*","%",$req->srch_invoice_no);
+        //     }
+        //     $srch_invoice_no = " AND invoice_no ".$equal." '".$_value."'";
+        // }
+
+        // if (!is_null($req->srch_supplier)) {
+        //     $equal = "= ";
+        //     $_value = $req->srch_supplier;
+            
+        //     if (Str::contains($req->srch_supplier, '*')){
+        //         $equal = "LIKE ";
+        //         $_value = str_replace("*","%",$req->srch_supplier);
+        //     }
+        //     $srch_supplier = " AND supplier ".$equal." '".$_value."'";
+        // }
+
+        // if (!is_null($req->srch_supplier_heat_no)) {
+        //     $equal = "= ";
+        //     $_value = $req->srch_supplier_heat_no;
+            
+        //     if (Str::contains($req->srch_supplier_heat_no, '*')){
+        //         $equal = "LIKE ";
+        //         $_value = str_replace("*","%",$req->srch_supplier_heat_no);
+        //     }
+        //     $srch_supplier_heat_no = " AND pui.supplier_heat_no ".$equal." '".$_value."'";
+        // }
+
+        // $data = DB::table('v_inventories')
+        //             ->whereRaw('1=1 '.$srch_item_class
+        //                 .$srch_received_date
+        //                 .$srch_receiving_no
+        //                 .$srch_jo_no
+        //                 .$srch_materials_type
+        //                 .$srch_product_line
+        //                 .$srch_item_code
+        //                 .$srch_item
+        //                 .$srch_alloy
+        //                 .$srch_schedule
+        //                 .$srch_size
+        //                 .$srch_width
+        //                 .$srch_length
+        //                 .$srch_heat_no
+        //                 .$srch_lot_no
+        //                 .$srch_invoice_no
+        //                 .$srch_supplier
+        //                 .$srch_supplier_heat_no
+        //                 .$srch_warehouse)->get();
+                        
+        // return $data;
+
+        $srch_item_class = "NULL";
+        $srch_received_date_from = "NULL";
+        $srch_received_date_to = "NULL";
+        $srch_receiving_no = "NULL";
+        $srch_jo_no = "NULL";
+        $srch_materials_type = "NULL";
+        $srch_product_line = "NULL";
+        $srch_item_code = "NULL";
+        $srch_item = "NULL";
+        $srch_alloy = "NULL";
+        $srch_schedule = "NULL";
+        $srch_size = "NULL";
+        $srch_width = "NULL";
+        $srch_length = "NULL";
+        $srch_heat_no = "NULL";
+        $srch_lot_no = "NULL";
+        $srch_invoice_no = "NULL";
+        $srch_supplier = "NULL";
+        $srch_supplier_heat_no = "NULL";
+        $srch_warehouse = "NULL";
 
         if (!is_null($req->srch_item_class)) {
-            $equal = "= ";
-            $_value = $req->srch_item_class;
-
-            if (Str::contains($req->srch_item_class, '*')){
-                $equal = "LIKE ";
-                $_value = str_replace("*","%",$req->srch_item_class);
-            }
-            $srch_item_class = " AND item_class ".$equal."'".$_value."'";
+            $srch_item_class = "'".$req->srch_item_class."'";
         }
 
-        if (!is_null($req->srch_jo_no)) {
-            $equal = "= ";
-            $_value = $req->srch_jo_no;
-
-            if (Str::contains($req->srch_jo_no, '*')){
-                $equal = "LIKE ";
-                $_value = str_replace("*","%",$req->srch_jo_no);
-            }
-            $srch_jo_no = " AND receive_jo_no ".$equal."'".$_value."'";
-        }
-
-        if (!is_null($req->srch_warehouse)) {
-            $equal = "= ";
-            $_value = $req->srch_warehouse;
-
-            if (Str::contains($req->srch_warehouse, '*')){
-                $equal = "LIKE ";
-                $_value = str_replace("*","%",$req->srch_warehouse);
-            }
-            $srch_warehouse = " AND warehouse ".$equal."'".$_value."'";
+        if (!is_null($req->srch_received_date_from) && !is_null($req->srch_received_date_to)) {
+            $srch_received_date_from = "'".$req->srch_received_date_from."'";
+            $srch_received_date_to = "'".$req->srch_received_date_to."'";
         }
 
         if (!is_null($req->srch_receiving_no)) {
-            $equal = "= ";
-            $_value = $req->srch_receiving_no;
-
-            if (Str::contains($req->srch_receiving_no, '*')){
-                $equal = "LIKE ";
-                $_value = str_replace("*","%",$req->srch_receiving_no);
-            }
-            $srch_receiving_no = " AND receive_jo_no ".$equal."'".$_value."'";
+            $srch_receiving_no = "'".$req->srch_receiving_no."'";
         }
 
-        if (!is_null($req->srch_materials_type) && $req->srch_product_line !== "null") {
-            $equal = "= ";
-            $_value = $req->srch_materials_type;
-            
-            if (Str::contains($req->srch_materials_type, '*')){
-                $equal = "LIKE ";
-                $_value = str_replace("*","%",$req->srch_materials_type);
-            }
-            $srch_materials_type = " AND item_type_line ".$equal." '".$_value."'";
+        if (!is_null($req->srch_jo_no)) {
+            $srch_jo_no = "'".$req->srch_jo_no."'";
         }
 
-        if (!is_null($req->srch_product_line) && $req->srch_product_line !== "null") {
-            $equal = "= ";
-            $_value = $req->srch_product_line;
-            
-            if (Str::contains($req->srch_product_line, '*')){
-                $equal = "LIKE ";
-                $_value = str_replace("*","%",$req->srch_product_line);
-            }
-            $srch_product_line = " AND item_type_line ".$equal." '".$_value."'";
+        if (!is_null($req->srch_materials_type)) {
+            $srch_materials_type = "'".$req->srch_materials_type."'";
         }
 
-        if (!is_null($req->srch_item_code) && $req->srch_item_code !== "null") {
-            $equal = "= ";
-            $_value = $req->srch_item_code;
-            
-            if (Str::contains($req->srch_item_code, '*')){
-                $equal = "LIKE ";
-                $_value = str_replace("*","%",$req->srch_item_code);
-            }
-            $srch_item_code = " AND item_code ".$equal." '".$_value."'";
+        if (!is_null($req->srch_product_line)) {
+            $srch_product_line = "'".$req->srch_product_line."'";
+        }
+
+        if (!is_null($req->srch_item_code)) {
+            $srch_item_code = "'".$req->srch_item_code."'";
         }
 
         if (!is_null($req->srch_item)) {
-            $equal = "= ";
-            $_value = $req->srch_item;
-            
-            if (Str::contains($req->srch_item, '*')){
-                $equal = "LIKE ";
-                $_value = str_replace("*","%",$req->srch_item);
-            }
-            $srch_item = " AND item ".$equal." '".$_value."'";
+            $srch_item = "'".$req->srch_item."'";
         }
 
         if (!is_null($req->srch_alloy)) {
-            $equal = "= ";
-            $_value = $req->srch_alloy;
-            
-            if (Str::contains($req->srch_alloy, '*')){
-                $equal = "LIKE ";
-                $_value = str_replace("*","%",$req->srch_alloy);
-            }
-            $srch_alloy = " AND alloy ".$equal." '".$_value."'";
+            $srch_alloy = "'".$req->srch_alloy."'";
         }
 
         if (!is_null($req->srch_schedule)) {
-            $equal = "= ";
-            $_value = $req->srch_schedule;
-            
-            if (Str::contains($req->srch_schedule, '*')){
-                $equal = "LIKE ";
-                $_value = str_replace("*","%",$req->srch_schedule);
-            }
-            $srch_schedule = " AND schedule ".$equal." '".$_value."'";
+            $srch_schedule = "'".$req->srch_schedule."'";
         }
 
         if (!is_null($req->srch_size)) {
-            $equal = "= ";
-            $_value = $req->srch_size;
-            
-            if (Str::contains($req->srch_size, '*')){
-                $equal = "LIKE ";
-                $_value = str_replace("*","%",$req->srch_size);
-            }
-            $srch_size = " AND size ".$equal." '".$_value."'";
+            $srch_size = "'".$req->srch_size."'";
         }
 
         if (!is_null($req->srch_width)) {
-            $equal = "= ";
-            $_value = $req->srch_width;
-            
-            if (Str::contains($req->srch_width, '*')){
-                $equal = "LIKE ";
-                $_value = str_replace("*","%",$req->srch_width);
-            }
-            $srch_width = " AND width ".$equal." '".$_value."'";
+            $srch_width = "'".$req->srch_width."'";
         }
 
         if (!is_null($req->srch_length)) {
-            $equal = "= ";
-            $_value = $req->srch_length;
-            
-            if (Str::contains($req->srch_length, '*')){
-                $equal = "LIKE ";
-                $_value = str_replace("*","%",$req->srch_length);
-            }
-            $srch_length = " AND `length` ".$equal." '".$_value."'";
+            $srch_length = "'".$req->srch_length."'";
         }
 
         if (!is_null($req->srch_heat_no)) {
-            $equal = "= ";
-            $_value = $req->srch_heat_no;
-            
-            if (Str::contains($req->srch_heat_no, '*')){
-                $equal = "LIKE ";
-                $_value = str_replace("*","%",$req->srch_heat_no);
-            }
-            $srch_heat_no = " AND heat_no ".$equal." '".$_value."'";
+            $srch_heat_no = "'".$req->srch_heat_no."'";
         }
 
         if (!is_null($req->srch_lot_no)) {
-            $equal = "= ";
-            $_value = $req->srch_lot_no;
-            
-            if (Str::contains($req->srch_lot_no, '*')){
-                $equal = "LIKE ";
-                $_value = str_replace("*","%",$req->srch_lot_no);
-            }
-            $srch_lot_no = " AND lot_no ".$equal." '".$_value."'";
+            $srch_lot_no = "'".$req->srch_lot_no."'";
         }
 
         if (!is_null($req->srch_invoice_no)) {
-            $equal = "= ";
-            $_value = $req->srch_invoice_no;
-            
-            if (Str::contains($req->srch_invoice_no, '*')){
-                $equal = "LIKE ";
-                $_value = str_replace("*","%",$req->srch_invoice_no);
-            }
-            $srch_invoice_no = " AND invoice_no ".$equal." '".$_value."'";
+            $srch_invoice_no = "'".$req->srch_invoice_no."'";
         }
 
         if (!is_null($req->srch_supplier)) {
-            $equal = "= ";
-            $_value = $req->srch_supplier;
-            
-            if (Str::contains($req->srch_supplier, '*')){
-                $equal = "LIKE ";
-                $_value = str_replace("*","%",$req->srch_supplier);
-            }
-            $srch_supplier = " AND supplier ".$equal." '".$_value."'";
+            $srch_supplier = "'".$req->srch_supplier."'";
         }
 
         if (!is_null($req->srch_supplier_heat_no)) {
-            $equal = "= ";
-            $_value = $req->srch_supplier_heat_no;
-            
-            if (Str::contains($req->srch_supplier_heat_no, '*')){
-                $equal = "LIKE ";
-                $_value = str_replace("*","%",$req->srch_supplier_heat_no);
-            }
-            $srch_supplier_heat_no = " AND pui.supplier_heat_no ".$equal." '".$_value."'";
+            $srch_supplier_heat_no = "'".$req->srch_supplier_heat_no."'";
         }
 
-        $data = DB::table('v_inventories')
-                    ->whereRaw('1=1 '.$srch_item_class
-                        .$srch_received_date
-                        .$srch_receiving_no
-                        .$srch_jo_no
-                        .$srch_materials_type
-                        .$srch_product_line
-                        .$srch_item_code
-                        .$srch_item
-                        .$srch_alloy
-                        .$srch_schedule
-                        .$srch_size
-                        .$srch_width
-                        .$srch_length
-                        .$srch_heat_no
-                        .$srch_lot_no
-                        .$srch_invoice_no
-                        .$srch_supplier
-                        .$srch_supplier_heat_no
-                        .$srch_warehouse)->get();
-                        
+        if (!is_null($req->srch_warehouse)) {
+            $srch_warehouse = "'".$req->srch_warehouse."'";
+        }
+
+        $data = DB::select(
+                            DB::raw("call GET_search_inventories(".$srch_item_class.",
+                                    ".$srch_received_date_from.",
+                                    ".$srch_received_date_to.",
+                                    ".$srch_receiving_no.",
+                                    ".$srch_jo_no.",
+                                    ".$srch_materials_type.",
+                                    ".$srch_product_line.",
+                                    ".$srch_item_code.",
+                                    ".$srch_item.",
+                                    ".$srch_alloy.",
+                                    ".$srch_schedule.",
+                                    ".$srch_size.",
+                                    ".$srch_width.",
+                                    ".$srch_length.",
+                                    ".$srch_heat_no.",
+                                    ".$srch_lot_no.",
+                                    ".$srch_invoice_no.",
+                                    ".$srch_supplier.",
+                                    ".$srch_supplier_heat_no.",
+                                    ".$srch_warehouse.",
+                                    ".Auth::user()->id.")")
+                        );
         return $data;
     }
 

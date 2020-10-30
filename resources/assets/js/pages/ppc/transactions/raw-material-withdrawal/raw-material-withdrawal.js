@@ -816,7 +816,12 @@ function addDetails() {
 	var limit = ($('#item_id').val() != '') ? 21 : 20;
 	var current_stock = parseInt($('#inv_qty').val());
 	var issued_qty = parseInt($('#issued_qty').val());
-	var save_issued_qty = parseInt($('#save_issued_qty').val());
+	var save_issued_qty = 0;
+
+	if ($('#save_issued_qty').val() !== "") {
+		save_issued_qty = parseInt($('#save_issued_qty').val());
+	}
+
 	var ExistHeat_NO = 1;
 
 	if (rawMaterial.length == limit) {

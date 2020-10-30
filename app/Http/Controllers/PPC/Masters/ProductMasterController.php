@@ -275,7 +275,7 @@ class ProductMasterController extends Controller
 
     public function prod_process_list(Request $req)
     {
-        $process = PpcProductProcess::where('prod_id', $req->prod_id)->get();
+        $process = PpcProductProcess::where('prod_id', $req->prod_id)->orderBy('sequence','asc')->get();
         return response()->json($process);
     }
 

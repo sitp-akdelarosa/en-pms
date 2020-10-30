@@ -213,10 +213,15 @@ class PDFController extends Controller
 				'id' => $ts->id,
 				'date' => date('M d Y'),
 				'header' => DB::table('v_travel_sheet_pdf')->where('id', $ts->id)->get(),
-				'process' => DB::table('ppc_pre_travel_sheet_processes')
-								->where('pre_travel_sheet_id', $ts->id)
-								->select('pre_travel_sheet_id', 'process_name')
-								->get(),
+				'process' => DB::select("SELECT tp.pre_travel_sheet_id,
+												tp.process_name,
+												pd.div_name,
+												tp.sequence
+										FROM enpms.ppc_pre_travel_sheet_processes as tp
+										inner join ppc_divisions as pd
+										on tp.div_code = pd.div_code
+										where pre_travel_sheet_id = ". $ts->id."
+										order by sequence ASC"),
 				'iso' => $iso,
 			]);
 		}
