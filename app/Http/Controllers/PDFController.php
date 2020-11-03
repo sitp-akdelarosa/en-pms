@@ -211,7 +211,7 @@ class PDFController extends Controller
 		foreach ($pre_travel_sheet as $key => $ts) {
 			array_push($travel_sheets, [
 				'id' => $ts->id,
-				'date' => date('M d Y'),
+				'date' => date('M. d, Y'),
 				'header' => DB::table('v_travel_sheet_pdf')->where('id', $ts->id)->get(),
 				'process' => DB::select("SELECT tp.pre_travel_sheet_id,
 												tp.process_name,

@@ -56,7 +56,12 @@
 								<h2 style="padding-top:40px;">TRAVEL SHEET</h2>
 							</div>
 							<div class="col-xs-1" style="width: 217px;">
-								<p style="padding-top:50px; padding-bottom: 0px;font-size: 13px; text-align:right">Date Released: {{ $pages['date'] }}</p>
+								<p style="padding-top:50px; margin-bottom: 0px; padding-bottom: 0px;font-size: 13px; text-align:right">Date Released: {{ $pages['date'] }}</p>
+								<?php
+									$tm = strtotime($header->ship_date);
+									$ship_date = date('M. d, Y',$tm);
+								?>
+								<p style="padding-top:0px; padding-bottom: 0px;font-size: 13px; text-align:right">Est. Ship Date: {{ $ship_date }}</p>
 							</div>
 							    
 						</div>
@@ -165,6 +170,7 @@
 										<tr>
 											<td colspan="11" style="height: 100px">
 												<strong>REMARKS</strong>
+												<p>{{ $header->remarks }}</p>
 											</td>
 										</tr>
 										
