@@ -844,7 +844,6 @@ function ProdSummariesTable(arr) {
     processing: true,
     deferRender: true,
     order: [[1, 'asc']],
-    scrollX: true,
     language: {
       aria: {
         sortAscending: ": activate to sort column ascending",
@@ -1540,7 +1539,8 @@ function getTablesAll() {
           lot_no: returnData[x].lot_no,
           inv_id: returnData[x].inv_id,
           rmw_id: returnData[x].rmw_id,
-          heat_no_id: returnData[x].heat_no_id
+          heat_no_id: returnData[x].heat_no_id,
+          ship_date: returnData[x].ship_date
         });
       }
 

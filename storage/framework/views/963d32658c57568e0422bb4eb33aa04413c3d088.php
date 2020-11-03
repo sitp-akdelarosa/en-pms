@@ -152,12 +152,12 @@
                             </div>
 
                             <div class="row justify-content-center">
-                                <div class="col-sm-3 col-sm-3 mb-3">
+                                <div class="col-sm-3 col-sm-3 mb-3" id="add_process">
                                     <button type="button" id="btn_add_process" class="btn btn-sm bg-green btn-block">
                                         <i class="fa fa-plus"></i> Add Process
                                     </button>
                                 </div>
-                                <div class="col-sm-3 col-sm-3 mb-3">
+                                <div class="col-sm-3 col-sm-3 mb-3" id="cancel_process">
                                     <button type="button" id="btn_cancel_process" class="btn btn-sm bg-red btn-block">
                                         <i class="fa fa-times"></i> Cancel
                                     </button>

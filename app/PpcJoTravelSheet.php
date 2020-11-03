@@ -18,7 +18,8 @@ class PpcJoTravelSheet extends Model
     	'material_used',
 		'material_heat_no',
 		'uom',
-        'lot_no',
+		'lot_no',
+		'ship_date',
     	'status',
         'create_user',
         'update_user'

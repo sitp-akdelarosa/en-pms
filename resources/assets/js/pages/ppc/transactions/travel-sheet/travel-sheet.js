@@ -19,7 +19,8 @@ $( function() {
 		$('#jo_no').val($(this).attr('data-jo_no'));
 		$('#prod_code').val($(this).attr('data-prod_code'));
 
-		$('#btn_cancel_process').hide();
+		$('#cancel_process').hide();
+		
 
 		if ($(this).attr('data-id') !== '') {
 			$('#issued_qty').val( $(this).attr('data-issued_qty'));
@@ -362,7 +363,7 @@ $( function() {
 		} else {
 			msg("The Process already existing.", "failed");
 		}
-		$('#btn_cancel_process').hide();
+		$('#cancel_process').hide();
 	});
 
 	$('#btn_cancel_process').on('click', function () {
@@ -409,7 +410,7 @@ $( function() {
 		$('#btn_add_process').html('<i class="fa fa-check"></i> Update Process');
 		$('#btn_add_process').removeClass('bg-green');
 		$('#btn_add_process').addClass('bg-navy');
-		$('#btn_cancel_process').show();
+		$('#cancel_process').show();
 	});
 });
 

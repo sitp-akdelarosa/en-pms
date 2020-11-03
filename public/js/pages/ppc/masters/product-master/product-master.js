@@ -1063,7 +1063,10 @@ function makeProcessList(arr) {
 	$('#tbl_prod_process').dataTable().fnDestroy();
 	$('#tbl_prod_process').dataTable({
 		data: arr,
-		order: [[0, 'desc']],
+		order: [[0, 'asc']],
+		bLengthChange: false,
+		scrollY: "300px",
+		paging: false,
 		columns: [
 			{
 				data: function (x) {

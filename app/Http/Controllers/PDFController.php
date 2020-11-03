@@ -218,17 +218,21 @@ class PDFController extends Controller
 												pd.div_name,
 												pd.div_code,
 												tp.sequence,
-												tp.remarks
+												ifnull(tp.remarks,pp.remarks) as remarks
 										FROM enpms.ppc_pre_travel_sheet_processes as tp
 										inner join ppc_divisions as pd
 										on tp.div_code = pd.div_code
-										where pre_travel_sheet_id = ". $ts->id."
+										inner join ppc_product_processes as pp
+                                    	on pp.process = tp.process_name
+										where tp.pre_travel_sheet_id = ". $ts->id."
+										AND pp.prod_code = '".$ts->prod_code."'
 										group by tp.pre_travel_sheet_id,
 												tp.process_name,
 												pd.div_name,
 												pd.div_code,
 												tp.sequence,
-												tp.remarks
+												tp.remarks,
+												pp.remarks
 										order by sequence ASC"),
 				'iso' => $iso,
 			]);
