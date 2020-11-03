@@ -37,25 +37,36 @@ foreach ($user_accesses as $user_access){
                 	<div class="col-md-6">
                 		<div class="form-group row">
 		                    <label for="trans_no" class="col-sm-2 control-label mt-5">Transaction No:</label>
-		                    <div class="col-sm-6">
+		                    <div class="col-sm-8">
 		                        <div class="input-group input-group-sm">
 		                            <input type="text" class="form-control form-control-sm validate" name="trans_no" id="trans_no">
 		                            <div id="trans_no_feedback"></div>
 		                            <div class="input-group-append">
-		                            	<button type="button" class="btn btn-sm bg-blue btn_navigation" id="btn_first">
+		                            	<button type="button" class="btn btn-sm bg-blue btn_navigation" id="btn_first" style="width: 30px; border-color: #6c757d">
 		                            		<i class="fa fa-angle-double-left"></i>
 		                            	</button>
-		                            	<button type="button" class="btn btn-sm bg-blue btn_navigation" id="btn_prev">
+		                            	<button type="button" class="btn btn-sm bg-blue btn_navigation" id="btn_prev" style="width: 30px; border-color: #6c757d">
 		                            		<i class="fa fa-angle-left"></i>
 		                            	</button>
-		                            	<button type="button" class="btn btn-sm bg-blue btn_navigation" id="btn_next">
+		                            	<button type="button" class="btn btn-sm bg-blue btn_navigation" id="btn_next" style="width: 30px; border-color: #6c757d">
 		                            		<i class="fa fa-angle-right"></i>
 		                            	</button>
-		                            	<button type="button" class="btn btn-sm bg-blue btn_navigation" id="btn_last">
+		                            	<button type="button" class="btn btn-sm bg-blue btn_navigation" id="btn_last" style="width: 30px; border-color: #6c757d">
 		                            		<i class="fa fa-angle-double-right"></i>
 		                            	</button>
 		                            	
 		                            </div>
+		                        </div>
+		                    </div>
+		                </div>
+                    </div>
+                    
+                    <div class="col-md-4 col-sm-12">
+                		<div class="form-group row">
+		                    <label for="status" class="col-md-2 col-sm-3 control-label mt-5">Status:</label>
+		                    <div class="col-md-6 col-sm-9">
+		                        <div class="input-group input-group-sm">
+		                            <input type="text" class="form-control form-control-sm validate" name="status" id="status" readonly>
 		                        </div>
 		                    </div>
 		                </div>
@@ -288,37 +299,42 @@ foreach ($user_accesses as $user_access){
 	            </div>
 
             	<div class="form-group row justify-content-center">
-            		<div class="col-lg-1 col-md-1 col-sm-2 mb-5" id="add_new">
+            		<div class="col-lg-2 col-md-1 col-sm-2 mb-5" id="add_new">
                         <button type="button" id="btn_new" class="btn bg-green btn-block permission-button">
                             <i class="fa fa-pencil"></i> Add New
                         </button>
                     </div>
-                    <div class="col-lg-1 col-md-1 col-sm-2 mb-5" id="edit">
+                    <div class="col-lg-2 col-md-1 col-sm-2 mb-5" id="edit">
                         <button type="button" id="btn_edit" class="btn bg-purple btn-block permission-button">
                             <i class="fa fa-edit"></i> Edit
                         </button>
                     </div>
-                    <div class="col-lg-1 col-md-1 col-sm-2 mb-5" id="save">
+                    <div class="col-lg-2 col-md-1 col-sm-2 mb-5" id="confirm">
+                        <button type="button" id="btn_confirm" class="btn btn-success btn-block permission-button">
+                            <i class="fa fa-check"></i> Confirm Withdrawal
+                        </button>
+                    </div>
+                    <div class="col-lg-2 col-md-1 col-sm-2 mb-5" id="save">
                         <button type="submit" id="btn_save" class="btn bg-blue btn-block permission-button">
                             <i class="fa fa-floppy-o"></i> Save
                         </button>
                     </div>
-                    <div class="col-lg-1 col-md-1 col-sm-2 mb-5" id="delete">
+                    <div class="col-lg-2 col-md-1 col-sm-2 mb-5" id="delete">
                         <button type="button" id="btn_delete" class="btn bg-red btn-block permission-button">
                             <i class="fa fa-trash"></i> Delete
                         </button>
                     </div>
-                    <div class="col-lg-1 col-md-1 col-sm-2 mb-5" id="cancel">
+                    <div class="col-lg-2 col-md-1 col-sm-2 mb-5" id="cancel">
                         <button type="button" id="btn_cancel" class="btn bg-red btn-block">
                             <i class="fa fa-times"></i> Cancel
                         </button>
                     </div>
-                    <div class="col-lg-1 col-md-1 col-sm-2 mb-5" id="print">
+                    <div class="col-lg-2 col-md-1 col-sm-2 mb-5" id="print">
                         <button type="button" id="btn_prepare_print" class="btn bg-navy btn-block">
                             <i class="fa fa-print"></i> Print Slip
                         </button>
                     </div>
-                    <div class="col-lg-1 col-md-1 col-sm-2 mb-5" id="search">
+                    <div class="col-lg-2 col-md-1 col-sm-2 mb-5" id="search">
                         <button type="button" id="btn_search_filter" class="btn bg-teal btn-block">
                             <i class="fa fa-search"></i> Search / Filter
                         </button>
@@ -340,6 +356,8 @@ foreach ($user_accesses as $user_access){
         var getInventoryURL = "{{ url('/transaction/product-withdrawal/get-product-inventory') }}";
         var ProductWithdrawalSlipPrintURL = "{{ url('/pdf/product-withdrawal-slip') }}";
         var excelSearchProductWithdrawalURL = "{{ url('/transaction/product-withdrawal/search-product-withdrawal-excel') }}";
+        var deleteWithdrawalURL = "{{ url('/transaction/product-withdrawal/delete-product-withdrawal') }}";
+        var confirmWithdrawalURL = "{{ url('/transaction/product-withdrawal/confirm-product-withdrawal') }}";
         
     </script>
     <script type="text/javascript" src="{{ mix('/js/pages/ppc/transactions/product-withdrawal/product-withdrawal.js') }}"></script>

@@ -310,7 +310,7 @@ $(function () {
             msg(data.msg, data.status);
           }
 
-          getRawMaterialList($('#trans_no').val());
+          getRawMaterialList('', '');
         }).fail(function (xhr, textStatus, errorThrown) {
           msg(errorThrown, 'error');
         });
@@ -383,6 +383,26 @@ $(function () {
       $('.loadingOverlay-modal').hide();
     });
   });
+  $('#btn_confirm').on('click', function () {
+    swal({
+      title: "Confirm Withdrawal",
+      text: "Are your sure to confirm this withdrawal?",
+      type: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#f95454",
+      confirmButtonText: "Yes",
+      cancelButtonText: "No",
+      closeOnConfirm: true,
+      closeOnCancel: false
+    }, function (isConfirm) {
+      if (isConfirm) {
+        swal.close();
+        confirmWithdrawal($('#id').val());
+      } else {
+        swal.close();
+      }
+    });
+  });
 });
 
 function init() {
@@ -401,12 +421,22 @@ function viewState() {
   $('#edit').show();
   $('#save').hide();
   $('.btn_edit_item').prop('disabled', true);
-  $(".btn_remove_item").css("visibility", "hidden");
+  $(".btn_remove_item").prop('disabled', true);
   $('#delete').show();
+  $('#confirm').show();
   $('#cancel').hide();
   $('#print').show();
   $('.input').prop('disabled', true);
   $('#trans_no').prop('readonly', false);
+
+  if ($('#status').val() == 'CONFIRMED') {
+    $('#btn_edit').prop('disabled', true);
+    $('#btn_confirm').prop('disabled', true);
+  } else {
+    $('#btn_edit').prop('disabled', false);
+    $('#btn_confirm').prop('disabled', false);
+  }
+
   RawMaterialList(data);
 }
 
@@ -425,9 +455,10 @@ function addState() {
   $('#edit').hide();
   $('#save').show();
   $('#delete').hide();
+  $('#confirm').hide();
   $('#cancel').show();
   $('#print').hide();
-  $('#btn_edit_item').show();
+  $('.btn_edit_item').show();
   $('.input').prop('disabled', false);
   $('#trans_no').prop('readonly', true);
   $('#issued_qty').prop('readonly', false);
@@ -436,7 +467,7 @@ function addState() {
   $('#returned_uom').prop('readonly', false);
   rawMaterial = [];
   RawMaterialList([]);
-  $(".btn_remove_item").css("visibility", "visible");
+  $(".btn_remove_item").prop('disabled', false);
 }
 
 function editState() {
@@ -451,8 +482,9 @@ function editState() {
   $('#search').hide();
   $('#edit').hide();
   $('#save').show();
-  $(".btn_remove_item").css("visibility", "visible");
+  $(".btn_remove_item").prop('disabled', false);
   $('#delete').hide();
+  $('#confirm').hide();
   $('#cancel').show();
   $('#print').hide();
   $('.btn_edit_item').prop('disabled', false);
@@ -525,9 +557,10 @@ function getRawMaterialList(trans_no) {
       });
       $('#id').val(data.trans_id);
       $('#trans_no').val(data.trans_no);
+      $('#status').val(data.istatus);
       viewState(rawMaterial);
       $('#item_id').val('');
-      $(".btn_remove_item").css("visibility", "hidden");
+      $(".btn_remove_item").prop('disabled', true);
     }
   }).fail(function (xhr, textStatus, errorThrown) {
     viewState();
@@ -732,7 +765,9 @@ function getMaterialDetails(material_heat_no, issued_qty, inv_id, state) {
             $('#size').val(material.size);
             $('#length').val(material.length);
             $('#mat_code').val(material.item_code);
-            $('#inv_qty').val(material.current_stock);
+            var issued_qty = $('#issued_qty').val();
+            var inv_qty = parseFloat(material.current_stock) - parseFloat(issued_qty);
+            $('#inv_qty').val(inv_qty);
             $('#qty_weight').val(material.qty_weight);
             $('#issued_qty').prop('readonly', false);
 
@@ -968,6 +1003,27 @@ function searchDataTable(arr) {
     initComplete: function initComplete() {
       $('.loadingOverlay-modal').hide();
     }
+  });
+}
+
+function confirmWithdrawal(id) {
+  $('.loadingOverlay').show();
+  $.ajax({
+    url: confirmWithdrawalURL,
+    type: 'POST',
+    datatype: "json",
+    loadonce: true,
+    data: {
+      _token: token,
+      id: id
+    }
+  }).done(function (data, textStatus, xhr) {
+    msg(data.msg, data.status);
+    getRawMaterialList($('#trans_no').val(), '');
+  }).fail(function (xhr, textStatus, errorThrown) {
+    ErrorMsg(xhr);
+  }).always(function () {
+    $('.loadingOverlay').hide();
   });
 }
 

@@ -31,12 +31,12 @@ $( function() {
         getWithdrawalTransaction('last', $('#trans_no').val());
     });
 
-
     $('#btn_search_item_code').on('click', function() {
+        var trans_code = $('#item_code').val();
         if ($('#item_class').val() == "") {
             showErrors({ item_class: ["Please select an Item Class."] });
         } else {
-            getInventory($('#item_class').val(), $('#item_code').val(), 0, null);
+            getInventory($('#item_class').val(), trans_code.trim(), 0, null);
         }
     });
 
@@ -50,7 +50,12 @@ $( function() {
     });
 
     $('#btn_edit').on('click', function () {
-        viewState('EDIT');
+        if ($('#trans_no').val() == '') {
+
+        } else {
+            viewState('EDIT');
+        }
+        
     });
 
     $('#btn_cancel').on('click', function () {
@@ -307,6 +312,67 @@ $( function() {
         getWithdrawalTransaction('', $(this).attr('data-trans_no'));
         $('#modal_product_search').modal('hide');
     });
+
+    $('#btn_delete').on('click', function () {
+        var id = $('#id').val();
+
+        swal({
+            title: "Are you sure?",
+            text: "You will not be able to recover your data!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#f95454",
+            confirmButtonText: "Yes",
+            cancelButtonText: "No",
+            closeOnConfirm: true,
+            closeOnCancel: false
+        }, function (isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    url: deleteWithdrawalURL,
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        _token: token,
+                        id: id
+                    },
+                }).done(function (data, textStatus, xhr) {
+                    if (data.status == 'success') {
+                        msg(data.msg, data.status)
+                    } else {
+                        msg(data.msg, data.status)
+                    }
+
+                    getWithdrawalTransaction('', '');
+                }).fail(function (xhr, textStatus, errorThrown) {
+                    msg(errorThrown, 'error');
+                });
+            } else {
+                swal("Cancelled", "Your data is safe and not deleted.");
+            }
+        });
+    });
+
+    $('#btn_confirm').on('click', function() {
+        swal({
+            title: "Confirm Withdrawal",
+            text: "Are your sure to confirm this withdrawal?",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#f95454",
+            confirmButtonText: "Yes",
+            cancelButtonText: "No",
+            closeOnConfirm: true,
+            closeOnCancel: false
+        }, function (isConfirm) {
+            if (isConfirm) {
+                swal.close();
+                confirmWithdrawal($('#id').val());
+            } else {
+                swal.close();
+            }
+        });
+    });
 });
 
 function init() {
@@ -343,6 +409,7 @@ function viewState(state) {
             $('.btn_withdrawal_detail_delete').prop('disabled', false);
 
             $('#add_new').hide();
+            $('#confirm').hide();
             $('#edit').hide();
             $('#save').show();
             $('#delete').hide();
@@ -374,6 +441,7 @@ function viewState(state) {
             $('.btn_withdrawal_detail_delete').prop('disabled', false);
 
             $('#add_new').hide();
+            $('#confirm').hide();
             $('#edit').hide();
             $('#save').show();
             $('#delete').hide();
@@ -404,9 +472,10 @@ function viewState(state) {
             $('.btn_withdrawal_detail_delete').prop('disabled', true);
 
             $('#add_new').show();
+            $('#confirm').show();
             $('#edit').show();
             $('#save').hide();
-            $('#delete').hide();
+            $('#delete').show();
             $('#cancel').hide();
             $('#print').show();
             $('#search').show();
@@ -439,6 +508,14 @@ function plotValues(info,details) {
     $('#id').val(info.id);
     $('#trans_no').val(info.trans_no);
     $('#status').val(info.status);
+
+    if (info.status == 'CONFIRMED') {
+        $('#btn_edit').prop('disabled', true);
+        $('#btn_confirm').prop('disabled', true);
+    } else {
+        $('#btn_edit').prop('disabled', false);
+        $('#btn_confirm').prop('disabled', false);
+    }
 
     product_arr = [];
 
@@ -665,7 +742,14 @@ function getInventory(item_class,item_code, issued_qty,inv_id,state) {
                     $('#size').val(product.size);
                     $('#schedule').val(product.schedule);
 
-                    $('#inv_qty').val(product.current_stock);
+                    var iss_qty = 0;
+                    if ($('#issued_qty').val() !== "" && $('#issued_qty').val() !== undefined) {
+                        iss_qty = parseFloat($('#issued_qty').val());
+                    }
+
+                    var curr_stock = parseFloat(product.current_stock) - iss_qty;
+
+                    $('#inv_qty').val(curr_stock);
                     $('#qty_weight').val(product.qty_weight);
                     $('#issued_qty').prop('readonly', false);
 
@@ -791,5 +875,23 @@ function searchDataTable(arr) {
         initComplete: function () {
             $('.loadingOverlay-modal').hide();
         }
+    });
+}
+
+function confirmWithdrawal(id) {
+    $('.loadingOverlay').show();
+    $.ajax({
+        url: confirmWithdrawalURL,
+        type: 'POST',
+        datatype: "json",
+        loadonce: true,
+        data: { _token: token, id: id },
+    }).done(function (data, textStatus, xhr) {
+        msg(data.msg, data.status);
+        getWithdrawalTransaction('',$('#trans_no').val());
+    }).fail(function (xhr, textStatus, errorThrown) {
+        ErrorMsg(xhr);
+    }).always(function () {
+        $('.loadingOverlay').hide();
     });
 }

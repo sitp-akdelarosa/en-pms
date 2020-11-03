@@ -29,10 +29,10 @@ foreach ($user_accesses as $user_access){
                 <input type="hidden" name="id" id="id">
 
                 <div class="row mb-10">
-                	<div class="col-lg-6 col-md-9 col-sm-12">
+                	<div class="col-lg-6 col-md-7 col-sm-12">
                 		<div class="form-group row">
-		                    <label for="trans_no" class="col-md-2 col-sm-3 control-label mt-5">Transaction No:</label>
-		                    <div class="col-md-6 col-sm-9">
+		                    <label for="trans_no" class="col-lg-2 col-md-2 col-sm-3 control-label mt-5">Transaction No:</label>
+		                    <div class="col-md-6 col-md-10 col-sm-9">
 		                        <div class="input-group input-group-sm">
 		                            <input type="text" class="form-control form-control-sm validate" name="trans_no" id="trans_no">
 		                            <div id="trans_no_feedback"></div>
@@ -51,6 +51,17 @@ foreach ($user_accesses as $user_access){
 		                            	</button>
 		                            	
 		                            </div>
+		                        </div>
+		                    </div>
+		                </div>
+                    </div>
+                    
+                    <div class="col-lg-4 col-md-5 col-sm-12">
+                		<div class="form-group row">
+		                    <label for="status" class="col-md-2 col-sm-3 control-label mt-5">Status:</label>
+		                    <div class="col-md-6 col-sm-9">
+		                        <div class="input-group input-group-sm">
+		                            <input type="text" class="form-control form-control-sm validate" name="status" id="status" readonly>
 		                        </div>
 		                    </div>
 		                </div>
@@ -300,7 +311,7 @@ foreach ($user_accesses as $user_access){
                 </div>
 	            <div class="row">
 	                <div class="col-12">
-	                    <table class="table table-sm table-hover table-striped dt-responsive nowrap" id="tbl_raw_material" style="width:100%">
+	                    <table class="table table-sm table-hover table-bordered table-striped dt-responsive nowrap" id="tbl_raw_material" style="width:100%">
 	                        <thead class="thead-dark">
 	                            <tr>
 	                                <th width="5%"></th>
@@ -331,6 +342,11 @@ foreach ($user_accesses as $user_access){
                     <div class="col-md-2 mb-5" id="edit">
                         <button type="button" id="btn_edit" class="btn bg-purple btn-block permission-button">
                             <i class="fa fa-edit"></i> Edit
+                        </button>
+                    </div>
+                    <div class="col-lg-2 col-md-1 col-sm-2 mb-5" id="confirm">
+                        <button type="button" id="btn_confirm" class="btn btn-success btn-block permission-button">
+                            <i class="fa fa-check"></i> Confirm Withdrawal
                         </button>
                     </div>
                     <div class="col-md-2 mb-5" id="save">
@@ -380,6 +396,7 @@ foreach ($user_accesses as $user_access){
         var code_permission = 'T0003';
         var getComputationIssuedQty = "{{ url('/transaction/raw-material-withdrawal/getComputationIssuedQty') }}";
         var excelSearchRawMaterialURL = "{{ url('/transaction/raw-material-withdrawal/search-raw-material-excel') }}";
+        var confirmWithdrawalURL = "{{ url('/transaction/raw-material-withdrawal/confirm-raw-material-withdrawal') }}";
     </script>
     <script type="text/javascript" src="{{ mix('/js/pages/ppc/transactions/raw-material-withdrawal/raw-material-withdrawal.js') }}"></script>
 @endpush

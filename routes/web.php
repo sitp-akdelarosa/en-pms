@@ -317,6 +317,8 @@ Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', '
 				->name('transaction.raw-material-withdrawal.search-filter-raw-material');
 			Route::get('/search-raw-material-excel', 'PPC\Transaction\RawMaterialWithdrawalController@excelFilteredData')
 				->name('transaction.raw-material-withdrawal.search-raw-material-excel');
+			Route::post('/confirm-raw-material-withdrawal', 'PPC\Transaction\RawMaterialWithdrawalController@ConfirmWithdrawal')
+				->name('transaction.raw-material-withdrawal.confirm-raw-material-withdrawal');
 		});
 
 		Route::group(['prefix' => 'product-withdrawal'], function () {
@@ -332,6 +334,10 @@ Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', '
 				->name('transaction.raw-material-withdrawal.search-filter-product-withdrawal');
 			Route::get('/search-product-withdrawal-excel', 'PPC\Transaction\ProductWithdrawalController@excelFilteredData')
 				->name('transaction.raw-material-withdrawal.search-product-withdrawal-excel');
+			Route::post('/delete-product-withdrawal', 'PPC\Transaction\ProductWithdrawalController@destroy')
+				->name('transaction.product-withdrawal.delete-product-withdrawal');
+			Route::post('/confirm-product-withdrawal', 'PPC\Transaction\ProductWithdrawalController@ConfirmWithdrawal')
+				->name('transaction.product-withdrawal.confirm-product-withdrawal');
 		});
 
 		Route::group(['prefix' => 'travel-sheet'], function () {

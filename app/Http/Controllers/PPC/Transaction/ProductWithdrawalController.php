@@ -110,7 +110,7 @@ class ProductWithdrawalController extends Controller
                 break;
 
             case 'last':
-                return $this->last('');
+                return $this->last(null);
                 break;
 
             default:
@@ -237,7 +237,7 @@ class ProductWithdrawalController extends Controller
 
             return response()->json($data);
         } else {
-            return $this->last();
+            return $this->last(null);
         }
     }
 
@@ -450,14 +450,16 @@ class ProductWithdrawalController extends Controller
 
                             if ($updated) {
                                 # add old issued qty first before deduct
-                                DB::table('inventories')
-                                            ->where('id',$req->detail_inv_id[$key])
-                                            ->increment('qty_pcs',$req->detail_old_issued_qty[$key]);
+                                // commented due to confirm button
+                                // DB::table('inventories')
+                                //             ->where('id',$req->detail_inv_id[$key])
+                                //             ->increment('qty_pcs',$req->detail_old_issued_qty[$key]);
 
                                 # deduct issued qty to inventory qty
-                                $inv = DB::table('inventories')
-                                            ->where('id',$req->detail_inv_id[$key])
-                                            ->decrement('qty_pcs',$req->detail_issued_qty[$key]);
+                                // commented due to confirm button
+                                // $inv = DB::table('inventories')
+                                //             ->where('id',$req->detail_inv_id[$key])
+                                //             ->decrement('qty_pcs',$req->detail_issued_qty[$key]);
 
                                 $updated_data ++;
                             }
@@ -491,9 +493,10 @@ class ProductWithdrawalController extends Controller
 
                         if ($inserted) {
                             # deduct issued qty to inventory qty
-                            $inv = DB::table('inventories')
-                                        ->where('id',$req->detail_inv_id[$key])
-                                        ->decrement('qty_pcs',$req->detail_issued_qty[$key]);
+                            // commented due to confirm button
+                            // $inv = DB::table('inventories')
+                            //             ->where('id',$req->detail_inv_id[$key])
+                            //             ->decrement('qty_pcs',$req->detail_issued_qty[$key]);
 
                             $inserted_data ++;
                         }
@@ -612,9 +615,10 @@ class ProductWithdrawalController extends Controller
 
                     if ($inserted) {
                         # deduct issued qty to inventory qty
-                        $inv = DB::table('inventories')
-                                    ->where('id',$req->detail_inv_id[$key])
-                                    ->decrement('qty_pcs',$req->detail_issued_qty[$key]);
+                        // commented due to confirm button
+                        // $inv = DB::table('inventories')
+                        //             ->where('id',$req->detail_inv_id[$key])
+                        //             ->decrement('qty_pcs',$req->detail_issued_qty[$key]);
 
                         $inserted_data ++;
                     }
@@ -670,6 +674,101 @@ class ProductWithdrawalController extends Controller
 
             return $data;
         }
+    }
+
+    public function destroy(Request $req)
+    {
+        $data = [
+            'msg' => "Deleting failed",
+            'status' => "warning"
+        ];
+
+        $RawMatQuantity = PpcProductWithdrawalDetail::where('trans_id',$req->id)->get();
+
+        foreach ($RawMatQuantity as $key => $rw) {
+            Inventory::where('id',$rw->inv_id)
+                                ->increment('qty_pcs', (float)$rw->issued_qty);
+        }
+        
+        $raw = PpcProductWithdrawalInfo::where('id',$req->id)->delete();
+        if ($raw) {
+            PpcProductWithdrawalDetail::where('trans_id',$req->id)->delete();
+            $data = [
+                'msg' => "Data was successfully deleted.",
+                'status' => "success"
+            ];
+        }
+        $this->_audit->insert([
+            'user_type' => Auth::user()->user_type,
+            'module_id' => $this->_moduleID,
+            'module' => 'Raw Material Withdrawal',
+            'action' => 'Deleted data ID: '.$req->id,
+            'user' => Auth::user()->id,
+            'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
+        ]);
+        return response()->json($data);
+    }
+
+    public function ConfirmWithdrawal(Request $req)
+    {
+        $data = [
+            'msg' => 'Confirmation failed.',
+            'status' => 'failed'
+        ];
+        $details = DB::table('ppc_product_withdrawal_details')
+                            ->where('trans_id',$req->id)
+                            ->select('inv_id','issued_qty')
+                            ->get();
+        if (count((array)$details) > 0) {
+            $update = DB::table('ppc_product_withdrawal_infos')
+                        ->where('id',$req->id)
+                        ->update([
+                            'status' => 'CONFIRMED',
+                            'update_user' => Auth::user()->id,
+                            'updated_at' => date('Y-m-d H:i:s')
+                        ]);
+
+            if ($update) {
+                $details = DB::table('ppc_product_withdrawal_details')
+                                ->where('trans_id',$req->id)
+                                ->select('inv_id','issued_qty')
+                                ->get();
+                
+                $inv_update = 0;
+                foreach ($details as $key => $dt) {
+                    $inv = DB::table('inventories')->where('id',$dt->inv_id)->count();
+                    if ($inv > 0) {
+                        $upd_inv = DB::table('inventories')
+                                    ->where('id',$dt->inv_id)
+                                    ->decrement('qty_pcs',$dt->issued_qty);
+                        if ($upd_inv) {
+                            $inv_update++;
+                        }
+                    }
+                }
+
+                if($inv_update > 0) {
+                    $data = [
+                        'msg' => 'Confirmation Successfully done.',
+                        'status' => 'success'
+                    ];
+                }
+                
+            } else {
+                $data = [
+                    'msg' => 'Confirmation failed.',
+                    'status' => 'failed'
+                ];
+            }
+        } else {
+            $data = [
+                'msg' => 'There are no Items selected in this transaction.',
+                'status' => 'failed'
+            ];
+        }
+            
+
+        return $data;
     }
 
     public function searchFilter(Request $req) 

@@ -62,7 +62,7 @@ class RawMaterialWithdrawalController extends Controller
     public function searchTransNo(Request $req)
     {
         if (empty($req->to) && !empty($req->trans_no)) {
-            $info = PpcRawMaterialWithdrawalInfo::select('id','trans_no')
+            $info = PpcRawMaterialWithdrawalInfo::select('id','trans_no','status')
                                             ->where('create_user',Auth::user()->id)
                                             ->where('trans_no',$req->trans_no)
                                             ->first();
@@ -110,6 +110,7 @@ class RawMaterialWithdrawalController extends Controller
                     'status' => 'success',
                     'trans_id' => $info->id,
                     'trans_no' => $info->trans_no,
+                    'istatus' => $info->status,
                     'details' => $details
                 ];
                 return response()->json($data);
@@ -157,7 +158,7 @@ class RawMaterialWithdrawalController extends Controller
 
     private function first()
     {
-        $info = PpcRawMaterialWithdrawalInfo::select('id','trans_no')
+        $info = PpcRawMaterialWithdrawalInfo::select('id','trans_no','status')
                                             ->where("id", "=", function ($query) {
                                                 $query->select(DB::raw(" MIN(id)"))
                                                   ->from('ppc_raw_material_withdrawal_infos')
@@ -206,6 +207,7 @@ class RawMaterialWithdrawalController extends Controller
             $data = [
                 'trans_id' => $info->id,
                 'trans_no' => $info->trans_no,
+                'istatus' => $info->status,
                 'details' => $details
             ];
 
@@ -215,12 +217,12 @@ class RawMaterialWithdrawalController extends Controller
 
     private function prev($trans_no)
     {
-        $latest = PpcRawMaterialWithdrawalInfo::select('id','trans_no')
+        $latest = PpcRawMaterialWithdrawalInfo::select('id','trans_no','status')
                                             ->where('trans_no',$trans_no)
                                             ->where('create_user',Auth::user()->id)
                                             ->first();
 
-        $info = PpcRawMaterialWithdrawalInfo::select('id','trans_no')
+        $info = PpcRawMaterialWithdrawalInfo::select('id','trans_no','status')
                                             ->where('id','<',$latest->id)
                                             ->orderBy("id","DESC")
                                             ->where('create_user',Auth::user()->id)
@@ -267,6 +269,7 @@ class RawMaterialWithdrawalController extends Controller
             $data = [
                 'trans_id' => $info->id,
                 'trans_no' => $info->trans_no,
+                'istatus' => $info->status,
                 'details' => $details
             ];
 
@@ -278,12 +281,12 @@ class RawMaterialWithdrawalController extends Controller
 
     private function next($trans_no)
     {
-        $latest = PpcRawMaterialWithdrawalInfo::select('id','trans_no')
+        $latest = PpcRawMaterialWithdrawalInfo::select('id','trans_no','status')
                                             ->where('trans_no',$trans_no)
                                             ->where('create_user',Auth::user()->id)
                                             ->first();
 
-        $info = PpcRawMaterialWithdrawalInfo::select('id','trans_no')
+        $info = PpcRawMaterialWithdrawalInfo::select('id','trans_no','status')
                                             ->where('id','>',$latest->id)
                                             ->where('create_user',Auth::user()->id)
                                             ->orderBy("id")
@@ -330,6 +333,7 @@ class RawMaterialWithdrawalController extends Controller
             $data = [
                 'trans_id' => $info->id,
                 'trans_no' => $info->trans_no,
+                'istatus' => $info->status,
                 'details' => $details
             ];
 
@@ -341,7 +345,7 @@ class RawMaterialWithdrawalController extends Controller
 
     private function last()
     {
-        $info = PpcRawMaterialWithdrawalInfo::select('id','trans_no')
+        $info = PpcRawMaterialWithdrawalInfo::select('id','trans_no','status')
                                             ->where("id", "=", function ($query) {
                                                 $query->select(DB::raw(" MAX(id)"))
                                                   ->from('ppc_raw_material_withdrawal_infos')
@@ -391,6 +395,7 @@ class RawMaterialWithdrawalController extends Controller
             $data = [
                 'trans_id' => $info->id,
                 'trans_no' => $info->trans_no,
+                'istatus' => $info->status,
                 'details' => $details
             ];
 
@@ -417,22 +422,17 @@ class RawMaterialWithdrawalController extends Controller
             foreach ($req->detail_ids as $key => $detailid) {
                 $deleted = 0;
                 $delete_user = 0;
-                $deleted_at = NULL;
-                // PpcUpdateInventory::where('heat_no',$req->material_heat_no[$key])
-                //                     ->decrement('quantity',(int)$req->issued_qty[$key]);
-
-                
+                $deleted_at = NULL;                
 
                 if ($req->deleted[$key] > 0) {
                     $deleted = 1;
                     $delete_user = Auth::user()->id;
                     $deleted_at = date('Y-m-d H:i:s');
 
-                    // Inventory::where('id',$req->inv_id[$key])
-                    //     ->increment('qty_pcs',(int)$req->issued_qty[$key]);
                 } else {
-                    Inventory::where('id',$req->inv_ids[$key])
-                        ->decrement('qty_pcs',(int)$req->issued_qty[$key]);
+                    // commented due to confirmation button
+                    // Inventory::where('id',$req->inv_ids[$key])
+                    //     ->decrement('qty_pcs',(int)$req->issued_qty[$key]);
 
                     array_push($params, [
                         'trans_id' => $info->id,
@@ -501,8 +501,9 @@ class RawMaterialWithdrawalController extends Controller
             $inv_qty = 0;
             foreach ($req->detail_ids as $key => $detailid) {
                 if ($detailid == 0) {
-                    Inventory::where('id',$req->inv_ids[$key])
-                        ->decrement('qty_pcs',(int)$req->issued_qty[$key]);
+                    // commented due to confirmation button
+                    // Inventory::where('id',$req->inv_ids[$key])
+                    //     ->decrement('qty_pcs',(int)$req->issued_qty[$key]);
 
                     $sc_no = $req->sc_no[$key];
                     if($req->sc_no[$key] == null || $req->sc_no[$key] == 'null' ){
@@ -622,8 +623,8 @@ class RawMaterialWithdrawalController extends Controller
         $RawMatQuantity = PpcRawMaterialWithdrawalDetails::where('trans_id',$req->id)->get();
 
         foreach ($RawMatQuantity as $key => $rw) {
-            PpcUpdateInventory::where('heat_no',$rw->material_heat_no)
-                                ->increment('quantity',(int)$rw->issued_qty);
+            Inventory::where('id',$rw->inv_id)
+                                ->increment('qty_pcs', (float)$rw->issued_qty);
         }
         
         $raw = PpcRawMaterialWithdrawalInfo::where('id',$req->id)->delete();
@@ -643,6 +644,68 @@ class RawMaterialWithdrawalController extends Controller
             'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
         ]);
         return response()->json($data);
+    }
+
+    public function ConfirmWithdrawal(Request $req)
+    {
+        $data = [
+            'msg' => 'Confirmation failed.',
+            'status' => 'failed'
+        ];
+        $details = DB::table('ppc_raw_material_withdrawal_details')
+                            ->where('trans_id',$req->id)
+                            ->select('inv_id','issued_qty')
+                            ->get();
+        if (count((array)$details) > 0) {
+            $update = DB::table('ppc_raw_material_withdrawal_infos')
+                        ->where('id',$req->id)
+                        ->update([
+                            'status' => 'CONFIRMED',
+                            'update_user' => Auth::user()->id,
+                            'updated_at' => date('Y-m-d H:i:s')
+                        ]);
+
+            if ($update) {
+                $details = DB::table('ppc_raw_material_withdrawal_details')
+                                ->where('trans_id',$req->id)
+                                ->select('inv_id','issued_qty')
+                                ->get();
+                
+                $inv_update = 0;
+                foreach ($details as $key => $dt) {
+                    $inv = DB::table('inventories')->where('id',$dt->inv_id)->count();
+                    if ($inv > 0) {
+                        $upd_inv = DB::table('inventories')
+                                    ->where('id',$dt->inv_id)
+                                    ->decrement('qty_pcs',$dt->issued_qty);
+                        if ($upd_inv) {
+                            $inv_update++;
+                        }
+                    }
+                }
+
+                if($inv_update > 0) {
+                    $data = [
+                        'msg' => 'Confirmation Successfully done.',
+                        'status' => 'success'
+                    ];
+                }
+                
+            } else {
+                $data = [
+                    'msg' => 'Confirmation failed.',
+                    'status' => 'failed'
+                ];
+            }
+        } else {
+            $data = [
+                'msg' => 'There are no Materials selected in this transaction.',
+                'status' => 'failed'
+            ];
+        }
+            
+
+        return $data;
     }
 
     public function scnosuggest(Request $req)

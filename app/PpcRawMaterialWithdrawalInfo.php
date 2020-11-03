@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class PpcRawMaterialWithdrawalInfo extends Model
 {
     protected $fillable = [
-    	'trans_no',
+      'trans_no',
+      'status',
       'create_user',
       'update_user'
     ];
