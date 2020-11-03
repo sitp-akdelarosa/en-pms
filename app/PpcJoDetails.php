@@ -24,7 +24,8 @@ class PpcJoDetails extends Model
 					'rmw_issued_qty',
 					'material_type',
 					'for_over_issuance',
-					'heat_no_id'
+					'heat_no_id',
+					'ship_date'
     			];
 
     public function jo_summary()

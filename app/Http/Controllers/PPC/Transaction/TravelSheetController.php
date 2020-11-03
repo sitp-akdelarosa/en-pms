@@ -373,23 +373,23 @@ class TravelSheetController extends Controller
                         ->where('jo_no',strtoupper($req->jo_no))
                         ->count();
             if ($exist > 0) {
-                $prod_processes = DB::table('ppc_pre_travel_sheet_processes')
-                                    ->select(
-                                        'id',
-                                        'set',
-                                        DB::raw("process_name as process"),
-                                        'sequence',
-                                        'remarks'
-                                    )
-                                    ->where('jo_no',strtoupper($req->jo_no))
-                                    ->groupBy(
-                                        'id',
-                                        'set',
-                                        'process_name',
-                                        'sequence',
-                                        'remarks'
-                                    )
-                                    ->get();
+                $prod_processes = DB::select("select tsp.id,
+                                                    tsp.`set`,
+                                                    tsp.process_name as process,
+                                                    tsp.sequence,
+                                                    ifnull(tsp.remarks,pp.remarks) as remarks
+                                            from ppc_pre_travel_sheet_processes as tsp
+                                            join ppc_product_processes as pp
+                                            on pp.process = tsp.process_name
+                                            where tsp.jo_no = '".strtoupper($req->jo_no)."' 
+                                            and prod_code = '".strtoupper($req->prod_code)."'
+                                            group by tsp.id,
+                                                    tsp.`set`,
+                                                    tsp.process_name,
+                                                    tsp.sequence,
+                                                    tsp.remarks,
+                                                    pp.remarks
+                                            order by sequence asc");
             } else {
                 $product = DB::table('ppc_product_codes')->select('id')->where('product_code',$req->prod_code)->first();
                 $prod_processes = PpcProductProcess::where('prod_id',$product->id)

@@ -292,6 +292,10 @@ Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', '
 				->name('transaction.production-schedule.cancelTravelSheet');
 			Route::get('/over-issuance', 'PPC\Transaction\ProductionScheduleController@calculateOverIssuance')
 				->name('transaction.production-schedule.over-issuance');
+			Route::get('/excel-filter-orders', 'PPC\Transaction\ProductionScheduleController@filterOrders')
+				->name('transaction.production-schedule.excel-filter-orders');
+			Route::get('/search-filter-orders', 'PPC\Transaction\ProductionScheduleController@filterOrders')
+				->name('transaction.production-schedule.search-filter-orders');
 		});
 
 		Route::group(['prefix' => 'raw-material-withdrawal'], function () {

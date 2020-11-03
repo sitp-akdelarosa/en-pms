@@ -166,6 +166,8 @@ class HelpersController extends Controller
             Log::error($e->getMessage());
         }
 
+        // $trans_code = 
+
         return $result->new_code;
     }
 
@@ -211,6 +213,14 @@ class HelpersController extends Controller
             return $transno;
         }
     }
+
+    // public function checkTransactionProdLine()
+    // {
+    //     $prodLine = DB::table('admin_assign_production_lines')
+    //                     ->where('user_id', Auth::user()->id)
+    //                     ->select('main_prod')
+    //                     ->first();
+    // }
 
     public function PrevTransactionNo($code)
     {

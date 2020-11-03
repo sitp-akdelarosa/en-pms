@@ -82,6 +82,11 @@ $( function() {
 		readNotification($(this).attr('data-id'),$(this).attr('data-link'));
 	});
 
+	$('.sidebar-toggle').on('click', function() {
+		$($.fn.dataTable.tables(true)).DataTable()
+			.columns.adjust();
+	});
+
 	// $('.modal').draggable({
 	// 	handle: ".modal-header"
 	// }); 

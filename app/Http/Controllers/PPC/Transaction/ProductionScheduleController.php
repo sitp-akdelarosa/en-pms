@@ -45,113 +45,59 @@ class ProductionScheduleController extends Controller
 
     public function GetProductionList(Request $req)
     {
-        $TO = '';
-        $FROM = '';
+        $Datalist = DB::select(DB::raw("CALL GET_production_summaries(".Auth::user()->id.",NULL,NULL,NULL,NULL,NULL,NULL)"));
+        return response()->json($Datalist);
+    }
 
-        if (isset($req->fromvalue)) {
+    public function filterOrders(Request $req)
+    {
+        return response()->json($this->getFilteredOrders($req));
+    }
 
-            $from1 = PpcProductionSummary::select('id')
-                ->where('sc_no', 'like', '%' . $req->fromvalue . '%')
-                ->where('create_user', Auth::user()->id)
-                ->orderBy('id', 'DESC')
-                ->first();
-            $from2 = PpcProductionSummary::select('id')
-                ->where('prod_code', 'like', '%' . $req->fromvalue . '%')
-                ->where('create_user', Auth::user()->id)
-                ->orderBy('id', 'DESC')
-                ->first();
-            $to1 = PpcProductionSummary::select(DB::raw("Max(id) as ids"))
-                ->where('sc_no', 'like', '%' . $req->tovalue . '%')
-                ->where('create_user', Auth::user()->id)
-                ->orderBy('id', 'DESC')
-                ->first();
-            $to2 = PpcProductionSummary::select('id')
-                ->where('prod_code', 'like', '%' . $req->tovalue . '%')
-                ->where('create_user', Auth::user()->id)
-                ->orderBy('id', 'DESC')
-                ->first();
+    public function getFilteredOrders($req)
+    {
+        $srch_date_upload_from = "NULL";
+        $srch_date_upload_to = "NULL";
+        $srch_sc_no = "NULL";
+        $srch_prod_code = "NULL";
+        $srch_description = "NULL";
+        $srch_po = "NULL";
 
-            if (isset($from1) && isset($to1)) {
-                $FROM = $from1->id;
-                $TO = $to1->ids;
-
-                if ($req->tovalue == '') {
-                    $toNULL = PpcProductionSummary::select(DB::raw("Max(id) as ids"))
-                        ->where('sc_no', 'like', '%' . $req->fromvalue . '%')
-                        ->where('create_user', Auth::user()->id)
-                        ->orderBy('id', 'DESC')
-                        ->first();
-                    $TO = $toNULL->ids;
-                }
-
-            }
-            if (isset($from2) && isset($to2)) {
-                $FROM = $from2->id;
-                $TO = $to2->id;
-
-                if ($req->tovalue == '') {
-                    $TO = $FROM;
-                }
-
-            }
-
-            $Datalist = DB::select(DB::raw("CALL GET_production_summaries(".Auth::user()->id.",".$FROM.",".$TO.")"));
-
-            // $Datalist = DB::select("SELECT ps.id as id,
-            //                                 ps.sc_no as sc_no,
-            //                                 ps.prod_code as prod_code,
-            //                                 ifnull(pc.code_description,ps.description) as description,
-            //                                 ps.sched_qty as sched_qty,
-            //                                 ps.quantity as quantity,
-            //                                 ps.po as po,
-            //                                 ps.status as status,
-            //                                 DATE_FORMAT(ps.date_upload, '%Y-%m-%d') as date_upload
-            //                         from ppc_production_summaries as ps
-            //                         inner join ppc_product_codes as pc on ps.prod_code = pc.product_code
-            //                         inner join admin_assign_production_lines as pl on pl.product_line = pc.product_type
-            //                         where pl.user_id = ".Auth::user()->id."
-            //                          and ps.sched_qty < ps.quantity
-            //                         and ps.id between ".$FROM." and ".$TO."
-            //                         group by ps.id,
-            //                                 ps.sc_no,
-            //                                 ps.prod_code,
-            //                                 pc.code_description,
-            //                                 ps.description,
-            //                                 ps.sched_qty,
-            //                                 ps.quantity,
-            //                                 ps.po,
-            //                                 ps.status,
-            //                                 DATE_FORMAT(ps.date_upload, '%Y-%m-%d')");
-
-            return response()->json($Datalist);
-        } else {
-            $Datalist = DB::select(DB::raw("CALL GET_production_summaries(".Auth::user()->id.",NULL,NULL)"));
-            // $Datalist = DB::select("SELECT ps.id as id,
-            //                                 ps.sc_no as sc_no,
-            //                                 ps.prod_code as prod_code,
-            //                                 ifnull(pc.code_description,ps.description) as description,
-            //                                 ps.sched_qty as sched_qty,
-            //                                 ps.quantity as quantity,
-            //                                 ps.po as po,
-            //                                 ps.status as status,
-            //                                 DATE_FORMAT(ps.date_upload, '%Y-%m-%d') as date_upload
-            //                         from ppc_production_summaries as ps
-            //                         inner join ppc_product_codes as pc on ps.prod_code = pc.product_code
-            //                         inner join admin_assign_production_lines as pl on pl.product_line = pc.product_type
-            //                         where pl.user_id = ".Auth::user()->id."
-            //                          and ps.sched_qty < ps.quantity
-            //                         group by ps.id,
-            //                                 ps.sc_no,
-            //                                 ps.prod_code,
-            //                                 pc.code_description,
-            //                                 ps.description,
-            //                                 ps.sched_qty,
-            //                                 ps.quantity,
-            //                                 ps.po,
-            //                                 ps.status,
-            //                                 DATE_FORMAT(ps.date_upload, '%Y-%m-%d')"); //and ps.sched_qty < ps.quantity
-            return response()->json($Datalist);
+        if (!is_null($req->srch_date_upload_from) && !is_null($req->srch_date_upload_to)) {
+            $srch_date_upload_from = "'".$req->srch_date_upload_from."'";
+            $srch_date_upload_to = "'".$req->srch_date_upload_to."'";
         }
+
+        if (!is_null($req->srch_sc_no)) {
+            $srch_sc_no = "'".$req->srch_sc_no."'";
+        }
+
+        if (!is_null($req->srch_prod_code)) {
+            $srch_prod_code = "'".$req->srch_prod_code."'";
+        }
+
+        if (!is_null($req->srch_description)) {
+            $srch_description = "'".$req->srch_description."'";
+        }
+
+        if (!is_null($req->srch_po)) {
+            $srch_po = "'".$req->srch_po."'";
+        }
+
+        $Datalist = DB::select(
+                        DB::raw(
+                            "CALL GET_production_summaries(
+                                ".Auth::user()->id.",
+                                ".$srch_date_upload_from.",
+                                ".$srch_date_upload_to.",
+                                ".$srch_sc_no.",
+                                ".$srch_prod_code.",
+                                ".$srch_description.",
+                                ".$srch_po."
+                                )"
+                        )
+                    );
+        return $Datalist;
     }
 
     public function SaveJODetails(Request $req)
@@ -270,7 +216,8 @@ class ProductionScheduleController extends Controller
                         'rmw_issued_qty' => $req->rmw_issued_qty[$key],
                         'material_type' => $req->material_type[$key],
                         'for_over_issuance' => $req->for_over_issuance[$key],
-                        'heat_no_id' => $req->heat_no_id[$key]
+                        'heat_no_id' => $req->heat_no_id[$key],
+                        'ship_date' => $req->ship_date[$key]
                     ]);
 
                 } else {
@@ -293,7 +240,8 @@ class ProductionScheduleController extends Controller
                         'rmw_issued_qty' => $req->rmw_issued_qty[$key],
                         'material_type' => $req->material_type[$key],
                         'for_over_issuance' => $req->for_over_issuance[$key],
-                        'heat_no_id' => $req->heat_no_id[$key]
+                        'heat_no_id' => $req->heat_no_id[$key],
+                        'ship_date' => $req->ship_date[$key]
                     ]);
                 }
                 $prod_code_unique = $req->prod_code[$key];
@@ -364,7 +312,8 @@ class ProductionScheduleController extends Controller
                     'rmw_issued_qty' => $req->rmw_issued_qty[$key],
                     'material_type' => $req->material_type[$key],
                     'for_over_issuance' => $req->for_over_issuance[$key],
-                    'heat_no_id' => $req->heat_no_id[$key]
+                    'heat_no_id' => $req->heat_no_id[$key],
+                    'ship_date' => $req->ship_date[$key]
                 ]);
 
                 $back_order_qty_total += $req->quantity[$key];
@@ -437,7 +386,8 @@ class ProductionScheduleController extends Controller
                                     d.rmw_issued_qty,
                                     d.material_type,
                                     d.for_over_issuance,
-                                    d.heat_no_id
+                                    d.heat_no_id,
+                                    d.ship_date
                             FROM ppc_jo_details_summaries as s
                             JOIN ppc_jo_details as d ON d.jo_summary_id = s.id
                             LEFT JOIN ppc_jo_travel_sheets as ts ON ts.id = d.jo_summary_id and ts.sc_no = d.sc_no
@@ -466,6 +416,7 @@ class ProductionScheduleController extends Controller
                                     d.material_type,
                                     d.for_over_issuance,
                                     d.heat_no_id,
+                                    d.ship_date,
                                     pui.id");
 
         return response()->json($details);
@@ -605,7 +556,7 @@ class ProductionScheduleController extends Controller
                                     inner join ppc_raw_material_withdrawal_infos as rmwi 
                                     on rmw.trans_id = rmwi.id
 
-                                    WHERE rmw.issued_qty <> 0 AND apl.user_id = ".Auth::user()->id.$with_rmw."
+                                    WHERE rmw.issued_qty <> 0 AND rmwi.`status` <> 'OPEN' AND apl.user_id = ".Auth::user()->id.$with_rmw."
                                     group by rmwi.trans_no,
                                         rmw.trans_id,
                                         pui.id,
@@ -668,6 +619,7 @@ class ProductionScheduleController extends Controller
                                         on pw.trans_id = pwi.id
 
                                         WHERE pw.issued_qty <> 0 
+                                        AND pwi.`status` <> 'OPEN'
                                         AND apl.user_id = ".Auth::user()->id."
                                         AND pwi.trans_no = '".$req->rmw_no."'
 
@@ -1204,5 +1156,112 @@ class ProductionScheduleController extends Controller
         $data = ['status' => "success"];
 
         return response()->json($data);
+    }
+
+    public function excelFilteredData(Request $req)
+    {
+        $data = $this->getFilteredOrders($req);
+        $date = date('Ymd');
+
+        Excel::create('UploadedOrders_'.$date, function($excel) use($data)
+        {
+            $excel->sheet('Summary', function($sheet) use($data)
+            {
+                $sheet->setHeight(4, 20);
+                $sheet->mergeCells('A2:F2');
+                $sheet->cells('A2:F2', function($cells) {
+                    $cells->setAlignment('center');
+                    $cells->setFont([
+                        'family'     => 'Calibri',
+                        'size'       => '14',
+                        'bold'       =>  true,
+                        'underline'  =>  true
+                    ]);
+                });
+                $sheet->cell('A2',"Uploaded Orders Summary");
+
+                $sheet->setHeight(6, 15);
+                $sheet->cells('A4:F4', function($cells) {
+                    $cells->setFont([
+                        'family'     => 'Calibri',
+                        'size'       => '11',
+                        'bold'       =>  true,
+                    ]);
+                    // Set all borders (top, right, bottom, left)
+                    $cells->setBorder('solid', 'solid', 'solid', 'solid');
+                });
+
+                $sheet->cell('A4', function($cell) {
+                    $cell->setValue("SC No.");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+            
+                $sheet->cell('B4', function($cell) {
+                    $cell->setValue("Product Code");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+
+                $sheet->cell('C4', function($cell) {
+                    $cell->setValue("Description");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+
+                $sheet->cell('D4', function($cell) {
+                    $cell->setValue("Quantity");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+
+                $sheet->cell('E4', function($cell) {
+                    $cell->setValue("P.O.");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+
+                $sheet->cell('F4', function($cell) {
+                    $cell->setValue("Date Uploaded");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+
+                $sheet->cells('A4:F4', function($cells) {
+                    $cells->setBorder('thick', 'thick', 'thick', 'thick');
+                });
+
+                $row = 5;
+
+                foreach ($data as $key => $dt) {
+                    $sheet->setHeight($row, 15);
+
+                    $sheet->cell('A'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->sc_no);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('B'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->prod_code);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('C'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->description);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('D'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->quantity);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('E'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->po);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('F'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->date_upload);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    
+                    $row++;
+                }
+                
+                $sheet->cells('A4:F'.$row, function($cells) {
+                    $cells->setBorder('thick', 'thick', 'thick', 'thick');
+                });
+            });
+        })->download('xlsx');
     }
 }

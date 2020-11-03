@@ -56,7 +56,7 @@ foreach ($user_accesses as $user_access){
                     
                     <div class="col-lg-4 col-md-5 col-sm-12">
                 		<div class="form-group row">
-		                    <label for="status" class="col-sm-3 control-label mt-5">Status:</label>
+		                    <label for="status" class="col-md-2 col-sm-3 control-label mt-5">Status:</label>
 		                    <div class="col-md-6 col-sm-9">
 		                        <div class="input-group input-group-sm">
 		                            <input type="text" class="form-control form-control-sm validate" name="status" id="status" readonly>
