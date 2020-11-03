@@ -15,6 +15,9 @@ class PpcPreTravelSheet extends Model
         'iso_code',
         'iso_name',
         'iso_photo',
+        'ship_date',
+        'release_date',
+        'remarks',
     	'create_user',
     	'update_user',
     ];

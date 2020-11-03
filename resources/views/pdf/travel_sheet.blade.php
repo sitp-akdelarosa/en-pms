@@ -136,7 +136,7 @@
 										?>
 													<tr>
 														<td>{{ $proc->process_name }}</td>
-														<td colspan="2"></td>
+														<td colspan="2">{{ $proc->remarks }}</td>
 														<td>{{ $proc->div_name."(".$proc->div_code.")" }}</td>
 														<td></td>
 														<td></td>

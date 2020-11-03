@@ -132,7 +132,7 @@
 										?>
 													<tr>
 														<td><?php echo e($proc->process_name); ?></td>
-														<td colspan="2"></td>
+														<td colspan="2"><?php echo e($proc->remarks); ?></td>
 														<td><?php echo e($proc->div_name."(".$proc->div_code.")"); ?></td>
 														<td></td>
 														<td></td>

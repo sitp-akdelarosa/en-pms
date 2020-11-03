@@ -26,11 +26,14 @@ $( function() {
 			$('#qty_per_sheet').val( $(this).attr('data-qty_per_sheet'));
 			$('#iso_no').val( $(this).attr('data-iso_code'));
 			$('#issued_qty').val( $(this).attr('data-issued_qty'));
+			$('#ship_date').val($(this).attr('data-ship_date'));
+			$('#ts_remarks').val($(this).attr('data-remarks'));
 			getPreTravelSheetData($(this).attr('data-id'), $(this).attr('data-jo_no'));
 			getSC($(this).attr('data-idJO'));
 		} else {
 			$('#issued_qty').val($(this).attr('data-sched_qty'));
-
+			// $('#ship_date').val($(this).attr('data-ship_date'));
+			// $('#ts_remarks').val($(this).attr('data-remarks'));
 			$('#qty_per_sheet').val('');
 			$('#iso_no').val('');
 			makeProdTable([]);
@@ -863,7 +866,8 @@ function makeJODetailsTable(arr) {
 				 		' data-jo_no="'+data.jo_no+'" data-prod_code="'+data.product_code+'" '+
 				 		' data-issued_qty="'+data.issued_qty+'"data-id="'+data.id+'" '+
 				 		' data-status="'+data.status+'"  data-sched_qty="'+data.sched_qty+'" '+
-				 		' data-qty_per_sheet="'+data.qty_per_sheet+'"  data-iso_code="'+data.iso_code+'"'+
+						' data-qty_per_sheet="'+data.qty_per_sheet+'"  data-iso_code="'+data.iso_code+'"'+
+					 	' data-ship_date="' + data.ship_date + '"  data-remarks="' + data.remarks + '"' +
 				 		' data-sc_no="'+data.sc_no+'" data-idJO="'+data.idJO+'"'+
 				 		' title="Travel Sheet"><i class="fa fa-file-text-o"></i> </button>';
 			}, name: 'action', orderable: false, searchable: false, width: '8.33%' },

@@ -33,13 +33,22 @@
                             </div>
 
                             <div class="form-group row">
-                                <div class="col-md-12">
+                                <div class="col-md-6">
                                     <div class="input-group input-group-sm">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">ISO Control No.:</span>
                                         </div>
                                         <select class="form-control select-validate disableOnProduction" name="iso_no" id="iso_no"></select>
                                         <div id="iso_no_feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Est. Ship Date:</span>
+                                        </div>
+                                        <input type="date" class="form-control validate disableOnProduction" name="ship_date" id="ship_date" />
+                                        <div id="ship_date_feedback"></div>
                                     </div>
                                 </div>
                             </div>
@@ -67,7 +76,7 @@
 
                             <div class="form-group row mb-3">
                                 <div class="col-sm-6">
-                                    <textarea name="remarks" id="remarks" class="form-control form-control-sm" style="resize:none;height:60px" placeholder="Add remarks here"></textarea>
+                                    <textarea name="ts_remarks" id="ts_remarks" class="form-control form-control-sm" style="resize:none;height:60px" placeholder="Add remarks here"></textarea>
                                 </div>
 
                                 <div class="col-sm-6">

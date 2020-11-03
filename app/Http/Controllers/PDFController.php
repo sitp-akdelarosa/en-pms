@@ -217,7 +217,8 @@ class PDFController extends Controller
 												tp.process_name,
 												pd.div_name,
 												pd.div_code,
-												tp.sequence
+												tp.sequence,
+												tp.remarks
 										FROM enpms.ppc_pre_travel_sheet_processes as tp
 										inner join ppc_divisions as pd
 										on tp.div_code = pd.div_code
@@ -226,7 +227,8 @@ class PDFController extends Controller
 												tp.process_name,
 												pd.div_name,
 												pd.div_code,
-												tp.sequence
+												tp.sequence,
+												tp.remarks
 										order by sequence ASC"),
 				'iso' => $iso,
 			]);
