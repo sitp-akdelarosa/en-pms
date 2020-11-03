@@ -12,6 +12,7 @@ class PpcPreTravelSheetProcess extends Model
 		'set',
 		'process_name',
         'sequence',
+        'remarks',
 		'div_code',
 		'create_user',
 		'update_user',

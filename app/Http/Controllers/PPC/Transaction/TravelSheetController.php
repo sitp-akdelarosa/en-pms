@@ -349,25 +349,49 @@ class TravelSheetController extends Controller
         $processes = [];
         $div_ids = [];
         if($req->sets == 'None'){
-            $product = DB::table('ppc_product_codes')->select('id')->where('product_code',$req->prod_code)->first();
-            $prod_processes = PpcProductProcess::where('prod_id',$product->id)
-                                ->select('process','sequence')
-                                ->groupBy('process','sequence')
-                                ->orderBy('sequence','asc')
-                                ->get();
+            $exist = DB::table('ppc_pre_travel_sheet_processes')
+                        ->where('jo_no',strtoupper($req->jo_no))
+                        ->count();
+            if ($exist > 0) {
+                $prod_processes = DB::table('ppc_pre_travel_sheet_processes')
+                                    ->select(
+                                        'id',
+                                        'set',
+                                        DB::raw("process_name as process"),
+                                        'sequence',
+                                        'remarks'
+                                    )
+                                    ->where('jo_no',strtoupper($req->jo_no))
+                                    ->groupBy(
+                                        'id',
+                                        'set',
+                                        'process_name',
+                                        'sequence',
+                                        'remarks'
+                                    )
+                                    ->get();
+            } else {
+                $product = DB::table('ppc_product_codes')->select('id')->where('product_code',$req->prod_code)->first();
+                $prod_processes = PpcProductProcess::where('prod_id',$product->id)
+                                    ->select('id','process','sequence','remarks')
+                                    ->groupBy('id','process','sequence','remarks')
+                                    ->orderBy('sequence','asc')
+                                    ->get();
+            }
+            
         }else{
             $prod_processes = PpcProcess::where('set_id',$req->sets)
-                                    ->select('process','sequence')
-                                    ->groupBy('process','sequence')
+                                    ->select('id','process','sequence','remarks')
+                                    ->groupBy('id','process','sequence','remarks')
                                     ->orderBy('sequence','asc')
                                     ->get();
         }
 
         foreach ($prod_processes as $key => $process) {
             array_push($data,[
-                'process' => [
-                    $process->process,
-                    DB::select("SELECT d.div_code as div_code
+                'id' => $process->id,
+                'process' => $process->process,
+                'div_code' => DB::select("SELECT d.div_code as div_code
                                 from ppc_division_processes as dp
                                 inner join ppc_divisions as d
                                 on d.id = dp.division_id
@@ -379,12 +403,30 @@ class TravelSheetController extends Controller
                                 AND pl.user_id = ".Auth::user()->id."
                                 AND d.is_disable = 0
                                 group by d.div_code"),
-                    $process->sequence
-                ],
+                'sequence' => $process->sequence,
+                'remarks' => $process->remarks
             ]);
         }
 
         return response()->json($data);
+    }
+
+    public function getProcessDiv(Request $req)
+    {
+        $div_code = DB::select("SELECT d.div_code as div_code
+                                from ppc_division_processes as dp
+                                inner join ppc_divisions as d
+                                on d.id = dp.division_id
+                                inner join ppc_division_productlines as dpl
+                                on d.id = dpl.division_id
+                                inner join admin_assign_production_lines as pl
+                                on dpl.productline = pl.product_line
+                                where dp.process = '".$req->process."'
+                                AND pl.user_id = ".Auth::user()->id."
+                                AND d.is_disable = 0
+                                group by d.div_code");
+
+        return $div_code;
     }
 
     public function save_travel_sheet_setup(Request $req)
@@ -394,11 +436,11 @@ class TravelSheetController extends Controller
             return $data;
         }
 
-        if(!isset($req->processes)){
+        if(!isset($req->process)){
             $data = [ 'msg' => "Please Input some Procces.", 'status' => "warning" ];
             return $data;
         }
-        foreach ($req->processes as $key => $process) {
+        foreach ($req->process as $key => $process) {
             if ($req->div_code[$key] == ''){
                 $data = [ 'msg' => "Please Fill up all the Division Code", 'status' => "warning" ];
                 return $data;
@@ -462,16 +504,19 @@ class TravelSheetController extends Controller
                 }
 
                 PpcPreTravelSheetProcess::where('pre_travel_sheet_id',$req->travel_sheet_id)->delete();
-                foreach ($req->processes as $key => $process) {
-                    PpcPreTravelSheetProcess::create([
+                foreach ($req->process as $key => $process) {
+                    $update = DB::table('ppc_pre_travel_sheet_processes')->insert([
                         'pre_travel_sheet_id' => $pre_ts->id,
                         'jo_no' => strtoupper($req->jo_no),
                         'set' => $req->set,
                         'process_name' => strtoupper($process),
                         'div_code' => strtoupper($req->div_code[$key]),
                         'sequence' => $req->sequence[$key],
+                        'remarks' => $req->remarks[$key],
                         'create_user' => Auth::user()->id,
                         'update_user' => Auth::user()->id,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s'),
                     ]);
                 }
 
@@ -529,13 +574,14 @@ class TravelSheetController extends Controller
                     ]);
                 }
 
-                foreach ($req->processes as $key => $process) {
+                foreach ($req->process as $key => $process) {
                     PpcPreTravelSheetProcess::create([
                         'pre_travel_sheet_id' => $pre_ts->id,
                         'jo_no' => strtoupper($req->jo_no),
                         'set' => $req->set,
                         'process_name' => strtoupper($process),
                         'sequence' => $req->sequence[$key],
+                        'remarks' => $req->remarks[$key],
                         'div_code' => strtoupper($req->div_code[$key]),
                         'create_user' => Auth::user()->id,
                         'update_user' => Auth::user()->id,

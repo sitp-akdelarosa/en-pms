@@ -119,7 +119,13 @@ mix.js('resources/assets/js/app.js', 'public/js')
     .js('resources/assets/js/pages/ppc/transactions/upload-orders/upload-orders.js', 'public/js/pages/ppc/transactions/upload-orders/upload-orders.js')
     .js('resources/assets/js/pages/ppc/transactions/update-inventory/update-inventory.js', 'public/js/pages/ppc/transactions/update-inventory/update-inventory.js')
     .js('resources/assets/js/pages/ppc/transactions/production-schedule/production-schedule.js', 'public/js/pages/ppc/transactions/production-schedule/production-schedule.js')
-    .js('resources/assets/js/pages/ppc/transactions/travel-sheet/travel-sheet.js', 'public/js/pages/ppc/transactions/travel-sheet/travel-sheet.js')
+    
+    .scripts([
+        'resources/assets/plugins/sortablejs/Sortable.js',
+        'resources/assets/plugins/sortablejs/jquery-sortable.js',
+        'resources/assets/js/pages/ppc/transactions/travel-sheet/travel-sheet.js'
+    ], 'public/js/pages/ppc/transactions/travel-sheet/travel-sheet.js')
+
     .js('resources/assets/js/pages/ppc/transactions/cutting-schedule/cutting-schedule.js', 'public/js/pages/ppc/transactions/cutting-schedule/cutting-schedule.js')
     .js('resources/assets/js/pages/ppc/transactions/raw-material-withdrawal/raw-material-withdrawal.js', 'public/js/pages/ppc/transactions/raw-material-withdrawal/raw-material-withdrawal.js')
     .js('resources/assets/js/pages/ppc/transactions/product-withdrawal/product-withdrawal.js', 'public/js/pages/ppc/transactions/product-withdrawal/product-withdrawal.js')

@@ -11,7 +11,8 @@ class PpcProductProcess extends Model
 			    	'prod_code',
 			    	'process',
 			    	'set',
-			    	'sequence',
+					'sequence',
+					'remarks',
 			    	'create_user',
 			    	'update_user'
 			    ];

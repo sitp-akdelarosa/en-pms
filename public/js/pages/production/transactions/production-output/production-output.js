@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 25);
+/******/ 	return __webpack_require__(__webpack_require__.s = 24);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -472,7 +472,7 @@ function getTransferQty(id) {
 
 /***/ }),
 
-/***/ 25:
+/***/ 24:
 /*!********************************************************************************************************!*\
   !*** multi ./resources/assets/js/pages/production/transactions/production-output/production-output.js ***!
   \********************************************************************************************************/

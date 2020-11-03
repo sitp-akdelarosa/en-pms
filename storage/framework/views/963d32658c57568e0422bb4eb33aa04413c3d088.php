@@ -91,13 +91,7 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                
                             </div>
-
-                            
-
-                                
 
                             <div class="row">
                                 <div class="col-sm-12">
@@ -119,16 +113,58 @@
 
                         </div>
                         <div class="col-md-6">
-                            <select class="form-control mb-5 disableOnProduction" name="set" id="set">
-                                <option value=""></option>
-                            </select>
+                            <div class="input-group input-group-sm mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Process Set</span>
+                                </div>
+
+                                <input type="hidden" name="process_id" id="process_id">
+                                <input type="hidden" name="prod_id" id="prod_id">
+
+                                <select class="form-control form-control-sm disableOnProduction" name="set" id="set">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+
+                            <div class="input-group mb-3 input-group-sm">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Process:</span>
+                                </div>
+                                <select class="form-control select-validate" id="process"></select>
+                                <div id="process_feedback"></div>
+                            </div>
+
+                            <div class="input-group mb-3 input-group-sm">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Sequence No.:</span>
+                                </div>
+                                <input type="number" class="form-control select-validate" id="sequence" min="1">
+                                <div id="sequence_feedback"></div>
+                            </div>
+
+                            <div class="row justify-content-center">
+                                <div class="col-sm-3 col-sm-3 mb-3">
+                                    <button type="button" id="btn_add_process" class="btn btn-sm bg-green btn-block">
+                                        <i class="fa fa-plus"></i> Add Process
+                                    </button>
+                                </div>
+                                <div class="col-sm-3 col-sm-3 mb-3">
+                                    <button type="button" id="btn_cancel_process" class="btn btn-sm bg-red btn-block">
+                                        <i class="fa fa-times"></i> Cancel
+                                    </button>
+                                </div>
+                            </div>
 
                             <div class="table-responsive">
-                                <table class="table table-sm table-hover table-striped dt-responsive nowrap" id="tbl_process">
+                                <table class="table table-sm table-hover table-bordered table-striped dt-responsive nowrap" id="tbl_process">
                                     <thead class="thead-dark">
                                         <tr>
+                                            <th>#</th>
                                             <th>Process Name</th>
-                                            <th>Division Code</th>
+                                            <th>Remarks</th>
+                                            <th>Div. Code</th>
+                                            <th></th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody id="tbl_process_body"></tbody>

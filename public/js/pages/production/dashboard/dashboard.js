@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 24);
+/******/ 	return __webpack_require__(__webpack_require__.s = 23);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -175,7 +175,7 @@ function makeDashTable(arr) {
 
 /***/ }),
 
-/***/ 24:
+/***/ 23:
 /*!***************************************************************************!*\
   !*** multi ./resources/assets/js/pages/production/dashboard/dashboard.js ***!
   \***************************************************************************/

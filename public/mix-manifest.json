@@ -19,7 +19,6 @@
     "/js/pages/ppc/transactions/product-withdrawal/product-withdrawal.js": "/js/pages/ppc/transactions/product-withdrawal/product-withdrawal.js",
     "/js/pages/ppc/transactions/production-schedule/production-schedule.js": "/js/pages/ppc/transactions/production-schedule/production-schedule.js",
     "/js/pages/ppc/transactions/raw-material-withdrawal/raw-material-withdrawal.js": "/js/pages/ppc/transactions/raw-material-withdrawal/raw-material-withdrawal.js",
-    "/js/pages/ppc/transactions/travel-sheet/travel-sheet.js": "/js/pages/ppc/transactions/travel-sheet/travel-sheet.js",
     "/js/pages/ppc/transactions/update-inventory/update-inventory.js": "/js/pages/ppc/transactions/update-inventory/update-inventory.js",
     "/js/pages/ppc/transactions/upload-orders/upload-orders.js": "/js/pages/ppc/transactions/upload-orders/upload-orders.js",
     "/js/pages/production/dashboard/dashboard.js": "/js/pages/production/dashboard/dashboard.js",
@@ -33,5 +32,6 @@
     "/js/login.js": "/js/login.js",
     "/js/pages/ppc/masters/product-master/product-master.js": "/js/pages/ppc/masters/product-master/product-master.js",
     "/js/pages/ppc/masters/material-master/material-master.js": "/js/pages/ppc/masters/material-master/material-master.js",
-    "/js/pages/ppc/masters/process-master/process-master.js": "/js/pages/ppc/masters/process-master/process-master.js"
+    "/js/pages/ppc/masters/process-master/process-master.js": "/js/pages/ppc/masters/process-master/process-master.js",
+    "/js/pages/ppc/transactions/travel-sheet/travel-sheet.js": "/js/pages/ppc/transactions/travel-sheet/travel-sheet.js"
 }

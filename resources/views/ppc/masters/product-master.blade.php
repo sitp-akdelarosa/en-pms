@@ -55,23 +55,6 @@ foreach ($user_accesses as $user_access){
 										<input type="number" class="form-control validate clear switch" name="character_num" id="character_num" min="1" max="16">
 										<div id="character_num_feedback"></div>
 									</div>
-
-									{{-- <div class="form-group row">
-										<label for="prod_type" class="col-sm-3 control-label mt-5">Product Line:</label>
-										<div class="col-sm-9">
-											<select class="form-control select-validate clear switch" name="prod_type" id="prod_type"></select>
-											<div id="prod_type_feedback"></div>
-										</div>
-									</div>
-
-									<div class="form-group row">
-										<label for="character_num" class="col-sm-3 control-label mt-5">Character #:</label>
-										<div class="col-sm-9">
-											<input type="number" class="form-control validate clear switch" name="character_num" id="character_num" min="1" max="16">
-											<div id="character_num_feedback"></div>
-										</div>
-									</div> --}}
-
 								</div>
 
 								<div class="col-md-6">
@@ -92,42 +75,26 @@ foreach ($user_accesses as $user_access){
 										<div id="description_feedback"></div>
 									</div>
 
-									{{-- <div class="form-group row">
-										<label for="character_code" class="col-sm-3 control-label mt-5">Character Code:</label>
-										<div class="col-sm-9">
-											<input type="text" class="form-control validate clear switch" name="character_code" id="character_code">
-											<div id="character_code_feedback"></div>
-										</div>
-									</div>
-
-									<div class="form-group row">
-										<label for="description" class="col-sm-3 control-label mt-5">Description:</label>
-										<div class="col-sm-9">
-											<input type="text" class="form-control validate clear switch" name="description" id="description">
-											<div id="description_feedback"></div>
-										</div>
-									</div> --}}
-
 								</div>
 							</div>
 
 							<div class="row justify-content-center">
-								<div class="col-lg-1 col-md-2 col-sm-3 col-xs-3 mb-5">
+								<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3 mb-5">
 									<button type="submit" id="btn_save_assembly" class="btn bg-blue btn-block permission-button">
 										<i class="fa fa-plus"></i> Add
 									</button>
 								</div>
-								<div class="col-lg-1 col-md-2 col-sm-3 col-xs-3 mb-5" id="div_clear">
+								<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3 mb-5" id="div_clear">
 									<button type="button" id="btn_clear_assembly" class="btn bg-gray btn-block">
 										<i class="fa fa-refresh"></i> Clear
 									</button>
 								</div>
-								<div class="col-lg-1 col-md-2 col-sm-3 col-xs-3 mb-5" id="div_delete">
+								<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3 mb-5" id="div_delete">
 									<button type="button" id="btn_delete_assembly" class="btn bg-red btn-block permission-button">
 										<i class="fa fa-trash"></i> Delete
 									</button>
 								</div>
-								<div class="col-lg-1 col-md-2 col-sm-3 col-xs-3 mb-5" id="div_cancel">
+								<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3 mb-5" id="div_cancel">
 									<button type="button" id="btn_cancel_assembly" class="btn bg-red btn-block">
 										<i class="fa fa-times"></i> Cancel
 									</button>
@@ -142,7 +109,7 @@ foreach ($user_accesses as $user_access){
 					<div class="col-md-8">
 
 						<div class="table-responsive">
-							<table class="table table-sm table-striped dt-responsive nowrap" id="tbl_prodcode_assembly" style="width:100%">
+							<table class="table table-sm table-striped table-bordered nowrap" id="tbl_prodcode_assembly" style="width:100%">
 								<thead class="thead-dark">
 									<tr>
 										<th width="5%">
@@ -168,7 +135,7 @@ foreach ($user_accesses as $user_access){
 			<div class="tab-pane" id="product_code_tab">
 
 				<div class="row mb-5">
-					<div class="loading"></div>
+					<div class="loadingOverlay"></div>
 
 					<div class="col-md-4">
 
@@ -178,14 +145,6 @@ foreach ($user_accesses as $user_access){
 							</div>
 							<select class="form-control select-validatselect-codeselect-codee clear switch" name="product-type" id="product-type"></select>
 						</div>
-
-
-						{{-- <div class="form-group row mb-10">
-							<label for="" class="control-label mt-5 col-sm-3 mt-5">Product Line:</label>
-							<div class="col-sm-9">
-								<select class="form-control select-validatselect-codeselect-codee clear switch" name="product-type" id="product-type"></select>
-							</div>
-						</div> --}}
 
 						<form action="{{ url('/masters/product-master/code/product/save') }}" id="frm_prod_code">
 							@csrf
@@ -262,13 +221,6 @@ foreach ($user_accesses as $user_access){
 								<input type="number" class="form-control clear" name="finish_weight" id="finish_weight" step=".01">
 							</div>
 
-							{{-- <div class="input-group mb-5 input-group-sm">
-								<div class="input-group-prepend">
-									<span class="input-group-text">Formula Classification</span>
-								</div>
-								<input type="text" class="form-control clear" name="formula_classification" id="formula_classification" >
-							</div> --}}
-
 							<div class="input-group mb-5 input-group-sm">
 								<div class="input-group-prepend">
 									<span class="input-group-text">Cut Weight:</span>
@@ -312,89 +264,6 @@ foreach ($user_accesses as $user_access){
 								</select>
 								<div id="cut_width_uom_feedback"></div>
 							</div>
-
-							{{-- <div class="form-group row">
-								<label for="" class="control-label mt-5 col-sm-3">Product Code:</label>
-								<div class="col-sm-9">
-									<input type="text" class="form-control validate clear" name="product_code" id="product_code" maxlength="16">
-									<div id="product_code_feedback"></div>
-								</div>
-							</div>
-
-							<div class="form-group row">
-								<label for="" class="control-label mt-5 col-sm-3">Description:</label>
-								<div class="col-sm-9">
-									<input type="text" class="form-control validate clear" name="code_description" id="code_description">
-									<div id="code_description_feedback"></div>
-								</div>
-							</div>
-
-							<div class="form-group row">
-								<label for="" class="control-label mt-5 col-sm-3">Alloy:</label>
-								<div class="col-sm-9">
-									<input type="text" class="form-control clear" name="alloy" id="alloy">
-								</div>
-							</div> --}}
-
-							{{-- <div class="form-group row">
-								<label for="" class="control-label mt-5 col-sm-3">Item:</label>
-								<div class="col-sm-9">
-									<input type="text" class="form-control clear" name="item" id="item">
-								</div>
-							</div>
-
-							<div class="form-group row">
-								<label for="" class="control-label mt-5 col-sm-3">Size:</label>
-								<div class="col-sm-9">
-									<input type="text" class="form-control clear" name="size" id="size" >
-								</div>
-							</div>
-
-							<div class="form-group row">
-								<label for="" class="control-label mt-5 col-sm-3">Class:</label>
-								<div class="col-sm-9">
-									<input type="text" class="form-control clear" name="class" id="class" >
-								</div>
-							</div>
-							<div class="form-group row">
-								<label for="" class="control-label mt-5 col-sm-3">Standard Material Used:</label>
-								<div class="col-sm-9">
-									<input type="text" class="form-control clear" name="standard_material_used" id="standard_material_used" >
-								</div>
-							</div> --}}
-
-							{{-- <div class="form-group row">
-								<label for="" class="control-label mt-5 col-sm-3">Cut Weight:</label>
-								<div class="col-sm-5">
-									<input type="number" class="form-control validate mb-3 size " name="cut_weight" id="cut_weight" step="any">
-									<div id="cut_weight_feedback"></div>
-								</div>
-								<div class="col-sm-4">
-									<select class="form-control select-validate mb-3" name="cut_weight_uom" id="cut_weight_uom">
-										<option value="N/A">N/A</option>
-										<option value="KG">kg</option>
-										<option value="LBS">lbs</option>
-									</select>
-									<div id="cut_weight_uom_feedback"></div>
-								</div>
-							</div> --}}
-
-							{{-- <div class="form-group row mb-10">
-								<label for="" class="control-label mt-5 col-sm-3">Cut Length:</label>
-								<div class="col-sm-5">
-									<input type="number" class="form-control validate mb-3 size" name="cut_length" id="cut_length" step="any">
-									<div id="cut_length_feedback"></div>
-								</div>
-								<div class="col-sm-4">
-									<select class="form-control select-validate mb-3" name="cut_length_uom" id="cut_length_uom">
-										<option value="N/A">N/A</option>
-										<option value="MM">mm</option>
-										<option value="CM">cm</option>
-										<option value="M">M</option>
-									</select>
-									<div id="cut_length_uom_feedback"></div>
-								</div>
-							</div> --}}
 
 							<div class="row">
 								<div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 mb-5">
@@ -452,48 +321,6 @@ foreach ($user_accesses as $user_access){
 									</select>
 								</div>
 							</div>
-
-							{{-- <div class="form-group row">
-								<label for="first" class="col-sm-3 control-label mt-5">1st Code:</label>
-								<div class="col-sm-6">
-									<select class="form-control select-code mb-3" name="first" id="first">
-										<option value=""></option>
-									</select>
-								</div>
-								<div class="col-sm-3">
-									<select class="form-control select-code mb-3" name="first_val" id="first_val">
-										<option value=""></option>
-									</select>
-								</div>
-							</div> --}}
-
-							{{-- <div class="form-group row">
-								<label for="second" class="col-sm-3 control-label mt-5">2nd Code:</label>
-								<div class="col-sm-6">
-									<select class="form-control select-code mb-3" name="second" id="second">
-										<option value=""></option>
-									</select>
-								</div>
-								<div class="col-sm-3">
-									<select class="form-control select-code mb-3" name="second_val" id="second_val">
-										<option value=""></option>
-									</select>
-								</div>
-							</div> --}}
-
-							{{-- <div class="form-group row" id="hide_3rd">
-								<label for="third" class="col-sm-3 control-label mt-5">3rd Code:</label>
-								<div class="col-sm-6">
-									<select class="form-control select-code mb-3" name="third" id="third">
-										<option value=""></option>
-									</select>
-								</div>
-								<div class="col-sm-3">
-									<select class="form-control select-code mb-3" name="third_val" id="third_val">
-										<option value=""></option>
-									</select>
-								</div>
-							</div> --}}
 
 							<div class="row">
 								<div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 mb-5">
@@ -628,112 +455,13 @@ foreach ($user_accesses as $user_access){
 								</div>
 							</div>
 
-
-							{{-- <div class="form-group row">
-								<label for="forth" class="col-sm-3 control-label mt-5">4th Code:</label>
-								<div class="col-sm-6">
-									<select class="form-control select-code mb-3" name="forth" id="forth">
-										<option value=""></option>
-									</select>
-								</div>
-								<div class="col-sm-3">
-									<select class="form-control select-code mb-3" name="forth_val" id="forth_val">
-										<option value=""></option>
-									</select>
-								</div>
-							</div>
-
-							<div class="form-group row">
-								<label for="fifth" class="col-sm-3 control-label mt-5">5th Code:</label>
-								<div class="col-sm-6">
-									<select class="form-control select-code mb-3" name="fifth" id="fifth">
-										<option value=""></option>
-									</select>
-								</div>
-								<div class="col-sm-3">
-									<select class="form-control select-code mb-3" name="fifth_val" id="fifth_val">
-										<option value=""></option>
-									</select>
-								</div>
-							</div>
-
-							<div class="form-group row">
-								<label for="seventh" class="col-sm-3 control-label mt-5">7th Code:</label>
-								<div class="col-sm-6">
-									<select class="form-control select-code mb-3" name="seventh" id="seventh">
-										<option value=""></option>
-									</select>
-								</div>
-								<div class="col-sm-3">
-									<select class="form-control select-code mb-3" name="seventh_val" id="seventh_val">
-										<option value=""></option>
-									</select>
-								</div>
-							</div>
-
-							<div class="form-group row">
-								<label for="eighth" class="col-sm-3 control-label mt-5">8th Code:</label>
-								<div class="col-sm-6">
-									<select class="form-control select-code mb-3" name="eighth" id="eighth">
-										<option value=""></option>
-									</select>
-								</div>
-								<div class="col-sm-3">
-									<select class="form-control select-code mb-3" name="eighth_val" id="eighth_val">
-										<option value=""></option>
-									</select>
-								</div>
-							</div>
-
-							<div class="form-group row" id="hide_9th">
-								<label for="ninth" class="col-sm-3 control-label mt-5">9th Code:</label>
-								<div class="col-sm-6">
-									<select class="form-control select-code mb-3" name="ninth" id="ninth">
-										<option value=""></option>
-									</select>
-								</div>
-								<div class="col-sm-3">
-									<select class="form-control select-code mb-3" name="ninth_val" id="ninth_val">
-										<option value=""></option>
-									</select>
-								</div>
-							</div>
-
-							<div class="form-group row">
-								<label for="eleventh" class="col-sm-3 control-label mt-5">11th Code:</label>
-								<div class="col-sm-6">
-									<select class="form-control select-code mb-3" name="eleventh" id="eleventh">
-										<option value=""></option>
-									</select>
-								</div>
-								<div class="col-sm-3">
-									<select class="form-control select-code mb-3" name="eleventh_val" id="eleventh_val">
-										<option value=""></option>
-									</select>
-								</div>
-							</div>
-
-							<div class="form-group row mb-10" id="hide_14th">
-								<label for="forteenth" class="col-sm-3 control-label mt-5">14th Code:</label>
-								<div class="col-sm-6">
-									<select class="form-control select-code mb-3" name="forteenth" id="forteenth">
-										<option value=""></option>
-									</select>
-								</div>
-								<div class="col-sm-3">
-									<select class="form-control select-code mb-3" name="forteenth_val" id="forteenth_val">
-										<option value=""></option>
-									</select>
-								</div>
-							</div> --}}
-
 							<div class="row justify-content-center">
-								<div class="col-md-3 mb-5">
+								<div class="col-lg-3 col-md-4 mb-5">
 									<button type="submit" id="btn_save" class="btn bg-green btn-block permission-button">
 										<i class="fa fa-floppy-o"></i> Save
 									</button>
 								</div>
-								<div class="col-md-3 mb-5">
+								<div class="col-lg-3 col-md-4 mb-5">
 									<button type="button" id="btn_cancel" class="btn bg-red btn-block">
 										<i class="fa fa-times"></i> Cancel
 									</button>
@@ -744,7 +472,7 @@ foreach ($user_accesses as $user_access){
 
 					<div class="col-md-8">
 						<div class="table-reponsive">
-							<table class="table table-striped table-sm mb-10 dt-responsive display nowrap" id="tbl_product_code" style="width:100%">
+							<table class="table table-striped table-sm mb-10 table-bordered display nowrap" id="tbl_product_code" style="width:100%">
 								<thead class="thead-dark">
 									<tr>
 										<th>
@@ -766,6 +494,22 @@ foreach ($user_accesses as $user_access){
 								<button type="button" id="btn_delete_product" class="btn bg-red btn-block permission-button">
 									<i class="fa fa-trash"></i> Delete Product
 								</button>
+							</div>
+							<div class="col-md-3 mb-5">
+								<button type="button" id="btn_excel_product" class="btn bg-green btn-block">
+									<i class="fa fa-file-excel-o"></i> Extract to Excel
+								</button>
+							</div>
+						</div>
+
+						<div class="row justify-content-center">
+							<div class="col-md-12" style="display:none" id="progress">
+								<div class="progress">
+									<div class="progress-bar progress-bar-success progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="00" aria-valuemin="0" aria-valuemax="100" style="width: 00%">
+										<span class="sr-only"></span>
+									</div>
+								</div>
+								<span class="progress-msg">Processing...</span>
 							</div>
 						</div>
 					</div>
@@ -795,6 +539,7 @@ foreach ($user_accesses as $user_access){
 		var getProcessURL = "{{ url('/masters/product-master/getProcessURL') }}";
 		var getdropdownproduct = "{{ url('/masters/product-master/get_dropdown_product') }}";
 		var getStandardMaterialURL = "{{ url('/masters/product-master/get-standard-material') }}";
+		var downloadExcelFileURL = "{{ url('/masters/product-master/download-excel-file') }}";
 
 		var getSetURL = "{{ url('masters/process-master/get-set') }}";
 

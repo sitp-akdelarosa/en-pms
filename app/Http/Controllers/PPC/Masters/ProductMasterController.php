@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\AuditTrailController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\HelpersController;
 use App\NotRegisteredProduct;
+use App\NotRegisteredMaterial;
 use App\PpcDivision;
 use App\PpcMaterialCode;
 use App\PpcProcess;
@@ -15,7 +16,10 @@ use App\PpcProductCode;
 use App\PpcProductCodeAssembly;
 use App\PpcProductProcess;
 use App\PpcUploadOrder;
+use App\PpcUpdateInventory;
+use DataTables;
 use DB;
+use Excel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -46,14 +50,14 @@ class ProductMasterController extends Controller
     {
         $assembly = DB::table('ppc_product_code_assemblies as pca')
             ->leftjoin('admin_assign_production_lines as apl', 'apl.product_line', '=', 'pca.prod_type')
-            ->select(
-                'pca.id as id',
-                'pca.prod_type as prod_type',
-                'pca.character_num as character_num',
-                'pca.character_code as character_code',
-                'pca.description as description',
-                'pca.created_at as created_at'
-            )
+            ->select([
+                DB::raw('pca.id as id'),
+                DB::raw('pca.prod_type as prod_type'),
+                DB::raw('pca.character_num as character_num'),
+                DB::raw('pca.character_code as character_code'),
+                DB::raw('pca.description as description'),
+                DB::raw('pca.created_at as created_at')
+            ])
             ->where('apl.user_id', Auth::user()->id)
             ->groupBy(
                 'pca.id',
@@ -63,11 +67,17 @@ class ProductMasterController extends Controller
                 'pca.description',
                 'pca.created_at'
             )
-            ->orderBy('pca.id', 'desc')->get();
+            ->orderBy('pca.id', 'desc');
+
+        return DataTables::of($assembly)
+						->editColumn('id', function($data) {
+							return $data->id;
+						})
+						->make(true);
             
 
 
-        return response()->json($assembly);
+        // return response()->json($assembly);
     }
 
     public function save_code_assembly(Request $req)
@@ -306,6 +316,7 @@ class ProductMasterController extends Controller
                     'prod_code' => strtoupper($req->prod_code),
                     'process' => strtoupper($req->process[$key]),
                     'set' => strtoupper($req->sets[$key]),
+                    'remarks' => strtoupper($req->remarks[$key]),
                     'sequence' => $seq,
                     'create_user' => Auth::user()->id,
                     'update_user' => Auth::user()->id,
@@ -343,27 +354,27 @@ class ProductMasterController extends Controller
         $product_codes = DB::table('ppc_product_codes as pc')
             ->leftjoin('admin_assign_production_lines as apl', 'apl.product_line', '=', 'pc.product_type')
             ->where('apl.user_id', $userid)->orderby('pc.id', 'desc')
-            ->select(
-                'pc.id as id',
-                'pc.product_type as product_type',
-                'pc.product_code as product_code',
-                'pc.code_description as code_description',
-                'pc.cut_weight as cut_weight',
-                'pc.cut_weight_uom as cut_weight_uom',
-                'pc.cut_length as cut_length',
-                'pc.cut_length_uom as cut_length_uom',
-                'pc.cut_width as cut_width',
-                'pc.cut_width_uom as cut_width_uom',
-                'pc.item as item',
-                'pc.alloy as alloy',
-                'pc.class as class',
-                'pc.size as size',
+            ->select([
+                DB::raw('pc.id as id'),
+                DB::raw('pc.product_type as product_type'),
+                DB::raw('pc.product_code as product_code'),
+                DB::raw('pc.code_description as code_description'),
+                DB::raw('pc.cut_weight as cut_weight'),
+                DB::raw('pc.cut_weight_uom as cut_weight_uom'),
+                DB::raw('pc.cut_length as cut_length'),
+                DB::raw('pc.cut_length_uom as cut_length_uom'),
+                DB::raw('pc.cut_width as cut_width'),
+                DB::raw('pc.cut_width_uom as cut_width_uom'),
+                DB::raw('pc.item as item'),
+                DB::raw('pc.alloy as alloy'),
+                DB::raw('pc.class as class'),
+                DB::raw('pc.size as size'),
                 DB::raw('IFNULL(pc.standard_material_used, "") as standard_material_used'),
                 DB::raw('IFNULL(pc.finish_weight, 0) as finish_weight'),
                 DB::raw('IFNULL(pc.formula_classification, "") as formula_classification'),
-                'pc.create_user as create_user',
-                'pc.created_at as created_at'
-            )->groupBy(
+                DB::raw('pc.create_user as create_user'),
+                DB::raw('pc.created_at as created_at')
+            ])->groupBy(
                 'pc.id',
                 'pc.product_type',
                 'pc.product_code',
@@ -383,8 +394,13 @@ class ProductMasterController extends Controller
                 'pc.formula_classification',
                 'pc.create_user',
                 'pc.created_at'
-            )->get();
-        return response()->json($product_codes);
+            );
+         return DataTables::of($product_codes)
+						->editColumn('id', function($data) {
+							return $data->id;
+						})
+						->make(true);
+        // return response()->json($product_codes);
     }
 
     public function save_product_code(Request $req)
@@ -484,6 +500,23 @@ class ProductMasterController extends Controller
                         'updated_at' => date("Y-m-d H:i:s"),
                     ]);
                 NotRegisteredProduct::where('prod_code', $req->product_code)->delete();
+            }
+
+            $check_in_inv = NotRegisteredMaterial::where('materials_code', $req->product_code)->count();
+
+            if ($check > 0) {
+                PpcUpdateInventory::where('item_code', $req->product_code)
+                    ->update([
+                        'description' => strtoupper($req->code_description),
+                        'product_line' => $req->product_type,
+                        'item' => $req->item,
+                        'class' => $req->class,
+                        'alloy' => $req->alloy,
+                        'size' => $req->size,
+                        'update_user' => Auth::user()->id,
+                        'updated_at' => date("Y-m-d H:i:s"),
+                    ]);
+                NotRegisteredMaterial::where('materials_code', $req->product_code)->delete();
             }
 
             $this->_audit->insert([
@@ -705,5 +738,206 @@ class ProductMasterController extends Controller
         }
 
         return dd($arr);
+    }
+
+    public function downloadExcelFile()
+    {
+        $data = DB::table('ppc_product_codes as pc')
+                    ->select(
+                        DB::raw('pc.id as id'),
+                        DB::raw('pc.product_type as product_type'),
+                        DB::raw('pc.product_code as product_code'),
+                        DB::raw('pc.code_description as code_description'),
+                        DB::raw('pc.cut_weight as cut_weight'),
+                        DB::raw('pc.cut_weight_uom as cut_weight_uom'),
+                        DB::raw('pc.cut_length as cut_length'),
+                        DB::raw('pc.cut_length_uom as cut_length_uom'),
+                        DB::raw('pc.cut_width as cut_width'),
+                        DB::raw('pc.cut_width_uom as cut_width_uom'),
+                        DB::raw('pc.item as item'),
+                        DB::raw('pc.alloy as alloy'),
+                        DB::raw('pc.class as class'),
+                        DB::raw('pc.size as size'),
+                        DB::raw('IFNULL(pc.standard_material_used, "") as standard_material_used'),
+                        DB::raw('IFNULL(pc.finish_weight, 0) as finish_weight'),
+                        DB::raw('IFNULL(pc.formula_classification, "") as formula_classification'),
+                        DB::raw('pc.update_user as update_user'),
+                        DB::raw('pc.updated_at as updated_at')
+                    )->groupBy(
+                        'pc.id',
+                        'pc.product_type',
+                        'pc.product_code',
+                        'pc.code_description',
+                        'pc.cut_weight',
+                        'pc.cut_weight_uom',
+                        'pc.cut_length',
+                        'pc.cut_length_uom',
+                        'pc.cut_width',
+                        'pc.cut_width_uom',
+                        'pc.item',
+                        'pc.alloy',
+                        'pc.class',
+                        'pc.size',
+                        'pc.standard_material_used',
+                        'pc.finish_weight',
+                        'pc.formula_classification',
+                        'pc.update_user',
+                        'pc.updated_at'
+                    )->orderBy('pc.id','asc')->get();
+        $date = date('Ymd');
+
+        Excel::create('ProductMasters_'.$date, function($excel) use($data)
+        {
+            $excel->sheet('Products', function($sheet) use($data)
+            {
+                $sheet->setHeight(4, 20);
+                $sheet->mergeCells('A2:M2');
+                $sheet->cells('A2:M2', function($cells) {
+                    $cells->setAlignment('center');
+                    $cells->setFont([
+                        'family'     => 'Calibri',
+                        'size'       => '14',
+                        'bold'       =>  true,
+                        'underline'  =>  true
+                    ]);
+                });
+                $sheet->cell('A2',"Product Masters");
+
+                $sheet->setHeight(6, 15);
+                $sheet->cells('A4:M4', function($cells) {
+                    $cells->setFont([
+                        'family'     => 'Calibri',
+                        'size'       => '11',
+                        'bold'       =>  true,
+                    ]);
+                });
+
+                $sheet->cell('A4', function($cell) {
+                    $cell->setValue("PRODUCT LINE");
+                    $cell->setBorder('thin','thin','thin','thin');
+                });
+            
+                $sheet->cell('B4', function($cell) {
+                    $cell->setValue("PRODUCT CODE");
+                    $cell->setBorder('thin','thin','thin','thin');
+                });
+
+                $sheet->cell('C4', function($cell) {
+                    $cell->setValue("DESCRIPTION");
+                    $cell->setBorder('thin','thin','thin','thin');
+                });
+
+                $sheet->cell('D4', function($cell) {
+                    $cell->setValue("CUT WEIGHT");
+                    $cell->setBorder('thin','thin','thin','thin');
+                });
+
+                $sheet->cell('E4', function($cell) {
+                    $cell->setValue("CUT LENGTH");
+                    $cell->setBorder('thin','thin','thin','thin');
+                });
+
+                $sheet->cell('F4', function($cell) {
+                    $cell->setValue("CUT WIDTH");
+                    $cell->setBorder('thin','thin','thin','thin');
+                });
+
+                $sheet->cell('G4', function($cell) {
+                    $cell->setValue("ITEM");
+                    $cell->setBorder('thin','thin','thin','thin');
+                });
+
+                $sheet->cell('H4', function($cell) {
+                    $cell->setValue("ALLOY");
+                    $cell->setBorder('thin','thin','thin','thin');
+                });
+
+                $sheet->cell('I4', function($cell) {
+                    $cell->setValue("CLASS");
+                    $cell->setBorder('thin','thin','thin','thin');
+                });
+
+                $sheet->cell('J4', function($cell) {
+                    $cell->setValue("SIZE");
+                    $cell->setBorder('thin','thin','thin','thin');
+                });
+
+                $sheet->cell('K4', function($cell) {
+                    $cell->setValue("STD. MATERIAL USED");
+                    $cell->setBorder('thin','thin','thin','thin');
+                });
+
+                $sheet->cell('L4', function($cell) {
+                    $cell->setValue("FINISH WEIGHT");
+                    $cell->setBorder('thin','thin','thin','thin');
+                });
+
+                $sheet->cell('M4', function($cell) {
+                    $cell->setValue("UPDATE_DATE");
+                    $cell->setBorder('thin','thin','thin','thin');
+                });
+
+                $row = 5;
+
+                foreach ($data as $key => $dt) {
+                    $sheet->setHeight($row, 15);
+
+                    $sheet->cell('A'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->product_type);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('B'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->product_code);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('c'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->code_description);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('D'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->cut_weight." ".$dt->cut_weight_uom);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('E'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->cut_length." ".$dt->cut_length_uom);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('F'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->cut_width." ".$dt->cut_width_uom);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('G'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->item);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('H'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->alloy);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('I'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->class);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('J'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->size);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('K'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->standard_material_used);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('L'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->finish_weight);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('M'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->updated_at);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    
+                    $row++;
+                }
+            });
+        })->download('xlsx');
     }
 }

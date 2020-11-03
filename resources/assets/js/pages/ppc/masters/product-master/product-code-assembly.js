@@ -198,22 +198,10 @@ function get_dropdown_product_assembly() {
 
 function getAssemblies() {
 	$('.loadingOverlay').show();
-	$.ajax({
-		url: assemblyListURL,
-		type: 'GET',
-		dataType: 'JSON',
-	}).done(function(data, textStatus, xhr) {
-		AssemblyTable(data);
-	}).fail(function(xhr, textStatus, errorThrown) {
-		msg(errorThrown,textStatus);
-	});
-}
-
-function AssemblyTable(arr) {
 	$('#tbl_prodcode_assembly').dataTable().fnClearTable();
 	$('#tbl_prodcode_assembly').dataTable().fnDestroy();
 	$('#tbl_prodcode_assembly').dataTable({
-		data: arr,
+		ajax: assemblyListURL,
 		processing: true,
 		deferRender: true,
 		language: {
@@ -229,31 +217,35 @@ function AssemblyTable(arr) {
 			search: "Search:",
 			zeroRecords: "No matching records found",
 			paginate: {
-				"previous":"Prev",
+				"previous": "Prev",
 				"next": "Next",
 				"last": "Last",
 				"first": "First"
 			}
 		},
-		order: [[6,'desc']],
+		order: [[6, 'desc']],
 		columns: [
-			{data: function(data) {
-				return '<input type="checkbox" class="table-checkbox check_item" value="'+data.id+'">';
-			}, orderable: false, searchable: false, width: '5.28%'},
-			{data: function(data) {
-				return "<button class='btn btn-sm bg-blue btn_edit_assembly' data-id='"+data.id+"' "+
-							"data-prod_type='"+data.prod_type+"' "+
-							"data-character_num='"+data.character_num+"' "+
-							"data-character_code='"+data.character_code+"' "+
-							"data-description='"+data.description+"'>"+
-							"<i class='fa fa-edit'></i>"+
+			{
+				data: function (data) {
+					return '<input type="checkbox" class="table-checkbox check_item" value="' + data.id + '">';
+				}, orderable: false, searchable: false, width: '5.28%'
+			},
+			{
+				data: function (data) {
+					return "<button class='btn btn-sm bg-blue btn_edit_assembly' data-id='" + data.id + "' " +
+						"data-prod_type='" + data.prod_type + "' " +
+						"data-character_num='" + data.character_num + "' " +
+						"data-character_code='" + data.character_code + "' " +
+						"data-description='" + data.description + "'>" +
+						"<i class='fa fa-edit'></i>" +
 						"</button>";
-			}, orderable: false, searchable: false, width: '5.28%'},
-			{data: 'prod_type', width: '22.28%'},
-			{data: 'character_num', width: '14.28%'},
-			{data: 'character_code', width: '14.28%'},
-			{data: 'description', width: '22.28%'},
-			{data: 'created_at', width: '14.28%'}
+				}, orderable: false, searchable: false, width: '5.28%'
+			},
+			{ data: 'prod_type', width: '22.28%' },
+			{ data: 'character_num', width: '14.28%' },
+			{ data: 'character_code', width: '14.28%' },
+			{ data: 'description', width: '22.28%' },
+			{ data: 'created_at', width: '14.28%' }
 		],
 		"initComplete": function () {
 			$('.loadingOverlay').hide();

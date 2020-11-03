@@ -89,18 +89,18 @@ foreach ($user_accesses as $user_access){
             			<table class="table table-sm table-hover table-striped table-bordered nowrap" style="width: 100%" id="tbl_jo_details">
             				<thead class="thead-dark">
                                 <tr>
-                                    <th></th>
-                                    <th></th>
-                                    <th>Job Order No.</th>
-                                    <th>Product Code</th>
-                                    <th>Description</th>
-                                    <th>Order Qty.</th>
-                                    <th>Sched Qty.</th>
-                                    <th>Issued Qty.</th>
-                                    <th>Material Used</th>
-                                    <th>Material Heat No.</th>
-                                    <th>Date</th>
-                                    <th>Status</th>
+                                    <th style="width:8.33%"></th>
+                                    <th style="width:8.33%"></th>
+                                    <th style="width:8.33%">Job Order No.</th>
+                                    <th style="width:8.33%">Product Code</th>
+                                    <th style="width:8.33%">Description</th>
+                                    <th style="width:8.33%">Order Qty.</th>
+                                    <th style="width:8.33%">Sched Qty.</th>
+                                    <th style="width:8.33%">Issued Qty.</th>
+                                    <th style="width:8.33%">Material Used</th>
+                                    <th style="width:8.33%">Material Heat No.</th>
+                                    <th style="width:8.33%">Date</th>
+                                    <th style="width:8.33%">Status</th>
                                 </tr>
                             </thead>
                             <tbody id="tbl_jo_details_body"></tbody>
@@ -112,7 +112,7 @@ foreach ($user_accesses as $user_access){
     </div>
 
     <div class="row justify-content-center">
-    	<div class="col-lg-1 col-md-2 col-sm-2">
+    	<div class="col-lg-2 col-md-2 col-sm-2">
     		<button class="btn btn-lg bg-green btn-block mb-3" id="btn_travel_sheet_all_print_preview">
     			<i class="fa fa-file-text-o"></i> Travel Sheet
     		</button>
@@ -134,7 +134,7 @@ foreach ($user_accesses as $user_access){
     <script type="text/javascript">
         var token = $('meta[name="csrf-token"]').attr('content');
         var joDetailsListURL = "{{ url('/transaction/travel-sheet/set-up/jo-list') }}";
-        var getBomURL = "{{ url('/transaction/travel-sheet/set-up/process') }}";
+        var getProcessURL = "{{ url('/transaction/travel-sheet/set-up/process') }}";
         var getSc_noURL = "{{ url('transaction/travel-sheet/get-Sc_no') }}";
 
         var preparedByURL = "{{ url('/transaction/cutting-schedule/preparedby') }}";
@@ -145,6 +145,8 @@ foreach ($user_accesses as $user_access){
         var auth_user = "{{ Auth::user()->firstname.' '.Auth::user()->lastname }}";
         var pdfTravelSheetURL = "{{ url('/pdf/travel-sheet') }}";
         var getPreTravelSheetDataURL = "{{ url('/transaction/travel-sheet/pre-travel-sheet-data') }}";
+
+        var getProcessDivURL = "{{ url('/transaction/travel-sheet/get-process-div') }}";
         var code_permission = 'T0006';
         
     </script>

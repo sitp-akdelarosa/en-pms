@@ -136,6 +136,9 @@ Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', '
 				->name('masters.product-master.update');
 			Route::get('/get-standard-material', 'PPC\Masters\ProductMasterController@getStandardMaterial')
 				->name('masters.product-master.get-standard-material');
+
+			Route::get('/download-excel-file', 'PPC\Masters\ProductMasterController@downloadExcelFile')
+				->name('masters.product-master.download-excel-file');
 		});
 
 		Route::group(['prefix' => 'material-master'], function () {
@@ -344,6 +347,8 @@ Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', '
 				->name('transaction.travel-sheet.pre-travel-sheet-data');
 			Route::post('/get-Sc_no', 'PPC\Transaction\TravelSheetController@getSc_no')
 				->name('transaction.travel-sheet.get-Sc_no');
+			Route::get('/get-process-div', 'PPC\Transaction\TravelSheetController@getProcessDiv')
+				->name('transaction.travel-sheet.get-process-div');
 		});
 
 		Route::group(['prefix' => 'cutting-schedule'], function () {

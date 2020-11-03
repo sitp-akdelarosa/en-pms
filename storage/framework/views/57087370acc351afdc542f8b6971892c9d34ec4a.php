@@ -75,21 +75,17 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="table-reponsive">
-                                <table class="table table-striped table-sm mb-10" id="tbl_prod_process" style="width:100%">
+                                <table class="table table-striped table-bordered table-sm mb-10" id="tbl_prod_process" style="width:100%">
                                     <thead class="thead-dark">
                                         <tr>
                                             <th width="5%">#</th>
-                                            
                                             <th>Process Name</th>
+                                            <th>Remarks</th>
                                             <th width="5%"></th>
                                             <th width="5%"></th>
                                         </tr>
                                     </thead>
-                                    <tbody id="tbl_prod_process_body">
-                                        <tr id="no_data">
-                                            <td colspan="4" class="text-center">No data available.</td>
-                                        </tr>
-                                    </tbody>
+                                    <tbody id="tbl_prod_process_body"></tbody>
                                 </table>
                             </div>
                         </div>

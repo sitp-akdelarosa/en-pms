@@ -198,22 +198,10 @@ function get_dropdown_product_assembly() {
 
 function getAssemblies() {
 	$('.loadingOverlay').show();
-	$.ajax({
-		url: assemblyListURL,
-		type: 'GET',
-		dataType: 'JSON',
-	}).done(function(data, textStatus, xhr) {
-		AssemblyTable(data);
-	}).fail(function(xhr, textStatus, errorThrown) {
-		msg(errorThrown,textStatus);
-	});
-}
-
-function AssemblyTable(arr) {
 	$('#tbl_prodcode_assembly').dataTable().fnClearTable();
 	$('#tbl_prodcode_assembly').dataTable().fnDestroy();
 	$('#tbl_prodcode_assembly').dataTable({
-		data: arr,
+		ajax: assemblyListURL,
 		processing: true,
 		deferRender: true,
 		language: {
@@ -229,31 +217,35 @@ function AssemblyTable(arr) {
 			search: "Search:",
 			zeroRecords: "No matching records found",
 			paginate: {
-				"previous":"Prev",
+				"previous": "Prev",
 				"next": "Next",
 				"last": "Last",
 				"first": "First"
 			}
 		},
-		order: [[6,'desc']],
+		order: [[6, 'desc']],
 		columns: [
-			{data: function(data) {
-				return '<input type="checkbox" class="table-checkbox check_item" value="'+data.id+'">';
-			}, orderable: false, searchable: false, width: '5.28%'},
-			{data: function(data) {
-				return "<button class='btn btn-sm bg-blue btn_edit_assembly' data-id='"+data.id+"' "+
-							"data-prod_type='"+data.prod_type+"' "+
-							"data-character_num='"+data.character_num+"' "+
-							"data-character_code='"+data.character_code+"' "+
-							"data-description='"+data.description+"'>"+
-							"<i class='fa fa-edit'></i>"+
+			{
+				data: function (data) {
+					return '<input type="checkbox" class="table-checkbox check_item" value="' + data.id + '">';
+				}, orderable: false, searchable: false, width: '5.28%'
+			},
+			{
+				data: function (data) {
+					return "<button class='btn btn-sm bg-blue btn_edit_assembly' data-id='" + data.id + "' " +
+						"data-prod_type='" + data.prod_type + "' " +
+						"data-character_num='" + data.character_num + "' " +
+						"data-character_code='" + data.character_code + "' " +
+						"data-description='" + data.description + "'>" +
+						"<i class='fa fa-edit'></i>" +
 						"</button>";
-			}, orderable: false, searchable: false, width: '5.28%'},
-			{data: 'prod_type', width: '22.28%'},
-			{data: 'character_num', width: '14.28%'},
-			{data: 'character_code', width: '14.28%'},
-			{data: 'description', width: '22.28%'},
-			{data: 'created_at', width: '14.28%'}
+				}, orderable: false, searchable: false, width: '5.28%'
+			},
+			{ data: 'prod_type', width: '22.28%' },
+			{ data: 'character_num', width: '14.28%' },
+			{ data: 'character_code', width: '14.28%' },
+			{ data: 'description', width: '22.28%' },
+			{ data: 'created_at', width: '14.28%' }
 		],
 		"initComplete": function () {
 			$('.loadingOverlay').hide();
@@ -414,6 +406,7 @@ $( function() {
 			prod_code: $('#prod_code').val(),
 			sequence: $('input[name="sequence[]"]').map(function(){return $(this).val();}).get(),
 			process: $('input[name="process[]"]').map(function(){return $(this).val();}).get(),
+			remarks: $('input[name="remarks[]"]').map(function () { return $(this).val(); }).get(),
 			sets: $('input[name="sets[]"]').map(function(){return $(this).val();}).get(),
 		};
 
@@ -453,7 +446,7 @@ $( function() {
 		if($('#cut_weight').val() < 0 || $('#cut_length').val() < 0){
 			msg("Please Input valid Number.","warning");
 		}else{
-			$('.loading').show();
+			$('.loadingOverlay').show();
 			$.ajax({
 				url: $(this).attr('action'),
 				type: 'POST',
@@ -475,7 +468,7 @@ $( function() {
 				var errors = xhr.responseJSON.errors;
 				showErrors(errors);
 			}).always(function() {
-				$('.loading').hide();
+				$('.loadingOverlay').hide();
 			});
 		}		
 	});
@@ -512,7 +505,7 @@ $( function() {
 					process_array[id] = {
 						id: $('#process_id').val(),
 						sequence: $('#sequence').val(),
-						// prod_code: $('#prod_code').val(),
+						remarks: '',
 						process: $('#process').val(),
 						sets: $('#set').val(),
 					};
@@ -538,6 +531,7 @@ $( function() {
 						id: '',
 						sequence: $('#sequence').val(),
 						prod_code: $('#prod_code').val(),
+						remarks: '',
 						process: $('#process').val(),
 						sets: $('#set').val(),
 					});
@@ -553,7 +547,7 @@ $( function() {
 		$('#btn_cancel_process').hide();
 	});
 
-	$('#tbl_prod_process_body').on('click', '.fa-times', function() {
+	$('#tbl_prod_process_body').on('click', '.btn_proc_delete', function() {
 		var id = $(this).attr('data-id');
 		$('#'+id).remove();
 		id--;
@@ -561,14 +555,14 @@ $( function() {
 
 		makeProcessList(process_array);
 
-		if ($('#tbl_prod_process_body > tr').length < 1) {
-			$('#tbl_prod_process_body').html('<tr id="no_data">'+
-                                            '<td colspan="4" class="text-center">No data available.</td>'+
-                                        '</tr>');
-		}
+		// if ($('#tbl_prod_process_body > tr').length < 1) {
+		// 	$('#tbl_prod_process_body').html('<tr id="no_data">'+
+        //                                     '<td colspan="4" class="text-center">No data available.</td>'+
+        //                                 '</tr>');
+		// }
 	});
 
-	$('#tbl_prod_process_body').on('click', '.fa-edit', function() {
+	$('#tbl_prod_process_body').on('click', '.btn_proc_edit', function() {
 		var id = $(this).attr('data-id');
 		$('#process_id').val(id);
 		$('#sequence').val(id);
@@ -602,7 +596,102 @@ $( function() {
 		$('#code_description').val('');
 		showDescription();
 	});
+
+	$('#btn_excel_product').on('click', function() {
+		var that = this;
+		var page_url = downloadExcelFileURL;
+
+		var percentage = 10;
+
+		$('#progress').show();
+		$('.progress-bar').css('width', '10%');
+		$('.progress-bar').attr('aria-valuenow', percentage);
+
+		var req = new XMLHttpRequest();
+
+		req.open("GET", page_url, true);
+		
+		setTimer(percentage);
+
+		req.addEventListener("progress", function (evt) {
+			if (evt.lengthComputable) {
+				var percentComplete = evt.loaded / evt.total;
+				console.log(percentComplete);
+			}
+		}, false);
+
+		req.responseType = "blob";
+		req.onreadystatechange = function () {
+			if (req.readyState == 2 && req.status == 200) {
+				stopTimer();
+				$('.progress-msg').html("Download is being started");
+			}
+			else if (req.readyState == 3) {
+				$('.progress-msg').html("Download is under progress");
+				$('.progress-bar').css('width', '80%');
+				$('.progress-bar').attr('aria-valuenow', 80);
+			}
+			else if (req.readyState === 4 && req.status === 200) {
+
+				$('.progress-bar').css('width', '100%');
+				$('.progress-bar').attr('aria-valuenow', 100);
+
+				$('.progress-msg').html("Downloaing has finished");
+
+				percentage = 100;
+
+				var disposition = req.getResponseHeader('content-disposition');
+				var matches = /"([^"]*)"/.exec(disposition);
+				var filename = (matches != null && matches[1] ? matches[1] : 'Product_Master.xlsx');
+
+				// var filename = $(that).data('filename');
+				if (typeof window.chrome !== 'undefined') {
+					// Chrome version
+					var link = document.createElement('a');
+					link.href = window.URL.createObjectURL(req.response);
+					link.download = filename;
+					link.click();
+					if (percentage == 100) {
+						$('#progress').hide();
+					}
+				} else if (typeof window.navigator.msSaveBlob !== 'undefined') {
+					// IE version
+					var blob = new Blob([req.response], { type: 'application/force-download' });
+					window.navigator.msSaveBlob(blob, filename);
+					if (percentage == 100) {
+						$('#progress').hide();
+					}
+				} else {
+					// Firefox version
+					var file = new File([req.response], filename, { type: 'application/force-download' });
+					window.open(URL.createObjectURL(file));
+					if (percentage == 100) {
+						$('#progress').hide();
+					}
+				}
+			}
+		};
+		var param = '_token='+token;
+		req.send(param);
+	});
 });
+
+var timer;
+
+function setTimer(percentage) {
+	percentage = 20;
+	timer = setInterval(function () {
+		console.log(percentage);
+		$('.progress-bar').css('width', percentage.toString() + '%');
+		$('.progress-bar').attr('aria-valuenow', percentage);
+		$('.progress-msg').html("Please wait.. Retrieving data.");
+		percentage = percentage + 5;
+	}, 100000);
+}
+
+function stopTimer() {
+	clearInterval(timer);
+}
 
 function clearCode() {
 	$('.select-code').val('');
@@ -968,77 +1057,52 @@ function delete_process(checkboxClass,deleteURL) {
 }
 
 function makeProcessList(arr) {
-	var tr = '';
-	$('#tbl_prod_process_body').html(tr);
-
 	var row = 1;
 
-	if (arr.length > 0) {
-		$.each(arr, function (i, x) {
-			tr = '<tr id="' + row + '">' +
-				'<td>' +
-				'<input type="hidden" name="proc_id[]" value="' + x.id + '">' +
-				'<input type="hidden" name="sequence[]" value="' + row + '">' + row +
-				'</td>' +
-				// '<td>'+
-				// 	'<input type="hidden" name="prod_code[]" value="'+x.prod_code+'">'+x.prod_code+
-				// '</td>'+
-				'<td>' +
-				'<input type="hidden" name="process[]" value="' + x.process + '">' + x.process +
-				'</td>' +
-				'<td>' +
-				'<i class="fa fa-edit text-aqua" data-id="' + row + '" data-sets="' + x.sets + '"></i>' +
-				'<input type="hidden" name="sets[]" value="' + x.sets + '">' +
-				'</td>' +
-				'<td>' +
-				'<i class="fa fa-times text-red" data-id="' + row + '"></i>' +
-				'</td>' +
-				'</tr>';
-			$('#tbl_prod_process_body').append(tr);
+	$('#tbl_prod_process').dataTable().fnClearTable();
+	$('#tbl_prod_process').dataTable().fnDestroy();
+	$('#tbl_prod_process').dataTable({
+		data: arr,
+		order: [[0, 'desc']],
+		columns: [
+			{
+				data: function (x) {
+					return '<input type="hidden" name="proc_id[]" value="' + x.id + '">' +
+						'<input type="hidden" name="sequence[]" value="' + row + '">' + row;
+				}, orderable: false, searchable: false
+			},
+			{
+				data: function (x) {
+					return '<input type="hidden" name="process[]" value="' + x.process + '">' + x.process;
+				}, orderable: false, searchable: false
+			},
+			{
+				data: function (x) {
+					return '<input type="text" class="form-control form-control-sm" name="remarks[]" autocomplete="off" value="' + x.remarks + '">';
+				}, orderable: false, searchable: false
+			},
+			{
+				data: function (x) {
+					return '<button type="button" class="btn btn-sm bg-blue btn_proc_edit" data-id="' + row + '" data-sets="' + x.sets + '">'+
+								'<i class="fa fa-edit"></i>' +
+							'</button>'+
+						'<input type="hidden" name="sets[]" value="' + x.sets + '">';
+				}, orderable: false, searchable: false
+			},
+			{
+				data: function (x) {
+					return '<button type="button" class="btn bg-red btn-sm btn_proc_delete" data-id="' + row + '">' +
+								'<i class="fa fa-times"></i>' +
+							'</button>';
+				}, orderable: false, searchable: false
+			}
+		],
+		createdRow: function (nRow, aData, iDataIndex) {
+			$(nRow).attr('id', aData[0]);
 			row++;
-		});
-	} else {
-		$('#tbl_prod_process_body').html('<tr id="no_data">' +
-			'<td colspan="4" class="text-center">No data available.</td>' +
-			'</tr>');
-	}
+		}
+	});
 }
-
-
-
-// function savedProductProcessList(arr) {
-// 	var tr = '';
-// 	$('#tbl_prod_process_body').html(tr);
-
-// 	var row = 1;
-
-// 	if (arr.length > 0) {
-// 		$.each(arr, function (i, x) {
-// 			tr = '<tr id="' + row + '">' +
-// 				'<td>' +
-// 				'<input type="hidden" name="proc_id[]" value="' + x.id + '">' +
-// 				'<input type="hidden" name="sequence[]" value="' + row + '">' + row +
-// 				'</td>' +
-// 				// '<td>'+
-// 				// 	'<input type="hidden" name="prod_code[]" value="'+x.prod_code+'">'+x.prod_code+
-// 				// '</td>'+
-// 				'<td>' +
-// 				'<input type="hidden" name="process[]" value="' + x.process + '">' + x.process +
-// 				'</td>' +
-// 				'<td>' +
-// 				'<i class="fa fa-edit text-aqua" data-id="' + row + '" data-sets="' + x.sets + '"></i>' +
-// 				'<input type="hidden" name="sets[]" value="' + x.sets + '">' +
-// 				'</td>' +
-// 				'<td>' +
-// 				'<i class="fa fa-times text-red" data-id="' + row + '"></i>' +
-// 				'</td>' +
-// 				'</tr>';
-// 			$('#tbl_prod_process_body').append(tr);
-// 			row++;
-// 		});
-// 	}
-	
-// }
 
 function showProcessList(prod_code,set) {
 	$.ajax({
@@ -1057,7 +1121,7 @@ function showProcessList(prod_code,set) {
 				process_array.push({
 					id: x.id,
 					sequence: x.sequence,
-					// prod_code: x.prod_code,
+					remarks: (x.remarks == null)? '': x.remarks,
 					process: x.process,
 					sets: x.set,
 				});
@@ -1239,6 +1303,7 @@ function selectedProcess(set_id, prod_id ) {
 			$.each(data, function(i, x) {
 				process_array.push({
 					process: x.process,
+					remarks: (x.remarks==null)?'':x.remarks,
 					sets: x.set_id,
 				});
 			});
@@ -1272,60 +1337,80 @@ function get_dropdown_product() {
 
 
 function getProductCodes() {
-	$.ajax({
-		url: prodCodeListURL,
-		type: 'GET',
-		dataType: 'JSON',
-	}).done(function(data, textStatus, xhr) {
-		ProductCodesTable(data);
-	}).fail(function(xhr, textStatus, errorThrown) {
-		msg(errorThrown,textStatus);
-	});
-}
-
-function ProductCodesTable(arr) {
 	$('#tbl_product_code').dataTable().fnClearTable();
-    $('#tbl_product_code').dataTable().fnDestroy();
-    $('#tbl_product_code').dataTable({
-        data: arr,
-        order: [[5,'desc']],
-        columns: [
-		    {data: function(data) {
-		    	return '<input type="checkbox" class="table-checkbox check_product_item" value="'+data.id+'">';
-		    }, orderable: false, searchable: false, width: '3.66%'},
-		    {data: function(data) {
-		    	return "<button class='btn btn-sm bg-blue btn_edit_product' "+
-                            "data-id='"+data.id+"' "+
-                            "data-product_type='"+data.product_type+"'" +
-                            "data-product_code='"+data.product_code+"' "+
-                            "data-code_description='"+data.code_description+"'"+
-                            "data-cut_weight='"+data.cut_weight+"'"+
-                            "data-cut_weight_uom='"+data.cut_weight_uom+"'"+
-                            "data-cut_length='"+data.cut_length+"'"+
-							"data-cut_length_uom='"+data.cut_length_uom+"'"+
-							"data-cut_width='" + data.cut_width + "'" +
-							"data-cut_width_uom='" + data.cut_width_uom + "'" +
-                            "data-item='"+data.item+"'"+
-                            "data-alloy='"+data.alloy+"'"+
-                            "data-class='"+data.class+"'"+
-							"data-size='"+data.size+"'"+
-							"data-standard_material_used='"+data.standard_material_used+"'"+
-							"data-finish_weight='" + data.finish_weight + "'" +
-                            "data-create_user='"+data.create_user+"'"+
-                            "data-created_at='"+data.created_at+"'>"+
-                            "<i class='fa fa-edit'></i>"+
-                        "</button><button class='btn btn-sm bg-purple btn_assign_process' "+
-                            "data-id='"+data.id+"' "+
-                            "data-product_code='"+data.product_code+"' title='Assign Process'>"+
-                            "<i class='fa fa-refresh'></i>"+
-                        "</button>";
-		    }, orderable: false, searchable: false, width: '3.66%'},
-		    {data: 'product_type', width: '24.66%'},
-		    {data: 'product_code', width: '19.66%'},
-		    {data: function(data) {
-		    	return '<span="'+data.code_description+'">'+ellipsis(data.code_description,10)+'<span>';
-		    }, width: '39.66%'},
-		    {data: 'created_at', width: '8.66%'},
+	$('#tbl_product_code').dataTable().fnDestroy();
+	$('#tbl_product_code').dataTable({
+		ajax: {
+			url: prodCodeListURL,
+			error: function(xhr,textStatus,errorThrown) {
+				ErrorMsg(xhr);
+			}
+		},
+		processing: true,
+		deferRender: true,
+		language: {
+			aria: {
+				sortAscending: ": activate to sort column ascending",
+				sortDescending: ": activate to sort column descending"
+			},
+			emptyTable: "No data available in table",
+			info: "Showing _START_ to _END_ of _TOTAL_ records",
+			infoEmpty: "No records found",
+			infoFiltered: "(filtered1 from _MAX_ total records)",
+			lengthMenu: "Show _MENU_",
+			search: "Search:",
+			zeroRecords: "No matching records found",
+			paginate: {
+				"previous": "Prev",
+				"next": "Next",
+				"last": "Last",
+				"first": "First"
+			}
+		},
+		order: [[5, 'desc']],
+		columns: [
+			{
+				data: function (data) {
+					return '<input type="checkbox" class="table-checkbox check_product_item" value="' + data.id + '">';
+				}, orderable: false, searchable: false, width: '3.66%'
+			},
+			{
+				data: function (data) {
+					return "<button class='btn btn-sm bg-blue btn_edit_product' " +
+						"data-id='" + data.id + "' " +
+						"data-product_type='" + data.product_type + "'" +
+						"data-product_code='" + data.product_code + "' " +
+						"data-code_description='" + data.code_description + "'" +
+						"data-cut_weight='" + data.cut_weight + "'" +
+						"data-cut_weight_uom='" + data.cut_weight_uom + "'" +
+						"data-cut_length='" + data.cut_length + "'" +
+						"data-cut_length_uom='" + data.cut_length_uom + "'" +
+						"data-cut_width='" + data.cut_width + "'" +
+						"data-cut_width_uom='" + data.cut_width_uom + "'" +
+						"data-item='" + data.item + "'" +
+						"data-alloy='" + data.alloy + "'" +
+						"data-class='" + data.class + "'" +
+						"data-size='" + data.size + "'" +
+						"data-standard_material_used='" + data.standard_material_used + "'" +
+						"data-finish_weight='" + data.finish_weight + "'" +
+						"data-create_user='" + data.create_user + "'" +
+						"data-created_at='" + data.created_at + "'>" +
+						"<i class='fa fa-edit'></i>" +
+						"</button><button class='btn btn-sm bg-purple btn_assign_process' " +
+						"data-id='" + data.id + "' " +
+						"data-product_code='" + data.product_code + "' title='Assign Process'>" +
+						"<i class='fa fa-refresh'></i>" +
+						"</button>";
+				}, orderable: false, searchable: false, width: '3.66%'
+			},
+			{ data: 'product_type', width: '24.66%' },
+			{ data: 'product_code', width: '19.66%' },
+			{
+				data: function (data) {
+					return '<span="' + data.code_description + '">' + ellipsis(data.code_description, 10) + '<span>';
+				}, width: '39.66%'
+			},
+			{ data: 'created_at', width: '8.66%' },
 		]
-    });
+	});
 }
