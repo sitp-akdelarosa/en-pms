@@ -386,9 +386,7 @@ class TravelSheetController extends Controller
                                             group by tsp.id,
                                                     tsp.`set`,
                                                     tsp.process_name,
-                                                    tsp.sequence,
-                                                    tsp.remarks,
-                                                    pp.remarks
+                                                    tsp.sequence
                                             order by sequence asc");
             } else {
                 $product = DB::table('ppc_product_codes')->select('id')->where('product_code',$req->prod_code)->first();
