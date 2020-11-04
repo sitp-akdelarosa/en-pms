@@ -447,13 +447,16 @@ function getTotalIssuedQty(){
 
 function validateInput(){
 	var rows = $('#tbl_product')["0"].rows.length - 1;
- 	if(rows > 1){
+ 	if(rows > 0){
         for(var x=0;x<rows;x++){
-        	var issued = parseInt($('#tbl_product')["0"].children[1].children[x].cells[1].children["0"].value);
-        	var sched = parseInt($('#tbl_product')["0"].children[1].children[x].cells[2].children["0"].value);
-            if(issued == 0 || issued < 0){
-            	return "invalid";
-        	}
+			if ($('#tbl_product')["0"].children[1] !== undefined) {
+				var issued = parseInt($('#tbl_product')["0"].children[1].children[x].cells[1].children["0"].value);
+				var sched = parseInt($('#tbl_product')["0"].children[1].children[x].cells[2].children["0"].value);
+				if (issued == 0 || issued < 0) {
+					return "invalid";
+				}
+			}
+        	
         	// if (issued > sched) {
         	// 	return "morethan";
         	// }
