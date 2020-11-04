@@ -70,7 +70,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn bg-red" data-dismiss="modal">Close</button>
-                    <button type="button" id="btn_search_excel" class="btn bg-green float-right">Download Excel</button>
+                    {{-- <button type="button" id="btn_search_excel" class="btn bg-green float-right">Download Excel</button> --}}
                     <button type="submit" class="btn bg-blue float-right permission-button">Filter</button>
                 </div>
                 
