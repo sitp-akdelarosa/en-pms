@@ -762,20 +762,21 @@ $(function () {
   $("#frm_search").on('submit', function (e) {
     e.preventDefault();
     $('.loadingOverlay-modal').show();
-    $.ajax({
-      url: $(this).attr('action'),
-      type: 'GET',
-      dataType: 'JSON',
-      data: $(this).serialize()
-    }).done(function (data, textStatus, xhr) {
-      ProdSummariesTable(data);
-    }).fail(function (xhr, textStatus, errorThrown) {
-      var errors = xhr.responseJSON.errors;
-      console.log(errors);
-      showErrors(errors);
-    }).always(function () {
-      $('.loadingOverlay-modal').hide();
-    });
+    var search_param = objectifyForm($(this).serializeArray());
+    ProdSummariesTable($(this).attr('action'), search_param); // $.ajax({
+    //     url: $(this).attr('action'),
+    //     type: 'GET',
+    //     dataType: 'JSON',
+    //     data: $(this).serialize(),
+    // }).done(function (data, textStatus, xhr) {
+    //     ProdSummariesTable(data);
+    // }).fail(function (xhr, textStatus, errorThrown) {
+    //     var errors = xhr.responseJSON.errors;
+    //     console.log(errors);
+    //     showErrors(errors);
+    // }).always(function () {
+    //     $('.loadingOverlay-modal').hide();
+    // });
   });
   $('#btn_search_excel').on('click', function () {
     window.location.href = excelSearchFilterURL + "?srch_date_upload_from=" + $('#srch_date_upload_from').val() + "&srch_date_upload_to=" + $('#srch_date_upload_to').val() + "&srch_sc_no=" + $('#srch_sc_no').val() + "&srch_prod_code=" + $('#srch_prod_code').val() + "&srch_description=" + $('#srch_description').val() + "&srch_po=" + $('#srch_po').val();
@@ -786,7 +787,9 @@ function initializePage() {
   check_permission(code_permission, function (output) {
     if (output == 1) {}
   });
-  ProdSummaries(prodSummariesURL);
+  ProdSummariesTable(prodSummariesURL, {
+    _token: token
+  });
   checkAllCheckboxesInTable('.check-all_prod_sum', '.check_item');
   makeJODetailsList(joDetails_arr);
   getTravelSheet();
@@ -836,11 +839,14 @@ function ProdSummaries(PRODURL) {
   }).always(function () {});
 }
 
-function ProdSummariesTable(arr) {
+function ProdSummariesTable(ajax_url, object_data) {
   $('#tbl_prod_sum').dataTable().fnClearTable();
   $('#tbl_prod_sum').dataTable().fnDestroy();
   $('#tbl_prod_sum').dataTable({
-    data: arr,
+    ajax: {
+      url: ajax_url,
+      data: object_data
+    },
     processing: true,
     deferRender: true,
     order: [[1, 'asc']],
@@ -895,11 +901,9 @@ function ProdSummariesTable(arr) {
       data: 'date_upload',
       name: 'ps.date_upload'
     }],
-    fnDrawCallBack: function fnDrawCallBack() {
-      $('.check_all_inventories').prop('checked', false);
-    },
     initComplete: function initComplete() {
       $('.loadingOverlay').hide();
+      $('.loadingOverlay-modal').hide();
     }
   });
 }

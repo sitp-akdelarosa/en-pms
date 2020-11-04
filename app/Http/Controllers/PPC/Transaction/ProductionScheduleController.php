@@ -46,12 +46,21 @@ class ProductionScheduleController extends Controller
     public function GetProductionList(Request $req)
     {
         $Datalist = DB::select(DB::raw("CALL GET_production_summaries(".Auth::user()->id.",NULL,NULL,NULL,NULL,NULL,NULL)"));
-        return response()->json($Datalist);
+        return DataTables::of($Datalist)
+						->editColumn('id', function($data) {
+							return $data->id;
+						})
+						->make(true);
     }
 
     public function filterOrders(Request $req)
     {
-        return response()->json($this->getFilteredOrders($req));
+         $Datalist = $this->getFilteredOrders($req);
+         return DataTables::of($Datalist)
+						->editColumn('id', function($data) {
+							return $data->id;
+						})
+						->make(true);
     }
 
     public function getFilteredOrders($req)

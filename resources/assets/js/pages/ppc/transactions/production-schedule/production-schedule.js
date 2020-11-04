@@ -707,22 +707,26 @@ $(function () {
         e.preventDefault();
         $('.loadingOverlay-modal').show();
 
-        $.ajax({
-            url: $(this).attr('action'),
-            type: 'GET',
-            dataType: 'JSON',
-            data: $(this).serialize(),
-        }).done(function (data, textStatus, xhr) {
-            ProdSummariesTable(data);
+        var search_param = objectifyForm($(this).serializeArray());
 
-        }).fail(function (xhr, textStatus, errorThrown) {
-            var errors = xhr.responseJSON.errors;
+        ProdSummariesTable($(this).attr('action'), search_param);
 
-            console.log(errors);
-            showErrors(errors);
-        }).always(function () {
-            $('.loadingOverlay-modal').hide();
-        });
+        // $.ajax({
+        //     url: $(this).attr('action'),
+        //     type: 'GET',
+        //     dataType: 'JSON',
+        //     data: $(this).serialize(),
+        // }).done(function (data, textStatus, xhr) {
+        //     ProdSummariesTable(data);
+
+        // }).fail(function (xhr, textStatus, errorThrown) {
+        //     var errors = xhr.responseJSON.errors;
+
+        //     console.log(errors);
+        //     showErrors(errors);
+        // }).always(function () {
+        //     $('.loadingOverlay-modal').hide();
+        // });
     });
 
     $('#btn_search_excel').on('click', function () {
@@ -740,7 +744,7 @@ function initializePage() {
         if (output == 1) {}
     });
 
-    ProdSummaries(prodSummariesURL);
+    ProdSummariesTable(prodSummariesURL,{ _token: token });
     checkAllCheckboxesInTable('.check-all_prod_sum','.check_item');
     makeJODetailsList(joDetails_arr);
     getTravelSheet();
@@ -795,11 +799,14 @@ function ProdSummaries(PRODURL) {
     });
 }
 
-function ProdSummariesTable(arr) {
+function ProdSummariesTable(ajax_url, object_data) {
     $('#tbl_prod_sum').dataTable().fnClearTable();
     $('#tbl_prod_sum').dataTable().fnDestroy();
     $('#tbl_prod_sum').dataTable({
-        data: arr,
+        ajax: {
+            url: ajax_url,
+            data: object_data
+        },
         processing: true,
         deferRender: true,
         order: [[1,'asc']],
@@ -845,11 +852,9 @@ function ProdSummariesTable(arr) {
             { data: 'status', name: 'ps.status' },
             { data: 'date_upload', name: 'ps.date_upload' }
         ],
-        fnDrawCallBack: function() {
-            $('.check_all_inventories').prop('checked',false);
-        },
         initComplete: function() {
             $('.loadingOverlay').hide();
+            $('.loadingOverlay-modal').hide();
         }
     });
 }
