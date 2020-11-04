@@ -283,6 +283,11 @@ $( function() {
 
 	get_set();
 
+	$(document).on('shown.bs.modal', function () {
+		$($.fn.dataTable.tables(true)).DataTable()
+			.columns.adjust();
+	});
+
 	//check_permission(code_permission);
 
 	$('#product-type').on('change', function(e) {
