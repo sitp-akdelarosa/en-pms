@@ -280,33 +280,15 @@ class UploadOrdersController extends Controller
 
     public function DatatableUpload()
     {
-        $Datalist = DB::select("SELECT uo.id,
-                                        uo.sc_no,
-                                        uo.prod_code,
-                                        uo.description,
-                                        uo.quantity,
-                                        uo.po,
-                                        u.nickname as uploader,
-                                        uo.date_upload 
-                                FROM enpms.ppc_upload_orders as uo
-                                inner join users as u
-                                on uo.uploader = u.id
-                                left join ppc_product_codes as ppc
-                                on ppc.product_code = uo.prod_code
-                                left join admin_assign_production_lines as apl
-                                on apl.product_line = ppc.product_type
-                                where apl.user_id = ".Auth::user()->id."
-                                group by uo.id,
-                                        uo.sc_no,
-                                        uo.prod_code,
-                                        uo.description,
-                                        uo.quantity,
-                                        uo.po,
-                                        u.nickname,
-                                        uo.date_upload
-                                order by uo.id desc");
+        $Datalist = DB::select(
+            DB::raw("CALL GET_orders(". Auth::user()->id .")")
+        );
 
-        return response()->json($Datalist);
+        return DataTables::of($Datalist)
+						->editColumn('id', function($data) {
+							return $data->id;
+						})
+						->make(true);
     }
 
     public function unRegisteredProducts()

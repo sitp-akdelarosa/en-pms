@@ -827,7 +827,7 @@ function InventoryTable(ajax_url,data_object) {
 		scrollX: true,
 		processing: true,
 		deferRender: true,
-		// serverSide: true,
+		//serverSide: true,
 		scrollCollapse: true,
 		columns: [
 			{

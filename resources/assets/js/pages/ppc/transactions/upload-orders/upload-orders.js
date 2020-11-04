@@ -322,25 +322,30 @@ function scheduletable(arr) {
 }
 
 function getUploadedProducts() {
-	$('.loadingOverlay').show();
-	$.ajax({
-		url: datatableUpload,
-		type: 'GET',
-		dataType: 'JSON',
-	}).done(function(data,textStatus,xhr) {
-		uploadedProductsTable(data);
-	}).fail(function(xhr,textStatus,errorThrown) {
-		msg('Unregistered Products: '+ errorThrown);
-	});
+	uploadedProductsTable(datatableUpload);
+	// $('.loadingOverlay').show();
+	// $.ajax({
+	// 	url: datatableUpload,
+	// 	type: 'GET',
+	// 	dataType: 'JSON',
+	// }).done(function(data,textStatus,xhr) {
+	// 	uploadedProductsTable(datatableUpload);
+	// }).fail(function(xhr,textStatus,errorThrown) {
+	// 	msg('Unregistered Products: '+ errorThrown);
+	// });
 }
 
-function uploadedProductsTable(arr) {
+function uploadedProductsTable(ajax_url) {
 	$('#tbl_Upload').dataTable().fnClearTable();
     $('#tbl_Upload').dataTable().fnDestroy();
     $('#tbl_Upload').dataTable({
-		data: arr,
-		scrollX: true,
-		order: [[6,'desc']],
+		ajax: {
+			url: ajax_url
+		},
+		stateSave: true,
+		order: [[6, 'desc']],
+		processing: true,
+		deferRender: true,
     	columns: [
 	    	{ data: 'sc_no' },
 			{ data: 'prod_code' },
