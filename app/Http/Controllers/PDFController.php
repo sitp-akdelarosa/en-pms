@@ -230,9 +230,7 @@ class PDFController extends Controller
 												tp.process_name,
 												pd.div_name,
 												pd.div_code,
-												tp.sequence,
-												tp.remarks,
-												pp.remarks
+												tp.sequence
 										order by sequence ASC"),
 				'iso' => $iso,
 			]);
