@@ -821,10 +821,19 @@ class UpdateInventoryController extends Controller
     {
         // $Datalist = DB::table('v_inventories')->where('user_id', Auth::user()->id);
         $Datalist = DB::select(
-                        DB::raw("CALL GET_inventories(".Auth::user()->id.",".$req->with_zero.")")
+                        DB::raw("call GET_inventories(".Auth::user()->id.",".$req->with_zero.",
+                                NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+                                NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+                                NULL, ".Auth::user()->id.")")
                     );
 
-        return $Datalist;
+        // return $Datalist;
+
+        return DataTables::of($Datalist)
+						->editColumn('id', function($data) {
+							return $data->id;
+						})
+						->make(true);
 
         // if ((int)$req->with_zero == 0) {
         //     $Datalist->where('current_stock','>',0);
@@ -1563,7 +1572,13 @@ class UpdateInventoryController extends Controller
 
     public function searchFilter(Request $req)
     {
-        return response()->json($this->getFilteredData($req));
+        $Datalist = $this->getFilteredData($req);
+
+        return DataTables::of($Datalist)
+						->editColumn('id', function($data) {
+							return $data->id;
+						})
+						->make(true);
     }
 
     private function getFilteredData($req)
@@ -1912,7 +1927,8 @@ class UpdateInventoryController extends Controller
         }
 
         $data = DB::select(
-                            DB::raw("call GET_search_inventories(".$srch_item_class.",
+                            DB::raw("call GET_inventories(NULL,".$req->with_zero.",
+                                    ".$srch_item_class.",
                                     ".$srch_received_date_from.",
                                     ".$srch_received_date_to.",
                                     ".$srch_receiving_no.",
@@ -2179,8 +2195,64 @@ class UpdateInventoryController extends Controller
         })->download('xlsx');
     }
 
-    public function destroy(Type $var = null)
+    public function checkInventoryDeletion(Request $req)
     {
-        # code...
+        $data = [
+            'count' => 0,
+            'items' => []
+        ];
+        if (count($req->ids) > 0) {
+            $prevent = DB::table("v_check_inventory_deletion")
+                            ->whereIn('id',$req->ids)
+                            ->count();
+
+            if ($prevent > 0) {
+                $prevent_item =  DB::table("v_check_inventory_deletion")
+                                    ->whereIn('id',$req->ids)
+                                    ->get();
+                $data = [
+                    'count' => $prevent,
+                    'items' => $prevent_item
+                ];
+            }
+        }
+
+        return $data;
+    }
+
+    public function destroy(Request $req)
+    {
+        $data = [
+            'msg' => 'Deleting items failed.',
+            'status' => 'failed'
+        ];
+        if (count($req->ids) > 0) {
+            $deleted = DB::table('ppc_update_inventories')
+                            ->whereIn('id',$req->ids)
+                            ->update([
+                                'deleted' => 1,
+                                'deleted_at' => date('Y-m-d H:i:s'),
+                                'delete_user' => Auth::user()->id
+                            ]);
+            
+            if ($deleted) {
+                DB::table('inventories')
+                    ->whereIn('received_id',$req->ids)
+                    ->update([
+                        'deleted' => 1,
+                        'deleted_at' => date('Y-m-d H:i:s'),
+                        'delete_user' => Auth::user()->id
+                    ]);
+
+                // Audit
+                
+                $data = [
+                    'msg' => 'Items were successfully deleted.',
+                    'status' => 'success'
+                ];
+            }
+        }
+
+        return $data;
     }
 }

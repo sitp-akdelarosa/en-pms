@@ -117,6 +117,12 @@ foreach ($user_accesses as $user_access){
                         </div>
 
                         <div class="col-lg-2 col-md-2 col-sm-3">
+                            <button id="btn_delete" class="btn btn-sm btn-block bg-red mb-3">
+                                <i class="fa fa-trash"></i> Delete
+                            </button>
+                        </div>
+
+                        <div class="col-lg-2 col-md-2 col-sm-3">
                             <button id="btn_check_unregistered" class="btn btn-sm btn-block bg-purple mb-3 permission-button">
                                 <i class="fa fa-check"></i> Check Unregistered Materials
                             </button>
@@ -160,6 +166,8 @@ foreach ($user_accesses as $user_access){
         var downloadMaterialFormatURL = "<?php echo e(url('/transaction/update-inventory/download-inventory-material-format')); ?>";
         var downloadProductFormatURL = "<?php echo e(url('/transaction/update-inventory/download-inventory-product-format')); ?>";
         var downloadSearchExcelURL = "<?php echo e(url('/transaction/update-inventory/download-update-inventory-search')); ?>";
+        var inventoryDeleteURL = "<?php echo e(url('/transaction/update-inventory/delete-inventory')); ?>";
+        var checkInventoryDeletionURL = "<?php echo e(url('/transaction/update-inventory/check-inventory-deletion')); ?>";
     </script>
     <script type="text/javascript" src="<?php echo e(mix('/js/pages/ppc/transactions/update-inventory/update-inventory.js')); ?>"></script>
 

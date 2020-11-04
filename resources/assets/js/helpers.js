@@ -354,7 +354,8 @@ function getDatatable(tbl_id,Url,dataColumn,aoColumnDefs,inOrder,unOrderable,unS
 
 function checkAllCheckboxesInTable(tblID, checkAllClass, checkItemClass, deleteButtonID) {
 	$(checkAllClass).on('change', function (e) {
-		$('input:checkbox' + checkItemClass).not(this).prop('checked', this.checked);
+		
+		$('input:checkbox' + checkItemClass).not('[disabled]').not(this).prop('checked', this.checked);		
 
 		var checked = 0;
 		var table = $(tblID).DataTable();
@@ -690,4 +691,13 @@ function dateToday() {
 
 function formatNumber(num) {
 	return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+}
+
+function objectifyForm(formArray) {
+	//serialize data function
+	var returnArray = {};
+	for (var i = 0; i < formArray.length; i++) {
+		returnArray[formArray[i]['name']] = formArray[i]['value'];
+	}
+	return returnArray;
 }

@@ -243,6 +243,9 @@ Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', '
 
 			Route::post('/delete-inventory', 'PPC\Transaction\UpdateInventoryController@destroy')
 				->name('transaction.update-inventory.delete-inventory');
+			
+			Route::get('/check-inventory-deletion', 'PPC\Transaction\UpdateInventoryController@checkInventoryDeletion')
+				->name('transaction.update-inventory.check-inventory-deletion');
 		});
 
 		Route::group(['prefix' => 'upload-orders'], function () {

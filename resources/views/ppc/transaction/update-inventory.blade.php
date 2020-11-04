@@ -169,6 +169,7 @@ foreach ($user_accesses as $user_access){
         var downloadProductFormatURL = "{{ url('/transaction/update-inventory/download-inventory-product-format') }}";
         var downloadSearchExcelURL = "{{ url('/transaction/update-inventory/download-update-inventory-search') }}";
         var inventoryDeleteURL = "{{ url('/transaction/update-inventory/delete-inventory') }}";
+        var checkInventoryDeletionURL = "{{ url('/transaction/update-inventory/check-inventory-deletion') }}";
     </script>
     <script type="text/javascript" src="{{ mix('/js/pages/ppc/transactions/update-inventory/update-inventory.js') }}"></script>
 
