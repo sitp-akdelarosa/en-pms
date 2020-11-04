@@ -19,6 +19,9 @@ $( function() {
 		$('#jo_no').val($(this).attr('data-jo_no'));
 		$('#prod_code').val($(this).attr('data-prod_code'));
 
+		$('#ship_date').val($(this).attr('data-ship_date'));
+		$('#ts_remarks').val($(this).attr('data-remarks'));
+
 		$('#cancel_process').hide();
 		
 
@@ -27,8 +30,7 @@ $( function() {
 			$('#qty_per_sheet').val( $(this).attr('data-qty_per_sheet'));
 			$('#iso_no').val( $(this).attr('data-iso_code'));
 			$('#issued_qty').val( $(this).attr('data-issued_qty'));
-			$('#ship_date').val($(this).attr('data-ship_date'));
-			$('#ts_remarks').val($(this).attr('data-remarks'));
+			
 			getPreTravelSheetData($(this).attr('data-id'), $(this).attr('data-jo_no'));
 			getSC($(this).attr('data-idJO'));
 		} else {
@@ -665,6 +667,8 @@ function makeProcessList(arr, old_data) {
 	var row = 1;
 	var i = 0;
 
+	$('.loadingOverlay-modal').show();
+
 	$('#tbl_process').dataTable().fnClearTable();
 	$('#tbl_process').dataTable().fnDestroy();
 	$('#tbl_process').dataTable({
@@ -674,6 +678,7 @@ function makeProcessList(arr, old_data) {
 		scrollY: "400px",
 		paging: false,
 		searching: false,
+		processing: true,
 		columns: [
 			{
 				data: function (x) {
@@ -738,6 +743,9 @@ function makeProcessList(arr, old_data) {
 			$(nRow).attr('id', aData[0]);
 			row++;
 			i++;
+		},
+		initComplete: function() {
+			$('.loadingOverlay-modal').hide();
 		}
 	});
 }
@@ -761,7 +769,7 @@ function getProcessDiv(process, handleData) {
 }
 
 function makeProdTable(arr,all_sc) {
-	$('.loadingOverlay-modal').show();
+	//$('.loadingOverlay-modal').show();
 	$('#tbl_product').dataTable().fnClearTable();
     $('#tbl_product').dataTable().fnDestroy();
     $('#tbl_product').dataTable({
@@ -769,7 +777,8 @@ function makeProdTable(arr,all_sc) {
         bLengthChange : false,
         scrollY: "250px",
 	    paging: false,
-	    searching: false,
+		searching: false,
+		processing: true,
         columns: [
             { data: function(x) {
                 return x.prod_code;
@@ -818,7 +827,7 @@ function makeProdTable(arr,all_sc) {
 
 		],
 		initComplete: function() {
-			$('.loadingOverlay-modal').hide();
+			//$('.loadingOverlay-modal').hide();
 		}
     });
     if(arr.length > 0){
@@ -959,7 +968,7 @@ function getPreTravelSheetData(id,jo) {
 	}).fail(function(xhr, textStatus, errorThrown) {
 		msg(errorThrown,textStatus);
 	}).always(function () {
-		$('.loadingOverlay-modal').hide();
+		//$('.loadingOverlay-modal').hide();
 	});
 }
 
