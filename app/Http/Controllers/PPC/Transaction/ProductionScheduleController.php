@@ -1040,7 +1040,8 @@ class ProductionScheduleController extends Controller
                 'ts.issued_qty',
                 'jt.material_used',
                 'jt.material_heat_no',
-                'ts.status')
+                'ts.status',
+                'jt.updated_at')
             ->select(
                 DB::raw("jt.id as idJO"),
                 DB::raw("ts.qty_per_sheet as qty_per_sheet"),
@@ -1055,7 +1056,8 @@ class ProductionScheduleController extends Controller
                 DB::raw("IFNULL(ts.issued_qty,0) as issued_qty"),
                 DB::raw("jt.material_used as material_used"),
                 DB::raw("jt.material_heat_no as material_heat_no"),
-                DB::raw("IFNULL(ts.status,0) as status")
+                DB::raw("IFNULL(ts.status,0) as status"),
+                DB::raw("jt.updated_at as updated_at")
             )->get();
 
         foreach ($data as $key => $dt) {
@@ -1074,6 +1076,7 @@ class ProductionScheduleController extends Controller
                 'material_used' => $dt->material_used,
                 'material_heat_no' => $dt->material_heat_no,
                 'status' => $dt->status,
+                'updated_at' => $dt->updated_at
             ]);
         }
 
@@ -1097,7 +1100,8 @@ class ProductionScheduleController extends Controller
                 'ts.issued_qty',
                 'jt.material_used',
                 'jt.material_heat_no',
-                'ts.status')
+                'ts.status',
+                'jt.updated_at')
             ->select(
                 DB::raw("jt.id as idJO"),
                 DB::raw("ts.qty_per_sheet as qty_per_sheet"),
@@ -1112,7 +1116,8 @@ class ProductionScheduleController extends Controller
                 DB::raw("IFNULL(ts.issued_qty,0) as issued_qty"),
                 DB::raw("jt.material_used as material_used"),
                 DB::raw("jt.material_heat_no as material_heat_no"),
-                DB::raw("IFNULL(ts.status,0) as status")
+                DB::raw("IFNULL(ts.status,0) as status"),
+                DB::raw("jt.updated_at as updated_at")
             )->get();
 
         foreach ($data as $key => $dt) {
@@ -1131,6 +1136,7 @@ class ProductionScheduleController extends Controller
                 'material_used' => $dt->material_used,
                 'material_heat_no' => $dt->material_heat_no,
                 'status' => $dt->status,
+                'updated_at' => $dt->updated_at
             ]);
         }
         return response()->json($jo_details);

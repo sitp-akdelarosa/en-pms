@@ -141,7 +141,7 @@ foreach ($user_accesses as $user_access){
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">Total Schedule Quantity:</span>
                                         </div>
-                                        <input type="number" class="form-control clear" name="total_sched_qty" id="total_sched_qty" readonly value="0">
+                                        <input type="number" step="0.01" class="form-control clear" name="total_sched_qty" id="total_sched_qty" readonly value="0">
                                     </div>
                                 </div>
                             </div>
@@ -244,7 +244,7 @@ foreach ($user_accesses as $user_access){
                 <div class="row justify-content-center mb-15">
                     <div class="col-md-12">
                         <div class="table-reponsive">
-                            <table class="table table-sm table-striped dt-responsive nowrap" style="width:100%" id="tbl_travel_sheet">
+                            <table class="table table-sm table-striped table-bordered dt-responsive nowrap" style="width:100%" id="tbl_travel_sheet">
                                 <thead class="thead-dark">
                                     <tr>
                                         <th ></th>
@@ -258,6 +258,7 @@ foreach ($user_accesses as $user_access){
                                         <th >Material Used</th>
                                         <th >Material Heat No.</th>
                                         <th >Status</th>
+                                        <th >Update Date</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbl_jo_details_body"></tbody>

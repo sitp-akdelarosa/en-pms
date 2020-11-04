@@ -452,15 +452,17 @@ $(function () {
 
         for(var i = 0; i < inputs.length; i++){
             if ($(inputs[i]).val() == '') {
-                total = parseInt(total) + 0;
+                total = parseFloat(total) + 0;
             } else {
-                total = parseInt(total) + parseInt($(inputs[i]).val());
+                var input = ($(inputs[i]).val() == '') ? 0 : $(inputs[i]).val();
+                total = parseFloat(total) + parseFloat(input);
             }
         }
 
         if (total === NaN) {
             total = 0;
         }
+
         $('#total_sched_qty').val(total);
 
         if ($(this).val() !== "") {
@@ -544,7 +546,7 @@ $(function () {
                 $('#sched_qty_'+table_count+'_feedback').addClass('invalid-feedback');
                 $('#sched_qty_'+table_count+'_feedback').html(error);
             } else {
-                sum_sched_qty();
+                //sum_sched_qty();
                 $('#sched_qty_' + table_count).removeClass('is-invalid');
                 $('#sched_qty_' + table_count + '_feedback').removeClass('invalid-feedback');
                 $('#sched_qty_' + table_count + '_feedback').html('');
@@ -1392,7 +1394,7 @@ function SaveJODetails() {
         $('#btn_check_over_issuance_div').hide();
         $('#btn_edit_div').show();
         $('#btn_cancel_div').hide();
-        ProdSummaries(prodSummariesURL);
+        ProdSummariesTable(prodSummariesURL, { _token: token });
         joDetails_arr = [];
         makeJODetailsList(joDetails_arr);
         getTravelSheet();
@@ -1539,7 +1541,7 @@ function makeTravelSheet(arr) {
     $('#tbl_travel_sheet').dataTable().fnDestroy();
     $('#tbl_travel_sheet').dataTable({
         data: arr,
-        order: [[1,'asc']],
+        order: [[11,'desc']],
         columns: [ 
             { data: function(data) {
                  return '<span class="cancel_travel_sheet"'+
@@ -1550,15 +1552,15 @@ function makeTravelSheet(arr) {
                         ' data-sc_no="'+data.sc_no+'" data-idJO="'+data.idJO+'"'+
                         ' title="Cancel Travel Sheet"><i class="text-red fa fa-times"></i> </span>';
             }, name: 'action', orderable: false, searchable: false},
-            { data: 'jo_no', name: 'jt.jo_no' },
-            { data: 'sc_no', name: 'jt.sc_no' },
-            { data: 'product_code', name: 'jt.prod_code' },
-            { data: 'description', name: 'jt.description' },
-            { data: 'back_order_qty', name: 'jt.order_qty' },
-            { data: 'sched_qty', name: 'jt.sched_qty' },
-            { data: 'issued_qty', name: 'ts.issued_qty' },
-            { data: 'material_used', name: 'jt.material_used' },
-            { data: 'material_heat_no', name: 'jt.material_heat_no' },
+            { data: 'jo_no', name: 'jo_no' },
+            { data: 'sc_no', name: 'sc_no' },
+            { data: 'product_code', name: 'prod_code' },
+            { data: 'description', name: 'description' },
+            { data: 'back_order_qty', name: 'order_qty' },
+            { data: 'sched_qty', name: 'sched_qty' },
+            { data: 'issued_qty', name: 'issued_qty' },
+            { data: 'material_used', name: 'material_used' },
+            { data: 'material_heat_no', name: 'material_heat_no' },
             { data: function(data) {
                 switch (data.status) {
                                 case 0:
@@ -1577,7 +1579,8 @@ function makeTravelSheet(arr) {
                                     return 'CLOSED';
                                     break;
                             }
-            }, name: 'ts.status'}
+            }, name: 'status'},
+            { data: 'updated_at', name: 'updated_at' },
         ]
     });
 }
