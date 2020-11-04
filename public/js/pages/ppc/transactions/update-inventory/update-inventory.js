@@ -104,6 +104,9 @@ $(function () {
   $(document).on('shown.bs.modal', function () {
     $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
   });
+  $('#tbl_materials_paginate .pagination').on('click', '.paginate_button', function () {
+    alert('unchecked'); // $('input:checkbox .check_all_inventories').prop('checked', false);
+  });
   $('#item_class').on('change', function () {
     if ($(this).val() == 'RAW MATERIAL') {
       $('.product_div').hide();
@@ -475,12 +478,74 @@ $(function () {
     var url = downloadSearchExcelURL + '?srch_item_class=' + srch_item_class + '&srch_received_date_from=' + srch_received_date_from + '&srch_received_date_to=' + srch_received_date_to + '&srch_receiving_no=' + srch_receiving_no + '&srch_jo_no=' + srch_jo_no + '&srch_materials_type=' + srch_materials_type + '&srch_product_line=' + srch_product_line + '&srch_item_code=' + srch_item_code + '&srch_item=' + srch_item + '&srch_alloy=' + srch_alloy + '&srch_schedule=' + srch_schedule + '&srch_size=' + srch_size + '&srch_width=' + srch_width + '&srch_length=' + srch_length + '&srch_heat_no=' + srch_heat_no + '&srch_lot_no=' + srch_lot_no + '&srch_invoice_no=' + srch_invoice_no + '&srch_supplier=' + srch_supplier + '&srch_supplier_heat_no=' + srch_supplier_heat_no;
     window.location.href = url;
   });
+  $('#btn_delete').on('click', function () {
+    var chkArray = [];
+    var table = $('#tbl_materials').DataTable();
+
+    for (var x = 0; x < table.context[0].aoData.length; x++) {
+      var DataRow = table.context[0].aoData[x];
+
+      if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
+        chkArray.push(table.context[0].aoData[x].anCells[0].firstChild.value);
+      }
+    }
+
+    if (chkArray.length > 0) {
+      var sp = 'this';
+
+      if (chkArray.length > 1) {
+        sp = 'these';
+      }
+
+      swal({
+        title: "Delete Inventory Item",
+        text: "Are you sure to delete " + sp + " Iventory Item?",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#f95454",
+        confirmButtonText: "Yes",
+        cancelButtonText: "No",
+        closeOnConfirm: true,
+        closeOnCancel: false
+      }, function (isConfirm) {
+        if (isConfirm) {
+          $('.loadingOverlay').show();
+          $.ajax({
+            url: inventoryDeleteURL,
+            type: 'POST',
+            dataType: 'JSON',
+            data: {
+              _token: token,
+              ids: chkArray
+            }
+          }).done(function (data, textStatus, xhr) {
+            if (data.status == 'success') {
+              msg(data.msg, data.status);
+            } else {
+              msg(data.msg, data.status);
+            }
+
+            userList(); // in here, the loading will close 
+
+            return data.status;
+          }).fail(function (xhr, textStatus, errorThrown) {
+            msg(errorThrown, 'error');
+          });
+        } else {
+          swal("Cancelled", "Your data is safe and not deleted.");
+        }
+      });
+    } else {
+      msg('Please select at least 1 user.', 'failed');
+    }
+  });
 });
 
 function init() {
   check_permission(code_permission, function (output) {
     if (output == 1) {}
   });
+  checkAllCheckboxesInTable('#tbl_materials', '.check_all_inventories', '.check_item_inventory');
   $('#product_line_div').hide();
   $('#materials_type_div').hide();
 }
@@ -771,17 +836,19 @@ function InventoryTable(arr) {
   $('#tbl_materials').dataTable().fnDestroy();
   $('#tbl_materials').dataTable({
     data: arr,
-    order: [[26, 'desc']],
+    order: [[27, 'desc']],
     scrollX: true,
     deferRender: true,
     scrollCollapse: true,
-    // destroy: true,
-    // fixedColumns: {
-    // 	leftColumns: 4
-    // },
     columns: [{
       data: function data(_data) {
-        return "<button type='button' name='edit-mainEdit' class='btn btn-sm btn-primary edit-mainEdit'" + "id='editinventory'" + "data-id= '" + _data.id + "' " + "data-item_class='" + _data.item_class + "' " + "data-receive_jo_no='" + _data.receive_jo_no + "' " + "data-item_type_line='" + _data.item_type_line + "' " + "data-item_code='" + _data.item_code + "'" + "data-description='" + _data.description + "'" + "data-item='" + _data.item + "'" + "data-alloy='" + _data.alloy + "'" + "data-schedule='" + _data.schedule + "'" + "data-size='" + _data.size + "'" + "data-std_weight='" + _data.std_weight + "'" + "data-std_weight_received='" + _data.std_weight_received + "'" + "data-finish_weight='" + _data.finish_weight + "'" + "data-qty_weight='" + _data.qty_weight + "'" + "data-qty_pcs='" + _data.qty_pcs + "'" + "data-current_stock='" + _data.current_stock + "'" + "data-heat_no='" + _data.heat_no + "' " + "data-lot_no='" + _data.lot_no + "' " + "data-invoice_no='" + _data.invoice_no + "'" + "data-received_date='" + _data.received_date + "'" + "data-width='" + _data.width + "' " + "data-warehouse='" + _data.warehouse + "' " + "data-length='" + _data.length + "' " + "data-supplier_heat_no='" + _data.supplier_heat_no + "' " + "data-updated_at='" + _data.updated_at + "' " + "data-supplier='" + _data.supplier + "'>" + "<i class='fa fa-edit'></i> " + "</button>";
+        return "<input type='checkbox' class='table-checkbox check_item_inventory' data-id= '" + _data.id + "' value='" + _data.id + "'/>";
+      },
+      searchable: false,
+      orderable: false
+    }, {
+      data: function data(_data2) {
+        return "<button type='button' name='edit-mainEdit' class='btn btn-sm btn-primary edit-mainEdit'" + "id='editinventory'" + "data-id= '" + _data2.id + "' " + "data-item_class='" + _data2.item_class + "' " + "data-receive_jo_no='" + _data2.receive_jo_no + "' " + "data-item_type_line='" + _data2.item_type_line + "' " + "data-item_code='" + _data2.item_code + "'" + "data-description='" + _data2.description + "'" + "data-item='" + _data2.item + "'" + "data-alloy='" + _data2.alloy + "'" + "data-schedule='" + _data2.schedule + "'" + "data-size='" + _data2.size + "'" + "data-std_weight='" + _data2.std_weight + "'" + "data-std_weight_received='" + _data2.std_weight_received + "'" + "data-finish_weight='" + _data2.finish_weight + "'" + "data-qty_weight='" + _data2.qty_weight + "'" + "data-qty_pcs='" + _data2.qty_pcs + "'" + "data-current_stock='" + _data2.current_stock + "'" + "data-heat_no='" + _data2.heat_no + "' " + "data-lot_no='" + _data2.lot_no + "' " + "data-invoice_no='" + _data2.invoice_no + "'" + "data-received_date='" + _data2.received_date + "'" + "data-width='" + _data2.width + "' " + "data-warehouse='" + _data2.warehouse + "' " + "data-length='" + _data2.length + "' " + "data-supplier_heat_no='" + _data2.supplier_heat_no + "' " + "data-updated_at='" + _data2.updated_at + "' " + "data-supplier='" + _data2.supplier + "'>" + "<i class='fa fa-edit'></i> " + "</button>";
       },
       searchable: false,
       orderable: false
@@ -880,8 +947,12 @@ function InventoryTable(arr) {
         button.prop('disabled', true);
       }
     },
+    fnDrawCallBack: function fnDrawCallBack() {
+      $('.check_all_inventories').prop('checked', false);
+    },
     initComplete: function initComplete() {
       $('.loadingOverlay').hide();
+      console.log($('#tbl_materials_paginate .pagination .paginate_button'));
     }
   });
 }

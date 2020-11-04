@@ -1,3 +1,7 @@
+<?php $__env->startSection('title'); ?>
+	Travel Sheet Status Report
+<?php $__env->stopSection(); ?>
+
 <?php $__env->startSection('content'); ?>
 <section class="content-header">
     <h1>Travel Sheet Status</h1>

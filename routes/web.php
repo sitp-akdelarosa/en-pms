@@ -240,6 +240,9 @@ Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', '
 
 			Route::get('/search-filter', 'PPC\Transaction\UpdateInventoryController@searchFilter')
 				->name('transaction.update-inventory.search-filter');
+
+			Route::post('/delete-inventory', 'PPC\Transaction\UpdateInventoryController@destroy')
+				->name('transaction.update-inventory.delete-inventory');
 		});
 
 		Route::group(['prefix' => 'upload-orders'], function () {

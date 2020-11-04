@@ -62,6 +62,9 @@ foreach ($user_accesses as $user_access){
                         <table class="table table-sm table-hover table-striped table-bordered nowrap mb-10" id="tbl_materials" style="width: 100%">
                             <thead class="thead-dark">
                                 <tr>
+                                    <th>
+                                        <input type='checkbox' class='table-checkbox check_all_inventories'/>
+                                    </th>
                                     <th></th>
                                     <th>Item Class</th>
                                     

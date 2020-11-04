@@ -64,6 +64,9 @@ foreach ($user_accesses as $user_access){
                         <table class="table table-sm table-hover table-striped table-bordered nowrap mb-10" id="tbl_materials" style="width: 100%">
                             <thead class="thead-dark">
                                 <tr>
+                                    <th>
+                                        <input type='checkbox' class='table-checkbox check_all_inventories'/>
+                                    </th>
                                     <th></th>
                                     <th>Item Class</th>
                                     
@@ -116,6 +119,12 @@ foreach ($user_accesses as $user_access){
                         </div>
 
                         <div class="col-lg-2 col-md-2 col-sm-3">
+                            <button id="btn_delete" class="btn btn-sm btn-block bg-red mb-3">
+                                <i class="fa fa-trash"></i> Delete
+                            </button>
+                        </div>
+
+                        <div class="col-lg-2 col-md-2 col-sm-3">
                             <button id="btn_check_unregistered" class="btn btn-sm btn-block bg-purple mb-3 permission-button">
                                 <i class="fa fa-check"></i> Check Unregistered Materials
                             </button>
@@ -159,6 +168,7 @@ foreach ($user_accesses as $user_access){
         var downloadMaterialFormatURL = "{{ url('/transaction/update-inventory/download-inventory-material-format') }}";
         var downloadProductFormatURL = "{{ url('/transaction/update-inventory/download-inventory-product-format') }}";
         var downloadSearchExcelURL = "{{ url('/transaction/update-inventory/download-update-inventory-search') }}";
+        var inventoryDeleteURL = "{{ url('/transaction/update-inventory/delete-inventory') }}";
     </script>
     <script type="text/javascript" src="{{ mix('/js/pages/ppc/transactions/update-inventory/update-inventory.js') }}"></script>
 

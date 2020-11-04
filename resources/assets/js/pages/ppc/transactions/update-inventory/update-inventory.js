@@ -14,6 +14,12 @@ $(function () {
 			.columns.adjust();
 	});
 
+
+	$('#tbl_materials_paginate .pagination').on('click', '.paginate_button',function () {
+		alert('unchecked');
+		// $('input:checkbox .check_all_inventories').prop('checked', false);
+	});
+
 	$('#item_class').on('change', function() {
 		if ($(this).val() == 'RAW MATERIAL') {
 			$('.product_div').hide();
@@ -448,12 +454,77 @@ $(function () {
 
 		window.location.href = url;
 	});
+
+	$('#btn_delete').on('click', function () {
+		var chkArray = [];
+		var table = $('#tbl_materials').DataTable();
+
+		for (var x = 0; x < table.context[0].aoData.length; x++) {
+			var DataRow = table.context[0].aoData[x];
+			if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
+				chkArray.push(table.context[0].aoData[x].anCells[0].firstChild.value)
+			}
+		}
+
+		if (chkArray.length > 0) {
+			var sp = 'this';
+
+			if (chkArray.length > 1) {
+				sp = 'these';
+			}
+
+			swal({
+				title: "Delete Inventory Item",
+				text: "Are you sure to delete " + sp + " Iventory Item?",
+				type: "warning",
+				showCancelButton: true,
+				confirmButtonColor: "#f95454",
+				confirmButtonText: "Yes",
+				cancelButtonText: "No",
+				closeOnConfirm: true,
+				closeOnCancel: false
+			}, function (isConfirm) {
+				if (isConfirm) {
+					$('.loadingOverlay').show();
+
+					$.ajax({
+						url: inventoryDeleteURL,
+						type: 'POST',
+						dataType: 'JSON',
+						data: {
+							_token: token,
+							ids: chkArray
+						},
+					}).done(function (data, textStatus, xhr) {
+						if (data.status == 'success') {
+							msg(data.msg, data.status)
+						} else {
+							msg(data.msg, data.status)
+						}
+
+						userList(); // in here, the loading will close 
+
+						return data.status;
+					}).fail(function (xhr, textStatus, errorThrown) {
+						msg(errorThrown, 'error');
+					});
+				} else {
+					swal("Cancelled", "Your data is safe and not deleted.");
+				}
+			});
+		} else {
+			msg('Please select at least 1 user.', 'failed');
+		}
+	});
+
 });
 
 function init() {
 	check_permission(code_permission, function(output) {
 		if (output == 1) {}
 	});
+
+	checkAllCheckboxesInTable('#tbl_materials','.check_all_inventories', '.check_item_inventory');
 
 	$('#product_line_div').hide();
 	$('#materials_type_div').hide();
@@ -723,15 +794,16 @@ function InventoryTable(arr) {
 	$('#tbl_materials').dataTable().fnDestroy();
 	$('#tbl_materials').dataTable({
 		data: arr,
-		order: [[26,'desc']],
+		order: [[27,'desc']],
 		scrollX: true,
 		deferRender: true,
 		scrollCollapse: true,
-		// destroy: true,
-		// fixedColumns: {
-		// 	leftColumns: 4
-		// },
 		columns: [
+			{
+				data: function (data) {
+					return "<input type='checkbox' class='table-checkbox check_item_inventory' data-id= '" + data.id + "' value='" + data.id + "'/>";
+				}, searchable: false, orderable: false
+			},
 			{
 				data: function (data) {
 					return "<button type='button' name='edit-mainEdit' class='btn btn-sm btn-primary edit-mainEdit'" +
@@ -843,8 +915,13 @@ function InventoryTable(arr) {
 				button.prop('disabled', true);
 			}
 		},
+		fnDrawCallBack: function () {
+			$('.check_all_inventories').prop('checked', false);
+		},
 		initComplete: function() {
 			$('.loadingOverlay').hide();
+
+			console.log($('#tbl_materials_paginate .pagination .paginate_button'));
 		}
 	});
 }

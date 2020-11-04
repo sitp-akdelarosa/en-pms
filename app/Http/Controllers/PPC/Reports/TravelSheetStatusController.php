@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HelpersController;
+use App\Http\Controllers\Admin\AuditTrailController;
 
 class TravelSheetStatusController extends Controller
 {

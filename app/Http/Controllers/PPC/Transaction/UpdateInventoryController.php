@@ -2178,4 +2178,9 @@ class UpdateInventoryController extends Controller
             });
         })->download('xlsx');
     }
+
+    public function destroy(Type $var = null)
+    {
+        # code...
+    }
 }

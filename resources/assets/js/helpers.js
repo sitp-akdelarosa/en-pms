@@ -366,6 +366,10 @@ function checkAllCheckboxesInTable(tblID, checkAllClass, checkItemClass, deleteB
 			}
 		}
 
+		// $(tblID + '_paginate').on('click', '.paginate_button', function() {
+		// 	$('input:checkbox' + checkAllClass).prop('checked', false);
+		// });
+
 		if (checked > 0) {
 			$(deleteButtonID).prop('disabled', false);
 		} else {

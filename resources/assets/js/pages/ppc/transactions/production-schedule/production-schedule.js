@@ -845,6 +845,9 @@ function ProdSummariesTable(arr) {
             { data: 'status', name: 'ps.status' },
             { data: 'date_upload', name: 'ps.date_upload' }
         ],
+        fnDrawCallBack: function() {
+            $('.check_all_inventories').prop('checked',false);
+        },
         initComplete: function() {
             $('.loadingOverlay').hide();
         }
