@@ -150,66 +150,66 @@ function jsUcfirst(word) {
  */
 function msg(msg_content,status) {
 	if (status == '') {
-		//swal("Oops!", msg_content);
-		$.toast({
-			heading: 'Oops!',
-			text: msg_content,
-			position: 'top-right',
-			loaderBg: '#ff6849',
-			icon: 'warning',
-			hideAfter: 3000,
-			stack: 6
-		});
+		swal("Oops!", msg_content);
+		// $.toast({
+		// 	heading: 'Oops!',
+		// 	text: msg_content,
+		// 	position: 'top-right',
+		// 	loaderBg: '#ff6849',
+		// 	icon: 'warning',
+		// 	hideAfter: 3000,
+		// 	stack: 6
+		// });
 	} else {
 		//swal(jsUcfirst(status)+"!", msg_content, status);
 		switch(status) {
-			case 'success':
-			   $.toast({
-					heading: jsUcfirst(status)+"!",
-					text: msg_content,
-					position: 'top-right',
-					loaderBg: '#ff6849',
-					icon: 'success',
-					hideAfter: 5000,
-					stack: 6
-				});
-			break;
+			// case 'success':
+			//    $.toast({
+			// 		heading: jsUcfirst(status)+"!",
+			// 		text: msg_content,
+			// 		position: 'top-right',
+			// 		loaderBg: '#ff6849',
+			// 		icon: 'success',
+			// 		hideAfter: 5000,
+			// 		stack: 6
+			// 	});
+			// break;
 
-			case 'failed':
-			   $.toast({
-					heading: jsUcfirst(status)+"!",
-					text: msg_content,
-					position: 'top-right',
-					loaderBg: '#ff6849',
-					icon: 'warning',
-					hideAfter: 5000,
-					stack: 6
-				});
-			break;
+			// case 'failed':
+			//    $.toast({
+			// 		heading: jsUcfirst(status)+"!",
+			// 		text: msg_content,
+			// 		position: 'top-right',
+			// 		loaderBg: '#ff6849',
+			// 		icon: 'warning',
+			// 		hideAfter: 5000,
+			// 		stack: 6
+			// 	});
+			// break;
 
-			case 'warning':
-			   $.toast({
-					heading: jsUcfirst(status)+"!",
-					text: msg_content,
-					position: 'top-right',
-					loaderBg: '#ff6849',
-					icon: 'warning',
-					hideAfter: 5000,
-					stack: 6
-				});
-			break;
+			// case 'warning':
+			//    $.toast({
+			// 		heading: jsUcfirst(status)+"!",
+			// 		text: msg_content,
+			// 		position: 'top-right',
+			// 		loaderBg: '#ff6849',
+			// 		icon: 'warning',
+			// 		hideAfter: 5000,
+			// 		stack: 6
+			// 	});
+			// break;
 
-			case 'error':
-			   $.toast({
-					heading: jsUcfirst(status)+"!",
-					text: msg_content,
-					position: 'top-right',
-					loaderBg: '#ff6849',
-					icon: 'danger',
-					hideAfter: 5000,
-					stack: 6
-				});
-			break;
+			// case 'error':
+			//    $.toast({
+			// 		heading: jsUcfirst(status)+"!",
+			// 		text: msg_content,
+			// 		position: 'top-right',
+			// 		loaderBg: '#ff6849',
+			// 		icon: 'danger',
+			// 		hideAfter: 5000,
+			// 		stack: 6
+			// 	});
+			// break;
 
 			case 'notification':
 			   $.toast({
@@ -221,6 +221,9 @@ function msg(msg_content,status) {
 					hideAfter: 5000,
 					stack: 6
 				});
+			break;
+			default:
+				swal(jsUcfirst(status) + "!", msg_content, status);
 			break;
 		}
 	}

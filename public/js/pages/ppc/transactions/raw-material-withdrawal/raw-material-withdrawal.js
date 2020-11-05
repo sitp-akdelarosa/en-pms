@@ -95,8 +95,6 @@
 
 var rawMaterial = [];
 $(function () {
-  getRawMaterialList();
-  checkAllCheckboxesInTable('.check_all', '.check_item');
   init();
   $(document).on('shown.bs.modal', function () {
     $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
@@ -183,18 +181,24 @@ $(function () {
         if (textStatus) {
           msg(data.msg, data.status);
           current_stock = 0;
-          getRawMaterialList($('#trans_no').val());
+          getRawMaterialList($('#trans_no').val()); // this will close the loading image
+
           $('#btn_add').removeClass('bg-blue');
           $('#btn_add').addClass('bg-green');
           $('#btn_add').html('<i class="fa fa-plus"></i> Add');
         }
       }).fail(function (xhr, textStatus, errorThrown) {
-        console.log(xhr.responseJSON);
-        var errors = xhr.responseJSON.errors;
-        showErrors(errors);
-        viewState();
-      }).always(function (xhr, textStatus) {
         $('.loadingOverlay').hide();
+
+        if (xhr.status == 500) {
+          ErrorMsg(xhr);
+        } else {
+          var errors = xhr.responseJSON.errors;
+          showErrors(errors);
+        }
+
+        viewState();
+      }).always(function (xhr, textStatus) {// $('.loadingOverlay').hide();
       });
     } else {
       msg("Please add materials to withdraw.", "failed");
@@ -283,41 +287,21 @@ $(function () {
   });
   $('#btn_delete').on('click', function () {
     var id = $('#id').val();
-    swal({
-      title: "Are you sure?",
-      text: "You will not be able to recover your data!",
-      type: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#f95454",
-      confirmButtonText: "Yes",
-      cancelButtonText: "No",
-      closeOnConfirm: true,
-      closeOnCancel: false
-    }, function (isConfirm) {
-      if (isConfirm) {
-        $.ajax({
-          url: deleteRawMaterial,
-          type: 'POST',
-          dataType: 'JSON',
-          data: {
-            _token: token,
-            id: id
-          }
-        }).done(function (data, textStatus, xhr) {
-          if (data.status == 'success') {
-            msg(data.msg, data.status);
-          } else {
-            msg(data.msg, data.status);
-          }
+    var status = $('#status').val();
 
-          getRawMaterialList('', '');
-        }).fail(function (xhr, textStatus, errorThrown) {
-          msg(errorThrown, 'error');
-        });
-      } else {
-        swal("Cancelled", "Your data is safe and not deleted.");
-      }
-    });
+    if (status == 'CONFIRMED') {
+      // for cancel function
+      check_cancellation($('#trans_no').val(), function (exist) {
+        if (exist > 0) {
+          msg("This transaction is already used in Production Schedule.", "info");
+        } else {
+          DeleteAndCancel(id, status);
+        }
+      });
+    } else {
+      // for delete function
+      DeleteAndCancel(id, status);
+    }
   });
   $('#btn_prepare_print').on('click', function () {
     $('#modal_withdrawal_slip').modal('show');
@@ -384,31 +368,83 @@ $(function () {
     });
   });
   $('#btn_confirm').on('click', function () {
-    swal({
-      title: "Confirm Withdrawal",
-      text: "Are your sure to confirm this withdrawal?",
-      type: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#f95454",
-      confirmButtonText: "Yes",
-      cancelButtonText: "No",
-      closeOnConfirm: true,
-      closeOnCancel: false
-    }, function (isConfirm) {
-      if (isConfirm) {
-        swal.close();
-        confirmWithdrawal($('#id').val());
-      } else {
-        swal.close();
-      }
-    });
+    var title = "Confirm Withdrawal";
+    var text = "Are your sure to confirm this withdrawal?";
+    var id = $('#id').val();
+    var status = $('#status').val();
+    var data_exist = 0;
+
+    if (status == 'CONFIRMED') {
+      title = "Unconfirm Withdrawal";
+      text = "Are your sure to unconfirm this withdrawal?";
+      check_cancellation($('#trans_no').val(), function (exist) {
+        data_exist = exist;
+      });
+    }
+
+    if (data_exist > 0) {
+      msg('This transaction is already used in Production Schedule.', 'failed');
+    } else {
+      swal({
+        title: title,
+        text: text,
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#f95454",
+        confirmButtonText: "Yes",
+        cancelButtonText: "No",
+        closeOnConfirm: true,
+        closeOnCancel: false
+      }, function (isConfirm) {
+        if (isConfirm) {
+          confirmWithdrawal(id, status);
+        } else {
+          swal.close();
+        }
+      });
+    }
   });
 });
 
 function init() {
   check_permission(code_permission, function (output) {
     if (output == 1) {}
+
+    getRawMaterialList();
+    checkAllCheckboxesInTable('.check_all', '.check_item');
   });
+}
+
+function buttonState(status) {
+  $('#edit').show();
+  $('#confirm').show();
+  $('#delete').show();
+  $('#print').show();
+
+  switch (status) {
+    case 'CANCELLED':
+      $('#edit').hide();
+      $('#confirm').hide();
+      $('#delete').hide();
+      $('#print').hide();
+      break;
+
+    case 'CONFIRMED':
+      $('#btn_edit').prop('disabled', true);
+      $('#btn_confirm').html('<i class="fa fa-circle"></i> Unconfirm Withdrawal');
+      $('#btn_confirm').removeClass('btn-success');
+      $('#btn_confirm').addClass('btn-secondary');
+      $('#btn_delete').html('<i class="fa fa-times"></i> Cancel Transaction');
+      break;
+
+    default:
+      $('#btn_edit').prop('disabled', false);
+      $('#btn_confirm').html('<i class="fa fa-check"></i> Confirm Withdrawal');
+      $('#btn_confirm').removeClass('btn-secondary');
+      $('#btn_confirm').addClass('btn-success');
+      $('#btn_delete').html('<i class="fa fa-trash"></i> Delete');
+      break;
+  }
 }
 
 function viewState() {
@@ -428,15 +464,7 @@ function viewState() {
   $('#print').show();
   $('.input').prop('disabled', true);
   $('#trans_no').prop('readonly', false);
-
-  if ($('#status').val() == 'CONFIRMED') {
-    $('#btn_edit').prop('disabled', true);
-    $('#btn_confirm').prop('disabled', true);
-  } else {
-    $('#btn_edit').prop('disabled', false);
-    $('#btn_confirm').prop('disabled', false);
-  }
-
+  buttonState($('#status').val());
   RawMaterialList(data);
 }
 
@@ -558,23 +586,16 @@ function getRawMaterialList(trans_no) {
       $('#id').val(data.trans_id);
       $('#trans_no').val(data.trans_no);
       $('#status').val(data.istatus);
-
-      if (data.istatus == 'CONFIRMED') {
-        $('#btn_edit').prop('disabled', true);
-        $('#btn_confirm').prop('disabled', true);
-      } else {
-        $('#btn_edit').prop('disabled', false);
-        $('#btn_confirm').prop('disabled', false);
-      }
-
+      buttonState(data.istatus);
       viewState(rawMaterial);
       $('#item_id').val('');
       $(".btn_remove_item").prop('disabled', true);
     }
   }).fail(function (xhr, textStatus, errorThrown) {
     viewState();
-    msg("There was an error while searching for Transaction No.");
-  }).always(function () {
+    ErrorMsg(xhr);
+  }).always(function (data) {
+    buttonState(data.istatus);
     $('.loadingOverlay').hide();
   });
 }
@@ -726,7 +747,7 @@ function getscnosuggest(scno, heat_no) {
     });
     $('#sc_no').select2();
   }).fail(function (xhr, textStatus, errorThrown) {
-    console.log("error");
+    ErrorMsg(xhr);
   });
 }
 
@@ -794,9 +815,7 @@ function getMaterialDetails(material_heat_no, issued_qty, inv_id, state) {
       msg("No Materials found for this Heat Number.", 'warning');
     }
   }).fail(function (xhr, textStatus, errorThrown) {
-    //msg(errorThrown, textStatus);
-    var response = jQuery.parseJSON(xhr.responseText);
-    ErrorMsg(response);
+    ErrorMsg(xhr);
   }).always(function () {
     $('.loadingOverlay').hide();
   });
@@ -1015,7 +1034,7 @@ function searchDataTable(arr) {
   });
 }
 
-function confirmWithdrawal(id) {
+function confirmWithdrawal(id, status) {
   $('.loadingOverlay').show();
   $.ajax({
     url: confirmWithdrawalURL,
@@ -1024,7 +1043,8 @@ function confirmWithdrawal(id) {
     loadonce: true,
     data: {
       _token: token,
-      id: id
+      id: id,
+      status: status
     }
   }).done(function (data, textStatus, xhr) {
     msg(data.msg, data.status);
@@ -1033,6 +1053,78 @@ function confirmWithdrawal(id) {
     ErrorMsg(xhr);
   }).always(function () {
     $('.loadingOverlay').hide();
+  });
+}
+
+function check_cancellation(rmw_no, handleData) {
+  $('.loadingOverlay').show();
+  $.ajax({
+    url: checkWithdrawalCancellationURL,
+    type: 'GET',
+    dataType: 'JSON',
+    data: {
+      rmw_no: rmw_no
+    }
+  }).done(function (data, textStatus, xhr) {
+    handleData(data.exist);
+  }).fail(function (xhr, textStatus, errorThrown) {
+    ErrorMsg(xhr);
+  }).always(function () {
+    $('.loadingOverlay').hide();
+  });
+}
+
+function DeleteAndCancel(id, status) {
+  var title = "Delete Withdrawal Transaction";
+  var text = "Are your sure to delete this withdrawal transaction?";
+  var CancelTitle = "Not Deleted!";
+  var CancelMsg = "Your data is safe and not deleted.";
+
+  if (status) {
+    title = "Cancel Withdrawal Transaction";
+    text = "Are your sure to cancel this withdrawal transaction?";
+    CancelTitle = "Not Cancelled!";
+    CancelMsg = "Widthrawal transaction cancellation was revoke.";
+  }
+
+  swal({
+    title: title,
+    text: text,
+    type: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#f95454",
+    confirmButtonText: "Yes",
+    cancelButtonText: "No",
+    closeOnConfirm: true,
+    closeOnCancel: false
+  }, function (isConfirm) {
+    if (isConfirm) {
+      $('.loadingOverlay').show();
+      $.ajax({
+        url: deleteRawMaterial,
+        type: 'POST',
+        dataType: 'JSON',
+        data: {
+          _token: token,
+          id: id,
+          status: status
+        }
+      }).done(function (data, textStatus, xhr) {
+        if (data.status == 'success') {
+          msg(data.msg, data.status);
+        } else {
+          msg(data.msg, data.status);
+        }
+
+        getRawMaterialList('', '');
+      }).fail(function (xhr, textStatus, errorThrown) {
+        ErrorMsg(xhr);
+      }).always(function () {
+        $('.loadingOverlay').hide();
+      });
+    } else {
+      swal(CancelTitle, CancelMsg);
+    }
   });
 }
 

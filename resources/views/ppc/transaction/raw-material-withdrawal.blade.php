@@ -397,6 +397,7 @@ foreach ($user_accesses as $user_access){
         var getComputationIssuedQty = "{{ url('/transaction/raw-material-withdrawal/getComputationIssuedQty') }}";
         var excelSearchRawMaterialURL = "{{ url('/transaction/raw-material-withdrawal/search-raw-material-excel') }}";
         var confirmWithdrawalURL = "{{ url('/transaction/raw-material-withdrawal/confirm-raw-material-withdrawal') }}";
+        var checkWithdrawalCancellationURL = "{{ url('/transaction/raw-material-withdrawal/check-withdrawal-cancellation') }}";
     </script>
     <script type="text/javascript" src="{{ mix('/js/pages/ppc/transactions/raw-material-withdrawal/raw-material-withdrawal.js') }}"></script>
 @endpush

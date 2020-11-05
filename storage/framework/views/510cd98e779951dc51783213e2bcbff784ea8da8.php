@@ -338,6 +338,7 @@ foreach ($user_accesses as $user_access){
         var getComputationIssuedQty = "<?php echo e(url('/transaction/raw-material-withdrawal/getComputationIssuedQty')); ?>";
         var excelSearchRawMaterialURL = "<?php echo e(url('/transaction/raw-material-withdrawal/search-raw-material-excel')); ?>";
         var confirmWithdrawalURL = "<?php echo e(url('/transaction/raw-material-withdrawal/confirm-raw-material-withdrawal')); ?>";
+        var checkWithdrawalCancellationURL = "<?php echo e(url('/transaction/raw-material-withdrawal/check-withdrawal-cancellation')); ?>";
     </script>
     <script type="text/javascript" src="<?php echo e(mix('/js/pages/ppc/transactions/raw-material-withdrawal/raw-material-withdrawal.js')); ?>"></script>
 <?php $__env->stopPush(); ?>

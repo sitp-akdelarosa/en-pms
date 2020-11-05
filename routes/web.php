@@ -331,6 +331,8 @@ Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', '
 				->name('transaction.raw-material-withdrawal.search-raw-material-excel');
 			Route::post('/confirm-raw-material-withdrawal', 'PPC\Transaction\RawMaterialWithdrawalController@ConfirmWithdrawal')
 				->name('transaction.raw-material-withdrawal.confirm-raw-material-withdrawal');
+			Route::get('/check-withdrawal-cancellation', 'PPC\Transaction\RawMaterialWithdrawalController@checkRMWithdrawalCancellation')
+				->name('transaction.raw-material-withdrawal.check-withdrawal-cancellation');
 		});
 
 		Route::group(['prefix' => 'product-withdrawal'], function () {
