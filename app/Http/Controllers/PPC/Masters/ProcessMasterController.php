@@ -122,11 +122,13 @@ class ProcessMasterController extends Controller
         if (isset($req->set_id)) {
             $this->validate($req, [
                 'set' => 'required',
+                'product_line' => 'required'
             ]);
 
             $set = PpcProcessSet::find($req->set_id);
 
             $set->set = strtoupper($req->set);
+            $set->product_line = $req->product_line;
             $set->update_user = Auth::user()->id;
             $set->update();
 
@@ -134,11 +136,13 @@ class ProcessMasterController extends Controller
         } else {
             $this->validate($req, [
                 'set' => 'required|unique:ppc_process_sets|max:50',
+                'product_line' => 'required'
             ]);
 
             $set = new PpcProcessSet();
 
             $set->set = strtoupper($req->set);
+            $set->product_line = $req->product_line;
             $set->create_user = Auth::user()->id;
             $set->update_user = Auth::user()->id;
             $set->save();
@@ -158,7 +162,8 @@ class ProcessMasterController extends Controller
 
     public function get_set()
     {
-        $set = PpcProcessSet::select('id as id', 'set as text')->where('create_user',Auth::user()->id)->get();
+        $set = PpcProcessSet::select('id as id', 'set as text','product_line')
+                            ->where('create_user',Auth::user()->id)->get();
 
         // $set = DB::select("SELECT ps.id as id,
         //                             ps.`set` as text
@@ -219,5 +224,21 @@ class ProcessMasterController extends Controller
         ]);
 
         return response()->json($data);
+    }
+
+    public function getProductLine()
+    {
+        $data = DB::table('ppc_dropdown_items as pdt')
+                    ->leftjoin('admin_assign_production_lines as apl', 'apl.product_line', '=', 'pdt.dropdown_item')
+                    ->select([
+                        'apl.product_line as id',
+                        'apl.product_line as text'
+                    ])
+                    ->where('pdt.dropdown_name_id', 7) // product line
+                    ->where('apl.user_id' , Auth::user()->id)
+                    ->groupBy('apl.product_line')
+                    ->get();
+
+        return $data;
     }
 }

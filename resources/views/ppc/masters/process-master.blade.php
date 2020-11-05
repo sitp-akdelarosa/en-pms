@@ -32,8 +32,10 @@ foreach ($user_accesses as $user_access){
                             <h4>Add a Set</h4>
                             <form method="post" action="{{ url('/masters/process-master/save-set') }}" id="frm_add_set">
                                 @csrf
+                                <input type="hidden" class="form-control validate" id="set_id" name="set_id">
+
                                 <div class="form-group row">
-                                    <div class="col-md-9 col-sm-8 col-xs-7">
+                                    <div class="col-md-12">
                                         <div class="input-group mb-3 input-group-sm">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text">Set:</span>
@@ -42,9 +44,30 @@ foreach ($user_accesses as $user_access){
                                             <div id="set_feedback"></div>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div class="col-md-3 col-sm-4 col-xs-5">
-                                        <button type="submit" class="btn btn-block bg-green">
+                                <div class="form-group row">
+                                    <div class="col-md-12">
+                                        <div class="input-group mb-3 input-group-sm">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">Product Line:</span>
+                                            </div>
+                                            <select class="form-control select-validate" id="product_line" name="product_line">
+                                                <option></option>
+                                            </select>
+                                            <div id="product_line_feedback"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row justify-content-center" >
+                                    <div class="col-md-3 col-sm-4 col-xs-5" id="cancel">
+                                        <button type="button" class="btn btn-block btn-secondary" title="Cancel Add Set" id="btn_cancel_set">
+                                            <i class="fa fa-refresh"></i> Cancel
+                                        </button>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-xs-5" id="add">
+                                        <button type="submit" class="btn btn-block bg-green" title="Add new Set" id="btn_add_set">
                                             <i class="fa fa-plus"></i> Add set
                                         </button>
                                     </div>
@@ -54,7 +77,7 @@ foreach ($user_accesses as $user_access){
                             <div class="row mb-10">
                                 {{-- <div class="col-md-12" id="set_list" style="width: 100%;"></div> --}}
 
-                                <table class="table table-sm table-hover table-striped dt-responsive nowrap" id="tbl_added_sets" style="width:100%">
+                                <table class="table table-sm table-hover table-bordered table-striped nowrap" id="tbl_added_sets" style="width:100%">
                                     <thead class="thead-dark">
                                         <th width="5%">
                                             <input type="checkbox" class="table-checkbox check_all_sets">
@@ -77,7 +100,7 @@ foreach ($user_accesses as $user_access){
                         <div class="col-md-4">
                             <h4>Choose Processes</h4>
 
-                            <table class="table table-sm table-hover table-striped dt-responsive nowrap" id="tbl_select_process" width="100%">
+                            <table class="table table-sm table-hover table-striped table-bordered dt-responsive nowrap" id="tbl_select_process" width="100%">
                                 <thead class="thead-dark">
                                     <th width="5%">
                                         <input type="checkbox" class="table-checkbox check_all">
@@ -160,7 +183,8 @@ foreach ($user_accesses as $user_access){
 		var saveProcessURL = "{{ url('masters/process-master/save') }}";
 		var selectedProcessListURL = "{{ url('masters/process-master/selected-process-list') }}";
 		var getSetURL = "{{ url('masters/process-master/get-set') }}";
-		var deleteSetURL = "{{ url('masters/process-master/delete-set') }}";
+        var deleteSetURL = "{{ url('masters/process-master/delete-set') }}";
+        var productLineURL = "{{ url('masters/process-master/get-product-line') }}";
 
         var code_permission = "M0005";
     </script>

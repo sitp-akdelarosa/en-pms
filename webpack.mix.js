@@ -50,6 +50,7 @@ mix.js('resources/assets/js/app.js', 'public/js')
         'resources/assets/plugins//moment/min/moment.min.js',
         'resources/assets/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js',
         'resources/assets/plugins/autocomplete/jquery-ui.min.js',
+        'resources/assets/plugins/session-timeout/jTimeout.min.js',
         'resources/assets/js/resizer.js',
         'resources/assets/js/helpers.js',
         'resources/assets/js/csrf_token.js'        

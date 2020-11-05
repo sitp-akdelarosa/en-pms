@@ -27,6 +27,7 @@ foreach ($user_accesses as $user_access){
             <li><a class="active" href="#production_summary" data-toggle="tab">Production Summary</a></li>
             <li><a href="#jo_details" data-toggle="tab">JO Details</a></li>
             <li><a href="#travel_sheet" data-toggle="tab">J.O. Details List</a></li>
+            
         </ul>
         <div class="tab-content">
 
@@ -63,7 +64,6 @@ foreach ($user_accesses as $user_access){
                     </div>
                 </div>   
             </div>
-
 
             <div class="tab-pane" id="jo_details">
                 <div class="row">

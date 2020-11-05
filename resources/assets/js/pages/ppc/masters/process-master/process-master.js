@@ -9,18 +9,8 @@ $( function() {
 		fallbackTolerance: 3, // So that we can select items on mobile
 		animation: 150
 	});
-	
-	//$('.select2').select2();
-
-	// $('#set_list').slimscroll({ height: '100px',width: '100%' });
-	get_set();
-	processSelection();
-	// get_dropdown_items_by_id(2,'#set');
-	checkAllCheckboxesInTable('#tbl_added_sets','.check_all_sets','.check_set','#btn_delete_set');
-	checkAllCheckboxesInTable('#tbl_select_process','.check_all','.check_item');
 
 	init();
-	//selectedProcess('Default');
 
 	$('#btn_add_process').on('click', function() {
 		var setTable = $('#tbl_added_sets').DataTable();
@@ -149,9 +139,6 @@ $( function() {
 		}
 	});
 
-	// $('#selected_set').on('click', function() {
-	// 	selectedProcess($(this).val());
-	// });
 
 	$('#sortable_process').on('click', '.delete', function() {
 		var id = $(this).attr('data-count');
@@ -200,6 +187,8 @@ $( function() {
 		}).done(function(data, textStatus, xhr) {
 			msg(data.msg,data.status);
 			$('#set').val('');
+			$('#set_id').val('');
+			$('#product_line').select2().val(null).trigger('change.select2')
 			get_set();
 		}).fail(function(xhr, textStatus, errorThrown) {
 			var errors = xhr.responseJSON.errors;
@@ -251,7 +240,28 @@ $( function() {
 		GUIState('edit');
 		selectedProcess($(this).attr('data-id'));
 		$('#selected_set').val([$(this).attr('data-id')]).trigger('change');
+	});
 
+	$('#btn_cancel_set').on('click', function() {
+		$('#set_id').val('');
+		$('#set').val('');
+		$('#product_line').val(null).trigger('change.select2');
+
+		$('#btn_add_set').html('<i class="fa fa-plus"></i> Add Set');
+		$('#btn_add_set').removeClass('bg-navy');
+		$('#btn_add_set').addClass('bg-green');
+		$('#cancel').hide();
+	});
+
+	$('#tbl_added_sets_body').on('click', '.btn_edit_set_name', function () {
+		$('#set_id').val($(this).attr('data-id'));
+		$('#set').val($(this).attr('data-set'));
+		$('#product_line').val([$(this).attr('data-product_line')]).trigger('change.select2');
+
+		$('#btn_add_set').html('<i class="fa fa-check"></i> Update Set');
+		$('#btn_add_set').removeClass('bg-green');
+		$('#btn_add_set').addClass('bg-navy');
+		$('#cancel').show();
 	});
 
 	$('#btn_cancel').on('click', function() {
@@ -274,6 +284,12 @@ function init() {
 		if (output == 1) {
 			$('#btn_delete_set').prop('disabled', true);
 		}
+
+		get_dropdown_productline();
+		get_set();
+		processSelection();
+		checkAllCheckboxesInTable('#tbl_added_sets', '.check_all_sets', '.check_set', '#btn_delete_set');
+		checkAllCheckboxesInTable('#tbl_select_process', '.check_all', '.check_item');
 	});
 
 	GUIState('view');
@@ -292,6 +308,7 @@ function GUIState(state) {
 			//$('#tbl_select_process .check_item').prop('disabled', true);
 			
 
+			$('#cancel').hide();
 			$('#btn_cancel').hide();
 			$('#state').val(state);
 
@@ -481,12 +498,17 @@ function setTable(dataArr) {
 		bLengthChange : false,
 		order: [[1,'desc']],
 		columns: [
-			{data: function(x) {
-				return "<input type='checkbox' class='table-checkbox check_set' value='"+x.id+"'>";
+			{
+				data: function(x) {
+					return "<input type='checkbox' class='table-checkbox check_set' value='"+x.id+"'>";
 			}, name: 'id', orderable: false, searchable: false},
-			{data: 'text', name: 'text'}, //set
+			{ data: 'text', name: 'text' },
 			{data: function(x) {
-				return '<button type="button" class="btn btn-sm btn-blue btn_edit_set" data-id="'+x.id+'">'+
+				return '<button type="button" class="btn btn-sm bg-purple btn_edit_set_name" ' +
+							'data-id="' + x.id + '" data-set="' + x.text + '" data-product_line="' + x.product_line + '" title="Edit Set Name">' +
+							'<i class="fa fa-arrow-up"></i>' +
+						'</button>'+
+						'<button type="button" class="btn btn-sm bg-blue btn_edit_set" data-id="' + x.id +'" title="Edit Process Set">'+
 							'<i class="fa fa-edit"></i>'+
 						'</button>';
 			}, orderable: false, searchable: false},
@@ -547,4 +569,23 @@ function delete_set() {
 	} else {
 		msg("Please select at least 1 Set." , "failed");
 	}	
+}
+
+function get_dropdown_productline() {
+	var opt = "<option value=''></option>";
+	$('#product-type').html(opt);
+	$.ajax({
+		url: productLineURL,
+		type: 'GET',
+		dataType: 'JSON',
+		data: { _token: token },
+	}).done(function (data, textStatus, xhr) {
+		$('#product_line').select2({
+			allowClear: true,
+			placeholder: 'Select a Product Line',
+			data: data
+		}).val(null);
+	}).fail(function (xhr, textStatus, errorThrown) {
+		ErrorMsg(xhr);
+	});
 }

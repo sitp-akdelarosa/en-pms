@@ -701,3 +701,7 @@ function objectifyForm(formArray) {
 	}
 	return returnArray;
 }
+
+function SessionTimeOutTimer() {
+
+}

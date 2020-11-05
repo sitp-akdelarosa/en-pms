@@ -29,7 +29,7 @@ Route::get('/', function () {
 				break;
 		}
 	} else {
-		return view('auth.login');
+		return redirect('/login');
 	}
 });
 
@@ -177,6 +177,8 @@ Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', '
 				->name('masters.process-master.get-set');
 			Route::post('/delete-set', 'PPC\Masters\ProcessMasterController@destroy_set')
 				->name('masters.process-master.delete-set');
+			Route::get('/get-product-line', 'PPC\Masters\ProcessMasterController@getProductLine')
+				->name('masters.process-master.get-product-line');
 		});
 
 		Route::group(['prefix' => 'operator-master'], function () {

@@ -558,6 +558,15 @@ function getRawMaterialList(trans_no) {
       $('#id').val(data.trans_id);
       $('#trans_no').val(data.trans_no);
       $('#status').val(data.istatus);
+
+      if (data.istatus == 'CONFIRMED') {
+        $('#btn_edit').prop('disabled', true);
+        $('#btn_confirm').prop('disabled', true);
+      } else {
+        $('#btn_edit').prop('disabled', false);
+        $('#btn_confirm').prop('disabled', false);
+      }
+
       viewState(rawMaterial);
       $('#item_id').val('');
       $(".btn_remove_item").prop('disabled', true);
