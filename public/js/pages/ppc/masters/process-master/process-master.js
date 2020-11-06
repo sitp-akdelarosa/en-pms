@@ -4352,7 +4352,7 @@ $( function() {
 				$('#btn_cancel').click();
 
 			}).fail(function(xhr, textStatus, errorThrown) {
-				msg(errorThrown,textStatus);
+				ErrorMsg(xhr);
 				$('.check_item').prop('checked', false);
 				selected_process_arr = [];
 
@@ -4415,13 +4415,26 @@ $( function() {
 			data: $(this).serialize(),
 		}).done(function(data, textStatus, xhr) {
 			msg(data.msg,data.status);
+
+			$('#btn_add_set').html('<i class="fa fa-plus"></i> Add Set');
+			$('#btn_add_set').removeClass('bg-navy');
+			$('#btn_add_set').addClass('bg-green');
+			$('#cancel').hide();
+
+			$('.btn_edit_set').prop('disabled', false);
+
 			$('#set').val('');
 			$('#set_id').val('');
 			$('#product_line').select2().val(null).trigger('change.select2')
 			get_set();
 		}).fail(function(xhr, textStatus, errorThrown) {
-			var errors = xhr.responseJSON.errors;
-			showErrors(errors);
+			if (xhr.status == 500) {
+				ErrorMsg(xhr);
+			} else {
+				var errors = xhr.responseJSON.errors;
+				showErrors(errors);
+			}
+			
 		}).always(function() {
 			$('.loadingOverlay').hide();
 		});
@@ -4468,6 +4481,8 @@ $( function() {
 	$('#tbl_added_sets_body').on('click', '.btn_edit_set', function() {
 		GUIState('edit');
 		selectedProcess($(this).attr('data-id'));
+
+		$('.btn_edit_set_name').prop('disabled',true);
 		$('#selected_set').val([$(this).attr('data-id')]).trigger('change');
 	});
 
@@ -4475,6 +4490,8 @@ $( function() {
 		$('#set_id').val('');
 		$('#set').val('');
 		$('#product_line').val(null).trigger('change.select2');
+
+		$('.btn_edit_set').prop('disabled', false);
 
 		$('#btn_add_set').html('<i class="fa fa-plus"></i> Add Set');
 		$('#btn_add_set').removeClass('bg-navy');
@@ -4485,7 +4502,9 @@ $( function() {
 	$('#tbl_added_sets_body').on('click', '.btn_edit_set_name', function () {
 		$('#set_id').val($(this).attr('data-id'));
 		$('#set').val($(this).attr('data-set'));
-		$('#product_line').val([$(this).attr('data-product_line')]).trigger('change.select2');
+		getSelectedProductLine($(this).attr('data-id'));
+		
+		$('.btn_edit_set').prop('disabled',true);
 
 		$('#btn_add_set').html('<i class="fa fa-check"></i> Update Set');
 		$('#btn_add_set').removeClass('bg-green');
@@ -4500,6 +4519,11 @@ $( function() {
 		$('.check_all').prop('checked', false).trigger('change');
 		$('.check_item').prop('checked', false).trigger('change');
 
+		$('.btn_edit_set_name').prop('disabled', false);
+
+		$('#btn_add_set').html('<i class="fa fa-plus"></i> Add Set');
+		$('#btn_add_set').removeClass('bg-navy');
+		$('#btn_add_set').addClass('bg-green');
 
 		$('#selected_set').val([]).trigger('change');
 		selected_process_arr = [];
@@ -4578,7 +4602,7 @@ function processSelection() {
 		process_select_arr = data;
 		makeProcessesTable(process_select_arr);
 	}).fail(function(xhr, textStatus, errorThrown) {
-		msg(errorThrown,textStatus);
+		ErrorMsg(xhr);
 	});
 }
 
@@ -4632,7 +4656,7 @@ function selectedProcess(set_id) {
 		$('#selected_set').val(set_id);
 		selectedProcessTable(selected_process_arr);
 	}).fail(function(xhr, textStatus, errorThrown) {
-		msg(errorThrown,textStatus);
+		ErrorMsg(xhr);
 	}).always( function() {
 		$('.loadingOverlay').hide();
 	});
@@ -4709,7 +4733,7 @@ function get_set() {
 		});
 		setTable(data);
 	}).fail(function(xhr, textStatus, errorThrown) {
-		msg(errorThrown,textStatus);
+		ErrorMsg(xhr);
 	});
 }
 
@@ -4734,7 +4758,7 @@ function setTable(dataArr) {
 			{ data: 'text', name: 'text' },
 			{data: function(x) {
 				return '<button type="button" class="btn btn-sm bg-purple btn_edit_set_name" ' +
-							'data-id="' + x.id + '" data-set="' + x.text + '" data-product_line="' + x.product_line + '" title="Edit Set Name">' +
+							'data-id="' + x.id + '" data-set="' + x.text + '" title="Edit Set Name">' +
 							'<i class="fa fa-arrow-up"></i>' +
 						'</button>'+
 						'<button type="button" class="btn btn-sm bg-blue btn_edit_set" data-id="' + x.id +'" title="Edit Process Set">'+
@@ -4788,7 +4812,7 @@ function delete_set() {
 					selectedProcessTable(selected_process_arr);
 					get_set();
 				}).fail(function(xhr, textStatus, errorThrown) {
-					msg(errorThrown,textStatus);
+					ErrorMsg(xhr);
 				});
 				$('.check_all_product').prop('checked',false);
 	        } else {
@@ -4816,5 +4840,25 @@ function get_dropdown_productline() {
 		}).val(null);
 	}).fail(function (xhr, textStatus, errorThrown) {
 		ErrorMsg(xhr);
+	});
+}
+
+function getSelectedProductLine(set_id) {
+	$('.loadingOverlay').show();
+	$.ajax({
+		url: selectedProductLineURL,
+		type: 'GET',
+		dataType: 'JSON',
+		data: { _token: token, set_id: set_id },
+	}).done(function (data, textStatus, xhr) {
+		console.log(data);
+		$('#product_line').select2({
+			allowClear: true,
+			placeholder: 'Select a Product Line',
+		}).val(data).trigger('change.select2');
+	}).fail(function (xhr, textStatus, errorThrown) {
+		ErrorMsg(xhr);
+	}).always( function() {
+		$('.loadingOverlay').hide();
 	});
 }

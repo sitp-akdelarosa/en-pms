@@ -179,6 +179,8 @@ Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', '
 				->name('masters.process-master.delete-set');
 			Route::get('/get-product-line', 'PPC\Masters\ProcessMasterController@getProductLine')
 				->name('masters.process-master.get-product-line');
+			Route::get('/selected-product-line', 'PPC\Masters\ProcessMasterController@selectedProductLine')
+				->name('masters.process-master.selected-product-line');
 		});
 
 		Route::group(['prefix' => 'operator-master'], function () {

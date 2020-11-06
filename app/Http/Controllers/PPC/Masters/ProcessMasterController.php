@@ -128,9 +128,19 @@ class ProcessMasterController extends Controller
             $set = PpcProcessSet::find($req->set_id);
 
             $set->set = strtoupper($req->set);
-            $set->product_line = $req->product_line;
             $set->update_user = Auth::user()->id;
             $set->update();
+
+            DB::table('ppc_process_productlines')->where('set_id',$set->id)->delete();
+
+            foreach ($req->product_line as $key => $product_line) {
+                DB::table('ppc_process_productlines')->insert([
+                    'set_id' => $set->id,
+                    'product_line' => $product_line,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s')
+                ]);
+            }
 
             $saved = true;
         } else {
@@ -142,10 +152,18 @@ class ProcessMasterController extends Controller
             $set = new PpcProcessSet();
 
             $set->set = strtoupper($req->set);
-            $set->product_line = $req->product_line;
             $set->create_user = Auth::user()->id;
             $set->update_user = Auth::user()->id;
             $set->save();
+
+            foreach ($req->product_line as $key => $product_line) {
+                DB::table('ppc_process_productlines')->insert([
+                    'set_id' => $set->id,
+                    'product_line' => $product_line,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s')
+                ]);
+            }
 
             $saved = true;
         }
@@ -162,7 +180,7 @@ class ProcessMasterController extends Controller
 
     public function get_set()
     {
-        $set = PpcProcessSet::select('id as id', 'set as text','product_line')
+        $set = PpcProcessSet::select('id as id', 'set as text')
                             ->where('create_user',Auth::user()->id)->get();
 
         // $set = DB::select("SELECT ps.id as id,
@@ -238,6 +256,22 @@ class ProcessMasterController extends Controller
                     ->where('apl.user_id' , Auth::user()->id)
                     ->groupBy('apl.product_line')
                     ->get();
+
+        return $data;
+    }
+
+    public function selectedProductLine(Request $req)
+    {
+        $data = [];
+
+        $prodlines = DB::table('ppc_process_productlines')
+                        ->where('set_id',$req->set_id)
+                        ->select('product_line')
+                        ->get();
+
+        foreach ($prodlines as $key => $pl) {
+            array_push($data,$pl->product_line);
+        }
 
         return $data;
     }

@@ -15,6 +15,8 @@ class CreatePpcProcessProductlinesTable extends Migration
     {
         Schema::create('ppc_process_productlines', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('set_id')->default(0);
+            $table->string('product_line')->length(100);
             $table->timestamps();
         });
     }

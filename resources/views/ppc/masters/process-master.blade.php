@@ -48,15 +48,9 @@ foreach ($user_accesses as $user_access){
 
                                 <div class="form-group row">
                                     <div class="col-md-12">
-                                        <div class="input-group mb-3 input-group-sm">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">Product Line:</span>
-                                            </div>
-                                            <select class="form-control select-validate" id="product_line" name="product_line">
-                                                <option></option>
-                                            </select>
-                                            <div id="product_line_feedback"></div>
-                                        </div>
+                                        <select class="form-control select-validate" multiple="multiple" id="product_line" name="product_line[]">
+                                        </select>
+                                        <div id="product_line_feedback"></div>
                                     </div>
                                 </div>
 
@@ -185,6 +179,7 @@ foreach ($user_accesses as $user_access){
 		var getSetURL = "{{ url('masters/process-master/get-set') }}";
         var deleteSetURL = "{{ url('masters/process-master/delete-set') }}";
         var productLineURL = "{{ url('masters/process-master/get-product-line') }}";
+        var selectedProductLineURL = "{{ url('masters/process-master/selected-product-line') }}";
 
         var code_permission = "M0005";
     </script>
