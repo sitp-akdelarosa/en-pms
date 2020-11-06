@@ -180,20 +180,11 @@ class ProcessMasterController extends Controller
 
     public function get_set()
     {
-        $set = PpcProcessSet::select('id as id', 'set as text')
-                            ->where('create_user',Auth::user()->id)->get();
-
-        // $set = DB::select("SELECT ps.id as id,
-        //                             ps.`set` as text
-        //                     FROM enpms.ppc_process_sets as ps
-        //                     left join ppc_product_processes as ppp
-        //                     on ppp.`set` = ps.id
-        //                     left join ppc_product_codes as ppc
-        //                     on ppc.product_code = ppp.prod_code
-        //                     left join admin_assign_production_lines as apl
-        //                     on apl.product_line = ppc.product_type
-        //                     where apl.user_id = ".Auth::user()->id."
-        //                     group by ps.id, ps.`set`");
+        $set = DB::table('ppc_process_sets as p')
+                    ->join('ppc_process_productlines as pp','p.id','=','pp.set_id')
+                    ->join('admin_assign_production_lines as apl','apl.product_line','=','pp.product_line')
+                    ->select('p.id as id', 'p.set as text')
+                    ->where('apl.user_id',Auth::user()->id)->get();
 
         return response()->json($set);
     }
