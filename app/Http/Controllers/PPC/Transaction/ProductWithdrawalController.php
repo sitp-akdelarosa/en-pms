@@ -121,6 +121,13 @@ class ProductWithdrawalController extends Controller
 
     private function first()
     {
+        $data = [
+                'trans_id' => '',
+                'trans_no' => '',
+                'info' => [],
+                'details' => []
+            ];
+
         $info = DB::table('ppc_product_withdrawal_infos as i')
                     ->select(
                         'i.id as id',
@@ -151,19 +158,24 @@ class ProductWithdrawalController extends Controller
                 'details' => $details
             ];
 
-            return response()->json($data);
+            
         }
+        
+        return response()->json($data);
     }
 
     private function prev($trans_no)
     {
+        $info = [];
+
         $latest = DB::table('ppc_product_withdrawal_infos')
                     ->select('id')
                     ->where('trans_no',$trans_no)
                     ->where('create_user',Auth::user()->id)
                     ->first();
 
-        $info = DB::table('ppc_product_withdrawal_infos as i')
+        if (count((array)$latest) > 0) {
+            $info = DB::table('ppc_product_withdrawal_infos as i')
                     ->select(
                         'i.id as id',
                         'i.trans_no as trans_no',
@@ -181,6 +193,7 @@ class ProductWithdrawalController extends Controller
                     ->orderBy("i.id","DESC")
                     ->where('i.create_user',Auth::user()->id)
                     ->first();
+        }
 
         if (count((array)$info) > 0) {
             $details = $this->getProductsWithdrawed($info->id);
@@ -200,13 +213,16 @@ class ProductWithdrawalController extends Controller
 
     private function next($trans_no)
     {
+        $info = [];
+
         $latest = DB::table('ppc_product_withdrawal_infos')
                     ->select('id')
                     ->where('trans_no',$trans_no)
                     ->where('create_user',Auth::user()->id)
                     ->first();
 
-        $info = DB::table('ppc_product_withdrawal_infos as i')
+        if (count((array)$latest) > 0) {
+            $info = DB::table('ppc_product_withdrawal_infos as i')
                     ->select(
                         'i.id as id',
                         'i.trans_no as trans_no',
@@ -224,6 +240,9 @@ class ProductWithdrawalController extends Controller
                     ->where('create_user',Auth::user()->id)
                     ->orderBy("id")
                     ->first();
+        }
+
+        
 
         if (count((array)$info) > 0) {
             $details = $this->getProductsWithdrawed($info->id);
@@ -683,12 +702,76 @@ class ProductWithdrawalController extends Controller
             'status' => "warning"
         ];
 
-        $RawMatQuantity = PpcProductWithdrawalDetail::where('trans_id',$req->id)->get();
-
-        foreach ($RawMatQuantity as $key => $rw) {
-            Inventory::where('id',$rw->inv_id)
-                                ->increment('qty_pcs', (float)$rw->issued_qty);
+        switch ($req->status) {
+            case 'CONFIRMED':
+                $data = $this->CancelTransaction($req);
+                break;
+            
+            default:
+                $data = $this->DeleteTransaction($req);
+                break;
         }
+
+        return response()->json($data);
+    }
+
+    private function CancelTransaction($req)
+    {
+        $data = [
+            'msg' => "Cancelling Transaction has failed.",
+            'status' => "failed"
+        ];
+
+        $transaction = PpcProductWithdrawalInfo::where('id',$req->id)->select('trans_no')->first();
+
+        
+        
+        $raw = PpcProductWithdrawalInfo::where('id',$req->id)->update([
+                                                'status' => 'CANCELLED',
+                                                'updated_at' => date('Y-m-d H:i:s'),
+                                                'update_user' => Auth::user()->id 
+                                            ]);
+        if ($raw) {
+            $rmwd = PpcProductWithdrawalDetail::where('trans_id',$req->id)->select('inv_id','issued_qty')->get();
+
+            foreach ($rmwd as $key => $rm) {
+                DB::table('inventories')->where('id',$rm->inv_id)
+                    ->increment('qty_pcs', $rm->issued_qty);
+            }
+
+            PpcProductWithdrawalDetail::where('trans_id',$req->id)->update([
+                                                'cancelled' => 1,
+                                                'updated_at' => date('Y-m-d H:i:s'),
+                                                'update_user' => Auth::user()->id,
+                                                'cancelled_at' => date('Y-m-d H:i:s'),
+                                                'cancelled_user' => Auth::user()->id 
+                                            ]);
+
+            $data = [
+                'msg' => "Transaction was successfully cancelled.",
+                'status' => "success"
+            ];
+        }
+        $this->_audit->insert([
+            'user_type' => Auth::user()->user_type,
+            'module_id' => $this->_moduleID,
+            'module' => 'Product Withdrawal',
+            'action' => 'Product Withdrawal Transaction '.$transaction.' was cancelled.',
+            'user' => Auth::user()->id,
+            'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
+        ]);
+
+        return $data;
+    }
+
+    private function DeleteTransaction($req)
+    {
+        $data = [
+                'msg' => "Deleting failed.",
+                'status' => "failed"
+            ];
+        
+        $transaction = PpcProductWithdrawalInfo::where('id',$req->id)->select('trans_no')->first();
         
         $raw = PpcProductWithdrawalInfo::where('id',$req->id)->delete();
         if ($raw) {
@@ -701,12 +784,13 @@ class ProductWithdrawalController extends Controller
         $this->_audit->insert([
             'user_type' => Auth::user()->user_type,
             'module_id' => $this->_moduleID,
-            'module' => 'Raw Material Withdrawal',
-            'action' => 'Deleted data ID: '.$req->id,
+            'module' => 'Product Withdrawal',
+            'action' => 'Product Withdrawal Transaction '.$transaction.' was deleted.',
             'user' => Auth::user()->id,
             'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
         ]);
-        return response()->json($data);
+
+        return $data;
     }
 
     public function ConfirmWithdrawal(Request $req)
@@ -720,46 +804,18 @@ class ProductWithdrawalController extends Controller
                             ->select('inv_id','issued_qty')
                             ->get();
         if (count((array)$details) > 0) {
-            $update = DB::table('ppc_product_withdrawal_infos')
-                        ->where('id',$req->id)
-                        ->update([
-                            'status' => 'CONFIRMED',
-                            'update_user' => Auth::user()->id,
-                            'updated_at' => date('Y-m-d H:i:s')
-                        ]);
 
-            if ($update) {
-                $details = DB::table('ppc_product_withdrawal_details')
-                                ->where('trans_id',$req->id)
-                                ->select('inv_id','issued_qty')
-                                ->get();
+            switch ($req->status) {
+                case 'CONFIRMED':
+                    $data = $this->UnconfirmIt($req);
+                    break;
                 
-                $inv_update = 0;
-                foreach ($details as $key => $dt) {
-                    $inv = DB::table('inventories')->where('id',$dt->inv_id)->count();
-                    if ($inv > 0) {
-                        $upd_inv = DB::table('inventories')
-                                    ->where('id',$dt->inv_id)
-                                    ->decrement('qty_pcs',$dt->issued_qty);
-                        if ($upd_inv) {
-                            $inv_update++;
-                        }
-                    }
-                }
-
-                if($inv_update > 0) {
-                    $data = [
-                        'msg' => 'Confirmation Successfully done.',
-                        'status' => 'success'
-                    ];
-                }
-                
-            } else {
-                $data = [
-                    'msg' => 'Confirmation failed.',
-                    'status' => 'failed'
-                ];
+                default:
+                    $data = $this->ConfirmIt($req);
+                    break;
             }
+
+            
         } else {
             $data = [
                 'msg' => 'There are no Items selected in this transaction.',
@@ -767,6 +823,108 @@ class ProductWithdrawalController extends Controller
             ];
         }
             
+
+        return $data;
+    }
+
+    private function ConfirmIt($req)
+    {
+        $data = [
+                'msg' => 'Confirmation failed.',
+                'status' => 'failed'
+            ];
+
+        $update = DB::table('ppc_product_withdrawal_infos')
+                    ->where('id',$req->id)
+                    ->update([
+                        'status' => 'CONFIRMED',
+                        'update_user' => Auth::user()->id,
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ]);
+
+        if ($update) {
+            $details = DB::table('ppc_product_withdrawal_details')
+                            ->where('trans_id',$req->id)
+                            ->select('inv_id','issued_qty')
+                            ->get();
+            
+            $inv_update = 0;
+            foreach ($details as $key => $dt) {
+                $inv = DB::table('inventories')->where('id',$dt->inv_id)->count();
+                if ($inv > 0) {
+                    $upd_inv = DB::table('inventories')
+                                ->where('id',$dt->inv_id)
+                                ->decrement('qty_pcs',$dt->issued_qty);
+                    if ($upd_inv) {
+                        $inv_update++;
+                    }
+                }
+            }
+
+            if($inv_update > 0) {
+                $data = [
+                    'msg' => 'Confirmation Successfully done.',
+                    'status' => 'success'
+                ];
+            }
+            
+        } else {
+            $data = [
+                'msg' => 'Confirmation failed.',
+                'status' => 'failed'
+            ];
+        }
+
+        return $data;
+    }
+
+    private function UnconfirmIt($req)
+    {
+        $data = [
+                'msg' => 'Unconfirmation failed.',
+                'status' => 'failed'
+            ];
+
+        $update = DB::table('ppc_product_withdrawal_infos')
+                    ->where('id',$req->id)
+                    ->update([
+                        'status' => 'UNCONFIRMED',
+                        'update_user' => Auth::user()->id,
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ]);
+
+        if ($update) {
+            $details = DB::table('ppc_product_withdrawal_details')
+                            ->where('trans_id',$req->id)
+                            ->select('inv_id','issued_qty')
+                            ->get();
+            
+            $inv_update = 0;
+            foreach ($details as $key => $dt) {
+                $inv = DB::table('inventories')->where('id',$dt->inv_id)->count();
+                if ($inv > 0) {
+                    $upd_inv = DB::table('inventories')
+                                ->where('id',$dt->inv_id)
+                                ->increment('qty_pcs',$dt->issued_qty);
+                    if ($upd_inv) {
+                        $inv_update++;
+                    }
+                }
+            }
+
+            if($inv_update > 0) {
+                $data = [
+                    'msg' => 'Transaction was Unconfirmed successfully',
+                    'status' => 'success'
+                ];
+            }
+            
+        } else {
+            $data = [
+                'msg' => 'Unconfirmation failed.',
+                'status' => 'failed'
+            ];
+        }
 
         return $data;
     }
@@ -1136,6 +1294,25 @@ class ProductWithdrawalController extends Controller
                 }
             });
         })->download('xlsx');
+    }
+
+    public function checkRMWithdrawalCancellation(Request $req)
+    {
+        $data = [
+            'exist' => 0
+        ];
+
+        $prevent = DB::table("ppc_jo_details_summaries")
+                        ->where('rmw_no',$req->pw_no)
+                        ->count();
+
+        if ($prevent > 0) {
+            $data = [
+                'exist' => 1,
+            ];
+        }
+
+        return $data;
     }
 
 

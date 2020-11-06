@@ -354,6 +354,8 @@ Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', '
 				->name('transaction.product-withdrawal.delete-product-withdrawal');
 			Route::post('/confirm-product-withdrawal', 'PPC\Transaction\ProductWithdrawalController@ConfirmWithdrawal')
 				->name('transaction.product-withdrawal.confirm-product-withdrawal');
+			Route::get('/check-withdrawal-cancellation', 'PPC\Transaction\ProductWithdrawalController@checkRMWithdrawalCancellation')
+				->name('transaction.product-withdrawal.check-withdrawal-cancellation');
 		});
 
 		Route::group(['prefix' => 'travel-sheet'], function () {

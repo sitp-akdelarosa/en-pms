@@ -211,6 +211,10 @@ function msg(msg_content,status) {
 			// 	});
 			// break;
 
+			case 'failed':
+				swal(jsUcfirst(status) + "!", msg_content, 'warning');
+			break;
+
 			case 'notification':
 			   $.toast({
 					heading: jsUcfirst(status)+"!",
@@ -530,6 +534,7 @@ function getSelectedText(elementId) {
 }
 
 function check_permission(code,handleData) {
+	$('.loadingOverlay').show();
 	$.ajax({
 		url: '../../../../helpers/check-permission',
 		type: 'GET',
@@ -549,7 +554,7 @@ function check_permission(code,handleData) {
 		console.log(xhr);
 		//msg(errorThrown,textStatus);
 	}).always(function() {
-		console.log("complete");
+		$('.loadingOverlay').hide();
 	});
 	
 }

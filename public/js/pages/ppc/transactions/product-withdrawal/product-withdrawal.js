@@ -318,70 +318,76 @@ $(function () {
   });
   $('#btn_delete').on('click', function () {
     var id = $('#id').val();
-    swal({
-      title: "Are you sure?",
-      text: "You will not be able to recover your data!",
-      type: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#f95454",
-      confirmButtonText: "Yes",
-      cancelButtonText: "No",
-      closeOnConfirm: true,
-      closeOnCancel: false
-    }, function (isConfirm) {
-      if (isConfirm) {
-        $.ajax({
-          url: deleteWithdrawalURL,
-          type: 'POST',
-          dataType: 'JSON',
-          data: {
-            _token: token,
-            id: id
-          }
-        }).done(function (data, textStatus, xhr) {
-          if (data.status == 'success') {
-            msg(data.msg, data.status);
-          } else {
-            msg(data.msg, data.status);
-          }
+    var status = $('#status').val();
 
-          getWithdrawalTransaction('', '');
-        }).fail(function (xhr, textStatus, errorThrown) {
-          msg(errorThrown, 'error');
+    if ($('#trans_no').val() !== '') {
+      if (status == 'CONFIRMED') {
+        // for cancel function
+        check_cancellation($('#trans_no').val(), function (exist) {
+          if (exist > 0) {
+            msg("This transaction is already used in Production Schedule.", "info");
+          } else {
+            DeleteAndCancel(id, status);
+          }
         });
       } else {
-        swal("Cancelled", "Your data is safe and not deleted.");
+        // for delete function
+        DeleteAndCancel(id, status);
       }
-    });
+    } else {
+      msg('Please add new withdrawal transaction.', 'warning');
+    }
   });
   $('#btn_confirm').on('click', function () {
-    swal({
-      title: "Confirm Withdrawal",
-      text: "Are your sure to confirm this withdrawal?",
-      type: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#f95454",
-      confirmButtonText: "Yes",
-      cancelButtonText: "No",
-      closeOnConfirm: true,
-      closeOnCancel: false
-    }, function (isConfirm) {
-      if (isConfirm) {
-        swal.close();
-        confirmWithdrawal($('#id').val());
-      } else {
-        swal.close();
+    var title = "Confirm Withdrawal";
+    var text = "Are your sure to confirm this withdrawal?";
+    var id = $('#id').val();
+    var status = $('#status').val();
+    var data_exist = 0;
+
+    if ($('#trans_no').val() !== '') {
+      if (status == 'CONFIRMED') {
+        title = "Unconfirm Withdrawal";
+        text = "Are your sure to unconfirm this withdrawal?";
+        check_cancellation($('#trans_no').val(), function (exist) {
+          data_exist = exist;
+        });
       }
-    });
+
+      if (data_exist > 0) {
+        msg('This transaction is already used in Production Schedule.', 'warning');
+      } else {
+        swal({
+          title: title,
+          text: text,
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#f95454",
+          confirmButtonText: "Yes",
+          cancelButtonText: "No",
+          closeOnConfirm: true,
+          closeOnCancel: false
+        }, function (isConfirm) {
+          if (isConfirm) {
+            confirmWithdrawal(id, status);
+          } else {
+            swal.close();
+          }
+        });
+      }
+    } else {
+      msg('Please add new withdrawal transaction.', 'warning');
+    }
   });
 });
 
 function init() {
   check_permission(code_permission, function (output) {
     if (output == 1) {}
+
+    getWithdrawalTransaction('', '');
+    viewState('');
   });
-  viewState('');
-  getWithdrawalTransaction('', '');
 }
 
 function clear() {
@@ -465,7 +471,40 @@ function viewState(state) {
       $('#cancel').hide();
       $('#print').show();
       $('#search').show();
+      buttonState($('#status').val());
       vState = '';
+      break;
+  }
+}
+
+function buttonState(status) {
+  $('#edit').show();
+  $('#confirm').show();
+  $('#delete').show();
+  $('#print').show();
+
+  switch (status) {
+    case 'CANCELLED':
+      $('#edit').hide();
+      $('#confirm').hide();
+      $('#delete').hide();
+      $('#print').hide();
+      break;
+
+    case 'CONFIRMED':
+      $('#btn_edit').prop('disabled', true);
+      $('#btn_confirm').html('<i class="fa fa-circle"></i> Unconfirm Withdrawal');
+      $('#btn_confirm').removeClass('btn-success');
+      $('#btn_confirm').addClass('btn-secondary');
+      $('#btn_delete').html('<i class="fa fa-times"></i> Cancel Transaction');
+      break;
+
+    default:
+      $('#btn_edit').prop('disabled', false);
+      $('#btn_confirm').html('<i class="fa fa-check"></i> Confirm Withdrawal');
+      $('#btn_confirm').removeClass('btn-secondary');
+      $('#btn_confirm').addClass('btn-success');
+      $('#btn_delete').html('<i class="fa fa-trash"></i> Delete');
       break;
   }
 }
@@ -493,15 +532,7 @@ function plotValues(info, details) {
   $('#id').val(info.id);
   $('#trans_no').val(info.trans_no);
   $('#status').val(info.status);
-
-  if (info.status == 'CONFIRMED') {
-    $('#btn_edit').prop('disabled', true);
-    $('#btn_confirm').prop('disabled', true);
-  } else {
-    $('#btn_edit').prop('disabled', false);
-    $('#btn_confirm').prop('disabled', false);
-  }
-
+  buttonState(info.status);
   product_arr = [];
   var count = product_arr.length;
   console.log(details);
@@ -780,7 +811,7 @@ function searchDataTable(arr) {
   });
 }
 
-function confirmWithdrawal(id) {
+function confirmWithdrawal(id, status) {
   $('.loadingOverlay').show();
   $.ajax({
     url: confirmWithdrawalURL,
@@ -789,7 +820,8 @@ function confirmWithdrawal(id) {
     loadonce: true,
     data: {
       _token: token,
-      id: id
+      id: id,
+      status: status
     }
   }).done(function (data, textStatus, xhr) {
     msg(data.msg, data.status);
@@ -798,6 +830,78 @@ function confirmWithdrawal(id) {
     ErrorMsg(xhr);
   }).always(function () {
     $('.loadingOverlay').hide();
+  });
+}
+
+function check_cancellation(pw_no, handleData) {
+  $('.loadingOverlay').show();
+  $.ajax({
+    url: checkWithdrawalCancellationURL,
+    type: 'GET',
+    dataType: 'JSON',
+    data: {
+      pw_no: pw_no
+    }
+  }).done(function (data, textStatus, xhr) {
+    handleData(data.exist);
+  }).fail(function (xhr, textStatus, errorThrown) {
+    ErrorMsg(xhr);
+  }).always(function () {
+    $('.loadingOverlay').hide();
+  });
+}
+
+function DeleteAndCancel(id, status) {
+  var title = "Delete Withdrawal Transaction";
+  var text = "Are your sure to delete this withdrawal transaction?";
+  var CancelTitle = "Not Deleted!";
+  var CancelMsg = "Your data is safe and not deleted.";
+
+  if (status) {
+    title = "Cancel Withdrawal Transaction";
+    text = "Are your sure to cancel this withdrawal transaction?";
+    CancelTitle = "Not Cancelled!";
+    CancelMsg = "Widthrawal transaction cancellation was revoke.";
+  }
+
+  swal({
+    title: title,
+    text: text,
+    type: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#f95454",
+    confirmButtonText: "Yes",
+    cancelButtonText: "No",
+    closeOnConfirm: true,
+    closeOnCancel: false
+  }, function (isConfirm) {
+    if (isConfirm) {
+      $('.loadingOverlay').show();
+      $.ajax({
+        url: deleteWithdrawalURL,
+        type: 'POST',
+        dataType: 'JSON',
+        data: {
+          _token: token,
+          id: id,
+          status: status
+        }
+      }).done(function (data, textStatus, xhr) {
+        if (data.status == 'success') {
+          msg(data.msg, data.status);
+        } else {
+          msg(data.msg, data.status);
+        }
+
+        getWithdrawalTransaction('', '');
+      }).fail(function (xhr, textStatus, errorThrown) {
+        ErrorMsg(xhr);
+      }).always(function () {
+        $('.loadingOverlay').hide();
+      });
+    } else {
+      swal(CancelTitle, CancelMsg);
+    }
   });
 }
 

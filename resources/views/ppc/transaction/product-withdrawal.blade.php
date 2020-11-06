@@ -358,6 +358,7 @@ foreach ($user_accesses as $user_access){
         var excelSearchProductWithdrawalURL = "{{ url('/transaction/product-withdrawal/search-product-withdrawal-excel') }}";
         var deleteWithdrawalURL = "{{ url('/transaction/product-withdrawal/delete-product-withdrawal') }}";
         var confirmWithdrawalURL = "{{ url('/transaction/product-withdrawal/confirm-product-withdrawal') }}";
+        var checkWithdrawalCancellationURL = "{{ url('/transaction/product-withdrawal/check-withdrawal-cancellation') }}";
         
     </script>
     <script type="text/javascript" src="{{ mix('/js/pages/ppc/transactions/product-withdrawal/product-withdrawal.js') }}"></script>
