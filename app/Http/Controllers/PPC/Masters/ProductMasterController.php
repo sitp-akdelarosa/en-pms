@@ -72,7 +72,18 @@ class ProductMasterController extends Controller
         return DataTables::of($assembly)
 						->editColumn('id', function($data) {
 							return $data->id;
-						})
+                        })
+                        ->addColumn('action', function($data) {
+                            return "<button class='btn btn-sm bg-blue btn_edit_assembly' data-id='".$data->id."' 
+                                    data-prod_type='".$data->prod_type."' 
+                                    data-character_num='".$data->character_num."' 
+                                    data-character_code='".$data->character_code."' 
+                                    data-description='".$data->description."' data-toggle='popover' 
+										data-content='This Button is to view/edit this assembly.' 
+										data-placement='right'>
+                                    <i class='fa fa-edit'></i>
+                                    </button>";
+                        })
 						->make(true);
             
 
@@ -413,7 +424,8 @@ class ProductMasterController extends Controller
                 DB::raw('IFNULL(pc.finish_weight, 0) as finish_weight'),
                 DB::raw('IFNULL(pc.formula_classification, "") as formula_classification'),
                 DB::raw('pc.create_user as create_user'),
-                DB::raw('pc.updated_at as updated_at')
+                DB::raw('pc.updated_at as updated_at'),
+                DB::raw('pc.disabled as disabled')
             ])->groupBy(
                 'pc.id',
                 'pc.product_type',
@@ -433,12 +445,47 @@ class ProductMasterController extends Controller
                 'pc.finish_weight',
                 'pc.formula_classification',
                 'pc.create_user',
-                'pc.updated_at'
+                'pc.updated_at',
+                'pc.disabled'
             );
          return DataTables::of($product_codes)
 						->editColumn('id', function($data) {
 							return $data->id;
-						})
+                        })
+                        ->addColumn('action', function($data) {
+                            return "<button class='btn btn-sm bg-blue btn_edit_product'
+                                        data-id='".$data->id."' 
+                                        data-product_type='".$data->product_type."'
+                                        data-product_code='".$data->product_code."' 
+                                        data-code_description='".$data->code_description."'
+                                        data-cut_weight='".$data->cut_weight."'
+                                        data-cut_weight_uom='".$data->cut_weight_uom."'
+                                        data-cut_length='".$data->cut_length."'
+                                        data-cut_length_uom='".$data->cut_length_uom."'
+                                        data-cut_width='".$data->cut_width."'
+                                        data-cut_width_uom='".$data->cut_width_uom."'
+                                        data-item='".$data->item."'
+                                        data-alloy='".$data->alloy."'
+                                        data-class='".$data->class."'
+                                        data-size='".$data->size."'
+                                        data-standard_material_used='".$data->standard_material_used."'
+                                        data-finish_weight='".$data->finish_weight."'
+                                        data-create_user='".$data->create_user."'
+                                        data-disabled='".$data->disabled."'
+                                        data-updated_at='".$data->updated_at."' data-toggle='popover' 
+										data-content='This Button is to Edit ".$data->product_code.".' 
+										data-placement='right'>
+                                        <i class='fa fa-edit'></i>
+                                    </button>
+                                    
+                                    <button class='btn btn-sm bg-purple btn_assign_process' 
+                                    data-id='".$data->id."' 
+                                    data-product_code='".$data->product_code."' data-toggle='popover' 
+										data-content='This Button is to Assign Process for ".$data->product_code.".' 
+										data-placement='right'>
+                                    <i class='fa fa-refresh'></i>
+                                    </button>";
+                        })
 						->make(true);
         // return response()->json($product_codes);
     }
@@ -780,9 +827,11 @@ class ProductMasterController extends Controller
         return dd($arr);
     }
 
-    public function downloadExcelFile()
+    public function downloadExcelFile(Request $req)
     {
-        $data = DB::table('ppc_product_codes as pc')
+        $data = [];
+        $prod_lines = explode(',',$req->prod_lines);
+        $query = DB::table('ppc_product_codes as pc')
                     ->select(
                         DB::raw('pc.id as id'),
                         DB::raw('pc.product_type as product_type'),
@@ -823,7 +872,14 @@ class ProductMasterController extends Controller
                         'pc.formula_classification',
                         'pc.update_user',
                         'pc.updated_at'
-                    )->orderBy('pc.id','asc')->get();
+                    );
+
+        if (!is_null($req->prod_lines)) {
+            $query->whereIn('pc.product_type',$prod_lines);
+        }
+
+        $data = $query->orderBy('pc.id','asc')->get();
+
         $date = date('Ymd');
 
         Excel::create('ProductMasters_'.$date, function($excel) use($data)
@@ -979,5 +1035,49 @@ class ProductMasterController extends Controller
                 }
             });
         })->download('xlsx');
+    }
+
+    public function getAllProductLines(Request $req)
+    {
+        $data = DB::table('ppc_dropdown_items')
+                    ->whereIn('dropdown_name_id',[7]) // product Line
+                    ->select(
+                        DB::raw("dropdown_item as id"),
+                        DB::raw("dropdown_item as text")
+                    )
+                    ->orderby('dropdown_item','ASC')->get();
+
+        return response()->json($data);
+    }
+
+    public function enableDisabledProducts(Request $req)
+    {
+        $data = [
+            'msg' => 'Disabling / Enabling Product code has failed.',
+            'status' => 'failed'
+        ];
+
+        $updated = 0;
+
+        if ($req->disabled == 0) {
+            // to disabled
+            $updated = DB::table('ppc_product_codes')
+                            ->where('id',$req->id)
+                            ->update(['disabled' => 1]);
+        } else {
+            // tioenable
+            $updated = DB::table('ppc_product_codes')
+                            ->where('id',$req->id)
+                            ->update(['disabled' => 0]);
+        }
+
+        if ($updated) {
+            $data = [
+                'msg' => 'Disabling / Enabling Product code has successfully done.',
+                'status' => 'success'
+            ];
+        }
+
+        return response()->json($data);
     }
 }

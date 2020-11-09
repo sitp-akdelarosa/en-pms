@@ -1019,127 +1019,51 @@ class ProductionScheduleController extends Controller
 
     public function getTravel_sheet(Request $req)
     {
-        $jo_details = [];
         $data = DB::table('ppc_jo_travel_sheets as jt')
-            ->leftJoin('ppc_pre_travel_sheets as ts', 'ts.jo_no', '=', 'jt.jo_no')
-            ->leftjoin('ppc_product_codes as pc', 'jt.prod_code', '=', 'pc.product_code')
-            ->leftjoin('admin_assign_production_lines as pl', 'pl.product_line', '=', 'pc.product_type')
-            ->where('pl.user_id', Auth::user()->id)
-            ->where('jt.create_user', Auth::user()->id)
-            ->whereIn('jt.status', array(0, 1))
-            ->orderBy('jt.jo_no', 'desc')
-            ->groupBy(
-                'jt.id',
-                'ts.id',
-                'ts.qty_per_sheet',
-                'ts.iso_code',
-                'jt.jo_no',
-                'jt.sc_no',
-                'jt.prod_code',
-                'jt.description',
-                'ts.issued_qty',
-                'jt.material_used',
-                'jt.material_heat_no',
-                'ts.status',
-                'jt.updated_at')
-            ->select(
-                DB::raw("jt.id as idJO"),
-                DB::raw("ts.qty_per_sheet as qty_per_sheet"),
-                DB::raw("ts.iso_code as iso_code"),
-                DB::raw("IFNULL(ts.id,'') as id"),
-                DB::raw("jt.jo_no as jo_no"),
-                DB::raw("jt.sc_no as sc_no"),
-                DB::raw("jt.prod_code as product_code"),
-                DB::raw("ifnull(pc.code_description,jt.description) as description"),
-                DB::raw("SUM(jt.order_qty) as back_order_qty"),
-                DB::raw("SUM(jt.sched_qty) as sched_qty"),
-                DB::raw("IFNULL(ts.issued_qty,0) as issued_qty"),
-                DB::raw("jt.material_used as material_used"),
-                DB::raw("jt.material_heat_no as material_heat_no"),
-                DB::raw("IFNULL(ts.status,0) as status"),
-                DB::raw("jt.updated_at as updated_at")
-            )->get();
+                    ->leftJoin('ppc_pre_travel_sheets as ts', 'ts.jo_no', '=', 'jt.jo_no')
+                    ->leftjoin('ppc_product_codes as pc', 'jt.prod_code', '=', 'pc.product_code')
+                    ->leftjoin('admin_assign_production_lines as pl', 'pl.product_line', '=', 'pc.product_type')
+                    ->where('pl.user_id', Auth::user()->id)
+                    ->where('jt.create_user', Auth::user()->id)
+                    ->orderBy('jt.jo_no', 'desc')
+                    ->groupBy(
+                        'jt.id',
+                        'ts.id',
+                        'ts.qty_per_sheet',
+                        'ts.iso_code',
+                        'jt.jo_no',
+                        'jt.sc_no',
+                        'jt.prod_code',
+                        'jt.description',
+                        'ts.issued_qty',
+                        'jt.material_used',
+                        'jt.material_heat_no',
+                        'ts.status',
+                        'jt.updated_at')
+                    ->select([
+                        DB::raw("jt.id as idJO"),
+                        DB::raw("IFNULL(ts.qty_per_sheet,0) as qty_per_sheet"),
+                        DB::raw("IFNULL(ts.iso_code,'') as iso_code"),
+                        DB::raw("IFNULL(ts.id,'') as id"),
+                        DB::raw("jt.jo_no as jo_no"),
+                        DB::raw("jt.sc_no as sc_no"),
+                        DB::raw("jt.prod_code as product_code"),
+                        DB::raw("ifnull(pc.code_description,jt.description) as description"),
+                        DB::raw("SUM(jt.order_qty) as back_order_qty"),
+                        DB::raw("SUM(jt.sched_qty) as sched_qty"),
+                        DB::raw("IFNULL(ts.issued_qty,0) as issued_qty"),
+                        DB::raw("jt.material_used as material_used"),
+                        DB::raw("jt.material_heat_no as material_heat_no"),
+                        DB::raw("IFNULL(ts.status,0) as status"),
+                        DB::raw("jt.updated_at as updated_at")
+                    ]);
+        return response()->json($data);
 
-        foreach ($data as $key => $dt) {
-            array_push($jo_details, [
-                'qty_per_sheet' => $dt->qty_per_sheet,
-                'iso_code' => $dt->iso_code,
-                'id' => $dt->id,
-                'idJO' => $dt->idJO,
-                'jo_no' => $dt->jo_no,
-                'sc_no' => $dt->sc_no,
-                'product_code' => $dt->product_code,
-                'description' => $dt->description,
-                'back_order_qty' => $dt->back_order_qty,
-                'sched_qty' => $dt->sched_qty,
-                'issued_qty' => $dt->issued_qty,
-                'material_used' => $dt->material_used,
-                'material_heat_no' => $dt->material_heat_no,
-                'status' => $dt->status,
-                'updated_at' => $dt->updated_at
-            ]);
-        }
-
-        $data = DB::table('ppc_jo_travel_sheets as jt')
-            ->leftJoin('ppc_pre_travel_sheets as ts', 'ts.jo_no', '=', 'jt.jo_no')
-            ->leftjoin('ppc_product_codes as pc', 'jt.prod_code', '=', 'pc.product_code')
-            ->leftjoin('admin_assign_production_lines as pl', 'pl.product_line', '=', 'pc.product_type')
-            ->where('pl.user_id', Auth::user()->id)
-            ->where('jt.create_user', '!=', Auth::user()->id)
-            ->whereIn('jt.status', array(0, 1))
-            ->orderBy('jt.jo_no', 'desc')
-            ->groupBy(
-                'jt.id',
-                'ts.id',
-                'ts.qty_per_sheet',
-                'ts.iso_code',
-                'jt.jo_no',
-                'jt.sc_no',
-                'jt.prod_code',
-                'jt.description',
-                'ts.issued_qty',
-                'jt.material_used',
-                'jt.material_heat_no',
-                'ts.status',
-                'jt.updated_at')
-            ->select(
-                DB::raw("jt.id as idJO"),
-                DB::raw("ts.qty_per_sheet as qty_per_sheet"),
-                DB::raw("ts.iso_code as iso_code"),
-                DB::raw("IFNULL(ts.id,'') as id"),
-                DB::raw("jt.jo_no as jo_no"),
-                DB::raw("jt.sc_no as sc_no"),
-                DB::raw("jt.prod_code as product_code"),
-                DB::raw("jt.description as description"),
-                DB::raw("SUM(jt.order_qty) as back_order_qty"),
-                DB::raw("SUM(jt.sched_qty) as sched_qty"),
-                DB::raw("IFNULL(ts.issued_qty,0) as issued_qty"),
-                DB::raw("jt.material_used as material_used"),
-                DB::raw("jt.material_heat_no as material_heat_no"),
-                DB::raw("IFNULL(ts.status,0) as status"),
-                DB::raw("jt.updated_at as updated_at")
-            )->get();
-
-        foreach ($data as $key => $dt) {
-            array_push($jo_details, [
-                'qty_per_sheet' => $dt->qty_per_sheet,
-                'iso_code' => $dt->iso_code,
-                'id' => $dt->id,
-                'idJO' => $dt->idJO,
-                'jo_no' => $dt->jo_no,
-                'sc_no' => $dt->sc_no,
-                'product_code' => $dt->product_code,
-                'description' => $dt->description,
-                'back_order_qty' => $dt->back_order_qty,
-                'sched_qty' => $dt->sched_qty,
-                'issued_qty' => $dt->issued_qty,
-                'material_used' => $dt->material_used,
-                'material_heat_no' => $dt->material_heat_no,
-                'status' => $dt->status,
-                'updated_at' => $dt->updated_at
-            ]);
-        }
-        return response()->json($jo_details);
+        // return DataTables::of($data)
+		// 				->editColumn('idJO', function($data) {
+		// 					return $data->idJO;
+		// 				})
+		// 				->make(true);
     }
 
     public function cancel_TravelSheet(Request $req)

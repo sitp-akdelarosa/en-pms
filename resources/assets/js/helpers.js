@@ -87,6 +87,10 @@ $( function() {
 			.columns.adjust();
 	});
 
+	$('[data-toggle="popover"]').popover({
+		trigger: 'hover'
+	});
+
 	// $('.modal').draggable({
 	// 	handle: ".modal-header"
 	// }); 

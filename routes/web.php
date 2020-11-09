@@ -139,6 +139,10 @@ Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', '
 
 			Route::get('/download-excel-file', 'PPC\Masters\ProductMasterController@downloadExcelFile')
 				->name('masters.product-master.download-excel-file');
+			Route::get('/all-product-lines', 'PPC\Masters\ProductMasterController@getAllProductLines')
+				->name('masters.product-master.all-product-lines');
+			Route::get('/enable-disabled-product', 'PPC\Masters\ProductMasterController@enableDisabledProducts')
+				->name('masters.product-master.enable-disabled-product');
 		});
 
 		Route::group(['prefix' => 'material-master'], function () {

@@ -42,7 +42,7 @@ foreach ($user_accesses as $user_access){
 										<div class="input-group-prepend">
 											<span class="input-group-text">Product Line:</span>
 										</div>
-										<select class="form-control select-validate clear switch" name="prod_type" id="prod_type"></select>
+										<select class="form-control select-validate clear readonly_assembly switch" name="prod_type" id="prod_type"></select>
 										<div id="prod_type_feedback"></div>
 									</div>
 
@@ -50,7 +50,7 @@ foreach ($user_accesses as $user_access){
 										<div class="input-group-prepend">
 											<span class="input-group-text">Character #:</span>
 										</div>
-										<input type="number" class="form-control validate clear switch" name="character_num" id="character_num" min="1" max="16">
+										<input type="number" class="form-control validate clear readonly_assembly switch" name="character_num" id="character_num" min="1" max="16">
 										<div id="character_num_feedback"></div>
 									</div>
 								</div>
@@ -61,7 +61,7 @@ foreach ($user_accesses as $user_access){
 										<div class="input-group-prepend">
 											<span class="input-group-text">Character Code:</span>
 										</div>
-										<input type="text" class="form-control validate clear switch" name="character_code" id="character_code">
+										<input type="text" class="form-control validate clear readonly_assembly switch" name="character_code" id="character_code">
 										<div id="character_code_feedback"></div>
 									</div>
 
@@ -69,7 +69,7 @@ foreach ($user_accesses as $user_access){
 										<div class="input-group-prepend">
 											<span class="input-group-text">Description:</span>
 										</div>
-										<input type="text" class="form-control validate clear switch" name="description" id="description">
+										<input type="text" class="form-control validate clear readonly_assembly switch" name="description" id="description">
 										<div id="description_feedback"></div>
 									</div>
 
@@ -77,23 +77,38 @@ foreach ($user_accesses as $user_access){
 							</div>
 
 							<div class="row justify-content-center">
-								<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3 mb-5">
-									<button type="submit" id="btn_save_assembly" class="btn bg-blue btn-block permission-button">
+								<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3 mb-5" id="div_add">
+									<button type="button" id="btn_add_assembly" class="btn bg-green btn-block permission-button" data-toggle='popover' 
+										data-content='This Button is to add new assembly data.' 
+										data-placement='right'>
 										<i class="fa fa-plus"></i> Add
 									</button>
 								</div>
+								<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3 mb-5" id="div_save">
+									<button type="submit" id="btn_save_assembly" class="btn bg-blue btn-block permission-button" data-toggle='popover' 
+										data-content='This Button is to save this assembly data.' 
+										data-placement='right'>
+										<i class="fa fa-floppy-o"></i> Save
+									</button>
+								</div>
 								<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3 mb-5" id="div_clear">
-									<button type="button" id="btn_clear_assembly" class="btn bg-gray btn-block">
+									<button type="button" id="btn_clear_assembly" class="btn bg-gray btn-block" data-toggle='popover' 
+										data-content='This Button is to clear all input fields.' 
+										data-placement='right'>
 										<i class="fa fa-refresh"></i> Clear
 									</button>
 								</div>
 								<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3 mb-5" id="div_delete">
-									<button type="button" id="btn_delete_assembly" class="btn bg-red btn-block permission-button">
+									<button type="button" id="btn_delete_assembly" class="btn bg-red btn-block permission-button" data-toggle='popover' 
+										data-content='This Button is to delete selected assemblies in the table.' 
+										data-placement='right'>
 										<i class="fa fa-trash"></i> Delete
 									</button>
 								</div>
 								<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3 mb-5" id="div_cancel">
-									<button type="button" id="btn_cancel_assembly" class="btn bg-red btn-block">
+									<button type="button" id="btn_cancel_assembly" class="btn bg-red btn-block" data-toggle='popover' 
+										data-content='This Button is to cancel editing this assembly data.' 
+										data-placement='right'>
 										<i class="fa fa-times"></i> Cancel
 									</button>
 								</div>
@@ -141,7 +156,7 @@ foreach ($user_accesses as $user_access){
 							<div class="input-group-prepend">
 								<span class="input-group-text">Product Line:</span>
 							</div>
-							<select class="form-control select-validatselect-codeselect-codee clear switch" name="product-type" id="product-type"></select>
+							<select class="form-control select-validatselect-codeselect-codee clear switch readonly_code" name="product-type" id="product-type"></select>
 						</div>
 
 						<form action="<?php echo e(url('/masters/product-master/code/product/save')); ?>" id="frm_prod_code">
@@ -153,7 +168,7 @@ foreach ($user_accesses as $user_access){
 								<div class="input-group-prepend">
 									<span class="input-group-text">Product Code:</span>
 								</div>
-								<input type="text" class="form-control validate clear" name="product_code" id="product_code" maxlength="16">
+								<input type="text" class="form-control validate clear readonly_code" name="product_code" id="product_code" maxlength="16">
 								<div id="product_code_feedback"></div>
 							</div>
 
@@ -161,7 +176,7 @@ foreach ($user_accesses as $user_access){
 								<div class="input-group-prepend">
 									<span class="input-group-text">Description:</span>
 								</div>
-								<input type="text" class="form-control validate clear" name="code_description" id="code_description">
+								<input type="text" class="form-control validate clear readonly_code" name="code_description" id="code_description">
 								<div id="code_description_feedback"></div>
 							</div>
 
@@ -171,7 +186,7 @@ foreach ($user_accesses as $user_access){
 										<div class="input-group-prepend">
 											<span class="input-group-text">Alloy:</span>
 										</div>
-										<input type="text" class="form-control clear" name="alloy" id="alloy">
+										<input type="text" class="form-control clear readonly_code" name="alloy" id="alloy">
 									</div>
 								</div>
 
@@ -180,7 +195,7 @@ foreach ($user_accesses as $user_access){
 										<div class="input-group-prepend">
 											<span class="input-group-text">Item:</span>
 										</div>
-										<input type="text" class="form-control clear" name="item" id="item">
+										<input type="text" class="form-control clear readonly_code" name="item" id="item">
 									</div>
 								</div>
 							</div>
@@ -191,7 +206,7 @@ foreach ($user_accesses as $user_access){
 										<div class="input-group-prepend">
 											<span class="input-group-text">Size:</span>
 										</div>
-										<input type="text" class="form-control clear" name="size" id="size">
+										<input type="text" class="form-control clear readonly_code" name="size" id="size">
 									</div>
 								</div>
 
@@ -200,7 +215,7 @@ foreach ($user_accesses as $user_access){
 										<div class="input-group-prepend">
 											<span class="input-group-text">Class:</span>
 										</div>
-										<input type="text" class="form-control clear" name="class" id="class">
+										<input type="text" class="form-control clear readonly_code" name="class" id="class">
 									</div>
 								</div>
 							</div>
@@ -209,26 +224,26 @@ foreach ($user_accesses as $user_access){
 								<div class="input-group-prepend">
 									<span class="input-group-text">Standard Material Used:</span>
 								</div>
-								<input type="text" class="form-control clear" name="standard_material_used" id="standard_material_used" >
+								<input type="text" class="form-control clear readonly_code" name="standard_material_used" id="standard_material_used" >
 							</div>
 
 							<div class="input-group mb-5 input-group-sm">
 								<div class="input-group-prepend">
 									<span class="input-group-text">Crude / Finish Weight:</span>
 								</div>
-								<input type="number" class="form-control clear" name="finish_weight" id="finish_weight" step=".01">
+								<input type="number" class="form-control clear readonly_code" name="finish_weight" id="finish_weight" step=".01">
 							</div>
 
 							<div class="input-group mb-5 input-group-sm">
 								<div class="input-group-prepend">
 									<span class="input-group-text">Cut Weight:</span>
 								</div>
-								<input type="number" class="form-control validate size " name="cut_weight" id="cut_weight" step="any">
+								<input type="number" class="form-control validate size readonly_code " name="cut_weight" id="cut_weight" step="any">
 								<div id="cut_weight_feedback"></div>
-								<select class="form-control select-validate" name="cut_weight_uom" id="cut_weight_uom">
+								<select class="form-control select-validate readonly_code" name="cut_weight_uom" id="cut_weight_uom">
 									<option value="N/A">N/A</option>
-									<option value="KG">kg</option>
-									<option value="LBS">lbs</option>
+									<option value="KGS">KGS</option>
+									<option value="LBS">LBS</option>
 								</select>
 								<div id="cut_weight_uom_feedback"></div>
 							</div>
@@ -237,12 +252,12 @@ foreach ($user_accesses as $user_access){
 								<div class="input-group-prepend">
 									<span class="input-group-text">Cut Length:</span>
 								</div>
-								<input type="number" class="form-control validate size" name="cut_length" id="cut_length" step="any">
+								<input type="number" class="form-control validate size readonly_code" name="cut_length" id="cut_length" step="any">
 								<div id="cut_length_feedback"></div>
-								<select class="form-control select-validate" name="cut_length_uom" id="cut_length_uom">
+								<select class="form-control select-validate readonly_code" name="cut_length_uom" id="cut_length_uom">
 									<option value="N/A">N/A</option>
-									<option value="MM">mm</option>
-									<option value="CM">cm</option>
+									<option value="MM">MM</option>
+									<option value="CM">CM</option>
 									<option value="M">M</option>
 								</select>
 								<div id="cut_length_uom_feedback"></div>
@@ -252,12 +267,12 @@ foreach ($user_accesses as $user_access){
 								<div class="input-group-prepend">
 									<span class="input-group-text">Cut Width:</span>
 								</div>
-								<input type="number" class="form-control validate size" name="cut_width" id="cut_width" step="any">
+								<input type="number" class="form-control validate size readonly_code" name="cut_width" id="cut_width" step="any">
 								<div id="cut_width_feedback"></div>
-								<select class="form-control select-validate" name="cut_width_uom" id="cut_width_uom">
+								<select class="form-control select-validate readonly_code" name="cut_width_uom" id="cut_width_uom">
 									<option value="N/A">N/A</option>
-									<option value="MM">mm</option>
-									<option value="CM">cm</option>
+									<option value="MM">MM</option>
+									<option value="CM">CM</option>
 									<option value="M">M</option>
 								</select>
 								<div id="cut_width_uom_feedback"></div>
@@ -269,14 +284,14 @@ foreach ($user_accesses as $user_access){
 										<div class="input-group-prepend">
 											<span class="input-group-text">1st Code:</span>
 										</div>
-										<select class="form-control select-code" name="first" id="first">
+										<select class="form-control select-code readonly_code" name="first" id="first">
 											<option value=""></option>
 										</select>
 									</div>
 								</div>
 
 								<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 mb-5">
-									<select class="form-control select-code" name="first_val" id="first_val">
+									<select class="form-control select-code readonly_code" name="first_val" id="first_val">
 										<option value=""></option>
 									</select>
 								</div>
@@ -288,14 +303,14 @@ foreach ($user_accesses as $user_access){
 										<div class="input-group-prepend">
 											<span class="input-group-text">2nd Code:</span>
 										</div>
-										<select class="form-control select-code" name="second" id="second">
+										<select class="form-control select-code readonly_code" name="second" id="second">
 											<option value=""></option>
 										</select>
 									</div>
 								</div>
 
 								<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 mb-5">
-									<select class="form-control select-code" name="second_val" id="second_val">
+									<select class="form-control select-code readonly_code" name="second_val" id="second_val">
 										<option value=""></option>
 									</select>
 								</div>
@@ -307,14 +322,14 @@ foreach ($user_accesses as $user_access){
 										<div class="input-group-prepend">
 											<span class="input-group-text">3rd Code:</span>
 										</div>
-										<select class="form-control select-code" name="third" id="third">
+										<select class="form-control select-code readonly_code" name="third" id="third">
 											<option value=""></option>
 										</select>
 									</div>
 								</div>
 
 								<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 mb-5">
-									<select class="form-control select-code" name="third_val" id="third_val">
+									<select class="form-control select-code readonly_code" name="third_val" id="third_val">
 										<option value=""></option>
 									</select>
 								</div>
@@ -326,14 +341,14 @@ foreach ($user_accesses as $user_access){
 										<div class="input-group-prepend">
 											<span class="input-group-text">4th Code:</span>
 										</div>
-										<select class="form-control select-code" name="forth" id="forth">
+										<select class="form-control select-code readonly_code" name="forth" id="forth">
 											<option value=""></option>
 										</select>
 									</div>
 								</div>
 
 								<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 mb-5">
-									<select class="form-control select-code" name="forth_val" id="forth_val">
+									<select class="form-control select-code readonly_code" name="forth_val" id="forth_val">
 										<option value=""></option>
 									</select>
 								</div>
@@ -345,14 +360,14 @@ foreach ($user_accesses as $user_access){
 										<div class="input-group-prepend">
 											<span class="input-group-text">5th Code:</span>
 										</div>
-										<select class="form-control select-code" name="fifth" id="fifth">
+										<select class="form-control select-code readonly_code" name="fifth" id="fifth">
 											<option value=""></option>
 										</select>
 									</div>
 								</div>
 
 								<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 mb-5">
-									<select class="form-control select-code" name="fifth_val" id="fifth_val">
+									<select class="form-control select-code readonly_code" name="fifth_val" id="fifth_val">
 										<option value=""></option>
 									</select>
 								</div>
@@ -364,14 +379,14 @@ foreach ($user_accesses as $user_access){
 										<div class="input-group-prepend">
 											<span class="input-group-text">7th Code:</span>
 										</div>
-										<select class="form-control select-code" name="seventh" id="seventh">
+										<select class="form-control select-code readonly_code" name="seventh" id="seventh">
 											<option value=""></option>
 										</select>
 									</div>
 								</div>
 
 								<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 mb-5">
-									<select class="form-control select-code" name="seventh_val" id="seventh_val">
+									<select class="form-control select-code readonly_code" name="seventh_val" id="seventh_val">
 										<option value=""></option>
 									</select>
 								</div>
@@ -383,14 +398,14 @@ foreach ($user_accesses as $user_access){
 										<div class="input-group-prepend">
 											<span class="input-group-text">8th Code:</span>
 										</div>
-										<select class="form-control select-code" name="eighth" id="eighth">
+										<select class="form-control select-code readonly_code" name="eighth" id="eighth">
 											<option value=""></option>
 										</select>
 									</div>
 								</div>
 
 								<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 mb-5">
-									<select class="form-control select-code" name="eighth_val" id="eighth_val">
+									<select class="form-control select-code readonly_code" name="eighth_val" id="eighth_val">
 										<option value=""></option>
 									</select>
 								</div>
@@ -402,14 +417,14 @@ foreach ($user_accesses as $user_access){
 										<div class="input-group-prepend">
 											<span class="input-group-text">9th Code:</span>
 										</div>
-										<select class="form-control select-code" name="ninth" id="ninth">
+										<select class="form-control select-code readonly_code" name="ninth" id="ninth">
 										<option value=""></option>
 									</select>
 									</div>
 								</div>
 
 								<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 mb-5">
-									<select class="form-control select-code" name="ninth_val" id="ninth_val">
+									<select class="form-control select-code readonly_code" name="ninth_val" id="ninth_val">
 										<option value=""></option>
 									</select>
 								</div>
@@ -421,14 +436,14 @@ foreach ($user_accesses as $user_access){
 										<div class="input-group-prepend">
 											<span class="input-group-text">11th Code:</span>
 										</div>
-										<select class="form-control select-code" name="eleventh" id="eleventh">
+										<select class="form-control select-code readonly_code" name="eleventh" id="eleventh">
 											<option value=""></option>
 										</select>
 									</div>
 								</div>
 
 								<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 mb-5">
-									<select class="form-control select-code" name="eleventh_val" id="eleventh_val">
+									<select class="form-control select-code readonly_code" name="eleventh_val" id="eleventh_val">
 										<option value=""></option>
 									</select>
 								</div>
@@ -440,27 +455,38 @@ foreach ($user_accesses as $user_access){
 										<div class="input-group-prepend">
 											<span class="input-group-text">14th Code:</span>
 										</div>
-										<select class="form-control select-code" name="forteenth" id="forteenth">
+										<select class="form-control select-code readonly_code" name="forteenth" id="forteenth">
 											<option value=""></option>
 										</select>
 									</div>
 								</div>
 
 								<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 mb-5">
-									<select class="form-control select-code" name="forteenth_val" id="forteenth_val">
+									<select class="form-control select-code readonly_code" name="forteenth_val" id="forteenth_val">
 										<option value=""></option>
 									</select>
 								</div>
 							</div>
 
 							<div class="row justify-content-center">
-								<div class="col-lg-3 col-md-4 mb-5">
-									<button type="submit" id="btn_save" class="btn bg-green btn-block permission-button">
+								<div class="col-lg-3 col-md-4 mb-5" id="add_code">
+									<button type="button" id="btn_add_code" class="btn bg-blue btn-block permission-button" data-toggle="popover" 
+											data-content="This Button is to Add another Product Code." 
+											data-placement="right">
+										<i class="fa fa-plus"></i> Add new
+									</button>
+								</div>
+								<div class="col-lg-3 col-md-4 mb-5" id="save_code">
+									<button type="submit" id="btn_save" class="btn bg-green btn-block permission-button" data-toggle="popover" 
+											data-content="This Button is to Save Product Code Details." 
+											data-placement="right">
 										<i class="fa fa-floppy-o"></i> Save
 									</button>
 								</div>
-								<div class="col-lg-3 col-md-4 mb-5">
-									<button type="button" id="btn_cancel" class="btn bg-red btn-block">
+								<div class="col-lg-3 col-md-4 mb-5" id="cancel_code">
+									<button type="button" id="btn_cancel" class="btn bg-red btn-block" data-toggle="popover" 
+											data-content="This Button is to Cancel saving of edit / new Product Codes." 
+											data-placement="right">
 										<i class="fa fa-times"></i> Cancel
 									</button>
 								</div>
@@ -481,6 +507,7 @@ foreach ($user_accesses as $user_access){
 										<th>Product Code</th>
 										<th>Description</th>
 										<th>Date Updated</th>
+										<th></th>
 									</tr>
 								</thead>
 								<tbody id="tbl_product_code_body"></tbody>
@@ -489,25 +516,18 @@ foreach ($user_accesses as $user_access){
 
 						<div class="row justify-content-center">
 							<div class="col-md-3 mb-5">
-								<button type="button" id="btn_delete_product" class="btn bg-red btn-block permission-button">
+								<button type="button" id="btn_delete_product" class="btn bg-red btn-block permission-button"  data-toggle="popover" 
+										data-content="This Button is to delete selected Product Codes." 
+										data-placement="right">
 									<i class="fa fa-trash"></i> Delete Product
 								</button>
 							</div>
 							<div class="col-md-3 mb-5">
-								<button type="button" id="btn_excel_product" class="btn bg-green btn-block">
+								<button type="button" id="btn_excel_product" class="btn bg-green btn-block"  data-toggle="popover" 
+										data-content="This Button is to initialize Excel download." 
+										data-placement="right">
 									<i class="fa fa-file-excel-o"></i> Extract to Excel
 								</button>
-							</div>
-						</div>
-
-						<div class="row justify-content-center">
-							<div class="col-md-12" style="display:none" id="progress">
-								<div class="progress">
-									<div class="progress-bar progress-bar-success progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="00" aria-valuemin="0" aria-valuemax="100" style="width: 00%">
-										<span class="sr-only"></span>
-									</div>
-								</div>
-								<span class="progress-msg">Processing...</span>
 							</div>
 						</div>
 					</div>
@@ -538,6 +558,8 @@ foreach ($user_accesses as $user_access){
 		var getdropdownproduct = "<?php echo e(url('/masters/product-master/get_dropdown_product')); ?>";
 		var getStandardMaterialURL = "<?php echo e(url('/masters/product-master/get-standard-material')); ?>";
 		var downloadExcelFileURL = "<?php echo e(url('/masters/product-master/download-excel-file')); ?>";
+		var AllProductLineURL = "<?php echo e(url('/masters/product-master/all-product-lines')); ?>";
+		var disabledURL = "<?php echo e(url('/masters/product-master/enable-disabled-product')); ?>";
 
 		var getSetURL = "<?php echo e(url('masters/process-master/get-set')); ?>";
 

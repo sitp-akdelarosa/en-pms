@@ -1005,22 +1005,8 @@ function makeJODetailsList(arr) {
       searchable: false,
       orderable: false
     }],
-    // columnDefs: [
-    //     { "width": "5%", "targets": 0 },
-    //     { "width": "5%", "targets": 1 },
-    //     { "width": "7%", "targets": 2 },
-    //     { "width": "20%", "targets": 3 },
-    //     { "width": "8%", "targets": 4 },
-    //     { "width": "15%", "targets": 5 },
-    //     { "width": "7%", "targets": 6 },
-    //     { "width": "21%", "targets": 7 },
-    //     { "width": "6%", "targets": 8 },
-    //     { "width": "6%", "targets": 9 }
-    // ],
     initCompelete: function initCompelete(settings, json) {
       $("#tbl_jo_details").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
-      console.log(settings);
-      console.log(json);
       $('.material_heat_no').select2({
         allowClear: true,
         placeholder: 'Select a Heat No.' // data: data
