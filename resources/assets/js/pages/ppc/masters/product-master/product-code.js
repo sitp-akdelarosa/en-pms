@@ -1225,7 +1225,7 @@ function getProductCodes() {
 							'data-content="This Button is to Disable / Enable '+data.product_code+'" '+
 							'data-placement="right" '+
 							'>' + enable_disable + '</button>';
-				}, name: 'pc.disabled', width: '6.66%' 
+				}, name: 'pc.disabled', orderable: false, searchable: false, width: '6.66%' 
 			},
 		],
 		initComplete: function() {
