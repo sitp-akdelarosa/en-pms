@@ -1,20 +1,9 @@
-var dataColumn = [
-    {data: function(data) {
-    	return '<input type="checkbox" class="table-checkbox check_item" value="'+data.id+'">';
-    }, name: 'id', 'orderable': false, 'searchable': false},
-    {data: 'action', name: 'action', 'orderable': false, 'searchable': false},
-    {data: 'mat_type', name: 'mat_type'},
-    {data: 'character_num', name: 'character_num'},
-    {data: 'character_code', name: 'character_code'},
-    {data: 'description', name: 'description'},
-    {data: 'created_at', name: 'created_at'},
-];
 
 $( function() {
 	$('#div_cancel').hide();
 	get_dropdown_material_type_assembly()
     checkAllCheckboxesInTable('#tbl_matcode_assembly','.check_all','.check_item');
-	getDatatable('tbl_matcode_assembly',assemblyListURL,dataColumn,[],6);
+	assemblyDataTable();
 
 
 	$('body').on('keydown', '.switch', function(e) {
@@ -51,6 +40,7 @@ $( function() {
 
     $('#frm_mat_assembly').on('submit', function(e) {
 		e.preventDefault();
+		$('.loadingOverlay').show();
    		$.ajax({
 			url: $(this).attr('action'),
 			type: 'POST',
@@ -59,14 +49,20 @@ $( function() {
 		}).done(function(data, textStatus, xhr) {
 			if (textStatus == 'success') {
 				msg("Data was successfully saved.","success");
-				getDatatable('tbl_matcode_assembly',assemblyListURL,dataColumn,[],6);
+				assemblyDataTable();
 				new_assembly();
 				showDropdowns($('#mat_type').val())
 				$('#material_type').val($('#mat_type').val());
 			}
 		}).fail(function(xhr, textStatus, errorThrown) {
-			var errors = xhr.responseJSON.errors;
-			showErrors(errors);
+			if (xhr.status == 500) {
+				ErrorMsg(xhr);
+			} else {
+				var errors = xhr.responseJSON.errors;
+				showErrors(errors);
+			}
+		}).always( function() {
+			$('.loadingOverlay').hide();
 		});
 	});
 
@@ -161,4 +157,59 @@ function get_dropdown_material_type_assembly() {
     }).fail(function(xhr, textStatus, errorThrown) {
         msg(errorThrown,textStatus);
     });
+}
+
+function assemblyDataTable() {
+	$('#tbl_matcode_assembly').dataTable().fnClearTable();
+	$('#tbl_matcode_assembly').dataTable().fnDestroy();
+	$('#tbl_matcode_assembly').dataTable({
+		ajax: {
+			url: assemblyListURL,
+			error: function (xhr, textStatus, errorThrown) {
+				ErrorMsg(xhr);
+			}
+		},
+		stateSave: true,
+		processing: true,
+		deferRender: true,
+		language: {
+			aria: {
+				sortAscending: ": activate to sort column ascending",
+				sortDescending: ": activate to sort column descending"
+			},
+			emptyTable: "No data available in table",
+			info: "Showing _START_ to _END_ of _TOTAL_ records",
+			infoEmpty: "No records found",
+			infoFiltered: "(filtered1 from _MAX_ total records)",
+			lengthMenu: "Show _MENU_",
+			search: "Search:",
+			zeroRecords: "No matching records found",
+			paginate: {
+				"previous": "Prev",
+				"next": "Next",
+				"last": "Last",
+				"first": "First"
+			}
+		},
+		order: [[6, 'desc']],
+		columns: [
+			{
+				data: function (data) {
+					return '<input type="checkbox" class="table-checkbox check_item" value="' + data.id + '">';
+				}, name: 'id', 'orderable': false, 'searchable': false
+			},
+			{ data: function(data) {
+				return '<button class="btn btn-sm bg-blue btn_edit_assembly" data-id="'+data.id+'" data-mat_type="'+data.mat_type+'" ' +
+							'data-character_num="'+data.character_num+'" data-character_code="'+data.character_code+'" ' +
+							'data-description="'+data.description+'">'+
+								'<i class="fa fa-edit"></i>' +
+						'</button>';
+			}, name: 'action', 'orderable': false, 'searchable': false },
+			{ data: 'mat_type', name: 'mat_type' },
+			{ data: 'character_num', name: 'character_num' },
+			{ data: 'character_code', name: 'character_code' },
+			{ data: 'description', name: 'description' },
+			{ data: 'updated_at', name: 'updated_at' },
+		]
+	});
 }

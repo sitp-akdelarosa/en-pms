@@ -120,7 +120,7 @@ foreach ($user_accesses as $user_access){
 										<th>Character #</th>
 										<th>Character Code</th>
 										<th>Description</th>
-										<th>Date Created</th>
+										<th>Date Updated</th>
 									</tr>
 								</thead>
 								<tbody id="tbl_prodcode_assembly_body"></tbody>
@@ -482,7 +482,7 @@ foreach ($user_accesses as $user_access){
 										<th>Product Line</th>
 										<th>Product Code</th>
 										<th>Description</th>
-										<th>Date Created</th>
+										<th>Date Updated</th>
 									</tr>
 								</thead>
 								<tbody id="tbl_product_code_body"></tbody>

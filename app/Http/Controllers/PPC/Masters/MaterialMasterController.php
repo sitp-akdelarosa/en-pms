@@ -47,18 +47,13 @@ class MaterialMasterController extends Controller
 							'character_num as character_num',
 							'character_code as character_code',
 							'description as description',
-							'created_at as created_at'
+							'updated_at as updated_at'
 						])
 						->orderBy('id','desc');
 
 		return DataTables::of($assembly)
 						->editColumn('id', function($data) {
 							return $data->id;
-						})
-						->addColumn('action', function($data) {
-							return '<button class="btn btn-sm bg-blue btn_edit_assembly" data-id="'.$data->id.'" data-mat_type="'.$data->mat_type.'" data-character_num="'.$data->character_num.'" data-character_code="'.$data->character_code.'" data-description="'.$data->description.'">
-										<i class="fa fa-edit"></i>
-									</button>';
 						})
 						->make(true);
 	}
@@ -185,52 +180,92 @@ class MaterialMasterController extends Controller
 
 	public function show_dropdowns(Request $req)
 	{
-		$first = PpcMaterialAssembly::select('character_num','character_code','description')
+		$first = PpcMaterialAssembly::select(
+                                        DB::raw("ifnull(character_num,'') as character_num"), 
+                                        DB::raw("ifnull(character_code,'') as character_code"), 
+                                        DB::raw("ifnull(description,'') as description")
+                                    )
 									->where('mat_type',$req->mat_type)
 									->where('character_num',1)
 									->get();
 
-		$second = PpcMaterialAssembly::select('character_num','character_code','description')
+		$second = PpcMaterialAssembly::select(
+                                        DB::raw("ifnull(character_num,'') as character_num"), 
+                                        DB::raw("ifnull(character_code,'') as character_code"), 
+                                        DB::raw("ifnull(description,'') as description")
+                                    )
 									->where('mat_type',$req->mat_type)
 									->where('character_num',2)
 									->get();
 
-		$third = PpcMaterialAssembly::select('character_num','character_code','description')
+		$third = PpcMaterialAssembly::select(
+                                        DB::raw("ifnull(character_num,'') as character_num"), 
+                                        DB::raw("ifnull(character_code,'') as character_code"), 
+                                        DB::raw("ifnull(description,'') as description")
+                                    )
 									->where('mat_type',$req->mat_type)
 									->where('character_num',3)
 									->get();
 
-		$forth = PpcMaterialAssembly::select('character_num','character_code','description')
+		$forth = PpcMaterialAssembly::select(
+                                        DB::raw("ifnull(character_num,'') as character_num"), 
+                                        DB::raw("ifnull(character_code,'') as character_code"), 
+                                        DB::raw("ifnull(description,'') as description")
+                                    )
 									->where('mat_type',$req->mat_type)
 									->where('character_num',4)
 									->get();
 
-		$fifth = PpcMaterialAssembly::select('character_num','character_code','description')
+		$fifth = PpcMaterialAssembly::select(
+                                        DB::raw("ifnull(character_num,'') as character_num"), 
+                                        DB::raw("ifnull(character_code,'') as character_code"), 
+                                        DB::raw("ifnull(description,'') as description")
+                                    )
 									->where('mat_type',$req->mat_type)
 									->where('character_num',5)
 									->get();
 
-		$seventh = PpcMaterialAssembly::select('character_num','character_code','description')
+		$seventh = PpcMaterialAssembly::select(
+                                        DB::raw("ifnull(character_num,'') as character_num"), 
+                                        DB::raw("ifnull(character_code,'') as character_code"), 
+                                        DB::raw("ifnull(description,'') as description")
+                                    )
 									->where('mat_type',$req->mat_type)
 									->where('character_num',7)
 									->get();
 
-		$eighth = PpcMaterialAssembly::select('character_num','character_code','description')
+		$eighth = PpcMaterialAssembly::select(
+                                        DB::raw("ifnull(character_num,'') as character_num"), 
+                                        DB::raw("ifnull(character_code,'') as character_code"), 
+                                        DB::raw("ifnull(description,'') as description")
+                                    )
 									->where('mat_type',$req->mat_type)
 									->where('character_num',8)
 									->get();
 
-		$ninth = PpcMaterialAssembly::select('character_num','character_code','description')
+		$ninth = PpcMaterialAssembly::select(
+                                        DB::raw("ifnull(character_num,'') as character_num"), 
+                                        DB::raw("ifnull(character_code,'') as character_code"), 
+                                        DB::raw("ifnull(description,'') as description")
+                                    )
 									->where('mat_type',$req->mat_type)
 									->where('character_num',9)
 									->get();
 
-		$eleventh = PpcMaterialAssembly::select('character_num','character_code','description')
+		$eleventh = PpcMaterialAssembly::select(
+                                        DB::raw("ifnull(character_num,'') as character_num"), 
+                                        DB::raw("ifnull(character_code,'') as character_code"), 
+                                        DB::raw("ifnull(description,'') as description")
+                                    )
 									->where('mat_type',$req->mat_type)
 									->where('character_num',11)
 									->get();
 
-		$forteenth = PpcMaterialAssembly::select('character_num','character_code','description')
+		$forteenth = PpcMaterialAssembly::select(
+                                        DB::raw("ifnull(character_num,'') as character_num"), 
+                                        DB::raw("ifnull(character_code,'') as character_code"), 
+                                        DB::raw("ifnull(description,'') as description")
+                                    )
 									->where('mat_type',$req->mat_type)
 									->where('character_num',14)
 									->get();
@@ -265,7 +300,7 @@ class MaterialMasterController extends Controller
 							'pmc.schedule as schedule',
 							'pmc.size as size',
 							'pmc.std_weight as std_weight',
-							'pmc.created_at as created_at'
+							'pmc.updated_at as updated_at'
 						])
 						// ->where('apl.user_id' ,Auth::user()->id)
 						->orderBy('pmc.id','desc');
@@ -276,22 +311,6 @@ class MaterialMasterController extends Controller
 						})
 						->editColumn('code_description', function($data) {
 							return $data->code_description;
-						})
-						->addColumn('action', function($data) {
-							return "<button class='btn btn-sm bg-blue btn_edit_material' 
-										data-id='".$data->id."' 
-										data-material_type='".$data->material_type."' 
-										data-material_code='".$data->material_code."' 
-										data-code_description='".$data->code_description."'
-										data-item='".$data->item."'
-										data-alloy='".$data->alloy."'
-										data-schedule='".$data->schedule."'
-										data-size='".$data->size."'
-										data-std_weight='".$data->std_weight."'
-										data-create_user='".$data->create_user."'
-										data-created_at='".$data->created_at."'>
-										<i class='fa fa-edit'></i>
-									</button>";
 						})
 						->make(true);
 	}

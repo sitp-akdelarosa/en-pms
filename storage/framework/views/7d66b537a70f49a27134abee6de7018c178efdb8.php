@@ -21,17 +21,15 @@
     <link rel="shortcut icon" type="image/x-icon" href="<?php echo e(asset('images/favicon.ico')); ?>">
 </head>
 
-<body class="hold-transition skin-blue sidebar-mini">
-    <div id="app" class="wrapper">
-
-        <div class="loadingOverlay"></div>
-        
+<body class="hold-transition skin-blue sidebar-mini wysihtml5-supported">
+    <div id="app" class="wrapper">        
         <?php echo $__env->make('includes.layout.header', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
 
         <?php echo $__env->make('includes.layout.sidebar', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
 
 
         <div class="content-wrapper">
+            <div class="loadingOverlay"></div>
             <?php echo $__env->yieldContent('content'); ?>
         </div>
 

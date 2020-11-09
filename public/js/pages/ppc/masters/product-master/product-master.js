@@ -245,7 +245,7 @@ function getAssemblies() {
 			{ data: 'character_num', width: '14.28%' },
 			{ data: 'character_code', width: '14.28%' },
 			{ data: 'description', width: '22.28%' },
-			{ data: 'created_at', width: '14.28%' }
+			{ data: 'updated_at', width: '14.28%' }
 		],
 		"initComplete": function () {
 			$('.loadingOverlay').hide();
@@ -1402,7 +1402,7 @@ function getProductCodes() {
 						"data-standard_material_used='" + data.standard_material_used + "'" +
 						"data-finish_weight='" + data.finish_weight + "'" +
 						"data-create_user='" + data.create_user + "'" +
-						"data-created_at='" + data.created_at + "'>" +
+						"data-updated_at='" + data.updated_at + "'>" +
 						"<i class='fa fa-edit'></i>" +
 						"</button><button class='btn btn-sm bg-purple btn_assign_process' " +
 						"data-id='" + data.id + "' " +
@@ -1418,7 +1418,7 @@ function getProductCodes() {
 					return '<span="' + data.code_description + '">' + ellipsis(data.code_description, 10) + '<span>';
 				}, width: '39.66%'
 			},
-			{ data: 'created_at', width: '8.66%' },
+			{ data: 'updated_at', width: '8.66%' },
 		]
 	});
 }

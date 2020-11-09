@@ -245,7 +245,7 @@ function getAssemblies() {
 			{ data: 'character_num', width: '14.28%' },
 			{ data: 'character_code', width: '14.28%' },
 			{ data: 'description', width: '22.28%' },
-			{ data: 'created_at', width: '14.28%' }
+			{ data: 'updated_at', width: '14.28%' }
 		],
 		"initComplete": function () {
 			$('.loadingOverlay').hide();

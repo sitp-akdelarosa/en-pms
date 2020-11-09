@@ -56,7 +56,7 @@ class ProductMasterController extends Controller
                 DB::raw('pca.character_num as character_num'),
                 DB::raw('pca.character_code as character_code'),
                 DB::raw('pca.description as description'),
-                DB::raw('pca.created_at as created_at')
+                DB::raw('pca.updated_at as updated_at')
             ])
             ->where('apl.user_id', Auth::user()->id)
             ->groupBy(
@@ -65,7 +65,7 @@ class ProductMasterController extends Controller
                 'pca.character_num',
                 'pca.character_code',
                 'pca.description',
-                'pca.created_at'
+                'pca.updated_at'
             )
             ->orderBy('pca.id', 'desc');
 
@@ -211,55 +211,95 @@ class ProductMasterController extends Controller
 
     public function show_dropdowns(Request $req)
     {
-        $first = PpcProductCodeAssembly::select('character_num', 'character_code', 'description')
-            ->where('prod_type', $req->prod_type)
-            ->where('character_num', 1)
-            ->get();
+        $first = PpcProductCodeAssembly::select(
+                                        DB::raw("ifnull(character_num,'') as character_num"), 
+                                        DB::raw("ifnull(character_code,'') as character_code"), 
+                                        DB::raw("ifnull(description,'') as description")
+                                    )
+                                    ->where('prod_type', $req->prod_type)
+                                    ->where('character_num', 1)
+                                    ->get();
 
-        $second = PpcProductCodeAssembly::select('character_num', 'character_code', 'description')
-            ->where('prod_type', $req->prod_type)
-            ->where('character_num', 2)
-            ->get();
+        $second = PpcProductCodeAssembly::select(
+                                        DB::raw("ifnull(character_num,'') as character_num"), 
+                                        DB::raw("ifnull(character_code,'') as character_code"), 
+                                        DB::raw("ifnull(description,'') as description")
+                                    )
+                                    ->where('prod_type', $req->prod_type)
+                                    ->where('character_num', 2)
+                                    ->get();
 
-        $third = PpcProductCodeAssembly::select('character_num', 'character_code', 'description')
-            ->where('prod_type', $req->prod_type)
-            ->where('character_num', 3)
-            ->get();
+        $third = PpcProductCodeAssembly::select(
+                                        DB::raw("ifnull(character_num,'') as character_num"), 
+                                        DB::raw("ifnull(character_code,'') as character_code"), 
+                                        DB::raw("ifnull(description,'') as description")
+                                    )
+                                    ->where('prod_type', $req->prod_type)
+                                    ->where('character_num', 3)
+                                    ->get();
 
-        $forth = PpcProductCodeAssembly::select('character_num', 'character_code', 'description')
-            ->where('prod_type', $req->prod_type)
-            ->where('character_num', 4)
-            ->get();
+        $forth = PpcProductCodeAssembly::select(
+                                        DB::raw("ifnull(character_num,'') as character_num"), 
+                                        DB::raw("ifnull(character_code,'') as character_code"), 
+                                        DB::raw("ifnull(description,'') as description")
+                                    )
+                                    ->where('prod_type', $req->prod_type)
+                                    ->where('character_num', 4)
+                                    ->get();
 
-        $fifth = PpcProductCodeAssembly::select('character_num', 'character_code', 'description')
-            ->where('prod_type', $req->prod_type)
-            ->where('character_num', 5)
-            ->get();
+        $fifth = PpcProductCodeAssembly::select(
+                                        DB::raw("ifnull(character_num,'') as character_num"), 
+                                        DB::raw("ifnull(character_code,'') as character_code"), 
+                                        DB::raw("ifnull(description,'') as description")
+                                    )
+                                    ->where('prod_type', $req->prod_type)
+                                    ->where('character_num', 5)
+                                    ->get();
 
-        $seventh = PpcProductCodeAssembly::select('character_num', 'character_code', 'description')
-            ->where('prod_type', $req->prod_type)
-            ->where('character_num', 7)
-            ->get();
+        $seventh = PpcProductCodeAssembly::select(
+                                        DB::raw("ifnull(character_num,'') as character_num"), 
+                                        DB::raw("ifnull(character_code,'') as character_code"), 
+                                        DB::raw("ifnull(description,'') as description")
+                                    )
+                                    ->where('prod_type', $req->prod_type)
+                                    ->where('character_num', 7)
+                                    ->get();
 
-        $eighth = PpcProductCodeAssembly::select('character_num', 'character_code', 'description')
-            ->where('prod_type', $req->prod_type)
-            ->where('character_num', 8)
-            ->get();
+        $eighth = PpcProductCodeAssembly::select(
+                                        DB::raw("ifnull(character_num,'') as character_num"), 
+                                        DB::raw("ifnull(character_code,'') as character_code"), 
+                                        DB::raw("ifnull(description,'') as description")
+                                    )
+                                    ->where('prod_type', $req->prod_type)
+                                    ->where('character_num', 8)
+                                    ->get();
 
-        $ninth = PpcProductCodeAssembly::select('character_num', 'character_code', 'description')
-            ->where('prod_type', $req->prod_type)
-            ->where('character_num', 9)
-            ->get();
+        $ninth = PpcProductCodeAssembly::select(
+                                        DB::raw("ifnull(character_num,'') as character_num"), 
+                                        DB::raw("ifnull(character_code,'') as character_code"), 
+                                        DB::raw("ifnull(description,'') as description")
+                                    )
+                                    ->where('prod_type', $req->prod_type)
+                                    ->where('character_num', 9)
+                                    ->get();
 
-        $eleventh = PpcProductCodeAssembly::select('character_num', 'character_code', 'description')
-            ->where('prod_type', $req->prod_type)
-            ->where('character_num', 11)
-            ->get();
+        $eleventh = PpcProductCodeAssembly::select(
+                                        DB::raw("ifnull(character_num,'') as character_num"), 
+                                        DB::raw("ifnull(character_code,'') as character_code"), 
+                                        DB::raw("ifnull(description,'') as description")
+                                    )
+                                    ->where('prod_type', $req->prod_type)
+                                    ->where('character_num', 11)
+                                    ->get();
 
-        $forteenth = PpcProductCodeAssembly::select('character_num', 'character_code', 'description')
-            ->where('prod_type', $req->prod_type)
-            ->where('character_num', 14)
-            ->get();
+        $forteenth = PpcProductCodeAssembly::select(
+                                        DB::raw("ifnull(character_num,'') as character_num"), 
+                                        DB::raw("ifnull(character_code,'') as character_code"), 
+                                        DB::raw("ifnull(description,'') as description")
+                                    )
+                                    ->where('prod_type', $req->prod_type)
+                                    ->where('character_num', 14)
+                                    ->get();
 
         $data = [
             'first' => $first,
@@ -373,7 +413,7 @@ class ProductMasterController extends Controller
                 DB::raw('IFNULL(pc.finish_weight, 0) as finish_weight'),
                 DB::raw('IFNULL(pc.formula_classification, "") as formula_classification'),
                 DB::raw('pc.create_user as create_user'),
-                DB::raw('pc.created_at as created_at')
+                DB::raw('pc.updated_at as updated_at')
             ])->groupBy(
                 'pc.id',
                 'pc.product_type',
@@ -393,7 +433,7 @@ class ProductMasterController extends Controller
                 'pc.finish_weight',
                 'pc.formula_classification',
                 'pc.create_user',
-                'pc.created_at'
+                'pc.updated_at'
             );
          return DataTables::of($product_codes)
 						->editColumn('id', function($data) {

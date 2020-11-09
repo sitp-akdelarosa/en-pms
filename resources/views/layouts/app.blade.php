@@ -21,17 +21,15 @@
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('images/favicon.ico') }}">
 </head>
 
-<body class="hold-transition skin-blue sidebar-mini">
-    <div id="app" class="wrapper">
-
-        <div class="loadingOverlay"></div>
-        
+<body class="hold-transition skin-blue sidebar-mini wysihtml5-supported">
+    <div id="app" class="wrapper">        
         @include('includes.layout.header')
 
         @include('includes.layout.sidebar')
 
 
         <div class="content-wrapper">
+            <div class="loadingOverlay"></div>
             @yield('content')
         </div>
 

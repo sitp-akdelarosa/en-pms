@@ -1,20 +1,9 @@
-var dataColumn = [
-    {data: function(data) {
-    	return '<input type="checkbox" class="table-checkbox check_item" value="'+data.id+'">';
-    }, name: 'id', 'orderable': false, 'searchable': false},
-    {data: 'action', name: 'action', 'orderable': false, 'searchable': false},
-    {data: 'mat_type', name: 'mat_type'},
-    {data: 'character_num', name: 'character_num'},
-    {data: 'character_code', name: 'character_code'},
-    {data: 'description', name: 'description'},
-    {data: 'created_at', name: 'created_at'},
-];
 
 $( function() {
 	$('#div_cancel').hide();
 	get_dropdown_material_type_assembly()
     checkAllCheckboxesInTable('#tbl_matcode_assembly','.check_all','.check_item');
-	getDatatable('tbl_matcode_assembly',assemblyListURL,dataColumn,[],6);
+	assemblyDataTable();
 
 
 	$('body').on('keydown', '.switch', function(e) {
@@ -51,6 +40,7 @@ $( function() {
 
     $('#frm_mat_assembly').on('submit', function(e) {
 		e.preventDefault();
+		$('.loadingOverlay').show();
    		$.ajax({
 			url: $(this).attr('action'),
 			type: 'POST',
@@ -59,14 +49,20 @@ $( function() {
 		}).done(function(data, textStatus, xhr) {
 			if (textStatus == 'success') {
 				msg("Data was successfully saved.","success");
-				getDatatable('tbl_matcode_assembly',assemblyListURL,dataColumn,[],6);
+				assemblyDataTable();
 				new_assembly();
 				showDropdowns($('#mat_type').val())
 				$('#material_type').val($('#mat_type').val());
 			}
 		}).fail(function(xhr, textStatus, errorThrown) {
-			var errors = xhr.responseJSON.errors;
-			showErrors(errors);
+			if (xhr.status == 500) {
+				ErrorMsg(xhr);
+			} else {
+				var errors = xhr.responseJSON.errors;
+				showErrors(errors);
+			}
+		}).always( function() {
+			$('.loadingOverlay').hide();
 		});
 	});
 
@@ -163,19 +159,61 @@ function get_dropdown_material_type_assembly() {
     });
 }
 
-var material_dataColumn = [
-    {data: function(data) {
-    	return '<input type="checkbox" class="table-checkbox check_material_item" value="'+data.id+'">';
-    }, name: 'pmc.id', orderable: false, searchable: false},
-    {data: 'action', name: 'action', orderable: false, searchable: false},
-    {data: 'material_type', name: '.pmc.material_type'},
-    {data: 'material_code', name: 'pmc.material_code'},
-    {data: function(data) {
-    	return '<span title="'+data.code_description+'">'+ellipsis(data.code_description,10)+'</span>';
-    }, name: 'pmc.code_description'},
-    {data: 'create_user', name: 'pmc.create_user'},
-    {data: 'created_at', name: 'pmc.created_at'}
-];
+function assemblyDataTable() {
+	$('#tbl_matcode_assembly').dataTable().fnClearTable();
+	$('#tbl_matcode_assembly').dataTable().fnDestroy();
+	$('#tbl_matcode_assembly').dataTable({
+		ajax: {
+			url: assemblyListURL,
+			error: function (xhr, textStatus, errorThrown) {
+				ErrorMsg(xhr);
+			}
+		},
+		stateSave: true,
+		processing: true,
+		deferRender: true,
+		language: {
+			aria: {
+				sortAscending: ": activate to sort column ascending",
+				sortDescending: ": activate to sort column descending"
+			},
+			emptyTable: "No data available in table",
+			info: "Showing _START_ to _END_ of _TOTAL_ records",
+			infoEmpty: "No records found",
+			infoFiltered: "(filtered1 from _MAX_ total records)",
+			lengthMenu: "Show _MENU_",
+			search: "Search:",
+			zeroRecords: "No matching records found",
+			paginate: {
+				"previous": "Prev",
+				"next": "Next",
+				"last": "Last",
+				"first": "First"
+			}
+		},
+		order: [[6, 'desc']],
+		columns: [
+			{
+				data: function (data) {
+					return '<input type="checkbox" class="table-checkbox check_item" value="' + data.id + '">';
+				}, name: 'id', 'orderable': false, 'searchable': false
+			},
+			{ data: function(data) {
+				return '<button class="btn btn-sm bg-blue btn_edit_assembly" data-id="'+data.id+'" data-mat_type="'+data.mat_type+'" ' +
+							'data-character_num="'+data.character_num+'" data-character_code="'+data.character_code+'" ' +
+							'data-description="'+data.description+'">'+
+								'<i class="fa fa-edit"></i>' +
+						'</button>';
+			}, name: 'action', 'orderable': false, 'searchable': false },
+			{ data: 'mat_type', name: 'mat_type' },
+			{ data: 'character_num', name: 'character_num' },
+			{ data: 'character_code', name: 'character_code' },
+			{ data: 'description', name: 'description' },
+			{ data: 'updated_at', name: 'updated_at' },
+		]
+	});
+}
+
 
 $( function() {
 	get_dropdown_material_type();
@@ -198,7 +236,7 @@ $( function() {
 	});
 
 	checkAllCheckboxesInTable('#tbl_material_code','.check_all_material','.check_material_item');
-	getDatatable('tbl_material_code',matCodeListURL,material_dataColumn,[],6);
+	materialCodesDataTable();
 
 	init();
 
@@ -280,7 +318,7 @@ $( function() {
 		}).done(function(data, textStatus, xhr) {
 			if (data.status == 'success') {
 				msg(data.msg,data.status);
-				getDatatable('tbl_material_code',matCodeListURL,material_dataColumn,[],6);
+				materialCodesDataTable();
 				$('#btn_save').html('<i class="fa fa-floppy-o"></i> Save');
 				clearInputs();
 				clearCode();
@@ -332,6 +370,7 @@ function showDropdowns(mat_type) {
 		dataType: 'JSON',
 		data: {_token: token, mat_type: mat_type}
 	}).done(function(data, textStatus, xhr) {
+		console.log(data);
 		$.each(data, function(i,x) {
 			switch(i) {
 				case 'first':
@@ -614,10 +653,10 @@ function autoAssignSelectBox(code) {
 		var third = jsUcfirst(code.charAt(2));
 		var forth1 = jsUcfirst(code.charAt(3));
 		var forth2 = jsUcfirst(code.charAt(3))+jsUcfirst(code.charAt(4));
-		var fifth = jsUcfirst(code.charAt(4));
+		var fifth = jsUcfirst(code.charAt(3)) + jsUcfirst(code.charAt(4));//jsUcfirst(code.charAt(4));
 
-		var seventh = jsUcfirst(code.charAt(6))+jsUcfirst(code.charAt(7))+jsUcfirst(code.charAt(8));
-
+		var seventh = jsUcfirst(code.charAt(6));//+jsUcfirst(code.charAt(7))+jsUcfirst(code.charAt(8));
+		var eighth = jsUcfirst(code.charAt(7)) + jsUcfirst(code.charAt(8));
 		var eleventh1 = jsUcfirst(code.charAt(10))+jsUcfirst(code.charAt(11))+jsUcfirst(code.charAt(12));
 		var eleventh2 = jsUcfirst(code.charAt(10))+jsUcfirst(code.charAt(11))+jsUcfirst(code.charAt(12))+jsUcfirst(code.charAt(13))+jsUcfirst(code.charAt(14))+jsUcfirst(code.charAt(15));
 		var forteenth = jsUcfirst(code.charAt(13))+jsUcfirst(code.charAt(14))+jsUcfirst(code.charAt(15));
@@ -685,7 +724,17 @@ function autoAssignSelectBox(code) {
 				$('#hide_9th').hide();
 			} else {
 				$('#hide_8th').show();
+				$('#eighth_val').val(eighth);
+				$('#eighth').val(eighth);
+
 				$('#hide_9th').show();
+			}
+		}
+
+		if ($('#eighth_val').val() != null) {
+			var eighth_val = $('#eighth_val').val();
+			if (eighth_val.length == 2) {
+				$('#hide_9th').hide();
 			}
 		}
 		
@@ -753,3 +802,72 @@ function clearInputs() {
 	$('#material_type').val('');
 	$('#material_id').val('');
 }
+
+function materialCodesDataTable() {
+	$('#tbl_material_code').dataTable().fnClearTable();
+	$('#tbl_material_code').dataTable().fnDestroy();
+	$('#tbl_material_code').dataTable({
+		ajax: {
+			url: matCodeListURL,
+			error: function (xhr, textStatus, errorThrown) {
+				ErrorMsg(xhr);
+			}
+		},
+		stateSave: true,
+		processing: true,
+		deferRender: true,
+		language: {
+			aria: {
+				sortAscending: ": activate to sort column ascending",
+				sortDescending: ": activate to sort column descending"
+			},
+			emptyTable: "No data available in table",
+			info: "Showing _START_ to _END_ of _TOTAL_ records",
+			infoEmpty: "No records found",
+			infoFiltered: "(filtered1 from _MAX_ total records)",
+			lengthMenu: "Show _MENU_",
+			search: "Search:",
+			zeroRecords: "No matching records found",
+			paginate: {
+				"previous": "Prev",
+				"next": "Next",
+				"last": "Last",
+				"first": "First"
+			}
+		},
+		order: [[6, 'desc']],
+		columns: [
+			{
+				data: function (data) {
+					return '<input type="checkbox" class="table-checkbox check_material_item" value="' + data.id + '">';
+				}, name: 'pmc.id', orderable: false, searchable: false
+			},
+			{ data: function (data) {
+				return "<button class='btn btn-sm bg-blue btn_edit_material' " +
+							"data-id='"+data.id+"' " +
+							"data-material_type='"+data.material_type+"' " +
+							"data-material_code='"+data.material_code+"' " +
+							"data-code_description='"+data.code_description+"' " +
+							"data-item='"+data.item+"' " +
+							"data-alloy='"+data.alloy+"' " +
+							"data-schedule='"+data.schedule+"' " +
+							"data-size='"+data.size+"' " +
+							"data-std_weight='"+data.std_weight+"' " +
+							"data-create_user='"+data.create_user+"' " +
+							"data-updated_at='"+data.updated_at+"' > " +
+								"<i class='fa fa-edit'></i>"+
+						"</button >";
+			}, name: 'action', orderable: false, searchable: false },
+			{ data: 'material_type', name: '.pmc.material_type' },
+			{ data: 'material_code', name: 'pmc.material_code' },
+			{
+				data: function (data) {
+					return '<span title="' + data.code_description + '">' + ellipsis(data.code_description, 10) + '</span>';
+				}, name: 'pmc.code_description'
+			},
+			{ data: 'create_user', name: 'pmc.create_user' },
+			{ data: 'updated_at', name: 'pmc.updated_at' }
+		]
+	});
+}
+
