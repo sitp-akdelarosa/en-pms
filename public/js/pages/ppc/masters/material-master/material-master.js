@@ -1,10 +1,6 @@
 
 $( function() {
-	$('#div_cancel').hide();
-	get_dropdown_material_type_assembly()
-    checkAllCheckboxesInTable('#tbl_matcode_assembly','.check_all','.check_item');
-	assemblyDataTable();
-
+	init();
 
 	$('body').on('keydown', '.switch', function(e) {
 		var self = $(this)
@@ -50,7 +46,7 @@ $( function() {
 			if (textStatus == 'success') {
 				msg("Data was successfully saved.","success");
 				assemblyDataTable();
-				new_assembly();
+				view_assembly();
 				showDropdowns($('#mat_type').val())
 				$('#material_type').val($('#mat_type').val());
 			}
@@ -87,39 +83,131 @@ $( function() {
     $('#btn_delete_assembly').on('click', function(e) {
 		delete_assembly('.check_item',assemblyDeleteURL);
 	});
+
+	$('#btn_add_assembly').on('click', function() {
+		if ($('#assembly_id').val() !== '') {
+			$('#div_add').hide();
+			$('#div_save').show();
+			$('#div_clear').hide();
+			$('#div_cancel').show();
+			$('#div_delete').hide();
+
+			$('.readonly_assembly').prop('disabled', false);
+			$('#tbl_matcode_assembly .dt-checkboxes').prop('disabled', true);
+			$('#tbl_matcode_assembly .dt-checkboxes-select-all').prop('disabled', true);
+			$('#tbl_matcode_assembly .dt-checkboxes-select-all input[type=checkbox]').prop('disabled', true);
+			$('.btn_edit_assembly').prop('disabled', true);
+		} else {
+			new_assembly();
+		}
+	});
+
+	$('#tbl_matcode_assembly .dt-checkboxes-select-all').on('click', function() {
+		if ($('#tbl_matcode_assembly .dt-checkboxes-select-all .table-checkbox').is(':checked')) {
+			$('.btn_edit_assembly').prop('disabled', true);
+		} else {
+			$('.btn_edit_assembly').prop('disabled', false);
+		}
+	});
+
+	$('#tbl_matcode_assembly').on('change', '.table-checkbox',function() {
+		if ($(this).is(':checked')) {
+			$('.btn_edit_assembly').prop('disabled', true);
+		} else {
+			$('.btn_edit_assembly').prop('disabled', false);
+		}
+	});
+
+	$('#tbl_matcode_assembly_body').on('click', 'td:first-child',function() {
+		if ($('#tbl_matcode_assembly_body .dt-checkboxes').is(':checked')) {
+			$('.btn_edit_assembly').prop('disabled', false);
+		} else {
+			$('.btn_edit_assembly').prop('disabled', true);
+		}
+	});
+
+	$('#tbl_matcode_assembly_body').on('change', '.dt-checkboxes',function() {
+		if ($(this).is(':checked')) {
+			$('.btn_edit_assembly').prop('disabled', true);
+		} else {
+			$('.btn_edit_assembly').prop('disabled', false);
+		}
+	});
 });
+
+function init() {
+	check_permission(code_permission, function(output) {
+		if (output == 1) {}
+		view_assembly();
+		get_dropdown_material_type_assembly()
+		checkAllCheckboxesInTable('#tbl_matcode_assembly','.check_all','.check_item');
+		assemblyDataTable();
+	});
+}
+
+function view_assembly() {
+	$('#btn_add_assembly').html("<i class='fa fa-plus'></i> Add");
+	$('#btn_add_assembly').removeClass('bg-blue');
+	$('#btn_add_assembly').addClass('bg-green');
+
+	$('#div_add').show();
+	$('#div_save').hide();
+	$('#div_cancel').hide();
+	$('#div_clear').hide();
+	$('#div_delete').show();
+
+	$('.readonly_assembly').prop('disabled', true);
+	$('#tbl_matcode_assembly .dt-checkboxes').prop('disabled', false);
+	$('#tbl_matcode_assembly .dt-checkboxes-select-all').prop('disabled', false);
+	$('.btn_edit_assembly').prop('disabled', false);
+	$('#tbl_matcode_assembly .dt-checkboxes-select-all input[type=checkbox]').prop('disabled', false);
+}
 
 function new_assembly() {
 	$('#assembly_id').val('');
+
 	$('#btn_save_assembly').html("<i class='fa fa-floppy-o'></i> Save");
 	$('#btn_save_assembly').removeClass('bg-green');
 	$('#btn_save_assembly').addClass('bg-blue');
 
-	$('#div_cancel').hide();
-
+	$('#div_add').hide();
+	$('#div_save').show();
 	$('#div_clear').show();
-	$('#div_delete').show();
+	$('#div_delete').hide();
+	$('#div_cancel').show();
+
+	$('.readonly_assembly').prop('disabled', false);
+	$('#tbl_matcode_assembly .dt-checkboxes').prop('disabled', true);
+	$('#tbl_matcode_assembly .dt-checkboxes-select-all').prop('disabled', true);
+	$('#tbl_matcode_assembly .dt-checkboxes-select-all input[type=checkbox]').prop('disabled', true);
+	$('.btn_edit_assembly').prop('disabled', true);
 }
 
 function update_assembly() {
 	$('#btn_save_assembly').html("<i class='fa fa-check'></i> Update");
 	$('#btn_save_assembly').removeClass('bg-blue');
-	$('#btn_save_assembly').addClass('bg-green');
+	$('#btn_save_assembly').addClass('bg-navy');
+
+	$('#btn_add_assembly').html("<i class='fa fa-edit'></i> Edit");
+	$('#btn_add_assembly').removeClass('bg-green');
+	$('#btn_add_assembly').addClass('bg-blue');
+
+	$('#div_save').hide();
+	$('#div_add').show();
 	$('#div_clear').hide();
 	$('#div_delete').hide();
-
 	$('#div_cancel').show();
+
+	$('.readonly_assembly').prop('disabled', true);
+	$('#tbl_matcode_assembly .dt-checkboxes').prop('disabled', true);
+	$('#tbl_matcode_assembly .dt-checkboxes-select-all').prop('disabled', true);
+
+	$('#tbl_matcode_assembly .dt-checkboxes-select-all input[type=checkbox]').prop('disabled', true);
 }
 
 function cancel_assembly() {
 	clear();
-	$('#btn_save_assembly').html("<i class='fa fa-floppy-o'></i> Save");
-	$('#btn_save_assembly').removeClass('bg-green');
-	$('#btn_save_assembly').addClass('bg-blue');
-	$('#div_cancel').hide();
-
-	$('#div_clear').show();
-	$('#div_delete').show();
+	view_assembly();
 }
 
 function clear() {
@@ -128,17 +216,53 @@ function clear() {
 
 function delete_assembly(checkboxClass,deleteURL) {
 	var chkArray = [];
-	$(checkboxClass+":checked").each(function() {
-		chkArray.push($(this).val());
-	});
+	var table = $('#tbl_matcode_assembly').DataTable();
+
+	for (var x = 0; x < table.context[0].aoData.length; x++) {
+		var DataRow = table.context[0].aoData[x];
+		if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
+			var checkbox = table.context[0].aoData[x].anCells[0].firstChild;
+			chkArray.push($(checkbox).attr('data-id'))
+		}
+	}
 
 	if (chkArray.length > 0) {
-		confirm_delete(chkArray,token,deleteURL,true,'tbl_matcode_assembly',assemblyListURL,dataColumn);
+		swal({
+			title: "Are you sure?",
+			text: "You will not be able to recover your data!",
+			type: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#f95454",
+			confirmButtonText: "Yes",
+			cancelButtonText: "No",
+			closeOnConfirm: true,
+			closeOnCancel: false
+		}, function(isConfirm){
+			if (isConfirm) {
+				$('.loadingOverlay').show();
+				$.ajax({
+					url: deleteURL,
+					type: 'POST',
+					dataType: 'JSON',
+					data: {
+						_token:token,
+						id: chkArray
+					},
+				}).done(function(data, textStatus, xhr) {
+					msg(data.msg,data.status);
+					assemblyDataTable();
+				}).fail(function(xhr, textStatus, errorThrown) {
+					$('.loadingOverlay').hide();
+					ErrorMsg(xhr);
+				});
+			} else {
+				$('#tbl_matcode_assembly .dt-checkboxes-select-all').click();
+				swal("Cancelled", "Your data is safe and not deleted.");
+			}
+		});
 	} else {
 		msg("Please select at least 1 item." , "failed");
 	}
-
-	$('.check_all').prop('checked',false);
 }
 
 function get_dropdown_material_type_assembly() {
@@ -155,7 +279,7 @@ function get_dropdown_material_type_assembly() {
             $('#mat_type').append(opt);
         });
     }).fail(function(xhr, textStatus, errorThrown) {
-        msg(errorThrown,textStatus);
+        ErrorMsg(xhr);
     });
 }
 
@@ -170,6 +294,7 @@ function assemblyDataTable() {
 			}
 		},
 		stateSave: true,
+		serverSide: true,
 		processing: true,
 		deferRender: true,
 		language: {
@@ -191,31 +316,62 @@ function assemblyDataTable() {
 				"first": "First"
 			}
 		},
+		columnDefs: [
+			{
+				targets: 0,
+				checkboxes: {
+					selectRow: true
+				}
+			}
+		],
+		select: {
+			selector: 'td:not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)):not(:nth-child(5)):not(:nth-child(6)):not(:nth-child(7))',
+			style: 'multi'
+		},
 		order: [[6, 'desc']],
 		columns: [
 			{
 				data: function (data) {
-					return '<input type="checkbox" class="table-checkbox check_item" value="' + data.id + '">';
+					return data.id//'<input type="checkbox" class="table-checkbox check_item" value="' + data.id + '">';
 				}, name: 'id', 'orderable': false, 'searchable': false
 			},
-			{ data: function(data) {
-				return '<button class="btn btn-sm bg-blue btn_edit_assembly" data-id="'+data.id+'" data-mat_type="'+data.mat_type+'" ' +
-							'data-character_num="'+data.character_num+'" data-character_code="'+data.character_code+'" ' +
-							'data-description="'+data.description+'">'+
-								'<i class="fa fa-edit"></i>' +
-						'</button>';
-			}, name: 'action', 'orderable': false, 'searchable': false },
+			{ data: 'action', name: 'action', 'orderable': false, 'searchable': false },
 			{ data: 'mat_type', name: 'mat_type' },
 			{ data: 'character_num', name: 'character_num' },
 			{ data: 'character_code', name: 'character_code' },
 			{ data: 'description', name: 'description' },
 			{ data: 'updated_at', name: 'updated_at' },
-		]
+		],
+		initComplete: function () {
+			$('.loadingOverlay').hide();
+			$('.btn_edit_assembly').popover({
+				trigger: 'hover focus'
+			});
+			$('#tbl_matcode_assembly .dt-checkboxes-select-all input[type=checkbox]').addClass('table-checkbox');
+		},
+		fnDrawCallback: function () {
+		},
+		createdRow: function (row, data, dataIndex) {
+			var dataRow = $(row);
+			var checkbox = $(dataRow[0].cells[0].firstChild);
+
+			checkbox.attr('data-id', data.id);
+			checkbox.addClass('table-checkbox check_item');
+		},
 	});
 }
 
 
 $( function() {
+	$('#add_code').show();
+	$('#save_code').hide();
+	$('#cancel_code').hide();
+	$('#clear_code').hide();
+	$('.readonly_code').prop('disabled', true);
+
+	$('#tbl_material_code .dt-checkboxes-select-all input[type=checkbox]').prop('disabled', false);
+	$('#tbl_material_code .dt-checkboxes').prop('disabled', false);
+
 	get_dropdown_material_type();
 	
 	$('#material_code').prop('readonly', true);
@@ -237,8 +393,6 @@ $( function() {
 
 	checkAllCheckboxesInTable('#tbl_material_code','.check_all_material','.check_material_item');
 	materialCodesDataTable();
-
-	init();
 
 	$('#material-type').on('change', function(e) {
 		e.preventDefault();
@@ -306,6 +460,12 @@ $( function() {
 		$('#schedule').prop('readonly',false);
 		$('#size').prop('readonly',false);
 		$('#std_weight').prop('readonly', false);
+
+		$('#tbl_material_code .dt-checkboxes-select-all input[type=checkbox]').prop('disabled', true);
+		$('#tbl_material_code .dt-checkboxes').prop('disabled', true);
+
+		$('#btn_add_code').html('<i class="fa fa-pencil"></i> Edit');
+		$('#clear_code').show();
 	});
 
 	$('#frm_mat_code').on('submit', function(e) {
@@ -338,9 +498,20 @@ $( function() {
 	$('#btn_cancel').on('click', function() {
 		clearCode();
 		showDropdowns();
+
+		$('#add_code').show();
+		$('#save_code').hide();
+		$('#cancel_code').hide();
+
+		$('.readonly_code').prop('disabled', true);
+
 		$('#btn_save').html('<i class="fa fa-floppy-o"></i> Save');
+		$('#btn_add_code').html('<i class="fa fa-plus"></i> Add New');
 		$('#material_code').prop('readonly', true);
 		$('#code_description').prop('readonly', true);
+
+		$('#tbl_material_code .dt-checkboxes-select-all input[type=checkbox]').prop('disabled', false);
+		$('#tbl_material_code .dt-checkboxes').prop('disabled', false);
 	});
 
 	$('#material_code').on('keyup', function() {
@@ -355,15 +526,87 @@ $( function() {
 		$('#code_description').val('');
 		showDescription();
 	});
+
+	$('#btn_add_code').on('click', function() {
+		$('#add_code').hide();
+		$('#clear_code').hide();
+		$('#save_code').show();
+		$('#cancel_code').show();
+
+		$('#tbl_material_code .dt-checkboxes-select-all input[type=checkbox]').prop('disabled', true);
+		$('#tbl_material_code .dt-checkboxes').prop('disabled', true);
+
+		$('.readonly_code').prop('disabled', false);
+	});
+
+	$('#btn_clear_code').on('click', function() {
+		$('#btn_add_code').html('<i class="fa fa-plus"></i> Add New');
+		$('#add_code').show();
+		$('#save_code').hide();
+		$('#cancel_code').hide();
+		$('#clear_code').hide();
+		$('#btn_save').html('<i class="fa fa-floppy-o"></i> Save');
+
+		$('#tbl_material_code .dt-checkboxes-select-all input[type=checkbox]').prop('disabled', false);
+		$('#tbl_material_code .dt-checkboxes').prop('disabled', false);
+
+		clearCode();
+	});
+
+	$('#tbl_material_code .dt-checkboxes-select-all').on('click', function() {
+		if ($('#tbl_material_code .dt-checkboxes-select-all input[type=checkbox]').is(':checked')) {
+			$('.btn_edit_material').prop('disabled', true);
+			$('#tbl_material_code_body .btn_enable_disable').prop('disabled', true);
+		} else {
+			$('.btn_edit_material').prop('disabled', false);
+			$('#tbl_material_code_body .btn_enable_disable').prop('disabled', false);
+		}
+	});
+
+	$('#tbl_material_code_body').on('click', 'td:first-child',function() {
+		if ($('#tbl_material_code_body .dt-checkboxes').is(':checked')) {
+			$('.btn_edit_material').prop('disabled', false);
+			$('#tbl_material_code_body .btn_enable_disable').prop('disabled', false);
+		} else {
+			$('.btn_edit_material').prop('disabled', true);
+			$('#tbl_material_code_body .btn_enable_disable').prop('disabled', true);
+		}
+
+	});
+
+	$('#tbl_material_code_body').on('change', '.dt-checkboxes',function() {
+		if ($(this).is(':checked')) {
+			$('.btn_edit_material').prop('disabled', true);
+			$('#tbl_material_code_body .btn_enable_disable').prop('disabled', true);
+		} else {
+			$('.btn_edit_material').prop('disabled', false);
+			$('#tbl_material_code_body .btn_enable_disable').prop('disabled', false);
+		}
+	});
+
+	$('#tbl_material_code').on('click', '.btn_enable_disable',function() {
+		$('.loadingOverlay').show();
+		$.ajax({
+			url: disabledURL,
+			type: 'GET',
+			dataType: 'JSON',
+			data: {
+				_token: token,
+				id: $(this).attr('data-id'),
+				disabled: $(this).attr('data-disabled')
+			}
+		}).done(function (data, textStatus, xhr) {
+			materialCodesDataTable();
+		}).fail(function (xhr, textStatus, errorThrown) {
+			ErrorMsg(xhr);
+		}).always( function() {
+			$('.loadingOverlay').hide();
+		});
+	});
 });
 
-function init() {
-	check_permission(code_permission, function(output) {
-		if (output == 1) {}
-	});
-}
-
 function showDropdowns(mat_type) {
+	$('.loadingOverlay').show();
 	$.ajax({
 		url: showDropdownURL,
 		type: 'GET',
@@ -537,7 +780,9 @@ function showDropdowns(mat_type) {
 		});
 		autoAssignSelectBox($('#material_code').val());
 	}).fail(function(xhr, textStatus, errorThrown) {
-		msg(errorThrown,textStatus);
+		ErrorMsg(xhr);
+	}).always( function() {
+		$('.loadingOverlay').hide();
 	});
 }
 
@@ -677,6 +922,13 @@ function autoAssignSelectBox(code) {
 				$('#hide_4th').show();
 				if ($('#forth_val').val() != null) {
 					$('#fifth_val').val(fifth);
+					
+					console.log($('#fifth_val').val());
+
+					if ($('#fifth_val').val() == null) {
+						fifth = jsUcfirst(code.charAt(4));
+						$('#fifth_val').val(fifth);
+					}
 					$('#fifth').val(fifth);
 					$('#hide_5th').show();
 				}else{
@@ -695,6 +947,14 @@ function autoAssignSelectBox(code) {
 				$('#hide_4th').show();
 				if ($('#forth_val').val() != null) {
 					$('#fifth_val').val(fifth);
+
+					console.log($('#fifth_val').val());
+
+					if ($('#fifth_val').val() == null) {
+						fifth = jsUcfirst(code.charAt(4));
+						$('#fifth_val').val(fifth);
+					}
+
 					$('#fifth').val(fifth);
 					$('#hide_5th').show();
 				}else{
@@ -706,6 +966,14 @@ function autoAssignSelectBox(code) {
 			else{
 				$('#hide_5th').show();
 				$('#fifth_val').val(fifth);
+
+				console.log($('#fifth_val').val());
+
+				if ($('#fifth_val').val() == null) {
+					fifth = jsUcfirst(code.charAt(4));
+					$('#fifth_val').val(fifth);
+				}
+
 				$('#fifth').val(fifth);
 				$('#second_val').val(second3);
 				$('#second').val(second3);
@@ -715,6 +983,10 @@ function autoAssignSelectBox(code) {
 
 		
 		$('#seventh_val').val(seventh);
+		if ($('#seventh_val').val() == null) {
+			seventh = jsUcfirst(code.charAt(6))+jsUcfirst(code.charAt(7))+jsUcfirst(code.charAt(8));
+			$('#seventh_val').val(seventh);
+		}
 		$('#seventh').val(seventh);
 
 		if ($('#seventh_val').val() != null) {
@@ -767,7 +1039,7 @@ function get_dropdown_material_type() {
             $('#material-type').append(opt);
         });
     }).fail(function(xhr, textStatus, errorThrown) {
-        msg(errorThrown,textStatus);
+        ErrorMsg(xhr);
     });
 }
 
@@ -814,6 +1086,7 @@ function materialCodesDataTable() {
 			}
 		},
 		stateSave: true,
+		serverSide: true,
 		processing: true,
 		deferRender: true,
 		language: {
@@ -835,39 +1108,80 @@ function materialCodesDataTable() {
 				"first": "First"
 			}
 		},
+		columnDefs: [
+			{
+				targets: 0,
+				checkboxes: {
+					selectRow: true
+				}
+			}
+		],
+		select: {
+			selector: 'td:not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)):not(:nth-child(5)):not(:nth-child(6)):not(:nth-child(7)):not(:nth-child(8))',
+			style: 'multi'
+		},
 		order: [[6, 'desc']],
 		columns: [
 			{
 				data: function (data) {
-					return '<input type="checkbox" class="table-checkbox check_material_item" value="' + data.id + '">';
-				}, name: 'pmc.id', orderable: false, searchable: false
+					return data.id//'<input type="checkbox" class="table-checkbox check_material_item" value="' + data.id + '">';
+				}, name: 'pmc.id', orderable: false, searchable: false, width: '3.5%'
 			},
-			{ data: function (data) {
-				return "<button class='btn btn-sm bg-blue btn_edit_material' " +
-							"data-id='"+data.id+"' " +
-							"data-material_type='"+data.material_type+"' " +
-							"data-material_code='"+data.material_code+"' " +
-							"data-code_description='"+data.code_description+"' " +
-							"data-item='"+data.item+"' " +
-							"data-alloy='"+data.alloy+"' " +
-							"data-schedule='"+data.schedule+"' " +
-							"data-size='"+data.size+"' " +
-							"data-std_weight='"+data.std_weight+"' " +
-							"data-create_user='"+data.create_user+"' " +
-							"data-updated_at='"+data.updated_at+"' > " +
-								"<i class='fa fa-edit'></i>"+
-						"</button >";
-			}, name: 'action', orderable: false, searchable: false },
-			{ data: 'material_type', name: '.pmc.material_type' },
-			{ data: 'material_code', name: 'pmc.material_code' },
+			{ data: 'action', name: 'action', orderable: false, searchable: false, width: '3.5%' },
+			{ data: 'material_type', name: '.pmc.material_type',width: '18.5%' },
+			{ data: 'material_code', name: 'pmc.material_code',width: '19.5%' },
+			{ data: 'code_description', name: 'pmc.code_description', width: '25.5%' },
+			{ data: 'create_user', name: 'pmc.create_user',width: '12.5%' },
+			{ data: 'updated_at', name: 'pmc.updated_at',width: '13.5%' },
 			{
 				data: function (data) {
-					return '<span title="' + data.code_description + '">' + ellipsis(data.code_description, 10) + '</span>';
-				}, name: 'pmc.code_description'
+					var enable_disable;
+					var bg_color = "";
+					if (data.disabled == 0) {
+						enable_disable = "<i class='fa fa-ban'></i>";
+						bg_color = "btn-danger";
+					} else {
+						enable_disable = "<i class='fa fa-toggle-on'></i>";
+						bg_color = "btn-primary";
+					}
+					return '<button type="button" class="btn ' + bg_color + ' btn_enable_disable" data-id="' + data.id + '" '+
+							'data-disabled="' + data.disabled+'" '+
+							'data-toggle="popover" '+
+							'data-content="This Button is to Disable / Enable '+data.product_code+'" '+
+							'data-placement="right" '+
+							'>' + enable_disable + '</button>';
+				}, name: 'pc.disabled', orderable: false, searchable: false, width: '3.5%' 
 			},
-			{ data: 'create_user', name: 'pmc.create_user' },
-			{ data: 'updated_at', name: 'pmc.updated_at' }
-		]
+		],
+
+		initComplete: function() {
+			// $('.btn_edit_product').popover({
+			// 	trigger: 'hover focus'
+			// });
+
+			// $('.btn_assign_process').popover({
+			// 	trigger: 'hover focus'
+			// });
+
+			// $('.btn_enable_disable').popover({
+			// 	trigger: 'hover focus'
+			// });
+			
+			$('#tbl_material_code .dt-checkboxes-select-all input[type=checkbox]').addClass('table-checkbox');
+		},
+		fnDrawCallback: function() {
+		},
+		createdRow: function (row, data, dataIndex) {
+			if (data.disabled == 1) {
+				$(row).css('background-color', '#ff6266');
+				$(row).css('color', '#fff');
+			}
+			var dataRow = $(row);
+			var checkbox = $(dataRow[0].cells[0].firstChild);
+
+			checkbox.attr('data-id', data.id);
+			checkbox.addClass('table-checkbox check_material_item');
+		},
 	});
 }
 

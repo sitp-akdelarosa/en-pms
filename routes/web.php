@@ -164,6 +164,8 @@ Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', '
 				->name('masters.material-master.destroy-code');
 			Route::get('/get_dropdown_material_type', 'PPC\Masters\MaterialMasterController@get_dropdown_material_type')
 				->name('masters.material-master.get_dropdown_material_type');
+			Route::get('/enable-disabled-material', 'PPC\Masters\MaterialMasterController@enableDisabledProducts')
+				->name('masters.material-master.enable-disabled-material');
 		});
 
 		Route::group(['prefix' => 'process-master'], function () {

@@ -1,5 +1,14 @@
 
 $( function() {
+	$('#add_code').show();
+	$('#save_code').hide();
+	$('#cancel_code').hide();
+	$('#clear_code').hide();
+	$('.readonly_code').prop('disabled', true);
+
+	$('#tbl_material_code .dt-checkboxes-select-all input[type=checkbox]').prop('disabled', false);
+	$('#tbl_material_code .dt-checkboxes').prop('disabled', false);
+
 	get_dropdown_material_type();
 	
 	$('#material_code').prop('readonly', true);
@@ -21,8 +30,6 @@ $( function() {
 
 	checkAllCheckboxesInTable('#tbl_material_code','.check_all_material','.check_material_item');
 	materialCodesDataTable();
-
-	init();
 
 	$('#material-type').on('change', function(e) {
 		e.preventDefault();
@@ -90,6 +97,12 @@ $( function() {
 		$('#schedule').prop('readonly',false);
 		$('#size').prop('readonly',false);
 		$('#std_weight').prop('readonly', false);
+
+		$('#tbl_material_code .dt-checkboxes-select-all input[type=checkbox]').prop('disabled', true);
+		$('#tbl_material_code .dt-checkboxes').prop('disabled', true);
+
+		$('#btn_add_code').html('<i class="fa fa-pencil"></i> Edit');
+		$('#clear_code').show();
 	});
 
 	$('#frm_mat_code').on('submit', function(e) {
@@ -122,9 +135,20 @@ $( function() {
 	$('#btn_cancel').on('click', function() {
 		clearCode();
 		showDropdowns();
+
+		$('#add_code').show();
+		$('#save_code').hide();
+		$('#cancel_code').hide();
+
+		$('.readonly_code').prop('disabled', true);
+
 		$('#btn_save').html('<i class="fa fa-floppy-o"></i> Save');
+		$('#btn_add_code').html('<i class="fa fa-plus"></i> Add New');
 		$('#material_code').prop('readonly', true);
 		$('#code_description').prop('readonly', true);
+
+		$('#tbl_material_code .dt-checkboxes-select-all input[type=checkbox]').prop('disabled', false);
+		$('#tbl_material_code .dt-checkboxes').prop('disabled', false);
 	});
 
 	$('#material_code').on('keyup', function() {
@@ -139,15 +163,87 @@ $( function() {
 		$('#code_description').val('');
 		showDescription();
 	});
+
+	$('#btn_add_code').on('click', function() {
+		$('#add_code').hide();
+		$('#clear_code').hide();
+		$('#save_code').show();
+		$('#cancel_code').show();
+
+		$('#tbl_material_code .dt-checkboxes-select-all input[type=checkbox]').prop('disabled', true);
+		$('#tbl_material_code .dt-checkboxes').prop('disabled', true);
+
+		$('.readonly_code').prop('disabled', false);
+	});
+
+	$('#btn_clear_code').on('click', function() {
+		$('#btn_add_code').html('<i class="fa fa-plus"></i> Add New');
+		$('#add_code').show();
+		$('#save_code').hide();
+		$('#cancel_code').hide();
+		$('#clear_code').hide();
+		$('#btn_save').html('<i class="fa fa-floppy-o"></i> Save');
+
+		$('#tbl_material_code .dt-checkboxes-select-all input[type=checkbox]').prop('disabled', false);
+		$('#tbl_material_code .dt-checkboxes').prop('disabled', false);
+
+		clearCode();
+	});
+
+	$('#tbl_material_code .dt-checkboxes-select-all').on('click', function() {
+		if ($('#tbl_material_code .dt-checkboxes-select-all input[type=checkbox]').is(':checked')) {
+			$('.btn_edit_material').prop('disabled', true);
+			$('#tbl_material_code_body .btn_enable_disable').prop('disabled', true);
+		} else {
+			$('.btn_edit_material').prop('disabled', false);
+			$('#tbl_material_code_body .btn_enable_disable').prop('disabled', false);
+		}
+	});
+
+	$('#tbl_material_code_body').on('click', 'td:first-child',function() {
+		if ($('#tbl_material_code_body .dt-checkboxes').is(':checked')) {
+			$('.btn_edit_material').prop('disabled', false);
+			$('#tbl_material_code_body .btn_enable_disable').prop('disabled', false);
+		} else {
+			$('.btn_edit_material').prop('disabled', true);
+			$('#tbl_material_code_body .btn_enable_disable').prop('disabled', true);
+		}
+
+	});
+
+	$('#tbl_material_code_body').on('change', '.dt-checkboxes',function() {
+		if ($(this).is(':checked')) {
+			$('.btn_edit_material').prop('disabled', true);
+			$('#tbl_material_code_body .btn_enable_disable').prop('disabled', true);
+		} else {
+			$('.btn_edit_material').prop('disabled', false);
+			$('#tbl_material_code_body .btn_enable_disable').prop('disabled', false);
+		}
+	});
+
+	$('#tbl_material_code').on('click', '.btn_enable_disable',function() {
+		$('.loadingOverlay').show();
+		$.ajax({
+			url: disabledURL,
+			type: 'GET',
+			dataType: 'JSON',
+			data: {
+				_token: token,
+				id: $(this).attr('data-id'),
+				disabled: $(this).attr('data-disabled')
+			}
+		}).done(function (data, textStatus, xhr) {
+			materialCodesDataTable();
+		}).fail(function (xhr, textStatus, errorThrown) {
+			ErrorMsg(xhr);
+		}).always( function() {
+			$('.loadingOverlay').hide();
+		});
+	});
 });
 
-function init() {
-	check_permission(code_permission, function(output) {
-		if (output == 1) {}
-	});
-}
-
 function showDropdowns(mat_type) {
+	$('.loadingOverlay').show();
 	$.ajax({
 		url: showDropdownURL,
 		type: 'GET',
@@ -321,7 +417,9 @@ function showDropdowns(mat_type) {
 		});
 		autoAssignSelectBox($('#material_code').val());
 	}).fail(function(xhr, textStatus, errorThrown) {
-		msg(errorThrown,textStatus);
+		ErrorMsg(xhr);
+	}).always( function() {
+		$('.loadingOverlay').hide();
 	});
 }
 
@@ -461,6 +559,13 @@ function autoAssignSelectBox(code) {
 				$('#hide_4th').show();
 				if ($('#forth_val').val() != null) {
 					$('#fifth_val').val(fifth);
+					
+					console.log($('#fifth_val').val());
+
+					if ($('#fifth_val').val() == null) {
+						fifth = jsUcfirst(code.charAt(4));
+						$('#fifth_val').val(fifth);
+					}
 					$('#fifth').val(fifth);
 					$('#hide_5th').show();
 				}else{
@@ -479,6 +584,14 @@ function autoAssignSelectBox(code) {
 				$('#hide_4th').show();
 				if ($('#forth_val').val() != null) {
 					$('#fifth_val').val(fifth);
+
+					console.log($('#fifth_val').val());
+
+					if ($('#fifth_val').val() == null) {
+						fifth = jsUcfirst(code.charAt(4));
+						$('#fifth_val').val(fifth);
+					}
+
 					$('#fifth').val(fifth);
 					$('#hide_5th').show();
 				}else{
@@ -490,6 +603,14 @@ function autoAssignSelectBox(code) {
 			else{
 				$('#hide_5th').show();
 				$('#fifth_val').val(fifth);
+
+				console.log($('#fifth_val').val());
+
+				if ($('#fifth_val').val() == null) {
+					fifth = jsUcfirst(code.charAt(4));
+					$('#fifth_val').val(fifth);
+				}
+
 				$('#fifth').val(fifth);
 				$('#second_val').val(second3);
 				$('#second').val(second3);
@@ -499,6 +620,10 @@ function autoAssignSelectBox(code) {
 
 		
 		$('#seventh_val').val(seventh);
+		if ($('#seventh_val').val() == null) {
+			seventh = jsUcfirst(code.charAt(6))+jsUcfirst(code.charAt(7))+jsUcfirst(code.charAt(8));
+			$('#seventh_val').val(seventh);
+		}
 		$('#seventh').val(seventh);
 
 		if ($('#seventh_val').val() != null) {
@@ -551,7 +676,7 @@ function get_dropdown_material_type() {
             $('#material-type').append(opt);
         });
     }).fail(function(xhr, textStatus, errorThrown) {
-        msg(errorThrown,textStatus);
+        ErrorMsg(xhr);
     });
 }
 
@@ -598,6 +723,7 @@ function materialCodesDataTable() {
 			}
 		},
 		stateSave: true,
+		serverSide: true,
 		processing: true,
 		deferRender: true,
 		language: {
@@ -619,39 +745,80 @@ function materialCodesDataTable() {
 				"first": "First"
 			}
 		},
+		columnDefs: [
+			{
+				targets: 0,
+				checkboxes: {
+					selectRow: true
+				}
+			}
+		],
+		select: {
+			selector: 'td:not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)):not(:nth-child(5)):not(:nth-child(6)):not(:nth-child(7)):not(:nth-child(8))',
+			style: 'multi'
+		},
 		order: [[6, 'desc']],
 		columns: [
 			{
 				data: function (data) {
-					return '<input type="checkbox" class="table-checkbox check_material_item" value="' + data.id + '">';
-				}, name: 'pmc.id', orderable: false, searchable: false
+					return data.id//'<input type="checkbox" class="table-checkbox check_material_item" value="' + data.id + '">';
+				}, name: 'pmc.id', orderable: false, searchable: false, width: '3.5%'
 			},
-			{ data: function (data) {
-				return "<button class='btn btn-sm bg-blue btn_edit_material' " +
-							"data-id='"+data.id+"' " +
-							"data-material_type='"+data.material_type+"' " +
-							"data-material_code='"+data.material_code+"' " +
-							"data-code_description='"+data.code_description+"' " +
-							"data-item='"+data.item+"' " +
-							"data-alloy='"+data.alloy+"' " +
-							"data-schedule='"+data.schedule+"' " +
-							"data-size='"+data.size+"' " +
-							"data-std_weight='"+data.std_weight+"' " +
-							"data-create_user='"+data.create_user+"' " +
-							"data-updated_at='"+data.updated_at+"' > " +
-								"<i class='fa fa-edit'></i>"+
-						"</button >";
-			}, name: 'action', orderable: false, searchable: false },
-			{ data: 'material_type', name: '.pmc.material_type' },
-			{ data: 'material_code', name: 'pmc.material_code' },
+			{ data: 'action', name: 'action', orderable: false, searchable: false, width: '3.5%' },
+			{ data: 'material_type', name: '.pmc.material_type',width: '18.5%' },
+			{ data: 'material_code', name: 'pmc.material_code',width: '19.5%' },
+			{ data: 'code_description', name: 'pmc.code_description', width: '25.5%' },
+			{ data: 'create_user', name: 'pmc.create_user',width: '12.5%' },
+			{ data: 'updated_at', name: 'pmc.updated_at',width: '13.5%' },
 			{
 				data: function (data) {
-					return '<span title="' + data.code_description + '">' + ellipsis(data.code_description, 10) + '</span>';
-				}, name: 'pmc.code_description'
+					var enable_disable;
+					var bg_color = "";
+					if (data.disabled == 0) {
+						enable_disable = "<i class='fa fa-ban'></i>";
+						bg_color = "btn-danger";
+					} else {
+						enable_disable = "<i class='fa fa-toggle-on'></i>";
+						bg_color = "btn-primary";
+					}
+					return '<button type="button" class="btn ' + bg_color + ' btn_enable_disable" data-id="' + data.id + '" '+
+							'data-disabled="' + data.disabled+'" '+
+							'data-toggle="popover" '+
+							'data-content="This Button is to Disable / Enable '+data.product_code+'" '+
+							'data-placement="right" '+
+							'>' + enable_disable + '</button>';
+				}, name: 'pc.disabled', orderable: false, searchable: false, width: '3.5%' 
 			},
-			{ data: 'create_user', name: 'pmc.create_user' },
-			{ data: 'updated_at', name: 'pmc.updated_at' }
-		]
+		],
+
+		initComplete: function() {
+			// $('.btn_edit_product').popover({
+			// 	trigger: 'hover focus'
+			// });
+
+			// $('.btn_assign_process').popover({
+			// 	trigger: 'hover focus'
+			// });
+
+			// $('.btn_enable_disable').popover({
+			// 	trigger: 'hover focus'
+			// });
+			
+			$('#tbl_material_code .dt-checkboxes-select-all input[type=checkbox]').addClass('table-checkbox');
+		},
+		fnDrawCallback: function() {
+		},
+		createdRow: function (row, data, dataIndex) {
+			if (data.disabled == 1) {
+				$(row).css('background-color', '#ff6266');
+				$(row).css('color', '#fff');
+			}
+			var dataRow = $(row);
+			var checkbox = $(dataRow[0].cells[0].firstChild);
+
+			checkbox.attr('data-id', data.id);
+			checkbox.addClass('table-checkbox check_material_item');
+		},
 	});
 }
 

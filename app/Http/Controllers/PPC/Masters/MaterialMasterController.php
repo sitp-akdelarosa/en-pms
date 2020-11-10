@@ -24,8 +24,6 @@ class MaterialMasterController extends Controller
 
 	public function __construct()
 	{
-		// $this->middleware('ajax-session-expired');
-		// $this->middleware('auth');
 		$this->_helper = new HelpersController;
 		$this->_audit = new AuditTrailController;
 
@@ -42,18 +40,25 @@ class MaterialMasterController extends Controller
 	{   
 		$assembly = DB::table('ppc_material_assemblies')
 						->select([
-							'id as id',
-							'mat_type as mat_type',
-							'character_num as character_num',
-							'character_code as character_code',
-							'description as description',
-							'updated_at as updated_at'
+							DB::raw('id as id'),
+							DB::raw('mat_type as mat_type'),
+							DB::raw('character_num as character_num'),
+							DB::raw('character_code as character_code'),
+							DB::raw('description as description'),
+							DB::raw('updated_at as updated_at')
 						])
 						->orderBy('id','desc');
 
 		return DataTables::of($assembly)
 						->editColumn('id', function($data) {
 							return $data->id;
+						})
+						->addColumn('action', function($data) {
+							return "<button class='btn btn-sm bg-blue btn_edit_assembly' data-id='".$data->id."' data-mat_type='".$data->mat_type."'
+										data-character_num='".$data->character_num."' data-character_code='".$data->character_code."'
+										data-description='".$data->description."'>
+											<i class='fa fa-edit'></i>
+									</button>";
 						})
 						->make(true);
 	}
@@ -65,7 +70,7 @@ class MaterialMasterController extends Controller
 			'mat_type' => 'required',
 			'character_num' => 'required',
 			'character_code' => 'required|max:20',
-			'description' => 'required|max:50',
+			// 'description' => 'required|max:50',
 		]);
 
 		$error = ['errors' => [
@@ -290,17 +295,18 @@ class MaterialMasterController extends Controller
 						// ->leftjoin('admin_assign_material_types as apl', 'apl.material_type', '=', 'pmc.material_type')
 						->leftjoin('users as u','u.id','pmc.create_user')
 						->select([
-							'pmc.id as id',
-							'pmc.material_type as material_type',
-							'pmc.material_code as material_code',
-							'pmc.code_description as code_description',
-							'u.nickname as create_user',
-							'pmc.item as item',
-							'pmc.alloy as alloy',
-							'pmc.schedule as schedule',
-							'pmc.size as size',
-							'pmc.std_weight as std_weight',
-							'pmc.updated_at as updated_at'
+							DB::raw('pmc.id as id'),
+							DB::raw('pmc.material_type as material_type'),
+							DB::raw('pmc.material_code as material_code'),
+							DB::raw('pmc.code_description as code_description'),
+							DB::raw('u.nickname as create_user'),
+							DB::raw('pmc.item as item'),
+							DB::raw('pmc.alloy as alloy'),
+							DB::raw('pmc.schedule as schedule'),
+							DB::raw('pmc.size as size'),
+							DB::raw('pmc.std_weight as std_weight'),
+							DB::raw('pmc.updated_at as updated_at'),
+							DB::raw('pmc.disabled as disabled')
 						])
 						// ->where('apl.user_id' ,Auth::user()->id)
 						->orderBy('pmc.id','desc');
@@ -309,8 +315,22 @@ class MaterialMasterController extends Controller
 						->editColumn('id', function($data) {
 							return $data->id;
 						})
-						->editColumn('code_description', function($data) {
-							return $data->code_description;
+						->addColumn('action', function($data) {
+							return "<button class='btn btn-sm bg-blue btn_edit_material'
+										data-id='".$data->id."'
+										data-material_type='".$data->material_type."'
+										data-material_code='".$data->material_code."'
+										data-code_description='".$data->code_description."'
+										data-item='".$data->item."'
+										data-alloy='".$data->alloy."'
+										data-schedule='".$data->schedule."'
+										data-size='".$data->size."'
+										data-std_weight='".$data->std_weight."'
+										data-create_user='".$data->create_user."'
+										data-disabled='".$data->disabled."'
+										data-updated_at='".$data->updated_at."'>
+											<i class='fa fa-edit'></i>
+									</button >";
 						})
 						->make(true);
 	}
@@ -486,5 +506,44 @@ class MaterialMasterController extends Controller
 					->groupBy('pdt.dropdown_item')
 					->get();
 		return response()->json($process);
+	}
+
+	public function enableDisabledProducts(Request $req)
+	{
+		$data = [
+            'msg' => 'Disabling / Enabling Product code has failed.',
+            'status' => 'failed'
+        ];
+
+        $updated = 0;
+
+        if ($req->disabled == 0) {
+            // to disabled
+            $updated = DB::table('ppc_material_codes')
+                            ->where('id',$req->id)
+                            ->update([
+								'disabled' => 1,
+								'updated_at' => date('Y-m-d H:i:s'),
+								'update_user' => Auth::user()->id
+							]);
+        } else {
+            // tioenable
+            $updated = DB::table('ppc_material_codes')
+                            ->where('id',$req->id)
+                            ->update([
+								'disabled' => 0,
+								'updated_at' => date('Y-m-d H:i:s'),
+								'update_user' => Auth::user()->id
+							]);
+        }
+
+        if ($updated) {
+            $data = [
+                'msg' => 'Disabling / Enabling Material code has successfully done.',
+                'status' => 'success'
+            ];
+        }
+
+        return response()->json($data);
 	}
 }

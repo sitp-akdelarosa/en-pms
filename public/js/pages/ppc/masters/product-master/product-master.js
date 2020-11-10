@@ -139,7 +139,7 @@ $( function() {
 			if (textStatus == 'success') {
 				msg("Data was successfully saved.","success");
 				getAssemblies();
-				new_assembly();
+				view_assembly();
 			}
 		}).fail(function(xhr, textStatus, errorThrown) {
 			if (xhr.status == 422) {
@@ -201,7 +201,16 @@ $( function() {
 		}
 	});
 
-	$('#tbl_prodcode_assembly_body').on('click', '.dt-checkboxes',function() {
+	$('#tbl_prodcode_assembly_body').on('click', 'td:first-child',function() {
+		if ($('#tbl_prodcode_assembly_body .dt-checkboxes').is(':checked')) {
+			$('.btn_edit_assembly').prop('disabled', false);
+		} else {
+			$('.btn_edit_assembly').prop('disabled', true);
+		}
+	});
+	
+
+	$('#tbl_prodcode_assembly_body').on('change', '.dt-checkboxes',function() {
 		if ($(this).is(':checked')) {
 			$('.btn_edit_assembly').prop('disabled', true);
 		} else {
@@ -303,10 +312,6 @@ function delete_assembly(checkboxClass,deleteURL) {
 
 	console.log(chkArray);
 
-	// $(checkboxClass+":checked").each(function() {
-	// 	chkArray.push($(this).val());
-	// });
-
 	if (chkArray.length > 0) {
 		swal({
 			title: "Are you sure?",
@@ -344,8 +349,6 @@ function delete_assembly(checkboxClass,deleteURL) {
 	} else {
 		msg("Please select at least 1 item." , "failed");
 	}
-
-	$('.check_all').prop('checked',false);
 }
 
 function get_dropdown_product_assembly() {
@@ -430,7 +433,7 @@ function getAssemblies() {
 				trigger: 'hover focus'
 			});
 
-			$('#tbl_prodcode_assembly .dt-checkboxes').addClass('table-checkbox check_item');
+			$('#tbl_prodcode_assembly .dt-checkboxes-select-all input[type=checkbox]').addClass('table-checkbox');
 		},
 		fnDrawCallback: function () {
 		},
@@ -439,6 +442,7 @@ function getAssemblies() {
 			var checkbox = $(dataRow[0].cells[0].firstChild);
 
 			checkbox.attr('data-id', data.id);
+			checkbox.addClass('table-checkbox check_item');
 		},
 	});
 }
@@ -910,6 +914,7 @@ $( function() {
 	});
 
 	$('#tbl_product_code').on('click', '.btn_enable_disable',function() {
+		$('.loadingOverlay').show();
 		$.ajax({
 			url: disabledURL,
 			type: 'GET',
@@ -923,6 +928,8 @@ $( function() {
 			getProductCodes();
 		}).fail(function (xhr, textStatus, errorThrown) {
 			ErrorMsg(xhr);
+		}).always( function() {
+			$('.loadingOverlay').hide();
 		});
 	});
 
@@ -1026,6 +1033,7 @@ $( function() {
 		$('#add_code').hide();
 		$('#save_code').show();
 		$('#cancel_code').show();
+		$('#clear_code').hide();
 
 		$('.readonly_code').prop('disabled', false);
 	});
@@ -1044,19 +1052,35 @@ $( function() {
 		if ($('#tbl_product_code .dt-checkboxes-select-all input[type=checkbox]').is(':checked')) {
 			$('.btn_edit_product').prop('disabled', true);
 			$('.btn_assign_process').prop('disabled', true);
+			$('#tbl_product_code_body .btn_enable_disable').prop('disabled', true);
 		} else {
 			$('.btn_edit_product').prop('disabled', false);
 			$('.btn_assign_process').prop('disabled', false);
+			$('#tbl_product_code_body .btn_enable_disable').prop('disabled', false);
 		}
 	});
 
-	$('#tbl_product_code_body').on('click', '.dt-checkboxes',function() {
+	$('#tbl_product_code_body').on('click', 'td:first-child',function() {
+		if ($('#tbl_product_code_body .dt-checkboxes').is(':checked')) {
+			$('.btn_edit_product').prop('disabled', false);
+			$('.btn_assign_process').prop('disabled', false);
+			$('#tbl_product_code_body .btn_enable_disable').prop('disabled', false);
+		} else {
+			$('.btn_edit_product').prop('disabled', true);
+			$('.btn_assign_process').prop('disabled', true);
+			$('#tbl_product_code_body .btn_enable_disable').prop('disabled', true);
+		}
+	});
+
+	$('#tbl_product_code_body').on('change', '.dt-checkboxes',function() {
 		if ($(this).is(':checked')) {
 			$('.btn_edit_product').prop('disabled', true);
 			$('.btn_assign_process').prop('disabled', true);
+			$('#tbl_product_code_body .btn_enable_disable').prop('disabled', true);
 		} else {
 			$('.btn_edit_product').prop('disabled', false);
 			$('.btn_assign_process').prop('disabled', false);
+			$('#tbl_product_code_body .btn_enable_disable').prop('disabled', false);
 		}
 	});
 });
@@ -1823,7 +1847,8 @@ function getProductCodes() {
 			$('.btn_enable_disable').popover({
 				trigger: 'hover focus'
 			});
-			$('#tbl_product_code .dt-checkboxes').addClass('table-checkbox check_product_item');
+
+			$('#tbl_product_code .dt-checkboxes-select-all input[type=checkbox]').addClass('table-checkbox');
 		},
 		fnDrawCallback: function() {
 		},
@@ -1836,6 +1861,7 @@ function getProductCodes() {
 			var checkbox = $(dataRow[0].cells[0].firstChild);
 
 			checkbox.attr('data-id', data.id);
+			checkbox.addClass('table-checkbox check_product_item');
 		},
 		
 	});

@@ -1063,12 +1063,20 @@ class ProductMasterController extends Controller
             // to disabled
             $updated = DB::table('ppc_product_codes')
                             ->where('id',$req->id)
-                            ->update(['disabled' => 1]);
+                            ->update([
+                                'disabled' => 1,
+                                'updated_at' => date('Y-m-d H:i:s'),
+								'update_user' => Auth::user()->id
+                            ]);
         } else {
             // tioenable
             $updated = DB::table('ppc_product_codes')
                             ->where('id',$req->id)
-                            ->update(['disabled' => 0]);
+                            ->update([
+                                'disabled' => 0,
+                                'updated_at' => date('Y-m-d H:i:s'),
+								'update_user' => Auth::user()->id
+                            ]);
         }
 
         if ($updated) {
