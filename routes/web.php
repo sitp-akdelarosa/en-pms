@@ -166,6 +166,10 @@ Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', '
 				->name('masters.material-master.get_dropdown_material_type');
 			Route::get('/enable-disabled-material', 'PPC\Masters\MaterialMasterController@enableDisabledProducts')
 				->name('masters.material-master.enable-disabled-material');
+			Route::get('/download-excel-file', 'PPC\Masters\MaterialMasterController@downloadExcelFile')
+				->name('masters.material-master.download-excel-file');
+			Route::get('/all-material-types', 'PPC\Masters\MaterialMasterController@getAllMaterialTypes')
+				->name('masters.material-master.all-material-types');
 		});
 
 		Route::group(['prefix' => 'process-master'], function () {

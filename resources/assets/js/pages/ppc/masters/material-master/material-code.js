@@ -1,5 +1,9 @@
 
 $( function() {
+	$(document).on('shown.bs.modal', function () {
+		getAllMaterialType();
+	});
+
 	$('#add_code').show();
 	$('#save_code').hide();
 	$('#cancel_code').hide();
@@ -240,7 +244,107 @@ $( function() {
 			$('.loadingOverlay').hide();
 		});
 	});
+
+	$('#btn_excel_material').on('click', function() {
+		$('#modal_download_excel').modal('show');
+	});
+
+	$('#btn_download_excel').on('click', function() {
+		var page_url = downloadExcelFileURL;
+		var param = '?_token=' + token + '&&mat_types=' + $('#mat_types').val();
+		var percentage = 10;
+
+		$('#progress').show();
+		$('.progress-bar').css('width', '10%');
+		$('.progress-bar').attr('aria-valuenow', percentage);
+
+		var req = new XMLHttpRequest();
+
+		req.open("GET", page_url + param, true);
+
+		setTimer(percentage);
+
+		req.addEventListener("progress", function (evt) {
+			if (evt.lengthComputable) {
+				var percentComplete = evt.loaded / evt.total;
+				console.log(percentComplete);
+			}
+		}, false);
+
+		req.responseType = "blob";
+		req.onreadystatechange = function () {
+			if (req.readyState == 2 && req.status == 200) {
+				stopTimer();
+				$('.progress-msg').html("Download is being started");
+			}
+			else if (req.readyState == 3) {
+				$('.progress-msg').html("Download is under progress");
+				$('.progress-bar').css('width', '80%');
+				$('.progress-bar').attr('aria-valuenow', 80);
+			}
+			else if (req.readyState === 4 && req.status === 200) {
+
+				$('.progress-bar').css('width', '100%');
+				$('.progress-bar').attr('aria-valuenow', 100);
+
+				$('.progress-msg').html("Downloaing has finished");
+
+				percentage = 100;
+
+				var disposition = req.getResponseHeader('content-disposition');
+				var matches = /"([^"]*)"/.exec(disposition);
+				var filename = (matches != null && matches[1] ? matches[1] : 'Product_Master.xlsx');
+
+				// var filename = $(that).data('filename');
+				if (typeof window.chrome !== 'undefined') {
+					// Chrome version
+					var link = document.createElement('a');
+					link.href = window.URL.createObjectURL(req.response);
+					link.download = filename;
+					link.click();
+					if (percentage == 100) {
+						$('#progress').hide();
+					}
+				} else if (typeof window.navigator.msSaveBlob !== 'undefined') {
+					// IE version
+					var blob = new Blob([req.response], { type: 'application/force-download' });
+					window.navigator.msSaveBlob(blob, filename);
+					if (percentage == 100) {
+						$('#progress').hide();
+					}
+				} else {
+					// Firefox version
+					var file = new File([req.response], filename, { type: 'application/force-download' });
+					window.open(URL.createObjectURL(file));
+					if (percentage == 100) {
+						$('#progress').hide();
+					}
+				}
+			}
+			else if (req.stastus == 500) {
+				console.log(req);
+			}
+		};
+		req.send();
+	});
 });
+
+var timer;
+
+function setTimer(percentage) {
+	percentage = 20;
+	timer = setInterval(function () {
+		console.log(percentage);
+		$('.progress-bar').css('width', percentage.toString() + '%');
+		$('.progress-bar').attr('aria-valuenow', percentage);
+		$('.progress-msg').html("Please wait.. Retrieving data.");
+		percentage = percentage + 5;
+	}, 100000);
+}
+
+function stopTimer() {
+	clearInterval(timer);
+}
 
 function showDropdowns(mat_type) {
 	$('.loadingOverlay').show();
@@ -819,6 +923,27 @@ function materialCodesDataTable() {
 			checkbox.attr('data-id', data.id);
 			checkbox.addClass('table-checkbox check_material_item');
 		},
+	});
+}
+
+function getAllMaterialType() {
+	$('.loadingOverlay-modal').show();
+	$.ajax({
+		url: AllMaterialTypeURL,
+		type: 'GET',
+		dataType: 'JSON',
+		data: { _token: token },
+	}).done(function (data, textStatus, xhr) {
+		$('#mat_types').select2({
+			allowClear: true,
+			placeholder: 'Select Material Types',
+			data: data
+		}).val(data).trigger('change.select2');
+
+	}).fail(function (xhr, textStatus, errorThrown) {
+		ErrorMsg(xhr);
+	}).always(function () {
+		$('.loadingOverlay-modal').hide();
 	});
 }
 

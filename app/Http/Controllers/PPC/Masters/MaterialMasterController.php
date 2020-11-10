@@ -14,6 +14,7 @@ use App\PpcUpdateInventory;
 use App\NotRegisteredMaterial;
 use DataTables;
 use DB;
+use Excel;
 
 
 class MaterialMasterController extends Controller
@@ -546,4 +547,176 @@ class MaterialMasterController extends Controller
 
         return response()->json($data);
 	}
+
+	public function downloadExcelFile(Request $req)
+	{
+		$data = [];
+        $mat_types = explode(',',$req->mat_types);
+        $query = DB::table('ppc_material_codes as pmc')
+						->leftjoin('users as u','u.id','pmc.create_user')
+						->select([
+							DB::raw('pmc.id as id'),
+							DB::raw('pmc.material_type as material_type'),
+							DB::raw('pmc.material_code as material_code'),
+							DB::raw('pmc.code_description as code_description'),
+							DB::raw('u.nickname as create_user'),
+							DB::raw('pmc.item as item'),
+							DB::raw('pmc.alloy as alloy'),
+							DB::raw('pmc.schedule as schedule'),
+							DB::raw('pmc.size as size'),
+							DB::raw('pmc.std_weight as std_weight'),
+							DB::raw('pmc.updated_at as updated_at'),
+							DB::raw('pmc.disabled as disabled')
+						])
+						->orderBy('pmc.id','desc');
+
+        if (!is_null($req->mat_types)) {
+            $query->whereIn('pmc.material_type',$mat_types);
+        }
+
+        $data = $query->orderBy('pmc.id','asc')->get();
+
+        $date = date('Ymd');
+
+        Excel::create('MaterialMasters_'.$date, function($excel) use($data)
+        {
+            $excel->sheet('Materials', function($sheet) use($data)
+            {
+                $sheet->setHeight(4, 20);
+                $sheet->mergeCells('A2:M2');
+                $sheet->cells('A2:M2', function($cells) {
+                    $cells->setAlignment('center');
+                    $cells->setFont([
+                        'family'     => 'Calibri',
+                        'size'       => '14',
+                        'bold'       =>  true,
+                        'underline'  =>  true
+                    ]);
+                });
+                $sheet->cell('A2',"Material Masters");
+
+                $sheet->setHeight(6, 15);
+                $sheet->cells('A4:M4', function($cells) {
+                    $cells->setFont([
+                        'family'     => 'Calibri',
+                        'size'       => '11',
+                        'bold'       =>  true,
+                    ]);
+                });
+
+                $sheet->cell('A4', function($cell) {
+                    $cell->setValue("MATERIAL TYPE");
+                    $cell->setBorder('thin','thin','thin','thin');
+                });
+            
+                $sheet->cell('B4', function($cell) {
+                    $cell->setValue("MATERIAL CODE");
+                    $cell->setBorder('thin','thin','thin','thin');
+                });
+
+                $sheet->cell('C4', function($cell) {
+                    $cell->setValue("DESCRIPTION");
+                    $cell->setBorder('thin','thin','thin','thin');
+                });
+
+                $sheet->cell('D4', function($cell) {
+                    $cell->setValue("ITEM");
+                    $cell->setBorder('thin','thin','thin','thin');
+                });
+
+                $sheet->cell('E4', function($cell) {
+                    $cell->setValue("ALLOY");
+                    $cell->setBorder('thin','thin','thin','thin');
+                });
+
+                $sheet->cell('F4', function($cell) {
+                    $cell->setValue("SCHEDULE");
+                    $cell->setBorder('thin','thin','thin','thin');
+                });
+
+                $sheet->cell('G4', function($cell) {
+                    $cell->setValue("SIZE");
+                    $cell->setBorder('thin','thin','thin','thin');
+                });
+
+                $sheet->cell('H4', function($cell) {
+                    $cell->setValue("STD. WEIGHT");
+                    $cell->setBorder('thin','thin','thin','thin');
+                });
+
+                $sheet->cell('I4', function($cell) {
+                    $cell->setValue("UPDATED BY");
+                    $cell->setBorder('thin','thin','thin','thin');
+                });
+
+                $sheet->cell('J4', function($cell) {
+                    $cell->setValue("DATE UPDATED");
+                    $cell->setBorder('thin','thin','thin','thin');
+                });
+
+                $row = 5;
+
+                foreach ($data as $key => $dt) {
+                    $sheet->setHeight($row, 15);
+
+                    $sheet->cell('A'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->material_type);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('B'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->material_code);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('c'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->code_description);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('D'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->item);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('E'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->alloy);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('F'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->schedule);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('G'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->size);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('H'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->std_weight);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('I'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->create_user);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('J'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->updated_at);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    
+                    $row++;
+                }
+            });
+        })->download('xlsx');
+	}
+
+	public function getAllMaterialTypes()
+	{
+		$data = DB::table('ppc_dropdown_items')
+                    ->whereIn('dropdown_name_id',[8]) // material types
+                    ->select(
+                        DB::raw("dropdown_item as id"),
+                        DB::raw("dropdown_item as text")
+                    )
+                    ->orderby('dropdown_item','ASC')->get();
+
+        return response()->json($data);
+	}
+
 }

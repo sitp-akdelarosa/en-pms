@@ -471,8 +471,15 @@ foreach ($user_accesses as $user_access){
 
 						<div class="row justify-content-center">
 							<div class="col-md-3 mb-5">
-								<button type="button" id="btn_delete_material" class="btn bg-red btn-blockv permission-button">
+								<button type="button" id="btn_delete_material" class="btn bg-red btn-block permission-button">
 									<i class="fa fa-trash"></i> Delete Material
+								</button>
+							</div>
+							<div class="col-md-3 mb-5">
+								<button type="button" id="btn_excel_material" class="btn bg-green btn-block"  data-toggle="popover" 
+										data-content="This Button is to initialize Excel download." 
+										data-placement="right">
+									<i class="fa fa-file-excel-o"></i> Extract to Excel
 								</button>
 							</div>
 						</div>
@@ -482,6 +489,9 @@ foreach ($user_accesses as $user_access){
 		</div>
 	</div>
 </section>
+
+@include('includes.modals.masters.material-master-modals')
+
 @endsection
 
 @push('scripts')
@@ -496,6 +506,8 @@ foreach ($user_accesses as $user_access){
 	var materialCodeDeleteURL = "{{ url('/masters/material-master/destroy-code') }}";
 	var getMaterialTypeURL = "{{ url('/masters/material-master/get_dropdown_material_type') }}";
 	var disabledURL = "{{ url('/masters/material-master/enable-disabled-material') }}";
+	var downloadExcelFileURL = "{{ url('/masters/material-master/download-excel-file') }}";
+	var AllMaterialTypeURL = "{{ url('/masters/material-master/all-material-types') }}";
 	var code_permission = "M0004";
 </script>
 <script type="text/javascript" src="{{ mix('/js/pages/ppc/masters/material-master/material-master.js') }}"></script>
