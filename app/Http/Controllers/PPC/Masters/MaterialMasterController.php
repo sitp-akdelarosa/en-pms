@@ -329,7 +329,9 @@ class MaterialMasterController extends Controller
 										data-std_weight='".$data->std_weight."'
 										data-create_user='".$data->create_user."'
 										data-disabled='".$data->disabled."'
-										data-updated_at='".$data->updated_at."'>
+										data-updated_at='".$data->updated_at."' data-toggle='popover' 
+											data-content='This Button is to edit details of ".$data->material_code.".' 
+											data-placement='right'>
 											<i class='fa fa-edit'></i>
 									</button >";
 						})

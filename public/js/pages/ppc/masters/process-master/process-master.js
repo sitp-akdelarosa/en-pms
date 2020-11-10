@@ -4671,15 +4671,15 @@ function selectedProcessTable(arr) {
 		$.each(arr, function (i, x) {
 			var remarks = (x.remarks == null) ? '' : x.remarks;
 
-			list += '<div class="form-group row process_name" data-process="' + x.process + '" data-remarks="' + remarks + '">' +
-						'<div class="col-sm-5">' + x.process + '</div>'+
-						'<div class="col-sm-6">'+
-							'<input type="text" class="form-control form-control-sm" name="remarks" placeholder="Remarks.." value="' + remarks + '">' +
-						'</div>'+
-						'<button type="button" class="btn btn-sm bg-red delete col-sm-1 btn-block" data-count="' + x.count + '">' +
-							'<i class="fa fa-times" ></i> ' +
-						'</button> ' +
-					'</div>';
+			list += "<div class='form-group row process_name' data-process='" + x.process + "' data-remarks='" + remarks + "'>" +
+						"<div class='col-sm-5'>" + x.process + "</div>"+
+						"<div class='col-sm-6'>"+
+							"<input type='text' class='form-control form-control-sm' name='remarks' placeholder='Remarks..' value='" + remarks + "'>" +
+						"</div>"+
+						"<button type='button' class='btn btn-sm bg-red delete col-sm-1 btn-block' data-count='" + x.count + "'>" +
+							"<i class='fa fa-times'></i> " +
+						"</button>" +
+					"</div>";
 		});
 		$('#sortable_process').html(list);
 		$('.loadingOverlay').hide();
@@ -4757,13 +4757,13 @@ function setTable(dataArr) {
 			}, name: 'id', orderable: false, searchable: false},
 			{ data: 'text', name: 'text' },
 			{data: function(x) {
-				return '<button type="button" class="btn btn-sm bg-purple btn_edit_set_name" ' +
-							'data-id="' + x.id + '" data-set="' + x.text + '" title="Edit Set Name">' +
-							'<i class="fa fa-arrow-up"></i>' +
-						'</button>'+
-						'<button type="button" class="btn btn-sm bg-blue btn_edit_set" data-id="' + x.id +'" title="Edit Process Set">'+
-							'<i class="fa fa-edit"></i>'+
-						'</button>';
+				return "<button type='button' class='btn btn-sm bg-purple btn_edit_set_name' " +
+							"data-id='" + x.id + "' data-set='" + x.text + "' title='Edit Set Name'>" +
+							"<i class='fa fa-arrow-up'></i>" +
+						"</button>"+
+						"<button type='button' class='btn btn-sm bg-blue btn_edit_set' data-id='" + x.id +"' title='Edit Process Set'>"+
+							"<i class='fa fa-edit'></i>"+
+						"</button>";
 			}, orderable: false, searchable: false},
 		],
 		initComplete: function () {

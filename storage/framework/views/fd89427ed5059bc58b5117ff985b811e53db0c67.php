@@ -84,22 +84,30 @@ foreach ($user_accesses as $user_access){
 									</button>
 								</div>
 								<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3 mb-5" id="div_save">
-									<button type="submit" id="btn_save_assembly" class="btn bg-blue btn-block permission-button switch">
+									<button type="submit" id="btn_save_assembly" class="btn bg-blue btn-block permission-button switch" data-toggle="popover" 
+											data-content="This Button is to save assembly data." 
+											data-placement="right">
 										<i class="fa fa-floppy-o"></i> Save
 									</button>
 								</div>
 								<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3 mb-5" id="div_clear">
-									<button type="button" id="btn_clear_assembly" class="btn bg-gray btn-block switch">
+									<button type="button" id="btn_clear_assembly" class="btn bg-gray btn-block switch" data-toggle="popover" 
+											data-content="This Button is to clear assembly data in the input fields." 
+											data-placement="right">
 										<i class="fa fa-refresh"></i> Clear
 									</button>
 								</div>
 								<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3 mb-5" id="div_delete">
-									<button type="button" id="btn_delete_assembly" class="btn bg-red btn-block permission-button switch">
+									<button type="button" id="btn_delete_assembly" class="btn bg-red btn-block permission-button switch" data-toggle="popover" 
+											data-content="This Button is to delete selected assemblies in the table." 
+											data-placement="right">
 										<i class="fa fa-trash"></i> Delete
 									</button>
 								</div>
 								<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3 mb-5" id="div_cancel">
-									<button type="button" id="btn_cancel_assembly" class="btn bg-red btn-block switch">
+									<button type="button" id="btn_cancel_assembly" class="btn bg-red btn-block switch" data-toggle="popover" 
+											data-content="This Button is to cancel saving assembly data." 
+											data-placement="right">
 										<i class="fa fa-times"></i> Cancel
 									</button>
 								</div>
@@ -426,19 +434,23 @@ foreach ($user_accesses as $user_access){
 									</button>
 								</div>
 								<div class="col-lg-3 col-md-4 mb-5" id="save_code">
-									<button type="submit" id="btn_save" class="btn bg-green btn-block permission-button switch_code">
+									<button type="submit" id="btn_save" class="btn bg-green btn-block permission-button switch_code" data-toggle="popover" 
+										data-content="This Button is to save Material Codes details." 
+										data-placement="right">
 										<i class="fa fa-floppy-o"></i> Save
 									</button>
 								</div>
 								<div class="col-lg-3 col-md-4 mb-5" id="clear_code">
 									<button type="button" id="btn_clear_code" class="btn bg-gray btn-block switch_code" data-toggle="popover" 
-											data-content="This Button is to Clear Material Codes details in input fields." 
+											data-content="This Button is to Clear Material Code details in input fields." 
 											data-placement="right">
 										<i class="fa fa-refresh"></i> Clear
 									</button>
 								</div>
 								<div class="col-lg-3 col-md-4 mb-5" id="cancel_code">
-									<button type="button" id="btn_cancel" class="btn bg-red btn-block switch_code">
+									<button type="button" id="btn_cancel" class="btn bg-red btn-block switch_code" data-toggle="popover" 
+										data-content="This Button is to cancel saving Material Code details." 
+										data-placement="right">
 										<i class="fa fa-times"></i> Cancel
 									</button>
 								</div>
@@ -469,7 +481,9 @@ foreach ($user_accesses as $user_access){
 
 						<div class="row justify-content-center">
 							<div class="col-md-3 mb-5">
-								<button type="button" id="btn_delete_material" class="btn bg-red btn-block permission-button">
+								<button type="button" id="btn_delete_material" class="btn bg-red btn-block permission-button" data-toggle="popover" 
+										data-content="This Button is to delete selected Material Codes in the table." 
+										data-placement="right">
 									<i class="fa fa-trash"></i> Delete Material
 								</button>
 							</div>
