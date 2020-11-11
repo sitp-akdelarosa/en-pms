@@ -723,6 +723,7 @@ $( function() {
 				materialCodesDataTable();
 				$('#btn_save').html('<i class="fa fa-floppy-o"></i> Save');
 				$('#btn_add_code').html('<i class="fa fa-plus"></i> Add New');
+				$('.readonly_code').prop('disabled', true);
 
 				$('#add_code').show();
 				$('#clear_code').hide();
@@ -1154,13 +1155,25 @@ function showCode(el,mat_type,code) {
 		}
 	}
 
-	if (el.replace('_val','') == 'forth') {
-		if (code.length > 1) {
+	if (el.replace('_val','') == 'fifth' && mat_type == 'S/S ROUND BAR') {
+		if (code == "" && code == null) {
+			$('#hide_4th').show();
 			$('#hide_5th').hide();
 		} else {
+			$('#hide_4th').hide();
 			$('#hide_5th').show();
 		}
+	} else {
+		if (el.replace('_val','') == 'forth') {
+			if (code.length == 2) {
+				$('#hide_5th').hide();
+			} else {
+				$('#hide_5th').show();
+			}
+		}
 	}
+
+	
 
 	if (el.replace('_val','') == 'seventh') {
 		if (code.length == 3) {
@@ -1168,6 +1181,14 @@ function showCode(el,mat_type,code) {
 			$('#hide_9th').hide();
 		} else {
 			$('#hide_8th').show();
+			$('#hide_9th').show();
+		}
+	}
+
+	if (el.replace('_val','') == 'eighth') {
+		if (code.length == 2) {
+			$('#hide_9th').hide();
+		} else {
 			$('#hide_9th').show();
 		}
 	}
@@ -1201,26 +1222,128 @@ function showMaterialCode() {
 
 function showDescription() {
 	var material_type = $('#material-type').val();
+	var first = (getSelectedText('first') == null)? '':getSelectedText('first');
 	var second = (getSelectedText('second') == null)? '':getSelectedText('second');
 	var third = (getSelectedText('third') == null)? '':getSelectedText('third');
 	var forth = (getSelectedText('forth') == null)? '':getSelectedText('forth');
-	var eleventh = (getSelectedText('eleventh') == null)? '':getSelectedText('eleventh');
+	var fifth = (getSelectedText('fifth') == null)? '':getSelectedText('fifth');
 	var seventh = (getSelectedText('seventh') == null)? '':getSelectedText('seventh');
+	var eighth = (getSelectedText('eighth') == null)? '':getSelectedText('eighth');
+	var eleventh = (getSelectedText('eleventh') == null)? '':getSelectedText('eleventh');
+	
 	//$('#code_description').val(forth+' '+eleventh+' '+ $('#material-type').val()+' '+seventh +$('#material-type').val());
 	//$('#alloy').val(forth);
-	var fifth = (getSelectedText('fifth') == null)? '':getSelectedText('fifth');
 
-	if (material_type.indexOf('PLATE') > -1) {
-		$('#code_description').val(fifth+' '+forth+' '+second+' '+seventh );
-	} else if (material_type.indexOf('PIPE') > -1) {
-		$('#code_description').val(forth+' '+eleventh+' '+second );
-	} else {
-		$('#code_description').val(fifth+' '+forth+' '+eleventh+' '+second+' '+seventh );
+	switch (material_type) {
+		case 'ALLOY STEEL ROUND':
+			$('#code_description').val(fifth+' '+seventh+' '+eighth+' '+eleventh);
+
+			$('#alloy').val(fifth);
+			$('#item').val(first+' '+seventh+' '+eighth);
+			$('#size').val(eleventh);
+			break;
+
+		case 'C/S HEX BAR':
+			$('#code_description').val(fifth+' '+seventh+' '+eighth+' '+eleventh);
+
+			$('#alloy').val(fifth);
+			$('#item').val(first+' '+seventh+' '+eighth);
+			$('#size').val(eleventh);
+			break;
+
+		case 'C/S ROUND BAR':
+			$('#code_description').val(first+' '+seventh+' '+eighth+' '+eleventh);
+
+			$('#item').val(first+' '+seventh+' '+eighth);
+			$('#alloy').val(fifth);
+			$('#size').val(eleventh);
+			break;
+
+		case 'C/S SMLS PIPE':
+		case 'C/S WELDED PIPE':
+			$('#code_description').val(first+' '+second+' '+seventh+' '+eleventh);
+
+			$('#item').val(first+' '+second);
+			$('#alloy').val(fifth);
+			$('#size').val(eleventh);
+			break;
+
+		case 'S/S CAST BAR/BILLET':
+			$('#code_description').val(first+' '+seventh+' '+second.replace("BAR",eighth)+' '+eleventh);
+
+			$('#item').val(first+' '+second.replace("BAR",eighth));
+			$('#alloy').val(fifth);
+			$('#size').val(eleventh);
+			break;
+
+		case 'S/S PEELED BAR':
+			$('#code_description').val(first+' '+seventh+' '+eighth+' '+fifth+' '+eleventh);
+
+			$('#item').val(first+' '+seventh+' '+eighth);
+			$('#alloy').val(fifth);
+			$('#size').val(eleventh);
+			break;
+
+		case 'S/S PLATE':
+			$('#code_description').val(first+' '+eighth+' '+fifth+' '+eleventh);
+
+			$('#item').val(first+' '+eighth);
+			$('#alloy').val(fifth);
+			$('#size').val(eleventh);
+			break;
+
+		case 'S/S ROUND BAR':
+			fifth = (fifth == "")? forth: fifth;
+			$('#code_description').val(first+' '+seventh+' '+eighth+' '+fifth+' '+eleventh);
+
+			$('#item').val(first+' '+seventh+' '+eighth);
+			$('#alloy').val(fifth);
+			$('#size').val(eleventh);
+			break;
+
+		case 'S/S SMLS PIPE':
+		case 'S/S WELDED PIPE':
+			$('#code_description').val(first+' '+forth+' '+second+' '+fifth+' '+seventh+' '+eleventh);
+
+			$('#item').val(first+' '+forth+' '+second);
+			$('#alloy').val(fifth);
+			$('#size').val(eleventh);
+			$('#schedule').val(seventh);
+			break;
+
+		default:
+			fifth = (fifth == "")? forth: fifth;
+			$('#code_description').val(first+' '+seventh+' '+eighth+' '+fifth+' '+eleventh);
+
+			$('#item').val(first+' '+seventh+' '+eighth);
+			$('#alloy').val(fifth);
+			$('#size').val(eleventh);
+			break;
 	}
+	
 
-	$('#alloy').val(forth+' '+fifth);
-	$('#item').val(second);
-	$('#size').val(eleventh);
+	// if (material_type.indexOf('PLATE') > -1) {
+	// 	$('#code_description').val(first+' '+eighth+' '+fifth+' '+eleventh);
+
+	// 	$('#item').val(second);
+	// 	$('#alloy').val(forth+' '+fifth);
+	// 	$('#size').val(eleventh);
+
+	// } else if (material_type.indexOf('PIPE') > -1) {
+	// 	$('#code_description').val(first+' '+forth+' '+second+' '+fifth+' '+seventh+' '+eleventh);
+
+	// 	$('#item').val(second);
+	// 	$('#alloy').val(forth+' '+fifth);
+	// 	$('#size').val(eleventh);
+
+	// } else if (material_type.indexOf('S/S ROUND') > -1) {
+	// 	$('#code_description').val(first+' '+seventh+' '+eighth+' '+fifth+' '+eleventh);
+
+	// 	$('#item').val(second);
+	// 	$('#alloy').val(forth+' '+fifth);
+	// 	$('#size').val(eleventh);
+
+	// }
 }
 
 function delete_material(checkboxClass,deleteURL) {
@@ -1285,7 +1408,15 @@ function autoAssignSelectBox(code) {
 				}else{
 					$('#forth_val').val(forth2);
 					$('#forth').val(forth2);
-					$('#hide_5th').hide();
+
+					if ($('#forth_val').val() == null) {
+						$('#hide_4th').hide();
+						$('#hide_5th').show();
+						$('#fifth_val').val(fifth);
+						$('#fifth').val(fifth);
+					} else {
+						$('#hide_5th').hide();
+					}
 				}
 		}else{
 			$('#second_val').val(second2);
@@ -1311,7 +1442,14 @@ function autoAssignSelectBox(code) {
 				}else{
 					$('#forth_val').val(forth2);
 					$('#forth').val(forth2);
-					$('#hide_5th').hide();
+					if ($('#forth_val').val() == null) {
+						$('#hide_4th').hide();
+						$('#hide_5th').show();
+						$('#fifth_val').val(fifth);
+						$('#fifth').val(fifth);
+					} else {
+						$('#hide_5th').hide();
+					}
 				}
 			}
 			else{

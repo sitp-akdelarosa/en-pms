@@ -170,7 +170,7 @@ $( function() {
 
     //Delete Multiple data
     $('#btn_delete').on('click', function() {
-        delete_set('.check_item',deleteOM);
+        delete_operators('.dt-checkboxes',deleteOM);
     });
 
     $('#btn_add').on('click', function() {
@@ -185,6 +185,37 @@ $( function() {
         clear();
         viewState('');
     });
+
+    $('.dt-checkboxes-select-all').on('click', function() {
+		if ($('.dt-checkboxes-select-all input[type=checkbox]').is(':checked')) {
+			$('.btn_edit').prop('disabled', true);
+			$('.btn_enable_disable').prop('disabled', true);
+		} else {
+			$('.btn_edit').prop('disabled', false);
+			$('.btn_enable_disable').prop('disabled', false);
+		}
+	});
+
+	$('tbl_operator_body').on('click', 'td:first-child',function() {
+		if ($('.dt-checkboxes').is(':checked')) {
+			$('.btn_edit').prop('disabled', false);
+			$('.btn_enable_disable').prop('disabled', false);
+		} else {
+			$('.btn_edit').prop('disabled', true);
+			$('.btn_enable_disable').prop('disabled', true);
+		}
+
+	});
+
+	$('tbl_operator_body').on('change', '.dt-checkboxes',function() {
+		if ($(this).is(':checked')) {
+			$('.btn_edit').prop('disabled', true);
+			$('.btn_enable_disable').prop('disabled', true);
+		} else {
+			$('.btn_edit').prop('disabled', false);
+			$('.btn_enable_disable').prop('disabled', false);
+		}
+	});
 
 });
 
@@ -231,6 +262,8 @@ function viewState(state) {
             $('#div_cancel').show();
             $('#div_delete').hide();
             $('.readonly_op').prop('disabled', false);
+            $('.dt-checkboxes').prop('disabled', true);
+            $('.dt-checkboxes-select-all input[type=checkbox]').prop('disabled', true);
             break;
 
         case 'edit':
@@ -241,6 +274,8 @@ function viewState(state) {
             $('#div_cancel').show();
             $('#div_delete').hide();
             $('.readonly_op').prop('disabled', false);
+            $('.dt-checkboxes').prop('disabled', true);
+            $('.dt-checkboxes-select-all input[type=checkbox]').prop('disabled', true);
             break;
     
         default:
@@ -251,6 +286,8 @@ function viewState(state) {
             $('#div_cancel').hide();
             $('#div_delete').show();
             $('.readonly_op').prop('disabled', true);
+            $('.dt-checkboxes').prop('disabled', false);
+            $('.dt-checkboxes-select-all input[type=checkbox]').prop('disabled', false);
 
             hideErrors('operator_id');
             hideErrors('firstname');
@@ -308,7 +345,7 @@ function getOperators() {
 		columns: [
 			{
                 data: function(data) {
-                    return '<input type="checkbox" class="table-checkbox check_item" value="'+data.id+'">';
+                    return data.id;//'<input type="checkbox" class="table-checkbox check_item" value="'+data.id+'">';
                 }, name: 'id', orderable: false, searchable: false
             },
             { data: 'action', name: 'action', orderable: false, searchable: false },
@@ -358,8 +395,63 @@ function getOperators() {
 			var checkbox = $(dataRow[0].cells[0].firstChild);
 
 			checkbox.attr('data-id', data.id);
-			checkbox.addClass('table-checkbox check_product_item');
+			checkbox.addClass('table-checkbox check_item');
 		},
 		
 	});
+}
+
+function delete_operators(checkboxClass,deleteURL) {
+	$('.loading').show();
+	var chkArray = [];
+	$(checkboxClass+":checked").each(function() {
+		chkArray.push($(this).attr('data-id'));
+	});
+
+	if (chkArray.length > 0) {
+		swal({
+	        title: "Are you sure?",
+	        text: "You will not be able to recover your data!",
+	        type: "warning",
+	        showCancelButton: true,
+	        confirmButtonColor: "#f95454",
+	        confirmButtonText: "Yes",
+	        cancelButtonText: "No",
+	        closeOnConfirm: true,
+	        closeOnCancel: false
+	    }, function(isConfirm){
+	        if (isConfirm) {
+	        	$.ajax({
+	        		url: deleteURL,
+	        		type: 'POST',
+	        		dataType: 'JSON',
+	        		data: {
+	        			_token:token,
+	        			id: chkArray
+	        		},
+	        	}).done(function(data, textStatus, xhr) {
+	        		msg(data.msg,data.status)
+	                getProductCodes();
+	        	}).fail(function(xhr, textStatus, errorThrown) {
+	        		msg(errorThrown,'error');
+	        	}).always(function() {
+	        		$('.loading').hide();
+	        	});
+	        } else {
+				$('.loading').hide();
+				$('#tbl_product_code .dt-checkboxes-select-all').click();
+	            swal("Cancelled", "Your data is safe and not deleted.");
+	        }
+	    });
+
+
+		$('.check_all').prop('checked',false);
+        clear();
+        $('#btn_save').removeClass('bg-green');
+        $('#btn_save').addClass('bg-blue');
+        $('#btn_save').html('<i class="fa fa-plus"></i> Add');
+
+	} else {
+		msg("Please select at least 1 item.", "failed");
+	}
 }

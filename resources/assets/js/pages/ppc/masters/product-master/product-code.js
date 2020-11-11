@@ -905,29 +905,83 @@ function showDescription() {
 	var forth = (getSelectedText('forth') == null)? '': getSelectedText('forth');
 	var seventh = (getSelectedText('seventh') == null)? '': getSelectedText('seventh');
 
-	if (eleventhcode.length == 3) {
-		var times = " x ";
-		if (eleventh == '') {
-			times = " ";
-		}
-		$('#code_description').val(
-			fifth+' '+
-			eighth + ' ' +
-			seventh + ' ' +
-			eleventh+ times +
-			forteenth+' '+
-			forth
-		);
-	} else {
-		$('#code_description').val(
-			fifth+' '+
-			eighth + ' ' +
-			seventh + ' ' +
-			eleventh+ ' ' +
-			forteenth + ' ' +
-			forth
-		);
+	var product_line = $('#product-type').val();
+
+	switch (product_line) {
+		// NING
+		case 'S/S FORGED FLANGE - ANSI':
+		case 'S/S FORGED FLANGE - CORROSION WEIGHT':
+		case 'S/S FORGED FLANGE - JIS':
+				$('#code_description').val(
+					fifth+' '+
+					eighth + ' ' +
+					seventh + ' ' +
+					forteenth+' '+
+					forth
+				);
+			break;
+		case 'S/S PLATE FLANGE - ANSI':
+				$('#code_description').val(
+					fifth+' '+
+					eighth + ' ' +
+					eleventh+ 'x' +
+					forteenth+' '+
+					forth
+				);
+			break;
+		
+		// ROSA
+		case 'C/S FORGED FITTING':
+		case 'S/S FORGED FITTING':
+		case 'S/S OLET':
+		case 'S/S BARSTOCK FITTING':
+				$('#code_description').val(
+					fifth+' '+
+					seventh + ' ' +
+					eighth + ' ' +
+					forteenth+', '+
+					forth
+				);
+			break;
+		case 'S/S PIPE NIPPLE (W)':
+				$('#code_description').val(
+					fifth+' '+
+					seventh + ' ' +
+					eighth + ' ' +
+					eleventh + ' ' +
+					forteenth+' '+
+					forth
+				);
+			break;
+	
+		default:
+			if (eleventhcode.length == 3) {
+				var times = " x ";
+				if (eleventh == '') {
+					times = " ";
+				}
+				$('#code_description').val(
+					fifth+' '+
+					eighth + ' ' +
+					seventh + ' ' +
+					eleventh+ times +
+					forteenth+' '+
+					forth
+				);
+			} else {
+				$('#code_description').val(
+					fifth+' '+
+					eighth + ' ' +
+					seventh + ' ' +
+					eleventh+ ' ' +
+					forteenth + ' ' +
+					forth
+				);
+			}
+			break;
 	}
+
+	
 	$('#class').val(forth);
 	$('#alloy').val(fifth);
 	$('#item').val(seventh+' '+eighth);

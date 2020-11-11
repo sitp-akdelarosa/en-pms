@@ -59,27 +59,27 @@
 
                                 <div class="row justify-content-center">
                                     <div class="col-lg-3 col-md-3 col-sm-2 col-xs-2" id="div_add">
-                                        <button type="button" class="btn btn-block bg-green permission-button switch" id="btn_add">
+                                        <button type="button" class="btn btn-block btn-sm bg-green permission-button switch" id="btn_add">
                                             <i class="fa fa-plus"></i> Add New
                                         </button>
                                     </div>
                                     <div class="col-lg-3 col-md-3 col-sm-2 col-xs-2" id="div_save">
-                                        <button type="submit" class="btn btn-block bg-blue permission-button switch" id="btn_save">
+                                        <button type="submit" class="btn btn-block btn-sm bg-blue permission-button switch" id="btn_save">
                                             <i class="fa fa-floppy-o"></i> Save
                                         </button>
                                     </div>
                                     <div class="col-lg-3 col-md-3 col-sm-2 col-xs-2" id="div_clear">
-                                        <button type="button" class="btn btn-block bg-grey permission-button switch" id="btn_clear">
+                                        <button type="button" class="btn btn-block btn-sm bg-grey permission-button switch" id="btn_clear">
                                             <i class="fa fa-refresh"></i> Clear
                                         </button>
                                     </div>
                                     <div class="col-lg-3 col-md-3 col-sm-2 col-xs-2" id="div_cancel">
-                                        <button type="button" class="btn btn-block bg-red permission-button switch" id="btn_cancel">
+                                        <button type="button" class="btn btn-block btn-sm bg-red permission-button switch" id="btn_cancel">
                                             <i class="fa fa-times"></i> Cancel
                                         </button>
                                     </div>
                                     <div class="col-lg-3 col-md-3 col-sm-2 col-xs-2" id="div_delete">
-                                        <button type="button" class="btn btn-block bg-red permission-button switch" id="btn_delete">
+                                        <button type="button" class="btn btn-block btn-sm bg-red permission-button switch" id="btn_delete">
                                             <i class="fa fa-trash"></i> Delete
                                         </button>
                                     </div>
