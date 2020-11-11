@@ -196,8 +196,8 @@ Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', '
 		Route::group(['prefix' => 'operator-master'], function () {
 			Route::get('/', 'PPC\Masters\OperatorMasterController@index')
 				->name('masters.operator-master');
-			Route::get('/get-output', 'PPC\Masters\OperatorMasterController@get_outputs')
-				->name('masters.operator-master.get-output');
+			Route::get('/get-operators', 'PPC\Masters\OperatorMasterController@Operators')
+				->name('masters.operator-master.get-operators');
 			Route::post('/save', 'PPC\Masters\OperatorMasterController@save')
 				->name('masters.operator-master.save');
 			Route::post('/destroy', 'PPC\Masters\OperatorMasterController@destroy')

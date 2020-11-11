@@ -100,7 +100,7 @@ class OperatorMasterController extends Controller
         return response()->json($PpcOperator);
     }
 
-    public function get_outputs()
+    public function Operators()
     {   
         $data = PpcOperator::all(); 
         return DataTables::of($data)
@@ -113,6 +113,7 @@ class OperatorMasterController extends Controller
                             data-operator_id="'.$data->operator_id.'"
                             data-firstname="'.$data->firstname.'"
                             data-lastname="'.$data->lastname.'"
+                            data-disabled="'.$data->disabled.'"
                             ><i class="fa fa-edit"></i></button>';
                         })
         ->make(true);

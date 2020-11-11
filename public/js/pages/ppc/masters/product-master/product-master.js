@@ -176,6 +176,7 @@ $( function() {
 	});
 
 	$('#btn_add_assembly').on('click', function() {
+		$('#prod_type').focus();
 		if ($('#assembly_id').val() !== '') {
 			$('#div_add').hide();
 			$('#div_save').show();
