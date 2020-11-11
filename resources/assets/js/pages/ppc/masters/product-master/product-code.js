@@ -908,55 +908,150 @@ function showDescription() {
 	var product_line = $('#product-type').val();
 
 	switch (product_line) {
-		// NING
 		case 'S/S FORGED FLANGE - ANSI':
 		case 'S/S FORGED FLANGE - CORROSION WEIGHT':
 		case 'S/S FORGED FLANGE - JIS':
-				$('#code_description').val(
-					fifth+' '+
-					eighth + ' ' +
-					seventh + ' ' +
-					forteenth+' '+
-					forth
-				);
+			$('#code_description').val(fifth+' '+eighth + ' ' +seventh + ' ' +forteenth+', '+forth);
+			$('#alloy').val(fifth);
+			$('#item').val(eighth+' '+seventh);
+			$('#size').val(forteenth);
+			$('#class').val(forth);
 			break;
+
 		case 'S/S PLATE FLANGE - ANSI':
-				$('#code_description').val(
-					fifth+' '+
-					eighth + ' ' +
-					eleventh+ 'x' +
-					forteenth+' '+
-					forth
-				);
+			$('#code_description').val(fifth+' '+eighth + ' ' +eleventh+ 'X' +forteenth+' '+forth);
+			$('#alloy').val(fifth);
+			$('#item').val(eighth+' - '+seventh);
+			$('#size').val(eleventh);
+			if ($('#size').val() == '' && $('#size').val() == null) {
+				$('#size').val(forteenth);
+			}
+			$('#class').val(forth);
+			break;
+
+		case 'S/S LAP JOINT - SU':
+			$('#code_description').val(fifth+' '+eighth + ' ' +eleventh+' '+forth);
+			$('#alloy').val(fifth);
+			$('#item').val(eighth+' '+seventh);
+			$('#size').val(eleventh+' X '+forteenth);
+			$('#class').val(forth);
+			break;
+
+		case 'S/S ROUND BULL PLUG':
+			$('#code_description').val(second+', '+eleventh+ 'X' +forteenth + ' ' +forth+', '+seventh);
+			$('#alloy').val(fifth);
+			$('#item').val(eighth+' '+seventh);
+			$('#size').val(eleventh+' X '+forteenth);
+			$('#class').val(forth);
 			break;
 		
-		// ROSA
 		case 'C/S FORGED FITTING':
 		case 'S/S FORGED FITTING':
-		case 'S/S OLET':
 		case 'S/S BARSTOCK FITTING':
-				$('#code_description').val(
-					fifth+' '+
-					seventh + ' ' +
-					eighth + ' ' +
-					forteenth+', '+
-					forth
-				);
+		case 'S/S B/W - ANSI':
+		case 'S/S B/W - ANSI (S)':
+		case 'S/S B/W - ANSI (X)':
+		case 'S/S B/W LONG TANGENT- ANSI':
+		case 'S/S LAP JOINT - JPF SP001':
+		case 'S/S LAP JOINT - JPI':
+			$('#code_description').val(fifth+' '+seventh + ' ' +eighth + ' ' +forteenth+', '+forth);
+			$('#alloy').val(fifth);
+			$('#item').val(eighth+' '+seventh);
+			$('#size').val(eleventh);
+			if ($('#size').val() == '' && $('#size').val() == null) {
+				$('#size').val(forteenth);
+			}
+			$('#class').val(forth);
 			break;
+
+		case 'S/S B/W - JIS':
+		case 'S/S OLET':
 		case 'S/S PIPE NIPPLE (W)':
-				$('#code_description').val(
-					fifth+' '+
-					seventh + ' ' +
-					eighth + ' ' +
-					eleventh + ' ' +
-					forteenth+' '+
-					forth
-				);
+			$('#code_description').val(fifth+' '+seventh + ' ' +eighth + ' ' +eleventh+ 'X' +forteenth+', '+forth);
+			$('#alloy').val(fifth);
+			$('#item').val(eighth+' '+seventh);
+			$('#size').val(eleventh+' X '+forteenth);
+			$('#class').val(forth);
 			break;
-	
+
+		case 'API C-TEE / CROSS':
+		case 'API FORGED FLANGE':
+			$('#code_description').val(fifth+' '+eighth + ', ' +forteenth+' '+forth);
+			$('#alloy').val(fifth);
+			$('#item').val(eighth);
+			$('#size').val(forteenth);
+			$('#class').val(forth);
+			break;
+
+		case 'C/S BARSTOCK FITTING':
+		case 'C/S B/W FITTING - ANSI (S)':
+			$('#code_description').val(fifth+' '+eighth + ', ' +eleventh+', '+seventh);
+			$('#alloy').val(fifth);
+			$('#item').val(eighth+' '+seventh);
+			$('#size').val(eleventh);
+			if ($('#size').val() == '' && $('#size').val() == null) {
+				$('#size').val(forteenth);
+			}
+			$('#class').val(forth);
+			break;
+
+		case 'C/S BULL PLUG':
+		case 'C/S HEX BULL PLUG':
+			$('#code_description').val(second.replace("C/S",fifth) + ', ' +forteenth+' '+forth+', '+seventh);
+			$('#alloy').val(fifth);
+			$('#item').val(eighth+' '+seventh);
+			$('#size').val(forteenth);
+			$('#class').val(forth);
+			break;
+
+		case 'C/S C-TEE / CROSS':
+			$('#code_description').val(fifth+' '+eighth+ ', ' +forteenth+', '+forth);
+			$('#alloy').val(fifth);
+			$('#item').val(eighth);
+			$('#size').val(forteenth);
+			$('#class').val(forth);
+			break;
+
+		case 'C/S HEX SWAGE NIPPLE':
+		case 'C/S PIPE NIPPLE (S)':
+		case 'C/S PIPE NIPPLE (W)':
+		case 'C/S SWAGE NIPPLE':
+			$('#code_description').val(second.replace("C/S",fifth) + ', ' +eleventh+' X '+forteenth+' '+forth+', '+seventh);
+			$('#alloy').val(fifth);
+			$('#item').val(eighth+' '+seventh);
+			$('#size').val(eleventh+' X '+forteenth);
+			$('#class').val(forth);
+			break;
+			
+		case 'S/S SK SERIES FITTING':
+			$('#code_description').val(fifth + ' ' +forteenth+' '+eighth+' '+forth+', '+seventh);
+			$('#alloy').val(fifth);
+			$('#item').val(eighth);
+			$('#size').val(forteenth);
+			$('#class').val(forth);
+			break;
+
+		case 'S/S STUB END':
+		case 'S/S STUB END (S)':
+		case 'S/S STUB END (X)':
+			$('#code_description').val(fifth + ' ' +seventh+' '+eighth+' '+forteenth+', '+forth);
+			$('#alloy').val(fifth);
+			$('#item').val(eighth+' '+seventh);
+			$('#size').val(forteenth);
+			$('#class').val(forth);
+			break;
+
+		case 'S/S SWAGE NIPPLE':
+			$('#code_description').val(second + ', ' +eleventh+' X '+forteenth+' '+forth+', '+seventh);
+			$('#alloy').val(fifth);
+			$('#item').val(eighth+' '+seventh);
+			$('#size').val(eleventh+' X '+forteenth);
+			$('#class').val(forth);
+			break;
+
 		default:
 			if (eleventhcode.length == 3) {
-				var times = " x ";
+				var times = " X ";
 				if (eleventh == '') {
 					times = " ";
 				}
@@ -978,14 +1073,16 @@ function showDescription() {
 					forth
 				);
 			}
+
+			$('#class').val(forth);
+			$('#alloy').val(fifth);
+			$('#item').val(seventh+' '+eighth);
+			$('#size').val(eleventh);
 			break;
 	}
 
 	
-	$('#class').val(forth);
-	$('#alloy').val(fifth);
-	$('#item').val(seventh+' '+eighth);
-	$('#size').val(eleventh);
+	
 }
 
 function showProcess(prodprocess) {
