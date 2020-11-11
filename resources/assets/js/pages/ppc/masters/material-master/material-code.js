@@ -229,6 +229,7 @@ $( function() {
 
 	$('#frm_mat_code').on('submit', function(e) {
 		e.preventDefault();
+		$('.loadingOverlay').show();
 		$.ajax({
 			url: $(this).attr('action'),
 			type: 'POST',
@@ -239,6 +240,13 @@ $( function() {
 				msg(data.msg,data.status);
 				materialCodesDataTable();
 				$('#btn_save').html('<i class="fa fa-floppy-o"></i> Save');
+				$('#btn_add_code').html('<i class="fa fa-plus"></i> Add New');
+
+				$('#add_code').show();
+				$('#clear_code').hide();
+				$('#save_code').hide();
+				$('#cancel_code').hide();
+
 				clearInputs();
 				clearCode();
 			}else{
@@ -247,6 +255,8 @@ $( function() {
 		}).fail(function(xhr, textStatus, errorThrown) {
 			var errors = xhr.responseJSON.errors;
 			showErrors(errors);
+		}).always( function() {
+			$('.loadingOverlay').hide();
 		});
 	});
 

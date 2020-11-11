@@ -783,6 +783,7 @@ $( function() {
 				$('#product_id').val('');
 				clearCode();
 
+				$('#btn_add_code').html('<i class="fa fa-plus"></i> Add New');
 				$('#add_code').show();
 				$('#save_code').hide();
 				$('#cancel_code').hide();
@@ -1118,6 +1119,7 @@ function clearCode() {
 }
 
 function showDropdowns(prod_type) {
+	$('.loadingOverlay').show();
 	$.ajax({
 		url: showDropdownURL,
 		type: 'GET',
@@ -1292,6 +1294,8 @@ function showDropdowns(prod_type) {
 		autoAssignSelectBox($('#product_code').val());
 	}).fail(function(xhr, textStatus, errorThrown) {
 		ErrorMsg(xhr)
+	}).always( function() {
+		$('.loadingOverlay').hide();
 	});
 }
 
