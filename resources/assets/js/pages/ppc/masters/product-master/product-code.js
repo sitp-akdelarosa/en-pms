@@ -1182,6 +1182,8 @@ function delete_process(checkboxClass,deleteURL) {
 function makeProcessList(arr) {
 	var row = 1;
 
+	$('.loadingOverlay-modal').show();
+
 	$('#tbl_prod_process').dataTable().fnClearTable();
 	$('#tbl_prod_process').dataTable().fnDestroy();
 	$('#tbl_prod_process').dataTable({
@@ -1226,6 +1228,9 @@ function makeProcessList(arr) {
 		createdRow: function (nRow, aData, iDataIndex) {
 			$(nRow).attr('id', aData[0]);
 			row++;
+		},
+		initComplete: function() {
+			$('.loadingOverlay-modal').hide();
 		}
 	});
 }

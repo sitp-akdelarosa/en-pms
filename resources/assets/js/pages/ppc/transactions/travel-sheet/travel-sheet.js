@@ -695,6 +695,7 @@ function makeProcessList(arr, old_data) {
 		paging: false,
 		searching: false,
 		processing: true,
+		scrollCollapse: true,
 		columns: [
 			{
 				data: function (x) {
