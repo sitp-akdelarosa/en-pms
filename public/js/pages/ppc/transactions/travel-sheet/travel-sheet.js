@@ -4924,6 +4924,7 @@ function makeProcessList(arr, old_data) {
 		paging: false,
 		searching: false,
 		processing: true,
+		scrollCollapse: true,
 		columns: [
 			{
 				data: function (x) {
@@ -5205,7 +5206,8 @@ function makeProdTable(arr,all_sc) {
 			}, searchable: false, orderable: false },
 
 			{ data: function(x) {
-				return '<button type="button" class="btn btn-sm bg-red btn_remove_issue" data-index="'+x.index+'">'+
+				var idx = (x.index == undefined)? index : x.index;
+				return '<button type="button" class="btn btn-sm bg-red btn_remove_issue" data-index="'+idx+'">'+
 							'<i class="fa fa-times"></i>' +
 						'</button>';
             }, searchable: false, orderable: false },
