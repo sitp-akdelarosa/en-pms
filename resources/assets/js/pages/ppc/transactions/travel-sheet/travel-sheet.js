@@ -375,11 +375,13 @@ $( function() {
 		$('#btn_add_process').removeClass('bg-navy');
 		$('#btn_add_process').addClass('bg-green');
 
+		$('#cancel_process').hide();
+
 		$('#sequence').prop('readonly', false);
 
 		$(this).hide();
 
-		showProcessList($('#set').val(), $('#prod_code').val(), null, $('#jo_no').val());
+		//showProcessList($('#set').val(), $('#prod_code').val(), null, $('#jo_no').val());
 	});
 
 	$('#tbl_process_body').on('click', '.btn_proc_delete', function () {
@@ -413,6 +415,16 @@ $( function() {
 		$('#btn_add_process').removeClass('bg-green');
 		$('#btn_add_process').addClass('bg-navy');
 		$('#cancel_process').show();
+		$('#btn_cancel_process').show();
+	});
+
+	$('#tbl_product_body').on('click','.btn_remove_issue', function() {
+		var index = $(this).attr('data-index');
+		$('#' + index).remove();
+		prod_arr.splice(index, 1);
+
+		console.log(prod_arr);
+		// makeProdTable(prod_arr);
 	});
 });
 
@@ -487,8 +499,12 @@ function SaveTravelSheet(){
 			msg(data.msg,data.status);
 		}
 	}).fail(function(xhr, textStatus, errorThrown) {
-		var errors = xhr.responseJSON.errors;
-		showErrors(errors);
+		if (xhr.status == 422) {
+			var errors = xhr.responseJSON.errors;
+			showErrors(errors);
+		} else {
+			ErrorMsg(xhr);
+		}
 	}).always(function() {
 		$('.loadingOverlay-modal').hide();
 	});		
@@ -768,76 +784,6 @@ function getProcessDiv(process, handleData) {
 
 }
 
-function makeProdTable(arr,all_sc) {
-	//$('.loadingOverlay-modal').show();
-	$('#tbl_product').dataTable().fnClearTable();
-    $('#tbl_product').dataTable().fnDestroy();
-    $('#tbl_product').dataTable({
-        data: arr,
-        bLengthChange : false,
-        scrollY: "250px",
-	    paging: false,
-		searching: false,
-		processing: true,
-        columns: [
-            { data: function(x) {
-                return x.prod_code;
-            }, searchable: false, orderable: false},
-
-            { data: function(x) {
-                return '<input type="number" step="1" name="issued_qty_per_sheet[]" id="issued_qty_'+x.id+'" data-id="'+x.id+'" data-old_qty="'+x.issued_qty+'" class="form-control issued_qty_per_sheet" value="'+x.issued_qty+'">';
-            }, searchable: false, orderable: false},
-
-            { data: function(x) {
-            	var scnos = x.sc_no;
-            	var qty = 0;
-
-            	$.each(all_sc, function(i, x) {
-            		if (scnos.includes(x)) {
-            			qty = parseFloat(qty) + parseFloat(sched_qty_arr[i]);
-            		}
-            	});
-
-                return '<input type="number" step="1" name="sc_qty[]" id="sc_qty_'+x.id+'" class="form-control sc_qty" value="'+qty+'" readonly>';
-            }, searchable: false, orderable: false},
-
-            { data: function(x) {
-            	var scnos = x.sc_no;
-            	// var scnos = scno.split(',');
-
-            	var options = '';
-            	// all_sc = sc.split(',');
-            	$.each(all_sc, function(i, x) {
-            		if (scnos.includes(x)) {
-            			options += '<option value="'+x+'" selected>'+x+'</option>';
-            		} else {
-            			options += '<option value="'+x+'">'+x+'</option>';
-            		}
-            		
-            	});
-            	var index = parseFloat(x.id)-1;
-
-            	if (index == NaN) {
-            		index = 0;
-            	}
-                return '<select name="scno['+index+'][]" data-id="'+x.id+'" class="form-control form-control-sm scno" multiple="multiple">'+
-                			options+
-                		'</select>';
-            }, searchable: false, orderable: false},
-
-		],
-		initComplete: function() {
-			//$('.loadingOverlay-modal').hide();
-		}
-    });
-    if(arr.length > 0){
-		getTotalIssuedQty();
-	}else{
-		$('#issued_qty_table').val(0);
-	}
-    $('.scno').select2();
-}
-
 function joDetailsList(status,from,to) {
 	jo_details = [];
 
@@ -868,8 +814,7 @@ function makeJODetailsTable(arr) {
     $('#tbl_jo_details').dataTable({
         data: arr,
 		order: [[10,'desc']],
-		scrollX: true,
-		autoWidth: true,
+		// scrollX: true,
         columns: [ 
             { data: function(data) {
 				return '<input type="checkbox" value="'+data.jo_no+'"  data-status="'+data.status+'" class="table-checkbox jo_check">';
@@ -923,6 +868,7 @@ function makeJODetailsTable(arr) {
 			$($.fn.dataTable.tables(true)).DataTable().columns.adjust();
 			$('.loadingOverlay').hide();
 		}
+
     });
 }
 
@@ -970,6 +916,86 @@ function getPreTravelSheetData(id,jo) {
 	}).always(function () {
 		//$('.loadingOverlay-modal').hide();
 	});
+}
+
+function makeProdTable(arr,all_sc) {
+	var index = 0;
+	$('#tbl_product').dataTable().fnClearTable();
+    $('#tbl_product').dataTable().fnDestroy();
+    $('#tbl_product').dataTable({
+        data: arr,
+        bLengthChange : false,
+        scrollY: "250px",
+	    paging: false,
+		searching: false,
+		processing: true,
+        columns: [
+            { data: function(x) {
+                return x.prod_code;
+            }, searchable: false, orderable: false },
+
+            { data: function(x) {
+                return '<input type="number" step="1" name="issued_qty_per_sheet[]" id="issued_qty_'+x.id+'" data-id="'+x.id+'" data-old_qty="'+x.issued_qty+'" class="form-control issued_qty_per_sheet" value="'+x.issued_qty+'">';
+            }, searchable: false, orderable: false },
+
+            { data: function(x) {
+            	var scnos = x.sc_no;
+            	var qty = 0;
+
+            	$.each(all_sc, function(i, x) {
+            		if (scnos.includes(x)) {
+            			qty = parseFloat(qty) + parseFloat(sched_qty_arr[i]);
+            		}
+            	});
+
+                return '<input type="number" step="1" name="sc_qty[]" id="sc_qty_'+x.id+'" class="form-control sc_qty" value="'+qty+'" readonly>';
+            }, searchable: false, orderable: false },
+
+            { data: function(x) {
+            	var scnos = x.sc_no;
+            	// var scnos = scno.split(',');
+
+            	var options = '';
+            	// all_sc = sc.split(',');
+            	$.each(all_sc, function(i, x) {
+            		if (scnos.includes(x)) {
+            			options += '<option value="'+x+'" selected>'+x+'</option>';
+            		} else {
+            			options += '<option value="'+x+'">'+x+'</option>';
+            		}
+            		
+            	});
+            	var index = parseFloat(x.id)-1;
+
+            	if (index == NaN) {
+            		index = 0;
+            	}
+                return '<select name="scno['+index+'][]" data-id="'+x.id+'" class="form-control form-control-sm scno" multiple="multiple">'+
+                			options+
+                		'</select>';
+			}, searchable: false, orderable: false },
+
+			{ data: function(x) {
+				return '<button type="button" class="btn btn-sm bg-red btn_remove_issue" data-index="'+x.index+'">'+
+							'<i class="fa fa-times"></i>' +
+						'</button>';
+            }, searchable: false, orderable: false },
+
+		],
+		initComplete: function() {
+			//$('.loadingOverlay-modal').hide();
+		},
+		createdRow: function (nRow, aData, iDataIndex) {
+			$(nRow).attr('id', index);
+			index++;
+		},
+    });
+    if(arr.length > 0){
+		getTotalIssuedQty();
+	}else{
+		$('#issued_qty_table').val(0);
+	}
+    $('.scno').select2();
 }
 
 function getSC(idJO) {

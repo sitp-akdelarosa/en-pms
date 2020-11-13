@@ -105,13 +105,14 @@
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="table-responsive">
-                                        <table class="table table-sm table-hover table-striped dt-responsive nowrap" id="tbl_product" style="width: 100%">
+                                        <table class="table table-sm table-hover table-bordered table-striped dt-responsive nowrap" id="tbl_product" style="width: 100%">
                                             <thead class="thead-dark">
                                                 <tr>
                                                     <th width="20%">Product Code</th>
                                                     <th width="10%">Issued Qty</th>
                                                     <th width="20%">SC. Qty</th>
-                                                    <th width="50%">SC No.</th>
+                                                    <th width="40%">SC No.</th>
+                                                    <th width="10%"></th>
                                                 </tr>
                                             </thead>
                                             <tbody id="tbl_product_body"></tbody>
