@@ -164,7 +164,7 @@ Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', '
 				->name('masters.material-master.destroy-code');
 			Route::get('/get_dropdown_material_type', 'PPC\Masters\MaterialMasterController@get_dropdown_material_type')
 				->name('masters.material-master.get_dropdown_material_type');
-			Route::get('/enable-disabled-material', 'PPC\Masters\MaterialMasterController@enableDisabledProducts')
+			Route::get('/enable-disabled-material', 'PPC\Masters\MaterialMasterController@enableDisabledMaterials')
 				->name('masters.material-master.enable-disabled-material');
 			Route::get('/download-excel-file', 'PPC\Masters\MaterialMasterController@downloadExcelFile')
 				->name('masters.material-master.download-excel-file');
@@ -202,6 +202,8 @@ Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', '
 				->name('masters.operator-master.save');
 			Route::post('/destroy', 'PPC\Masters\OperatorMasterController@destroy')
 				->name('masters.operator-master.destroy');
+			Route::get('/enable-disabled-operator', 'PPC\Masters\OperatorMasterController@enableDisabledOperators')
+				->name('masters.operator-master.enable-disabled-operator');
 		});
 	});
 

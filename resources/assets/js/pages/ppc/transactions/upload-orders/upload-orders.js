@@ -78,33 +78,113 @@ $(function () {
 		e.preventDefault();
 		$('.loadingOverlay-modal').show();
 
-		$.ajax({
-			url: $(this).attr('action'),
-			type: 'GET',
-			dataType: 'JSON',
-			data: $(this).serialize(),
-		}).done(function (data, textStatus, xhr) {
-			uploadedProductsTable(data);
+		var filterURL = $(this).attr('action');
+		var search_param = objectifyForm($(this).serializeArray());
 
-		}).fail(function (xhr, textStatus, errorThrown) {
-			var errors = xhr.responseJSON.errors;
-
-			console.log(errors);
-			showErrors(errors);
-		}).always(function () {
-			$('.loadingOverlay-modal').hide();
-		});
+		uploadedProductsTable(filterURL,search_param);
 	});
 
 	$('#btn_search_excel').on('click', function () {
-		window.location.href = excelSearchFilterURL + "?srch_date_upload_from=" + $('#srch_date_upload_from').val() +
+		var DownloadURL = excelSearchFilterURL + "?srch_date_upload_from=" + $('#srch_date_upload_from').val() +
 			"&srch_date_upload_to=" + $('#srch_date_upload_to').val() +
 			"&srch_sc_no=" + $('#srch_sc_no').val() +
 			"&srch_prod_code=" + $('#srch_prod_code').val() +
 			"&srch_description=" + $('#srch_description').val() +
 			"&srch_po=" + $('#srch_po').val();
+
+		var percentage = 10;
+
+		$('#progress').show();
+		$('.progress-bar').css('width', '10%');
+		$('.progress-bar').attr('aria-valuenow', percentage);
+
+		var req = new XMLHttpRequest();
+
+		req.open("GET", DownloadURL, true);
+
+		setTimer(percentage);
+
+		req.addEventListener("progress", function (evt) {
+			if (evt.lengthComputable) {
+				var percentComplete = evt.loaded / evt.total;
+				console.log(percentComplete);
+			}
+		}, false);
+
+		req.responseType = "blob";
+		req.onreadystatechange = function () {
+			if (req.readyState == 2 && req.status == 200) {
+				stopTimer();
+				$('.progress-msg').html("Download is being started");
+			}
+			else if (req.readyState == 3) {
+				$('.progress-msg').html("Download is under progress");
+				$('.progress-bar').css('width', '80%');
+				$('.progress-bar').attr('aria-valuenow', 80);
+			}
+			else if (req.readyState === 4 && req.status === 200) {
+
+				$('.progress-bar').css('width', '100%');
+				$('.progress-bar').attr('aria-valuenow', 100);
+
+				$('.progress-msg').html("Downloaing has finished");
+
+				percentage = 100;
+
+				var disposition = req.getResponseHeader('content-disposition');
+				var matches = /"([^"]*)"/.exec(disposition);
+				var filename = (matches != null && matches[1] ? matches[1] : 'Product_Master.xlsx');
+
+				// var filename = $(that).data('filename');
+				if (typeof window.chrome !== 'undefined') {
+					// Chrome version
+					var link = document.createElement('a');
+					link.href = window.URL.createObjectURL(req.response);
+					link.download = filename;
+					link.click();
+					if (percentage == 100) {
+						$('#progress').hide();
+					}
+				} else if (typeof window.navigator.msSaveBlob !== 'undefined') {
+					// IE version
+					var blob = new Blob([req.response], { type: 'application/force-download' });
+					window.navigator.msSaveBlob(blob, filename);
+					if (percentage == 100) {
+						$('#progress').hide();
+					}
+				} else {
+					// Firefox version
+					var file = new File([req.response], filename, { type: 'application/force-download' });
+					window.open(URL.createObjectURL(file));
+					if (percentage == 100) {
+						$('#progress').hide();
+					}
+				}
+			}
+			else if (req.stastus == 500) {
+				console.log(req);
+			}
+		};
+		req.send();
 	});
 });
+
+var timer;
+
+function setTimer(percentage) {
+	percentage = 20;
+	timer = setInterval(function () {
+		console.log(percentage);
+		$('.progress-bar').css('width', percentage.toString() + '%');
+		$('.progress-bar').attr('aria-valuenow', percentage);
+		$('.progress-msg').html("Please wait.. Retrieving data.");
+		percentage = percentage + 5;
+	}, 100000);
+}
+
+function stopTimer() {
+	clearInterval(timer);
+}
 
 function init() {
     check_permission(code_permission, function(output) {
@@ -335,12 +415,19 @@ function getUploadedProducts() {
 	// });
 }
 
-function uploadedProductsTable(ajax_url) {
+function uploadedProductsTable(ajax_url,params) {
 	$('#tbl_Upload').dataTable().fnClearTable();
     $('#tbl_Upload').dataTable().fnDestroy();
     $('#tbl_Upload').dataTable({
 		ajax: {
-			url: ajax_url
+			url: ajax_url,
+			data: params,
+			async: true,
+            error: function (xhr, textStatus, errorThrown)
+            {
+				$('.loadingOverlay').hide();
+                ErrorMsg(xhr);
+            }
 		},
 		stateSave: true,
 		order: [[6, 'desc']],
@@ -362,6 +449,7 @@ function uploadedProductsTable(ajax_url) {
             }
 		},
 		initComplete: function() {
+			$('.loadingOverlay-modal').hide();
 			$('.loadingOverlay').hide();
 		}
     });

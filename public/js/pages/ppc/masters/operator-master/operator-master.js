@@ -241,6 +241,7 @@ $(function () {
 
   $("#frm_operator").on('submit', function (e) {
     e.preventDefault();
+    $('.loadingOverlay').show();
     var form_action = $(this).attr("action");
     $.ajax({
       dataType: 'json',
@@ -265,11 +266,13 @@ $(function () {
       } else {
         ErrorMsg(xhr);
       }
+    }).always(function () {
+      $('.loadingOverlay').hide();
     });
   }); //Edit table
 
   $('#tbl_operator').on('click', '.btn_edit', function (e) {
-    viewState('edit');
+    viewState('show');
     $('#operator_id').val($(this).attr('data-operator_id'));
     $('#id').val($(this).attr('data-id'));
     $('#firstname').val($(this).attr('data-firstname'));
@@ -283,7 +286,11 @@ $(function () {
     delete_operators('.dt-checkboxes', deleteOM);
   });
   $('#btn_add').on('click', function () {
-    viewState('addnew');
+    if ($('#id').val() == '') {
+      viewState('addnew');
+    } else {
+      viewState('edit');
+    }
   });
   $('#btn_clear').on('click', function () {
     clear();
@@ -318,6 +325,25 @@ $(function () {
       $('.btn_edit').prop('disabled', false);
       $('.btn_enable_disable').prop('disabled', false);
     }
+  });
+  $('#tbl_operator_body').on('click', '.btn_enable_disable', function () {
+    $('.loadingOverlay').show();
+    $.ajax({
+      url: disabledURL,
+      type: 'GET',
+      dataType: 'JSON',
+      data: {
+        _token: token,
+        id: $(this).attr('data-id'),
+        disabled: $(this).attr('data-disabled')
+      }
+    }).done(function (data, textStatus, xhr) {
+      getOperators();
+    }).fail(function (xhr, textStatus, errorThrown) {
+      ErrorMsg(xhr);
+    }).always(function () {
+      $('.loadingOverlay').hide();
+    });
   });
 });
 
@@ -370,6 +396,18 @@ function viewState(state) {
       $('.dt-checkboxes-select-all input[type=checkbox]').prop('disabled', true);
       break;
 
+    case 'show':
+      $('#btn_add').html('<i class="fa fa-edit"></i> Edit');
+      $('#div_add').show();
+      $('#div_save').hide();
+      $('#div_clear').hide();
+      $('#div_cancel').show();
+      $('#div_delete').hide();
+      $('.readonly_op').prop('disabled', true);
+      $('.dt-checkboxes').prop('disabled', true);
+      $('.dt-checkboxes-select-all input[type=checkbox]').prop('disabled', true);
+      break;
+
     case 'edit':
       $('#btn_save').html('<i class="fa fa-pencil"></i> Update');
       $('#div_add').hide();
@@ -384,6 +422,7 @@ function viewState(state) {
 
     default:
       $('#btn_save').html('<i class="fa fa-floppy-o"></i> Save');
+      $('#btn_add').html('<i class="fa fa-plus"></i> Add New');
       $('#div_add').show();
       $('#div_save').hide();
       $('#div_clear').hide();
@@ -511,7 +550,7 @@ function getOperators() {
 }
 
 function delete_operators(checkboxClass, deleteURL) {
-  $('.loading').show();
+  $('.loadingOverlay').show();
   var chkArray = [];
   $(checkboxClass + ":checked").each(function () {
     chkArray.push($(this).attr('data-id'));
@@ -540,14 +579,14 @@ function delete_operators(checkboxClass, deleteURL) {
           }
         }).done(function (data, textStatus, xhr) {
           msg(data.msg, data.status);
-          getProductCodes();
+          getOperators();
         }).fail(function (xhr, textStatus, errorThrown) {
           msg(errorThrown, 'error');
         }).always(function () {
-          $('.loading').hide();
+          $('.loadingOverlay').hide();
         });
       } else {
-        $('.loading').hide();
+        $('.loadingOverlay').hide();
         $('#tbl_product_code .dt-checkboxes-select-all').click();
         swal("Cancelled", "Your data is safe and not deleted.");
       }

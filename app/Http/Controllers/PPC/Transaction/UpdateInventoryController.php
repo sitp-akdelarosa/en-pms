@@ -1874,7 +1874,7 @@ class UpdateInventoryController extends Controller
             $srch_product_line = "'".$req->srch_product_line."'";
         }
 
-        if (!is_null($req->srch_item_code)) {
+        if (!is_null($req->srch_item_code) && $req->srch_item_code !== 'null') {
             $srch_item_code = "'".$req->srch_item_code."'";
         }
 
@@ -1924,6 +1924,10 @@ class UpdateInventoryController extends Controller
 
         if (!is_null($req->srch_warehouse)) {
             $srch_warehouse = "'".$req->srch_warehouse."'";
+        }
+
+        if ($req->with_zero == '') {
+            $req->with_zero = 0;
         }
 
         $data = DB::select(

@@ -126,6 +126,7 @@
         var code_permission = "M0006";
         var getOperatorsURL = "{{ url('/masters/operator-master/get-operators') }}";
         var deleteOM = "{{ url('/masters/operator-master/destroy') }}";
+        var disabledURL = "{{ url('/masters/operator-master/enable-disabled-operator') }}";
 	</script>
 	<script type="text/javascript" src="{{ asset('/js/pages/ppc/masters/operator-master/operator-master.js') }}"></script>
 @endpush

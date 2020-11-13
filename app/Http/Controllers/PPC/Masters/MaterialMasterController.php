@@ -511,10 +511,10 @@ class MaterialMasterController extends Controller
 		return response()->json($process);
 	}
 
-	public function enableDisabledProducts(Request $req)
+	public function enableDisabledMaterials(Request $req)
 	{
 		$data = [
-            'msg' => 'Disabling / Enabling Product code has failed.',
+            'msg' => 'Disabling / Enabling Material code has failed.',
             'status' => 'failed'
         ];
 

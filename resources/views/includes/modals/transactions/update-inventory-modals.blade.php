@@ -509,6 +509,17 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="row justify-content-center">
+                        <div class="col-md-12" style="display:none" id="progress">
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-success progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="00" aria-valuemin="0" aria-valuemax="100" style="width: 00%">
+                                    <span class="sr-only"></span>
+                                </div>
+                            </div>
+                            <span class="progress-msg">Processing...</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn bg-red" data-dismiss="modal">Close</button>
@@ -583,9 +594,9 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn bg-red" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn bg-green float-right permission-button" id="btn_excel">
+                    {{-- <button type="button" class="btn bg-green float-right permission-button" id="btn_excel">
                          <i class="fa fa-download"></i> Download excel file
-                    </button>
+                    </button> --}}
                 </div>
             </div>
         </form>

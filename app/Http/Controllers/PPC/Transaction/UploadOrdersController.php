@@ -404,7 +404,11 @@ class UploadOrdersController extends Controller
 
     public function searchFilter(Request $req)
     {
-        return response()->json($this->getFilteredOrders($req));
+        return DataTables::of($this->getFilteredOrders($req))
+						->editColumn('id', function($data) {
+							return $data->id;
+						})
+						->make(true);
     }
 
     private function getFilteredOrders($req)
@@ -462,32 +466,34 @@ class UploadOrdersController extends Controller
             $srch_po = " AND po ".$equal."'".$_value."'";
         }
 
-        $Datalist = DB::select("SELECT uo.id,
-                                        uo.sc_no,
-                                        uo.prod_code,
-                                        uo.description,
-                                        uo.quantity,
-                                        uo.po,
-                                        u.nickname as uploader,
-                                        uo.date_upload 
-                                FROM enpms.ppc_upload_orders as uo
-                                inner join users as u
-                                on uo.uploader = u.id
-                                left join ppc_product_codes as ppc
-                                on ppc.product_code = uo.prod_code
-                                left join admin_assign_production_lines as apl
-                                on apl.product_line = ppc.product_type
-                                where apl.user_id = ".Auth::user()->id
-                                .$srch_date_upload.$srch_sc_no.$srch_prod_code.$srch_description.$srch_po.
-                                "group by uo.id,
-                                        uo.sc_no,
-                                        uo.prod_code,
-                                        uo.description,
-                                        uo.quantity,
-                                        uo.po,
-                                        u.nickname,
-                                        uo.date_upload
-                                order by uo.date_upload desc");
+        $query = "SELECT uo.id,
+                        uo.sc_no,
+                        uo.prod_code,
+                        uo.description,
+                        uo.quantity,
+                        uo.po,
+                        u.nickname as uploader,
+                        uo.date_upload 
+                FROM enpms.ppc_upload_orders as uo
+                inner join users as u
+                on uo.uploader = u.id
+                left join ppc_product_codes as ppc
+                on ppc.product_code = uo.prod_code
+                left join admin_assign_production_lines as apl
+                on apl.product_line = ppc.product_type
+                where apl.user_id = ".Auth::user()->id
+                .$srch_date_upload.$srch_sc_no.$srch_prod_code.$srch_description.$srch_po.
+                " group by uo.id,
+                        uo.sc_no,
+                        uo.prod_code,
+                        uo.description,
+                        uo.quantity,
+                        uo.po,
+                        u.nickname,
+                        uo.date_upload
+                order by uo.date_upload desc";
+
+        $Datalist = DB::select($query);
 
         return $Datalist;
     }

@@ -157,4 +157,43 @@ class OperatorMasterController extends Controller
 
         return response()->json($data);
     }
+
+    public function enableDisabledOperators(Request $req)
+    {
+        $data = [
+            'msg' => 'Disabling / Enabling Operator has failed.',
+            'status' => 'failed'
+        ];
+
+        $updated = 0;
+
+        if ($req->disabled == 0) {
+            // to disabled
+            $updated = DB::table('ppc_operators')
+                            ->where('id',$req->id)
+                            ->update([
+								'disabled' => 1,
+								'updated_at' => date('Y-m-d H:i:s'),
+								'update_user' => Auth::user()->id
+							]);
+        } else {
+            // tioenable
+            $updated = DB::table('ppc_operators')
+                            ->where('id',$req->id)
+                            ->update([
+								'disabled' => 0,
+								'updated_at' => date('Y-m-d H:i:s'),
+								'update_user' => Auth::user()->id
+							]);
+        }
+
+        if ($updated) {
+            $data = [
+                'msg' => 'Disabling / Enabling Operator has successfully done.',
+                'status' => 'success'
+            ];
+        }
+
+        return response()->json($data);
+    }
 }

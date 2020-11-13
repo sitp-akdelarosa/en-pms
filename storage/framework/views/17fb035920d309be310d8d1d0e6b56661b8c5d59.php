@@ -124,6 +124,7 @@
         var code_permission = "M0006";
         var getOperatorsURL = "<?php echo e(url('/masters/operator-master/get-operators')); ?>";
         var deleteOM = "<?php echo e(url('/masters/operator-master/destroy')); ?>";
+        var disabledURL = "<?php echo e(url('/masters/operator-master/enable-disabled-operator')); ?>";
 	</script>
 	<script type="text/javascript" src="<?php echo e(asset('/js/pages/ppc/masters/operator-master/operator-master.js')); ?>"></script>
 <?php $__env->stopPush(); ?>

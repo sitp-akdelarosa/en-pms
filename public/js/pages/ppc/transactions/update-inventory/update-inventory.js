@@ -495,7 +495,75 @@ $(function () {
     var srch_supplier = $('#srch_supplier').val();
     var srch_supplier_heat_no = $('#srch_supplier_heat_no').val();
     var url = downloadSearchExcelURL + '?srch_item_class=' + srch_item_class + '&srch_received_date_from=' + srch_received_date_from + '&srch_received_date_to=' + srch_received_date_to + '&srch_receiving_no=' + srch_receiving_no + '&srch_jo_no=' + srch_jo_no + '&srch_materials_type=' + srch_materials_type + '&srch_product_line=' + srch_product_line + '&srch_item_code=' + srch_item_code + '&srch_item=' + srch_item + '&srch_alloy=' + srch_alloy + '&srch_schedule=' + srch_schedule + '&srch_size=' + srch_size + '&srch_width=' + srch_width + '&srch_length=' + srch_length + '&srch_heat_no=' + srch_heat_no + '&srch_lot_no=' + srch_lot_no + '&srch_invoice_no=' + srch_invoice_no + '&srch_supplier=' + srch_supplier + '&srch_supplier_heat_no=' + srch_supplier_heat_no;
-    window.location.href = url;
+    var percentage = 10;
+    $('#progress').show();
+    $('.progress-bar').css('width', '10%');
+    $('.progress-bar').attr('aria-valuenow', percentage);
+    var req = new XMLHttpRequest();
+    req.open("GET", url, true);
+    setTimer(percentage);
+    req.addEventListener("progress", function (evt) {
+      if (evt.lengthComputable) {
+        var percentComplete = evt.loaded / evt.total;
+        console.log(percentComplete);
+      }
+    }, false);
+    req.responseType = "blob";
+
+    req.onreadystatechange = function () {
+      if (req.readyState == 2 && req.status == 200) {
+        stopTimer();
+        $('.progress-msg').html("Download is being started");
+      } else if (req.readyState == 3) {
+        $('.progress-msg').html("Download is under progress");
+        $('.progress-bar').css('width', '80%');
+        $('.progress-bar').attr('aria-valuenow', 80);
+      } else if (req.readyState === 4 && req.status === 200) {
+        $('.progress-bar').css('width', '100%');
+        $('.progress-bar').attr('aria-valuenow', 100);
+        $('.progress-msg').html("Downloaing has finished");
+        percentage = 100;
+        var disposition = req.getResponseHeader('content-disposition');
+        var matches = /"([^"]*)"/.exec(disposition);
+        var filename = matches != null && matches[1] ? matches[1] : 'Inventory.xlsx'; // var filename = $(that).data('filename');
+
+        if (typeof window.chrome !== 'undefined') {
+          // Chrome version
+          var link = document.createElement('a');
+          link.href = window.URL.createObjectURL(req.response);
+          link.download = filename;
+          link.click();
+
+          if (percentage == 100) {
+            $('#progress').hide();
+          }
+        } else if (typeof window.navigator.msSaveBlob !== 'undefined') {
+          // IE version
+          var blob = new Blob([req.response], {
+            type: 'application/force-download'
+          });
+          window.navigator.msSaveBlob(blob, filename);
+
+          if (percentage == 100) {
+            $('#progress').hide();
+          }
+        } else {
+          // Firefox version
+          var file = new File([req.response], filename, {
+            type: 'application/force-download'
+          });
+          window.open(URL.createObjectURL(file));
+
+          if (percentage == 100) {
+            $('#progress').hide();
+          }
+        }
+      } else if (req.stastus == 500) {
+        console.log(req);
+      }
+    };
+
+    req.send();
   });
   $('#btn_delete').on('click', function () {
     var ids = [];
@@ -571,6 +639,22 @@ $(function () {
     }
   });
 });
+var timer;
+
+function setTimer(percentage) {
+  percentage = 20;
+  timer = setInterval(function () {
+    console.log(percentage);
+    $('.progress-bar').css('width', percentage.toString() + '%');
+    $('.progress-bar').attr('aria-valuenow', percentage);
+    $('.progress-msg').html("Please wait.. Retrieving data.");
+    percentage = percentage + 5;
+  }, 100000);
+}
+
+function stopTimer() {
+  clearInterval(timer);
+}
 
 function init() {
   check_permission(code_permission, function (output) {
