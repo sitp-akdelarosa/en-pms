@@ -1473,11 +1473,11 @@ function showDescription() {
 			break;
 			
 		case 'S/S SK SERIES FITTING':
-			$('#code_description').val(fifth + ' ' +forteenth+' '+eighth+' '+forth+', '+seventh);
+			$('#code_description').val(fifth + ' ' +forteenth+' '+seventh);
 			$('#alloy').val(fifth);
-			$('#item').val(eighth);
+			$('#item').val(seventh);
 			$('#size').val(forteenth);
-			$('#class').val(forth);
+			$('#class').val(0);
 			break;
 
 		case 'S/S STUB END':
@@ -1680,6 +1680,7 @@ function makeProcessList(arr) {
 }
 
 function showProcessList(prod_code,set) {
+	$('.loadingOverlay-modal').show();
 	$.ajax({
 		url: prodProcessListURL,
 		type: 'GET',
@@ -1708,6 +1709,8 @@ function showProcessList(prod_code,set) {
 		makeProcessList(process_array);
 	}).fail(function(xhr, textStatus, errorThrown) {
 		ErrorMsg(xhr)
+	}).always( function() {
+		$('.loadingOverlay-modal').hide();
 	});
 }
 
@@ -1805,6 +1808,14 @@ function autoAssignSelectBox(code) {
 			$('#second_val').val(second2);
 			$('#second').val(second2);
 			$('#hide_3rd').hide();
+
+			if ($('#second_val').val() == null) {
+				var second2 = jsUcfirst(code.charAt(1))+jsUcfirst(code.charAt(2))+jsUcfirst(code.charAt(3));
+				$('#second_val').val(second2);
+				$('#second').val(second2);
+				$('#hide_3rd').hide();
+				$('#hide_4th').hide();
+			}
 		}
 
 		$('#forth_val').val(forth);
@@ -1815,6 +1826,14 @@ function autoAssignSelectBox(code) {
 
 		$('#seventh_val').val(seventh);
 		$('#seventh').val(seventh);
+
+		if ($('#seventh_val').val() == null) {
+			var seventh = jsUcfirst(code.charAt(6))+jsUcfirst(code.charAt(7))+jsUcfirst(code.charAt(8));
+			$('#seventh_val').val(seventh);
+			$('#seventh').val(seventh);
+			$('#hide_8th').hide();
+			$('#hide_9th').hide();
+		}
 
 		$('#eighth_val').val(eighth1);
 		$('#eighth').val(eighth1);

@@ -335,7 +335,7 @@ foreach ($user_accesses as $user_access){
 								</div>
 							</div>
 
-							<div class="row">
+							<div class="row" id="hide_4th">
 								<div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 mb-5">
 									<div class="input-group mb-5 input-group-sm">
 										<div class="input-group-prepend">
@@ -354,7 +354,7 @@ foreach ($user_accesses as $user_access){
 								</div>
 							</div>
 
-							<div class="row">
+							<div class="row" id="hide_5th">
 								<div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 mb-5">
 									<div class="input-group mb-5 input-group-sm">
 										<div class="input-group-prepend">
@@ -373,7 +373,7 @@ foreach ($user_accesses as $user_access){
 								</div>
 							</div>
 
-							<div class="row">
+							<div class="row" id="hide_7th">
 								<div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 mb-5">
 									<div class="input-group mb-5 input-group-sm">
 										<div class="input-group-prepend">
@@ -392,7 +392,7 @@ foreach ($user_accesses as $user_access){
 								</div>
 							</div>
 
-							<div class="row">
+							<div class="row" id="hide_8th">
 								<div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 mb-5">
 									<div class="input-group mb-5 input-group-sm">
 										<div class="input-group-prepend">
@@ -430,7 +430,7 @@ foreach ($user_accesses as $user_access){
 								</div>
 							</div>
 
-							<div class="row">
+							<div class="row" id="hide_11th">
 								<div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 mb-5">
 									<div class="input-group mb-5 input-group-sm">
 										<div class="input-group-prepend">

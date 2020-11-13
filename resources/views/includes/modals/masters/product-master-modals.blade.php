@@ -9,6 +9,7 @@
             </div>
             
             <div class="modal-body">
+                <div class="loadingOverlay-modal"></div>
                 <form method="POST" action="{{ url('/masters/product-master/code/processes/save') }}" id="frm_product_processes" class="mb-10">
                     @csrf
                     <input type="hidden" name="process_id" id="process_id">
