@@ -205,6 +205,7 @@ class PDFController extends Controller
 		$pre_travel_sheet = DB::table('ppc_pre_travel_sheets')
 			->whereIn('jo_no', $jo_no)
 			->select('id', 'jo_no', 'prod_code')
+			->orderBy('id','asc')
 			->get();
 		$iso = $this->_helper->getISO($req->iso_control);
 

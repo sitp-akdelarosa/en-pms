@@ -336,7 +336,33 @@ class ProductMasterController extends Controller
 
     public function prod_process_list(Request $req)
     {
-        $process = PpcProductProcess::where('prod_id', $req->prod_id)->orderBy('sequence','asc')->get();
+        $process = DB::select("SELECT distinct pp.id as id,
+                                    pp.sequence as sequence,
+                                    ifnull(pp.remarks,p.remarks) as remarks,
+                                    pp.process as process,
+                                    pp.`set` as `set`
+                            FROM enpms.ppc_product_processes as pp
+                            inner join ppc_processes as p
+                            on pp.`set` = p.set_id and pp.sequence = p.sequence
+                            where prod_id = ".$req->prod_id."
+                            order by sequence asc");
+
+        // if (count((array)$process) == 0) {
+        //     $prod = DB::table('ppc_product_codes')->select('product_type')->where('id',$req->prod_id)->first();
+
+        //     $process = DB::select("select p.id,
+        //                                     p.sequence,
+        //                                     p.remarks,
+        //                                     p.process,
+        //                                     p.`set`,
+        //                                     pp.product_line
+        //                             from ppc_processes as p
+        //                             inner join ppc_process_productlines as pp
+        //                             on p.set_id = pp.set_id
+        //                             where pp.product_line = '".$prod->product_type."'
+        //                             ");
+        // }
+
         return response()->json($process);
     }
 
@@ -479,7 +505,7 @@ class ProductMasterController extends Controller
                                     </button>
                                     
                                     <button class='btn btn-sm bg-purple btn_assign_process' 
-                                    data-id='".$data->id."' 
+                                    data-id='".$data->id."' data-prod_line='".$data->product_type."'
                                     data-product_code='".$data->product_code."' data-toggle='popover' 
 										data-content='This Button is to Assign Process for ".$data->product_code.".' 
 										data-placement='right'>
@@ -698,7 +724,7 @@ class ProductMasterController extends Controller
         return response()->json($data);
     }
 
-    public function get_set()
+    public function get_set(Request $req)
     {
         $set = PpcProcessSet::all();
         return response()->json($set);

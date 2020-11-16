@@ -672,19 +672,22 @@ function autoComplete(id,url,text) {
 }
 
 function ErrorMsg(xhr) {
-	var response;
-	if (xhr.hasOwnProperty('responseJSON')) {
-		response = xhr.responseJSON;
-	} else {
-		response = jQuery.parseJSON(xhr.responseText);
+	if (xhr.status == 500) {
+		var response;
+		if (xhr.hasOwnProperty('responseJSON')) {
+			response = xhr.responseJSON;
+		} else {
+			response = jQuery.parseJSON(xhr.responseText);
+		}
+
+		var msg = "File: " + response.file + "</br>" + "Line: " + response.line + "</br>" + "Message: " + response.message;
+		var file = response.file;
+		var line = response.line;
+
+		$('#msg_content').html(msg);
+		$('#modalMsg').modal('show');
 	}
-
-	var msg = "File: " + response.file + "</br>" + "Line: " + response.line + "</br>" + "Message: " + response.message;
-	var file = response.file;
-	var line = response.line;
-
-	$('#msg_content').html(msg);
-	$('#modalMsg').modal('show');
+	
 }
 
 function dateToday() {

@@ -478,8 +478,6 @@ $( function() {
 	get_dropdown_items_by_id(1,'#process');
 	autoComplete("#standard_material_used", getStandardMaterialURL, "code_description");
 
-	get_set();
-
 	$(document).on('keydown', function (e) {
 		if ($('#product_code_tab').hasClass('active')) {
 			switch (e.keyCode) {
@@ -710,6 +708,8 @@ $( function() {
 		$('#btn_save_process').html('<i class="fa fa-floppy-o"></i> Save');
 		$('#process_id').val('');
 
+		get_set($(this).attr('data-prod_line'));
+
 		showProcessList($('#prod_id').val(),$('#set').val());
 
 		$('#btn_cancel_process').hide();
@@ -755,7 +755,9 @@ $( function() {
 			var sequence = process_array.length + 1;
 			$('#sequence').val(sequence);
 		}).fail(function(xhr, textStatus, errorThrown) {
-			msg("There was an error while processesing.",textStatus);
+			if (xhr.status == 500) {
+				ErrorMsg(xhr);
+			}
 		});
 	});
 
@@ -789,8 +791,12 @@ $( function() {
 				$('#cancel_code').hide();
 
 			}).fail(function(xhr, textStatus, errorThrown) {
-				var errors = xhr.responseJSON.errors;
-				showErrors(errors);
+				if (xhr.status == 500) {
+					ErrorMsg(xhr);
+				} else {
+					var errors = xhr.responseJSON.errors;
+					showErrors(errors);
+				}
 			}).always(function() {
 				$('.loadingOverlay').hide();
 			});
@@ -817,6 +823,7 @@ $( function() {
 
 		// $('#product_code').prop('readonly', true);
 		// $('#code_description').prop('readonly', true);
+		$('#btn_add_code').html('<i class="fa fa-plus"></i> Add New');
 		$('#btn_save').html('<i class="fa fa-floppy-o"></i> Save');
 	});
 
@@ -1871,14 +1878,14 @@ function autoAssignSelectBox(code) {
 	}
 }
 
-function get_set() {
+function get_set(prod_line) {
 	var set = '<option value=""></option>';
 	$('#set').html(set);
 	$.ajax({
 		url: getSetURL,
 		type: 'GET',
 		dataType: 'JSON',
-		data: {_token: token},
+		data: {_token: token, prod_line: prod_line},
 	}).done(function(data, textStatus, xhr) {
 		console.log(data);
 		$.each(data, function(i, x) {

@@ -243,7 +243,7 @@ function initializePage(){
 									processData: false,
 								}).done(function (returns, textStatus, xhr) {
 									$('.loadingOverlay').hide();
-									var return_data = jQuery.parseJSON(returnData);
+									var return_data = jQuery.parseJSON(returns);
 									if (return_data.status == "success") {
 										if (return_data.countAddedRow == 0) {
 											msg('No record of data added', 'failed');
@@ -272,7 +272,7 @@ function initializePage(){
 										}
 
 									} else {
-										msg(returnData.msg, "warning");
+										msg(returns.msg, "warning");
 										document.getElementById('filenamess').innerHTML = "Select file...";
 									}
 								}).fail(function (xhr, textStatus, errorThrown) {
