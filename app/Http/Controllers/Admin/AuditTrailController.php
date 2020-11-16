@@ -58,6 +58,6 @@ class AuditTrailController extends Controller
 
         $params['user_type'] = $ut->description;
 
-        event(new AuditTrail($params));
+        //event(new AuditTrail($params));
     }
 }

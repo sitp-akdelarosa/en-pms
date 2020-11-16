@@ -594,9 +594,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn bg-red" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn bg-green float-right permission-button" id="btn_excel">
-                         <i class="fa fa-download"></i> Download excel file
-                    </button>
+                    
                 </div>
             </div>
         </form>
