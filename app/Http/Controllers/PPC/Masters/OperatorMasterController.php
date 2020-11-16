@@ -54,9 +54,11 @@ class OperatorMasterController extends Controller
         if (is_null($exists)) {
             if (isset($request->id)) {               
                 $PpcOperator = PpcOperator::find($request->id);
-                $PpcOperator->operator_id =$request->operator_id;
-                $PpcOperator->firstname = $request->firstname;
-                $PpcOperator->lastname =$request->lastname;
+                $PpcOperator->operator_id = strtoupper($request->operator_id);
+                $PpcOperator->firstname = strtoupper($request->firstname);
+                $PpcOperator->lastname =strtoupper($request->lastname);
+                $PpcOperator->nickname =strtoupper($request->nickname);
+                $PpcOperator->position =strtoupper($request->position);
                 $PpcOperator->update_user = Auth::user()->id;
                 $PpcOperator->update();
 
@@ -70,9 +72,11 @@ class OperatorMasterController extends Controller
                 ]);
             }else{
                 $PpcOperator = new PpcOperator();
-                $PpcOperator->operator_id =$request->operator_id;
-                $PpcOperator->firstname = $request->firstname;
-                $PpcOperator->lastname =$request->lastname;
+                $PpcOperator->operator_id =strtoupper($request->operator_id);
+                $PpcOperator->firstname = strtoupper($request->firstname);
+                $PpcOperator->lastname =strtoupper($request->lastname);
+                 $PpcOperator->nickname =strtoupper($request->nickname);
+                $PpcOperator->position =strtoupper($request->position);
                 $PpcOperator->create_user = Auth::user()->id;
                 $PpcOperator->update_user = Auth::user()->id;
                 $PpcOperator->save();
@@ -113,6 +117,8 @@ class OperatorMasterController extends Controller
                             data-operator_id="'.$data->operator_id.'"
                             data-firstname="'.$data->firstname.'"
                             data-lastname="'.$data->lastname.'"
+                            data-nickname="'.$data->nickname.'"
+                            data-position="'.$data->position.'"
                             data-disabled="'.$data->disabled.'"
                             ><i class="fa fa-edit"></i></button>';
                         })

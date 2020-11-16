@@ -55,6 +55,30 @@
                                     </div>
                                 </div>
 
+                                <div class="form-group row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="input-group input-group-sm">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">Nick Name:</span>
+                                            </div>
+                                            <input type="text" class="form-control input-sm validate clear readonly_op switch" name="nickname" id="nickname">
+                                            <div id="nickname_feedback"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="input-group input-group-sm">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">Position:</span>
+                                            </div>
+                                            <input type="text" class="form-control input-sm validate clear readonly_op switch" name="position" id="position">
+                                            <div id="position_feedback"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <hr />
 
                                 <div class="row justify-content-center">
@@ -99,6 +123,8 @@
                                             <th>Operator's ID</th>
                                             <th>First Name</th>
                                             <th>Last Name</th>
+                                            <th>Nick Name</th>
+                                            <th>Position</th>
                                             <th>Date Created</th>
                                             <th></th>
                                         </tr>

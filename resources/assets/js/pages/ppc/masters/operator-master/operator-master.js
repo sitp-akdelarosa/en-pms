@@ -165,7 +165,9 @@ $( function() {
         $('#operator_id').val($(this).attr('data-operator_id'));
         $('#id').val($(this).attr('data-id'));
         $('#firstname').val($(this).attr('data-firstname'));
-        $('#lastname').val($(this).attr('data-lastname'));
+		$('#lastname').val($(this).attr('data-lastname'));
+		$('#nickname').val($(this).attr('data-nickname'));
+		$('#position').val($(this).attr('data-position'));
         $('#btn_save').removeClass('bg-blue');
         $('#btn_save').addClass('bg-green');
         $('#btn_save').html('<i class="fa fa-check"></i> Update');
@@ -333,7 +335,9 @@ function viewState(state) {
 
             hideErrors('operator_id');
             hideErrors('firstname');
-            hideErrors('lastname');
+			hideErrors('lastname');
+			hideErrors('nickname');
+			hideErrors('position');
             break;
     }
 }
@@ -393,8 +397,10 @@ function getOperators() {
             { data: 'action', name: 'action', orderable: false, searchable: false },
             { data: 'operator_id', name: 'operator_id' },
             { data: 'firstname', name: 'firstname' },
-            { data: 'lastname', name: 'lastname' },
-            { data: 'created_at', name: 'created_at' },
+			{ data: 'lastname', name: 'lastname' },
+			{ data: 'nickname', name: 'nickname' },
+			{ data: 'position', name: 'position' },
+            { data: 'updated_at', name: 'updated_at' },
             {
                 data: function (data) {
 					var enable_disable;
@@ -494,6 +500,7 @@ function delete_operators(checkboxClass,deleteURL) {
         $('#btn_save').html('<i class="fa fa-plus"></i> Add');
 
 	} else {
+		$('.loadingOverlay').hide();
 		msg("Please select at least 1 item.", "failed");
 	}
 }

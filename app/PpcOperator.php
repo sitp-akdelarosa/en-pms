@@ -10,6 +10,8 @@ class PpcOperator extends Model
         'operator_id',
         'firstname',
         'lastname',
+        'nickname',
+        'position',
         'create_user',
         'update_user'
     ];
