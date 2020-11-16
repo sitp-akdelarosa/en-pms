@@ -1218,7 +1218,7 @@ function getMaterialused(heat_no, count) {
       });
     }
   }).fail(function (xhr, textStatus, errorThrown) {
-    msg(errorThrown, textStatus);
+    ErrorMsg(xhr);
   });
 }
 

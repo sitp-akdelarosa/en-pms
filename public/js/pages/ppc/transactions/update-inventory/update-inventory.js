@@ -494,7 +494,8 @@ $(function () {
     var srch_invoice_no = $('#srch_invoice_no').val();
     var srch_supplier = $('#srch_supplier').val();
     var srch_supplier_heat_no = $('#srch_supplier_heat_no').val();
-    var url = downloadSearchExcelURL + '?srch_item_class=' + srch_item_class + '&srch_received_date_from=' + srch_received_date_from + '&srch_received_date_to=' + srch_received_date_to + '&srch_receiving_no=' + srch_receiving_no + '&srch_jo_no=' + srch_jo_no + '&srch_materials_type=' + srch_materials_type + '&srch_product_line=' + srch_product_line + '&srch_item_code=' + srch_item_code + '&srch_item=' + srch_item + '&srch_alloy=' + srch_alloy + '&srch_schedule=' + srch_schedule + '&srch_size=' + srch_size + '&srch_width=' + srch_width + '&srch_length=' + srch_length + '&srch_heat_no=' + srch_heat_no + '&srch_lot_no=' + srch_lot_no + '&srch_invoice_no=' + srch_invoice_no + '&srch_supplier=' + srch_supplier + '&srch_supplier_heat_no=' + srch_supplier_heat_no;
+    var srch_warehouse = $('#srch_warehouse').val();
+    var url = downloadSearchExcelURL + '?srch_item_class=' + srch_item_class + '&srch_received_date_from=' + srch_received_date_from + '&srch_received_date_to=' + srch_received_date_to + '&srch_receiving_no=' + srch_receiving_no + '&srch_jo_no=' + srch_jo_no + '&srch_materials_type=' + srch_materials_type + '&srch_product_line=' + srch_product_line + '&srch_item_code=' + srch_item_code + '&srch_item=' + srch_item + '&srch_alloy=' + srch_alloy + '&srch_schedule=' + srch_schedule + '&srch_size=' + srch_size + '&srch_width=' + srch_width + '&srch_length=' + srch_length + '&srch_heat_no=' + srch_heat_no + '&srch_lot_no=' + srch_lot_no + '&srch_invoice_no=' + srch_invoice_no + '&srch_supplier=' + srch_supplier + '&srch_supplier_heat_no=' + srch_supplier_heat_no + '&srch_warehouse=' + srch_warehouse;
     var percentage = 10;
     $('#progress').show();
     $('.progress-bar').css('width', '10%');
@@ -734,13 +735,13 @@ function getWarehouse(state) {
       state: state
     }
   }).done(function (data, textStatus, xhr) {
-    var prod_line = $('#warehouse');
+    var warehouse = $('#warehouse');
 
     if (state == 'search') {
-      prod_line = $('#srch_warehouse');
+      warehouse = $('#srch_warehouse');
     }
 
-    prod_line.select2({
+    warehouse.select2({
       allowClear: true,
       placeholder: 'Select a Warehouse',
       width: 'resolve',

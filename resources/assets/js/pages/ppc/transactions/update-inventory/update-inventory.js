@@ -443,6 +443,7 @@ $(function () {
 		var srch_invoice_no = $('#srch_invoice_no').val();
 		var srch_supplier = $('#srch_supplier').val();
 		var srch_supplier_heat_no = $('#srch_supplier_heat_no').val();
+		var srch_warehouse = $('#srch_warehouse').val();
 
 		var url = downloadSearchExcelURL+
 		'?srch_item_class=' + srch_item_class +
@@ -463,7 +464,8 @@ $(function () {
 		'&srch_lot_no=' + srch_lot_no +
 		'&srch_invoice_no=' + srch_invoice_no +
 		'&srch_supplier=' + srch_supplier +
-		'&srch_supplier_heat_no=' + srch_supplier_heat_no;
+		'&srch_supplier_heat_no=' + srch_supplier_heat_no +
+		'&srch_warehouse=' + srch_warehouse;
 
 		var percentage = 10;
 
@@ -708,13 +710,13 @@ function getWarehouse(state) {
 		dataType: 'JSON',
 		data: { _token: token, state: state },
 	}).done(function (data, textStatus, xhr) {
-		var prod_line = $('#warehouse');
+		var warehouse = $('#warehouse');
 		
 		if (state == 'search') {
-			prod_line = $('#srch_warehouse');
+			warehouse = $('#srch_warehouse');
 		}
 
-		prod_line.select2({
+		warehouse.select2({
 			allowClear: true,
 			placeholder: 'Select a Warehouse',
 			width: 'resolve',
