@@ -4414,11 +4414,14 @@ $( function() {
 		e.preventDefault();
 		var validate = validateInput();
 	 	var totalIssued = parseInt($('#issued_qty_table').val());
-	 	var issued_qty = parseInt($('#issued_qty').val());
+		var issued_qty = parseInt($('#issued_qty').val());
+		 
 		if (validate == 'invalid') {
 			msg("Please input valid number.",'warning');
-		} else if(validate == 'morethan'){
+		} else if (validate == 'morethan') {
 			msg('Issued quantity per sheet must not more than SC quantity.','warning');
+		} else if (validate == 'no issuance') {
+			msg('No issuance was prepared.','warning');
 		} else {
 			if (totalIssued != issued_qty) {
 				swal({
@@ -4655,6 +4658,10 @@ $( function() {
 		console.log(prod_arr);
 		// makeProdTable(prod_arr);
 	});
+
+	$('#ship_date').on('change', function(e) {
+		hideErrors('ship_date');
+	});
 });
 
 function init() {
@@ -4693,16 +4700,16 @@ function validateInput(){
  	if(rows > 0){
         for(var x=0;x<rows;x++){
 			if ($('#tbl_product')["0"].children[1] !== undefined) {
-				var issued = parseInt($('#tbl_product')["0"].children[1].children[x].cells[1].children["0"].value);
-				var sched = parseInt($('#tbl_product')["0"].children[1].children[x].cells[2].children["0"].value);
-				if (issued == 0 || issued < 0) {
-					return "invalid";
+				if ($('#tbl_product')["0"].children[1].children[x].cells[1] == undefined) {
+					return "no issuance";
+				} else {
+					var issued = parseInt($('#tbl_product')["0"].children[1].children[x].cells[1].children["0"].value);
+					var sched = parseInt($('#tbl_product')["0"].children[1].children[x].cells[2].children["0"].value);
+					if (issued == 0 || issued < 0) {
+						return "invalid";
+					}
 				}
 			}
-        	
-        	// if (issued > sched) {
-        	// 	return "morethan";
-        	// }
         }
 	} else {
 		msg('Please prepare your travel sheet properly.', 'failed')

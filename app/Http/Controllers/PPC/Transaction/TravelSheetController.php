@@ -449,15 +449,43 @@ class TravelSheetController extends Controller
 
     public function save_travel_sheet_setup(Request $req)
     {
-        if(!isset($req->issued_qty_per_sheet)){
-            $data = [ 'msg' => "Please Input item in the Product Code table .", 'status' => "warning" ];
-            return $data;
-        }
+       $this->validate($req, [
+			'iso_no' => 'required',
+            'issued_qty_per_sheet' => 'required',
+            'issued_qty' => 'required',
+            'ship_date' => 'required'
+		]);
+
+        // if (!isset($req->iso_no) && is_null($req->iso_no)) {
+        //     // $errors['errors']['iso_no'] = 'Please fill out ISO No. field.';
+
+        //     array_push($errors['errors'], ['iso_no']);
+        // }
+
+        // if(!isset($req->issued_qty_per_sheet)  && is_null($req->issued_qty_per_sheet)) {
+        //     //$errors['errors']['issued_qty_per_sheet'] = 'Please fill out Qty. per Sheet field.';
+        //     array_push($errors['errors'], ['issued_qty_per_sheet']);
+        // }
+
+        // if(!isset($req->issued_qty)  && is_null($req->issued_qty)) {
+        //     //$errors['errors']['issued_qty'] = 'Please fill out Issued Qty. field.';
+        //     array_push($errors['errors'], ['issued_qty']);
+        // }
+
+        // if(!isset($req->ship_date)  && is_null($req->ship_date)) {
+        //     //$errors['errors']['iso_no'] = 'Please fill out ISO No. field.';
+        //     array_push($errors['errors'], ['ship_date']);
+        // }
+
+        // if (count($errors['errors']) > 0) {
+        //     return response()->json($errors, 422);
+        // }
 
         if(!isset($req->process)){
             $data = [ 'msg' => "Please Input some Procces.", 'status' => "warning" ];
             return $data;
         }
+
         foreach ($req->process as $key => $process) {
             if ($req->div_code[$key] == ''){
                 $data = [ 'msg' => "Please Fill up all the Division Code", 'status' => "warning" ];
@@ -475,13 +503,6 @@ class TravelSheetController extends Controller
         $total_issued_qty = 0;
         $msgIssuedQty = 0;
         if (isset($req->travel_sheet_id) && !empty($req->travel_sheet_id)) {
-            $this->validate($req, [
-                'prod_code' => 'required',
-                'issued_qty' => 'required|numeric',
-                'qty_per_sheet' => 'required|numeric',
-                'set' => 'required',
-                'iso_no' => 'required'
-            ]);
             $pre_ts = PpcPreTravelSheet::find($req->travel_sheet_id);
             $pre_ts->jo_no = strtoupper($req->jo_no);
             $pre_ts->prod_code = strtoupper($req->prod_code);
@@ -552,13 +573,6 @@ class TravelSheetController extends Controller
                 'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
             ]);
         } else {
-            $this->validate($req, [
-                'prod_code' => 'required',
-                'issued_qty' => 'required|numeric',
-                'qty_per_sheet' => 'required|numeric',
-                'set' => 'required',
-                'iso_no' => 'required'
-            ]);
             $pre_ts = new PpcPreTravelSheet();
             $pre_ts->jo_no = strtoupper($req->jo_no);
             $pre_ts->prod_code = strtoupper($req->prod_code);
