@@ -27,7 +27,7 @@
 
                     <div class="row">
                         <div class="col-md-12">
-                            <table class="table table-sm table-striped dt-responsive nowrap" id="tbl_process" style="width:100%">
+                            <table class="table table-sm table-striped table-bordered dt-responsive nowrap" id="tbl_process" style="width:100%">
                                 <thead class="thead-dark">
                                     <th>#</th>
                                     <th>Process</th>
@@ -82,7 +82,7 @@
 
                     <div class="row">
                         <div class="col-md-12">
-                            <table class="table table-sm table-striped dt-responsive nowrap" id="tbl_prodlines" style="width:100%">
+                            <table class="table table-sm table-striped dt-responsive table-bordered nowrap" id="tbl_prodlines" style="width:100%">
                                 <thead class="thead-dark">
                                     <th>#</th>
                                     <th>Product Lines</th>

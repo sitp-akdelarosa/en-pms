@@ -43,7 +43,7 @@ foreach ($user_accesses as $user_access){
 											<div class="input-group-prepend">
 												<span class="input-group-text">Division Code:</span>
 											</div>
-											<input type="text" class="form-control form-control-sm validate clear" id="div_code" name="div_code">
+											<input type="text" class="form-control form-control-sm validate clear readonly" id="div_code" name="div_code">
 											<div id="div_code_feedback"></div>
 										</div>
 
@@ -51,7 +51,7 @@ foreach ($user_accesses as $user_access){
 											<div class="input-group-prepend">
 												<span class="input-group-text">Division Name:</span>
 											</div>
-											<input type="text" class="form-control form-control-sm validate clear" id="div_name" name="div_name">
+											<input type="text" class="form-control form-control-sm validate clear readonly" id="div_name" name="div_name">
 											<div id="div_name_feedback"></div>
 										</div>
 
@@ -59,40 +59,16 @@ foreach ($user_accesses as $user_access){
 											<div class="input-group-prepend">
 												<span class="input-group-text">Plant:</span>
 											</div>
-											<input type="text" class="form-control form-control-sm validate clear" id="plant" name="plant">
+											<input type="text" class="form-control form-control-sm validate clear readonly" id="plant" name="plant">
 											<div id="plant_feedback"></div>
 										</div>
-
-										{{-- <div class="form-group row">
-											<label for="div_code" class="col-sm-3 control-label">Division Code:</label>
-											<div class="col-sm-9">
-												<input type="text" class="form-control form-control-sm validate clear" id="div_code" name="div_code">
-												<div id="div_code_feedback"></div>
-											</div>
-										</div>
-
-										<div class="form-group row">
-											<label for="div_name" class="col-sm-3 control-label">Division Name:</label>
-											<div class="col-sm-9">
-												<input type="text" class="form-control form-control-sm validate clear" id="div_name" name="div_name">
-												<div id="div_name_feedback"></div>
-											</div>
-										</div>
-
-										<div class="form-group row">
-											<label for="plant" class="col-sm-3 control-label">Plant:</label>
-											<div class="col-sm-9">
-												<input type="text" class="form-control form-control-sm validate clear" id="plant" name="plant">
-												<div id="plant_feedback"></div>
-											</div>
-										</div> --}}
 									</div>
 
 									<div class="col-lg-6 col-md-6 col-sm-6 mb-5">
 
 										<div class="form-group row">
 											<div class="col-sm-12 mb-3">
-												<select name="leader" class="form-control form-control-sm select-validate clear" style="width:100%" id="leader"></select>
+												<select name="leader" class="form-control form-control-sm select-validate clear readonly" style="width:100%" id="leader"></select>
 												<div id="leader_feedback"></div>
 											</div>
 										</div>
@@ -112,25 +88,16 @@ foreach ($user_accesses as $user_access){
 											</div>
 										</div>
 
-										{{-- <div class="form-group row">
-											<label for="process" class="col-sm-3 control-label">Product Line:</label>
-											
-										</div> --}}
-
 										<input type="hidden" name="user_id" id="user_id">
-
-										{{-- <div class="form-group row">
-											<label for="leader" class="col-sm-3 control-label">Leader:</label>
-											<div class="col-sm-9">
-												<select name="leader" class="form-control form-control-sm select-validate clear" id="leader"></select>
-												<input type="hidden" name="user_id" id="user_id">
-												<div id="leader_feedback"></div>
-											</div>
-										</div> --}}
 									</div>
 								</div>
 
 								<div class="row mb-5 justify-content-center">
+									<div class="col-lg-1 col-md-2 col-sm-3 col-xs-3 mb-3" id="btn_add_div">
+										<button type="button" class="btn btn-sm bg-green btn-block permission-button" id="btn_add">
+											<i class="fa fa-plus"></i> Add New
+										</button>
+									</div>
 									<div class="col-lg-1 col-md-2 col-sm-3 col-xs-3 mb-3" id="btn_save_div">
 										<button type="submit" class="btn btn-sm bg-blue btn-block permission-button" id="btn_save">
 											<i class="fa fa-floppy-o"></i> Save
@@ -160,8 +127,8 @@ foreach ($user_accesses as $user_access){
 
 
 					<div class="row">
-						<div class="col-md-9">
-							<table class="table table-sm table-striped" id="tbl_division" style="width:100%">
+						<div class="col-md-8">
+							<table class="table table-sm table-striped table-bordered" id="tbl_division" style="width:100%">
 								<thead class="thead-dark">
 									<tr>
 										<th>
@@ -179,9 +146,9 @@ foreach ($user_accesses as $user_access){
 								<tbody id="tbl_division_body"></tbody>
 							</table>
 						</div>
-						<div class="col-md-3">
+						<div class="col-md-4">
 							<div class="mb-40"></div>
-							<table class="table table-sm table-striped dt-responsive nowrap" id="tbl_view_process" style="width:100%">
+							<table class="table table-sm table-striped table-bordered dt-responsive nowrap" id="tbl_view_process" style="width:100%">
 								<thead class="thead-dark">
 									<tr>
 										<th>Process</th>

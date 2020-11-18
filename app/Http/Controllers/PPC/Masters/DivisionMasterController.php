@@ -47,8 +47,8 @@ class DivisionMasterController extends Controller
 						'leader_id',
 						'is_disable',
 						'user_id',
-						'created_at'
-					])->orderBy('updated_at','desc');
+						'updated_at'
+					]); //->orderBy('updated_at','desc');
 		return DataTables::of($division)
 						->editColumn('id', function($data) {
 							return $data->id;
