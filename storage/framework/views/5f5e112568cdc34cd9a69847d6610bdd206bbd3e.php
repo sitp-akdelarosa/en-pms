@@ -91,27 +91,27 @@ foreach ($user_accesses as $user_access){
 								</div>
 
 								<div class="row mb-5 justify-content-center">
-									<div class="col-lg-1 col-md-2 col-sm-3 col-xs-3 mb-3" id="btn_add_div">
+									<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3 mb-3" id="btn_add_div">
 										<button type="button" class="btn btn-sm bg-green btn-block permission-button" id="btn_add">
 											<i class="fa fa-plus"></i> Add New
 										</button>
 									</div>
-									<div class="col-lg-1 col-md-2 col-sm-3 col-xs-3 mb-3" id="btn_save_div">
+									<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3 mb-3" id="btn_save_div">
 										<button type="submit" class="btn btn-sm bg-blue btn-block permission-button" id="btn_save">
 											<i class="fa fa-floppy-o"></i> Save
 										</button>
 									</div>
-									<div class="col-lg-1 col-md-2 col-sm-3 col-xs-3 mb-3" id="btn_clear_div">
+									<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3 mb-3" id="btn_clear_div">
 										<button type="button" class="btn btn-sm bg-grey btn-block" id="btn_clear">
 											<i class="fa fa-refresh"></i> Clear
 										</button>
 									</div>
-									<div class="col-lg-1 col-md-2 col-sm-3 col-xs-3 mb-3" id="btn_delete_div">
+									<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3 mb-3" id="btn_delete_div">
 										<button type="button" class="btn btn-sm bg-red btn-block permission-button" id="btn_delete">
 											<i class="fa fa-trash"></i> Delete
 										</button>
 									</div>
-									<div class="col-lg-1 col-md-2 col-sm-3 col-xs-3 mb-3" id="btn_cancel_div">
+									<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3 mb-3" id="btn_cancel_div">
 										<button type="button" class="btn btn-sm bg-red btn-block" id="btn_cancel">
 											<i class="fa fa-times"></i> Cancel
 										</button>
