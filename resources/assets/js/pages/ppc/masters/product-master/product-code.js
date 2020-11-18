@@ -1111,7 +1111,7 @@ function showProcess(prodprocess) {
 }
 
 function delete_product(checkboxClass,deleteURL) {
-	$('.loading').show();
+	$('.loadingOverlay').show();
 	var chkArray = [];
 	$(checkboxClass+":checked").each(function() {
 		chkArray.push($(this).attr('data-id'));
@@ -1142,12 +1142,12 @@ function delete_product(checkboxClass,deleteURL) {
 	        		msg(data.msg,data.status)
 	                getProductCodes();
 	        	}).fail(function(xhr, textStatus, errorThrown) {
-	        		msg(errorThrown,'error');
+	        		ErrorMsg(xhr);
 	        	}).always(function() {
-	        		$('.loading').hide();
+	        		$('.loadingOverlay').hide();
 	        	});
 	        } else {
-				$('.loading').hide();
+				$('.loadingOverlay').hide();
 				$('#tbl_product_code .dt-checkboxes-select-all').click();
 	            swal("Cancelled", "Your data is safe and not deleted.");
 	        }

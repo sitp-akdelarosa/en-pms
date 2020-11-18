@@ -527,7 +527,43 @@ function delete_items(checkboxClass, deleteURL) {
 	});
 
 	if (chkArray.length > 0) {
-		confirm_delete(chkArray, token, deleteURL, true, 'tbl_division', divListURL, dataColumn);
+		// confirm_delete(chkArray, token, deleteURL, true, 'tbl_division', divListURL, dataColumn);
+
+		$('.loadingOverlay').show();
+		swal({
+	        title: "Are you sure?",
+	        text: "You will not be able to recover your data!",
+	        type: "warning",
+	        showCancelButton: true,
+	        confirmButtonColor: "#f95454",
+	        confirmButtonText: "Yes",
+	        cancelButtonText: "No",
+	        closeOnConfirm: true,
+	        closeOnCancel: false
+	    }, function(isConfirm){
+	        if (isConfirm) {
+	        	$.ajax({
+	        		url: deleteURL,
+	        		type: 'POST',
+	        		dataType: 'JSON',
+	        		data: {
+	        			_token:token,
+	        			id: chkArray
+	        		},
+	        	}).done(function(data, textStatus, xhr) {
+	        		msg(data.msg,data.status)
+	                divisionTable();
+	        	}).fail(function(xhr, textStatus, errorThrown) {
+	        		ErrorMsg(xhr);
+	        	}).always(function() {
+	        		$('.loadingOverlay').hide();
+	        	});
+	        } else {
+				$('.loadingOverlay').hide();
+				$('.check_all').click();
+	            swal("Cancelled", "Your data is safe and not deleted.");
+	        }
+	    });
 	} else {
 		msg("Please select at least 1 item.", "warning");
 	}

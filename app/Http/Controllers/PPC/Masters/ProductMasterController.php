@@ -66,8 +66,8 @@ class ProductMasterController extends Controller
                 'pca.character_code',
                 'pca.description',
                 'pca.updated_at'
-            )
-            ->orderBy('pca.id', 'desc');
+            );
+            // ->orderBy('pca.id', 'desc');
 
         return DataTables::of($assembly)
 						->editColumn('id', function($data) {
@@ -430,7 +430,7 @@ class ProductMasterController extends Controller
         $userid = Auth::user()->id;
         $product_codes = DB::table('ppc_product_codes as pc')
             ->leftjoin('admin_assign_production_lines as apl', 'apl.product_line', '=', 'pc.product_type')
-            ->where('apl.user_id', $userid)->orderby('pc.id', 'desc')
+            ->where('apl.user_id', $userid) // ->orderby('pc.id', 'desc')
             ->select([
                 DB::raw('pc.id as id'),
                 DB::raw('pc.product_type as product_type'),

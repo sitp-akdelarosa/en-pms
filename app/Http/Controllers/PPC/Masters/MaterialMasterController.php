@@ -47,8 +47,8 @@ class MaterialMasterController extends Controller
 							DB::raw('character_code as character_code'),
 							DB::raw('description as description'),
 							DB::raw('updated_at as updated_at')
-						])
-						->orderBy('id','desc');
+						]);
+						// ->orderBy('id','desc');
 
 		return DataTables::of($assembly)
 						->editColumn('id', function($data) {
@@ -308,9 +308,9 @@ class MaterialMasterController extends Controller
 							DB::raw('pmc.std_weight as std_weight'),
 							DB::raw('pmc.updated_at as updated_at'),
 							DB::raw('pmc.disabled as disabled')
-						])
+						]);
 						// ->where('apl.user_id' ,Auth::user()->id)
-						->orderBy('pmc.id','desc');
+						// ->orderBy('pmc.id','desc');
 
 		return DataTables::of($mat)
 						->editColumn('id', function($data) {
