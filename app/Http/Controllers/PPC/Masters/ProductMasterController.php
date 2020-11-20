@@ -615,7 +615,7 @@ class ProductMasterController extends Controller
                 NotRegisteredProduct::where('prod_code', $req->product_code)->delete();
             }
 
-            $check_in_inv = NotRegisteredMaterial::where('materials_code', $req->product_code)->count();
+            $check_in_inv = NotRegisteredMaterial::where('item_code', $req->product_code)->count();
 
             if ($check > 0) {
                 PpcUpdateInventory::where('item_code', $req->product_code)
@@ -629,7 +629,7 @@ class ProductMasterController extends Controller
                         'update_user' => Auth::user()->id,
                         'updated_at' => date("Y-m-d H:i:s"),
                     ]);
-                NotRegisteredMaterial::where('materials_code', $req->product_code)->delete();
+                NotRegisteredMaterial::where('item_code', $req->product_code)->delete();
             }
 
             $this->_audit->insert([

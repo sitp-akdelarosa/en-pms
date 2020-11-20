@@ -144,20 +144,20 @@
                     <div class="col-md-12">
                         <table class="table table-sm table-bordered table-striped nowrap" style="width:100%" id="tbl_materials">
                             <thead class="thead-dark">
-                                <th width="3.14%"></th>
-                                <th width="7.14">Sched Qty</th>
-                                <th width="17.14">Heat No.</th>
-                                <th width="7.14">Withdrawal Qty.(PCS)</th>
-                                <th width="16.14">Material Used</th>
-                                <th width="6.14">Lot No.</th>
-                                <th width="7.14">Blade Consumption</th>
-                                <th width="5.14">Cut Weight</th>
-                                <th width="5.14">Cut Length</th>
-                                <th width="5.14">Cut Width</th>
-                                <th width="5.14">Mat. Length</th>
-                                <th width="5.14">Mat. Std. Weight</th>
-                                <th width="5.14">Assign Qty</th>
-                                <th width="5.14">Remaining Qty</th>
+                                <th></th>
+                                <th>Sched Qty</th>
+                                <th>Heat No.</th>
+                                <th>Withdrawal Qty.(PCS)</th>
+                                <th>Material Used</th>
+                                <th>Lot No.</th>
+                                <th>Blade Consumption</th>
+                                <th>Cut Weight</th>
+                                <th>Cut Length</th>
+                                <th>Cut Width</th>
+                                <th>Mat. Length</th>
+                                <th>Mat. Std. Weight</th>
+                                <th>Assign Qty</th>
+                                <th>Remaining Qty</th>
                             </thead>
                             <tbody id="tbl_materials_body"></tbody>
                         </table>

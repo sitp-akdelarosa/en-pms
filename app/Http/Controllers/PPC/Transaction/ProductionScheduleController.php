@@ -507,7 +507,7 @@ class ProductionScheduleController extends Controller
                     ->select('id')->where('trans_no',$req->rmw_no)->first();
 
         $with_rmw = '';
-        $materials;
+        $materials = [];
 
         if (count((array)$rmw) > 0) {
             $with_rmw = " AND rmwi.trans_no = '".$req->rmw_no."'";
