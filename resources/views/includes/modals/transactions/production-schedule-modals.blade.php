@@ -78,3 +78,100 @@
         </form>
     </div>
 </div>
+
+<div id="modal_item_materials" class="modal fade " data-backdrop="static">
+    <div class="modal-dialog modal-full-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Materials</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="loadingOverlay-modal"></div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <table class="table table-sm table-bordered table-striped nowrap" style="width:100%" id="tbl_item">
+                            <thead class="thead-dark">
+                                <th width="20%">SC No.</th>
+                                <th width="30%">Product Code</th>
+                                <th width="30%">Description</th>
+                                <th width="20%">Back Order Qty.</th>
+                            </thead>
+                        </table>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="input-group input-group-sm mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Ship Date</span>
+                            </div>
+                            <input type="date" class="form-control validate clear" name="ship_date" id="ship_date">
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="input-group input-group-sm mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Withdrawal Slip No.</span>
+                            </div>
+                            <input type="text" class="form-control clear" name="rmw_no" id="rmw_no">
+                            <div class="input-group-append">
+                                <button class="btn btn-sm bg-blue" id="btn_search_withdrawal">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                            <input type="hidden" class="form-control clear" name="sc_no" id="sc_no">
+                            <input type="hidden" class="form-control clear" name="prod_code" id="prod_code">
+                            <input type="hidden" class="form-control clear" name="code_description" id="code_description">
+                            <input type="hidden" class="form-control clear" name="back_order_qty" id="back_order_qty">
+                        </div>
+                    </div>
+                </div>
+
+                {{-- <div class="row">
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-sm bg-green pull-right" id="add_material_row">
+                            <i class="fa fa-plus"></i> Add Row
+                        </button>
+                    </div>
+                </div> --}}
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-sm table-bordered table-striped nowrap" style="width:100%" id="tbl_materials">
+                            <thead class="thead-dark">
+                                <th width="3.14%"></th>
+                                <th width="7.14">Sched Qty</th>
+                                <th width="17.14">Heat No.</th>
+                                <th width="7.14">Withdrawal Qty.(PCS)</th>
+                                <th width="16.14">Material Used</th>
+                                <th width="6.14">Lot No.</th>
+                                <th width="7.14">Blade Consumption</th>
+                                <th width="5.14">Cut Weight</th>
+                                <th width="5.14">Cut Length</th>
+                                <th width="5.14">Cut Width</th>
+                                <th width="5.14">Mat. Length</th>
+                                <th width="5.14">Mat. Std. Weight</th>
+                                <th width="5.14">Assign Qty</th>
+                                <th width="5.14">Remaining Qty</th>
+                            </thead>
+                            <tbody id="tbl_materials_body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn bg-red" data-dismiss="modal">Close</button>
+                {{-- <button type="button" id="btn_search_excel" class="btn bg-green float-right">Download Excel</button> --}}
+                <button type="button" id="btn_save_material" class="btn bg-blue float-right permission-button">
+                    <i class="fa fa-floppy-o"></i> Save
+                </button>
+            </div>
+            
+        </div>
+    </div>
+</div>

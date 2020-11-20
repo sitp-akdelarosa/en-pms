@@ -34280,7 +34280,11 @@ input {
     }
 
     .modal-full {
-        width: 1200px;
+        width: 80%;
+    }
+
+    .modal-full-xl {
+        width: 90%;
     }
 }
 

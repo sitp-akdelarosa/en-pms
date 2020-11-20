@@ -85,27 +85,41 @@ foreach ($user_accesses as $user_access){
                             </select>
                         </div>
                     </div>
+
+                    <div class="offset-md-6 col-md-4">
+                        <div class="input-group input-group-sm mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Withdrawal Number</span>
+                            </div>
+                            <input type="text" class="form-control clear" name="rmw_no" id="rmw_no">
+                            <div class="input-group-append">
+                                <button class="btn btn-sm bg-blue" id="btn_search_withdrawal">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="row justify-content-center mb-15">
-                    <div class="col-md-8">
+                    <div class="col-md-12">
                         
                         <div class="table-reponsive">
                             <table class="table table-sm table-bordered table-striped nowrap" style="width:100%" id="tbl_jo_details">
                                 <thead class="thead-dark">
                                     <tr>
-                                        <th></th>
-                                        <th>SC No.</th>
-                                        <th>Product Code</th>
-                                        <th>Description</th>
-                                        <th>Back Order Qty.</th>
-                                        {{-- <th width="12%">Material Heat No.</th>
+                                        <th width="5%"></th>
+                                        <th width="5%">SC No.</th>
+                                        <th width="7%">Product Code</th>
+                                        <th width="17%">Description</th>
+                                        <th width="8%">Back Order Qty.</th>
+                                        <th width="12%">Material Heat No.</th>
                                         <th width="7%">Withdrawal Qty(PCS)</th>
                                         <th width="15%">Material Used</th>
                                         <th width="6%">Lot No.</th>
                                         <th width="6%">Sched. Qty.</th>
                                         <th width="6%">Remaining Qty.</th>
-                                        <th width="6%">Shipping Date</th> --}}
+                                        <th width="6%">Shipping Date</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbl_jo_details_body"></tbody>
@@ -280,7 +294,6 @@ foreach ($user_accesses as $user_access){
         var cancelTravelSheetURL = "{{ url('/transaction/production-schedule/cancelTravelSheet') }}";
         var OverIssuanceURL = "{{ url('/transaction/production-schedule/over-issuance') }}";
         var excelSearchFilterURL = "{{ url('/transaction/production-schedule/excel-filter-orders') }}";
-        var SaveMaterialsURL = "{{ url('/transaction/production-schedule/save-materials') }}";
         var code_permission = 'T0004';
         
     </script>

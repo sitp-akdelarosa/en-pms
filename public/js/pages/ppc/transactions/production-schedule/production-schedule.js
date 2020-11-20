@@ -103,10 +103,16 @@ var p_pcode = "";
 var msg_non_standard;
 var selected_heat_no = [];
 var unique_heat_no = [];
+var tbl_materials = $('#tbl_materials').DataTable();
+var arr_materials = [];
+var material_count = 0;
 $(function () {
   initializePage();
   autoComplete("#jono", getjosuggest, "jo_no");
   $(document).on('shown.bs.tab', function () {
+    $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+  });
+  $(document).on('shown.bs.modal', function () {
     $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
   });
   $('#tbl_prod_sum_body').on('change', '.check_item_prod_sum', function (e) {
@@ -233,9 +239,7 @@ $(function () {
     }
 
     getTables();
-  }); // $("#jono").on('keyup', getJO);
-  // $("#jono").on('keyup', getTables);
-
+  });
   $("#status").on('change', changestatus);
   $('#tbl_jo_details_body').on('click', '.remove_jo_details', function () {
     var count = $(this).attr('data-count');
@@ -286,208 +290,6 @@ $(function () {
       $('#btn_check_over_issuance_div').hide();
       $('#btn_edit_div').show();
       $('#btn_cancel_div').hide();
-    }
-  });
-  $('#tbl_jo_details_body').on('change', '.material_heat_no', function () {
-    //$('.loadingOverlay').show();
-    p_pcode = $(this).attr('data-pcode');
-    var rmw_issued_qty = $(this).find('option:selected').attr('data-rmw_issued_qty');
-    var uom = $(this).find('option:selected').attr('data-uom');
-    var inv_id = $(this).find('option:selected').attr('data-inv_id');
-    var rmw_id = $(this).find('option:selected').attr('data-rmw_id');
-    var heat_no = $(this).find('option:selected').attr('data-heat_no');
-    var material_heat_no = $(this).val(); // rmw_id
-
-    var material_used_code = $(this).find('option:selected').attr('data-item_code');
-    var material_used_size = $(this).find('option:selected').attr('data-size') == undefined ? "" : $(this).find('option:selected').attr('data-size').toString().toUpperCase().replace(/\s+/g, '');
-    var material_used_schedule = $(this).find('option:selected').attr('data-schedule');
-    var material_used_description = $(this).find('option:selected').attr('data-description');
-    var standard_material_used = $(this).find('option:selected').attr('data-standard_material_used') == undefined ? "" : $(this).find('option:selected').attr('data-standard_material_used').toString().toUpperCase().replace(/\s+/g, '');
-    var for_over_issuance = $(this).find('option:selected').attr('data-for_over_issuance');
-    var material_type = $(this).find('option:selected').attr('data-material_type');
-    var lot_no = $(this).find('option:selected').attr('data-lot_no');
-    var table_index = $(this).attr('data-count');
-
-    if ($('#is_same').is(':checked')) {
-      $.each(joDetails_arr, function (i, x) {
-        // assign values
-        $('.material_heat_no').select2().val(material_heat_no);
-        $('#rmw_issued_qty_' + x.count).val(rmw_issued_qty);
-        $('#uom_' + x.count).val(uom);
-        $('#uom_span_' + x.count).html(uom);
-        $('#inv_id_' + x.count).val(inv_id);
-        $('#rmw_id_' + x.count).val(rmw_id);
-        $('#heat_no_id_' + x.count).val(material_heat_no);
-        var selected_mat_used = ""; // check standard material used
-
-        if (material_type !== 'FINISHED' && material_type !== 'CRUDE') {
-          switch (standard_material_used) {
-            case material_used_code:
-              selected_mat_used = material_used_code;
-              break;
-
-            case material_used_size:
-              selected_mat_used = material_used_size;
-              break;
-
-            case material_used_schedule:
-              selected_mat_used = material_used_schedule;
-              break;
-
-            default:
-              selected_mat_used = material_used_description;
-              break;
-          }
-
-          $('#material_used_' + x.count).val(material_used_description);
-
-          if (standard_material_used != selected_mat_used) {
-            var error = "This is not the Product's Standard Material";
-            $('#material_used_' + x.count).addClass('is-invalid');
-            $('#material_used_' + x.count + '_feedback').addClass('invalid-feedback');
-            $('#material_used_' + x.count + '_feedback').html(error);
-          } else {
-            $('#material_used_' + x.count).removeClass('is-invalid');
-            $('#material_used_' + x.count + '_feedback').removeClass('invalid-feedback');
-            $('#material_used_' + x.count + '_feedback').html('');
-          }
-        } else {
-          $('#material_used_' + x.count).val(material_used_description);
-          $('#lot_no_' + x.count).val(lot_no);
-        } // alot material type and comparison for over issuance
-
-
-        $('#for_over_issuance_' + x.count).val(for_over_issuance);
-        $('#material_type_' + x.count).val(material_type);
-        x.material_heat_no = heat_no;
-        x.rmw_issued_qty = rmw_issued_qty;
-        x.uom = uom;
-        x.material_used = selected_mat_used;
-        x.material_type = material_type;
-        x.for_over_issuance = for_over_issuance;
-        x.inv_id = inv_id;
-        x.rmw_id = rmw_id;
-        x.heat_no_id = material_heat_no;
-      });
-    } else {
-      $('#rmw_issued_qty_' + table_index).val(rmw_issued_qty);
-      $('#uom_' + table_index).val(uom);
-      $('#uom_span_' + table_index).html(uom);
-      $('#inv_id_' + table_index).val(inv_id);
-      $('#rmw_id_' + table_index).val(rmw_id);
-      $('#heat_no_id_' + table_index).val(material_heat_no);
-      var selected_mat_used = "";
-
-      if (material_type !== 'FINISHED' && material_type !== 'CRUDE') {
-        // check standard material used
-        switch (standard_material_used) {
-          case material_used_code:
-            selected_mat_used = material_used_code;
-            break;
-
-          case material_used_size:
-            selected_mat_used = material_used_size;
-            break;
-
-          case material_used_schedule:
-            selected_mat_used = material_used_schedule;
-            break;
-
-          default:
-            selected_mat_used = material_used_description;
-            break;
-        }
-
-        $('#material_used_' + table_index).val(material_used_description);
-
-        if (standard_material_used != selected_mat_used) {
-          var error = "This is not the Product's Standard Material";
-          $('#material_used_' + table_index).addClass('is-invalid');
-          $('#material_used_' + table_index + '_feedback').addClass('invalid-feedback');
-          $('#material_used_' + table_index + '_feedback').html(error);
-        } else {
-          $('#material_used_' + table_index).removeClass('is-invalid');
-          $('#material_used_' + table_index + '_feedback').removeClass('invalid-feedback');
-          $('#material_used_' + table_index + '_feedback').html('');
-        } // alot material type and comparison for over issuance
-
-
-        $('#for_over_issuance_' + table_index).val(for_over_issuance);
-        $('#material_type_' + table_index).val(material_type);
-        joDetails_arr[table_index].material_heat_no = heat_no;
-        joDetails_arr[table_index].rmw_issued_qty = rmw_issued_qty;
-        joDetails_arr[table_index].uom = uom;
-        joDetails_arr[table_index].material_used = selected_mat_used;
-        joDetails_arr[table_index].material_type = material_type;
-        joDetails_arr[table_index].for_over_issuance = for_over_issuance;
-        joDetails_arr[table_index].inv_id = inv_id;
-        joDetails_arr[table_index].rmw_id = rmw_id;
-        joDetails_arr[table_index].heat_no_id = material_heat_no;
-      } else {
-        $('#material_used_' + x.count).val(material_used_description);
-        $('#lot_no_' + x.count).val(lot_no);
-      }
-    }
-
-    var inputs = $(".rmw_issued_qty");
-    var total = 0;
-
-    if ($('#is_same').is(':checked')) {
-      $('#total_heat_qty').val($('#rmw_issued_qty_' + table_index).val());
-    } else {
-      for (var i = 0; i < inputs.length; i++) {
-        if ($(inputs[i]).val() == '') {
-          total = parseInt(total) + 0;
-        } else {
-          total = parseInt(total) + parseInt($(inputs[i]).val());
-        }
-      }
-
-      if (total === NaN) {
-        total = 0;
-      }
-
-      $('#total_heat_qty').val(total);
-    } // get all selected HEAT NUMBER
-
-
-    var heat_nos = $('.material_heat_no');
-    selected_heat_no = [];
-
-    for (var i = 0; i < heat_nos.length; i++) {
-      if ($(heat_nos[i]).val() !== "" && $(heat_nos[i]).val() !== null) {
-        selected_heat_no.push({
-          heat_no: $(heat_nos[i]).find('option:selected').attr('data-heat_no'),
-          rmw_qty: $(heat_nos[i]).find('option:selected').attr('data-rmw_issued_qty')
-        });
-      }
-    } // get all UNIQUE HEAT NUMBER
-
-
-    var unique = [];
-    unique_heat_no = [];
-
-    for (var _i = 0; _i < selected_heat_no.length; _i++) {
-      if (!unique[selected_heat_no[_i].heat_no]) {
-        if (!unique[selected_heat_no[_i].rmw_qty]) {
-          unique_heat_no.push({
-            heat_no: selected_heat_no[_i].heat_no,
-            rmw_qty: selected_heat_no[_i].rmw_qty
-          });
-        }
-
-        unique[selected_heat_no[_i].rmw_qty] = 1;
-      }
-    }
-
-    $('#btn_save_div').show();
-    $('#btn_check_over_issuance_div').show();
-    $('#btn_edit_div').hide();
-    $('#btn_cancel_div').show();
-    $("#tbl_jo_details").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
-
-    if ($(this).val() == "") {
-      $('.loadingOverlay').hide();
     }
   });
   $('#tbl_jo_details_body').on('change', '.material_used', function () {
@@ -739,7 +541,7 @@ $(function () {
             swal("Failed", "The travel sheet has been processing of goods.");
           }
         }).fail(function (xhr, textStatus, errorThrown) {
-          msg(errorThrown, 'error');
+          ErrorMsg(xhr);
         });
       } else {
         swal("Cancelled", "The travel sheet is safe and not cancelled.");
@@ -750,10 +552,212 @@ $(function () {
     if ($('#rmw_no').val() == "") {
       msg("Please provide a Withdrawal Slip.", "failed");
     } else {
-      makeJODetailsList(joDetails_arr);
+      //akeJODetailsList(joDetails_arr);
       $('.material_used').val('');
-      getMaterialHeatNo($('#rmw_no').val());
-      $("#tbl_jo_details").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
+      getMaterialHeatNo($('#rmw_no').val(), $('#prod_code').val());
+      $("#tbl_materials").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
+    }
+  });
+  $('#tbl_materials_body').on('change', '.material_heat_no', function () {
+    //$('.loadingOverlay').show();
+    p_pcode = $(this).attr('data-pcode');
+    var rmw_issued_qty = $(this).find('option:selected').attr('data-rmw_issued_qty');
+    var uom = $(this).find('option:selected').attr('data-uom');
+    var inv_id = $(this).find('option:selected').attr('data-inv_id');
+    var rmw_id = $(this).find('option:selected').attr('data-rmw_id');
+    var heat_no = $(this).find('option:selected').attr('data-heat_no');
+    var material_heat_no = $(this).val(); // rmw_id
+
+    var material_used_code = $(this).find('option:selected').attr('data-item_code');
+    var material_used_size = $(this).find('option:selected').attr('data-size') == undefined ? "" : $(this).find('option:selected').attr('data-size').toString().toUpperCase().replace(/\s+/g, '');
+    var material_used_schedule = $(this).find('option:selected').attr('data-schedule');
+    var material_used_description = $(this).find('option:selected').attr('data-description');
+    var standard_material_used = $(this).find('option:selected').attr('data-standard_material_used') == undefined ? "" : $(this).find('option:selected').attr('data-standard_material_used').toString().toUpperCase().replace(/\s+/g, '');
+    var for_over_issuance = $(this).find('option:selected').attr('data-for_over_issuance');
+    var material_type = $(this).find('option:selected').attr('data-material_type');
+    var lot_no = $(this).find('option:selected').attr('data-lot_no');
+    var table_index = $(this).attr('data-count');
+
+    if ($('#is_same').is(':checked')) {
+      $.each(joDetails_arr, function (i, x) {
+        // assign values
+        $('.material_heat_no').select2().val(material_heat_no);
+        $('#rmw_issued_qty_' + x.count).val(rmw_issued_qty);
+        $('#uom_' + x.count).val(uom);
+        $('#uom_span_' + x.count).html(uom);
+        $('#inv_id_' + x.count).val(inv_id);
+        $('#rmw_id_' + x.count).val(rmw_id);
+        $('#heat_no_id_' + x.count).val(material_heat_no);
+        var selected_mat_used = ""; // check standard material used
+
+        if (material_type !== 'FINISHED' && material_type !== 'CRUDE') {
+          switch (standard_material_used) {
+            case material_used_code:
+              selected_mat_used = material_used_code;
+              break;
+
+            case material_used_size:
+              selected_mat_used = material_used_size;
+              break;
+
+            case material_used_schedule:
+              selected_mat_used = material_used_schedule;
+              break;
+
+            default:
+              selected_mat_used = material_used_description;
+              break;
+          }
+
+          $('#material_used_' + x.count).val(material_used_description);
+
+          if (standard_material_used != selected_mat_used) {
+            var error = "This is not the Product's Standard Material";
+            $('#material_used_' + x.count).addClass('is-invalid');
+            $('#material_used_' + x.count + '_feedback').addClass('invalid-feedback');
+            $('#material_used_' + x.count + '_feedback').html(error);
+          } else {
+            $('#material_used_' + x.count).removeClass('is-invalid');
+            $('#material_used_' + x.count + '_feedback').removeClass('invalid-feedback');
+            $('#material_used_' + x.count + '_feedback').html('');
+          }
+        } else {
+          $('#material_used_' + x.count).val(material_used_description);
+          $('#lot_no_' + x.count).val(lot_no);
+        } // alot material type and comparison for over issuance
+
+
+        $('#for_over_issuance_' + x.count).val(for_over_issuance);
+        $('#material_type_' + x.count).val(material_type);
+        x.material_heat_no = heat_no;
+        x.rmw_issued_qty = rmw_issued_qty;
+        x.uom = uom;
+        x.material_used = selected_mat_used;
+        x.material_type = material_type;
+        x.for_over_issuance = for_over_issuance;
+        x.inv_id = inv_id;
+        x.rmw_id = rmw_id;
+        x.heat_no_id = material_heat_no;
+      });
+    } else {
+      $('#rmw_issued_qty_' + table_index).val(rmw_issued_qty);
+      $('#uom_' + table_index).val(uom);
+      $('#uom_span_' + table_index).html(uom);
+      $('#inv_id_' + table_index).val(inv_id);
+      $('#rmw_id_' + table_index).val(rmw_id);
+      $('#heat_no_id_' + table_index).val(material_heat_no);
+      var selected_mat_used = "";
+
+      if (material_type !== 'FINISHED' && material_type !== 'CRUDE') {
+        // check standard material used
+        switch (standard_material_used) {
+          case material_used_code:
+            selected_mat_used = material_used_code;
+            break;
+
+          case material_used_size:
+            selected_mat_used = material_used_size;
+            break;
+
+          case material_used_schedule:
+            selected_mat_used = material_used_schedule;
+            break;
+
+          default:
+            selected_mat_used = material_used_description;
+            break;
+        }
+
+        $('#material_used_' + table_index).val(material_used_description);
+
+        if (standard_material_used != selected_mat_used) {
+          var error = "This is not the Product's Standard Material";
+          $('#material_used_' + table_index).addClass('is-invalid');
+          $('#material_used_' + table_index + '_feedback').addClass('invalid-feedback');
+          $('#material_used_' + table_index + '_feedback').html(error);
+        } else {
+          $('#material_used_' + table_index).removeClass('is-invalid');
+          $('#material_used_' + table_index + '_feedback').removeClass('invalid-feedback');
+          $('#material_used_' + table_index + '_feedback').html('');
+        } // alot material type and comparison for over issuance
+
+
+        $('#for_over_issuance_' + table_index).val(for_over_issuance);
+        $('#material_type_' + table_index).val(material_type);
+        joDetails_arr[table_index].material_heat_no = heat_no;
+        joDetails_arr[table_index].rmw_issued_qty = rmw_issued_qty;
+        joDetails_arr[table_index].uom = uom;
+        joDetails_arr[table_index].material_used = selected_mat_used;
+        joDetails_arr[table_index].material_type = material_type;
+        joDetails_arr[table_index].for_over_issuance = for_over_issuance;
+        joDetails_arr[table_index].inv_id = inv_id;
+        joDetails_arr[table_index].rmw_id = rmw_id;
+        joDetails_arr[table_index].heat_no_id = material_heat_no;
+      } else {
+        $('#material_used_' + x.count).val(material_used_description);
+        $('#lot_no_' + x.count).val(lot_no);
+      }
+    }
+
+    var inputs = $(".rmw_issued_qty");
+    var total = 0;
+
+    if ($('#is_same').is(':checked')) {
+      $('#total_heat_qty').val($('#rmw_issued_qty_' + table_index).val());
+    } else {
+      for (var i = 0; i < inputs.length; i++) {
+        if ($(inputs[i]).val() == '') {
+          total = parseInt(total) + 0;
+        } else {
+          total = parseInt(total) + parseInt($(inputs[i]).val());
+        }
+      }
+
+      if (total === NaN) {
+        total = 0;
+      }
+
+      $('#total_heat_qty').val(total);
+    } // get all selected HEAT NUMBER
+
+
+    var heat_nos = $('.material_heat_no');
+    selected_heat_no = [];
+
+    for (var i = 0; i < heat_nos.length; i++) {
+      if ($(heat_nos[i]).val() !== "" && $(heat_nos[i]).val() !== null) {
+        selected_heat_no.push({
+          heat_no: $(heat_nos[i]).find('option:selected').attr('data-heat_no'),
+          rmw_qty: $(heat_nos[i]).find('option:selected').attr('data-rmw_issued_qty')
+        });
+      }
+    } // get all UNIQUE HEAT NUMBER
+
+
+    var unique = [];
+    unique_heat_no = [];
+
+    for (var _i = 0; _i < selected_heat_no.length; _i++) {
+      if (!unique[selected_heat_no[_i].heat_no]) {
+        if (!unique[selected_heat_no[_i].rmw_qty]) {
+          unique_heat_no.push({
+            heat_no: selected_heat_no[_i].heat_no,
+            rmw_qty: selected_heat_no[_i].rmw_qty
+          });
+        }
+
+        unique[selected_heat_no[_i].rmw_qty] = 1;
+      }
+    }
+
+    $('#btn_save_div').show();
+    $('#btn_check_over_issuance_div').show();
+    $('#btn_edit_div').hide();
+    $('#btn_cancel_div').show();
+    $("#tbl_materials").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
+
+    if ($(this).val() == "") {
+      $('.loadingOverlay').hide();
     }
   });
   $('#btn_filter').on('click', function () {
@@ -764,23 +768,45 @@ $(function () {
     e.preventDefault();
     $('.loadingOverlay-modal').show();
     var search_param = objectifyForm($(this).serializeArray());
-    ProdSummariesTable($(this).attr('action'), search_param); // $.ajax({
-    //     url: $(this).attr('action'),
-    //     type: 'GET',
-    //     dataType: 'JSON',
-    //     data: $(this).serialize(),
-    // }).done(function (data, textStatus, xhr) {
-    //     ProdSummariesTable(data);
-    // }).fail(function (xhr, textStatus, errorThrown) {
-    //     var errors = xhr.responseJSON.errors;
-    //     console.log(errors);
-    //     showErrors(errors);
-    // }).always(function () {
-    //     $('.loadingOverlay-modal').hide();
-    // });
+    ProdSummariesTable($(this).attr('action'), search_param);
   });
   $('#btn_search_excel').on('click', function () {
     window.location.href = excelSearchFilterURL + "?srch_date_upload_from=" + $('#srch_date_upload_from').val() + "&srch_date_upload_to=" + $('#srch_date_upload_to').val() + "&srch_sc_no=" + $('#srch_sc_no').val() + "&srch_prod_code=" + $('#srch_prod_code').val() + "&srch_description=" + $('#srch_description').val() + "&srch_po=" + $('#srch_po').val();
+  });
+  $('#tbl_jo_details').on('click', '.open_materials', function () {
+    var arr_items = [];
+    arr_materials = [];
+    $('#ship_date').val('');
+    $('#rmw_no').val('');
+    arr_items.push({
+      sc_no: $(this).attr('data-sc_no'),
+      prod_code: $(this).attr('data-prod_code'),
+      description: $(this).attr('data-description'),
+      order_qty: $(this).attr('data-quantity')
+    });
+    $('#sc_no').val($(this).attr('data-sc_no'));
+    $('#prod_code').val($(this).attr('data-prod_code'));
+    $('#code_description').val($(this).attr('data-description'));
+    $('#back_order_qty').val($(this).attr('data-quantity'));
+    makeItemDataTable(arr_items);
+    makeMaterialsDataTable(arr_materials);
+    $('#modal_item_materials').modal('show');
+  });
+  $('#tbl_materials_body').on('click', '.btn_remove_material', function () {
+    populateOldMaterialData();
+    arr_materials.splice($(this).attr('data-count'), 1);
+    makeMaterialsDataTable(arr_materials);
+  });
+  $('#add_material_row').on('click', function () {
+    tbl_materials.row.add(["<button type='button' class='btn btn-sm bg-red btn_remove_material'>" + "<i class='fa fa-times'></i>" + "</button>", "<input type='number' step='0.01' name='sched_qty[]' class='form-control form-control-sm sched_qty' />", "<select id='material_heat_no_" + material_count + "' name='material_heat_no[]' class='form-control form-control-sm material_heat_no'></select>", "<div class='input-group input-group-sm'>" + "<input type='number' step='0.01' name='rmw_issued_qty[]' class='form-control form-control-sm rmw_issued_qty' readonly>" + "<div class='input-group-append'>" + "<span class='input-group-text'>PCS</span>" + "</div>", "<input type='text' name='material_used[]' class='form-control form-control-sm material_used' readonly/>", "<input type='text' name='lot_no[]' class='form-control form-control-sm lot_no' />", "<input type='text' name='blade_consumption[]' class='form-control form-control-sm blade_consumption' />", "<input type='text' name='cut_weight[]' class='form-control form-control-sm cut_weight' />", "<input type='text' name='cut_length[]' class='form-control form-control-sm cut_length' />", "<input type='text' name='cut_width[]' class='form-control form-control-sm cut_width' />", "<input type='text' name='mat_length[]' class='form-control form-control-sm mat_length' />", "<input type='text' name='mat_weight[]' class='form-control form-control-sm mat_weight' />", "<input type='number' step='0.01' name='assign_qty[]' class='form-control form-control-sm assign_qty' />", "<input type='number' step='0.01' name='remaining_qty[]' class='form-control form-control-sm remaining_qty' />"]).draw(false);
+    material_count++;
+  });
+  $('#btn_save_material').on('click', function () {
+    if ($('#ship_date').val() == "" && $('#ship_date').val() == null) {
+      msg('Please fill out Ship Date input field.', 'warning');
+    } else {
+      saveMaterials();
+    }
   });
 });
 
@@ -933,77 +959,39 @@ function makeJODetailsList(arr) {
     //scrollX: true,
     columns: [{
       data: function data(x) {
-        return "<button type='button' class='btn btn-sm bg-red remove_jo_details' data-count='" + x.count + "' data-id='" + x.id + "' data-dataid='" + x.dataid + "'>" + "<i class='fa fa-times'></i>" + "</button>" + "<input type='hidden' name='dataid[]' value='" + x.dataid + "'>";
+        return "<button type='button' class='btn btn-sm bg-blue open_materials' data-count='" + x.count + "' " + "data-id='" + x.id + "' data-dataid='" + x.dataid + "' " + "data-sc_no='" + x.sc_no + "' data-prod_code='" + x.prod_code + "' " + "data-description='" + x.description + "' data-quantity='" + x.quantity + "' " + "data-ship_date='" + x.ship_date + "' " + ">" + "<i class='fa fa-edit'></i>" + "</button>" + "<button type='button' class='btn btn-sm bg-red remove_jo_details' data-count='" + x.count + "' data-id='" + x.id + "' data-dataid='" + x.dataid + "'>" + "<i class='fa fa-times'></i>" + "</button>" + "<input type='hidden' name='dataid[]' value='" + x.dataid + "'>";
       },
       searchable: false,
-      orderable: false
+      orderable: false,
+      width: '5%'
     }, {
       data: function data(x) {
         return x.sc_no + "<input type='hidden' class='form-control form-control-sm' name='sc_no[]' value='" + x.sc_no + "'>";
       },
       searchable: true,
-      orderable: false
+      orderable: false,
+      width: '15%'
     }, {
       data: function data(x) {
         return x.prod_code + "<input type='hidden' class='form-control form-control-sm' name='prod_code[]' value='" + x.prod_code + "'>";
       },
       searchable: true,
-      orderable: false
+      orderable: false,
+      width: '30%'
     }, {
       data: function data(x) {
         return x.description + "<input type='hidden' class='form-control form-control-sm' name='description[]' value='" + x.description + "'>";
       },
       searchable: true,
-      orderable: false
+      orderable: false,
+      width: '40%'
     }, {
       data: function data(x) {
         return x.quantity + "<input type='hidden' id='quantity_" + x.count + "' class='form-control form-control-sm' name='quantity[]' value='" + x.quantity + "'>";
       },
       searchable: true,
-      orderable: false
-    }, {
-      data: function data(x) {
-        return "<select id='material_heat_no_" + x.count + "' data-pcode='" + x.prod_code + "' data-count='" + x.count + "' class='form-control form-control-sm material_heat_no material_heat_no_select' name='material_heat_no[]'>" + "<option class='" + x.material_heat_no + "'>" + x.material_heat_no + "</option>" + "</select><div class='material_heat_no_feedback' id='material_heat_no_" + x.count + "_feedback'></div>";
-      },
-      searchable: false,
-      orderable: false
-    }, {
-      data: function data(x) {
-        return "<div class='input-group input-group-sm'>" + "<input type='text' id='rmw_issued_qty_" + x.count + "' data-pcode='" + x.prod_code + "' data-count='" + x.count + "'  name='rmw_issued_qty[]' class='form-control form-control-sm rmw_issued_qty' readonly>" + "<div class='input-group-append'>" + "<span id='uom_span_" + x.count + "' class='input-group-text'>" + x.uom + "</span>" + "</div>" + "<input type='hidden' id='uom_" + x.count + "' class='form-control form-control-sm' style='width:50%;' name='uom[]' value='" + x.uom + "' readonly>";
-      },
-      searchable: true,
-      orderable: false
-    }, {
-      data: function data(x) {
-        return "<input type='text' id='material_used_" + x.count + "' value='" + x.material_used + "' data-count='" + x.count + "' data-pcode='" + x.prod_code + "' class='form-control form-control-sm material_used material_used_select' name='material_used[]'>" + "<div id='material_used_" + x.count + "_feedback' class='material_used__feedback'></div>";
-      },
-      searchable: false,
-      orderable: false
-    }, {
-      data: function data(x) {
-        var totalsched_qty = x.totalsched_qty == null || x.totalsched_qty == 'null' ? 0 : x.totalsched_qty;
-        return "<input type='text' id='lot_no_" + x.count + "' data-count='" + x.count + "' class='form-control form-control-sm lot_no' name='lot_no[]' value='" + x.lot_no + "'>" + "<input type='hidden' id='totalsched_qty" + x.count + "' name='totalsched_qty[]' value='" + totalsched_qty + "'>";
-      },
-      searchable: false,
-      orderable: false
-    }, {
-      data: function data(x) {
-        return "<input type='number' step='0.01' id='sched_qty_" + x.count + "' data-pcode='" + x.prod_code + "' data-count='" + x.count + "' " + "class='form-control form-control-sm sched_qty' min='0' name='sched_qty[]' value='" + x.sched_qty + "'>" + "<div id='sched_qty_" + x.count + "_feedback' class='sched_qty_feedback'></div>" + "<input type='hidden' class='form-control form-control-sm' id='material_type_" + x.count + "' name='material_type[]' value='" + x.material_type + "'>" + "<input type='hidden' class='form-control form-control-sm' id='for_over_issuance_" + x.count + "' name='for_over_issuance[]' value='" + x.for_over_issuance + "'>" + "<input type='hidden' class='form-control form-control-sm' id='rmw_id_" + x.count + "' name='rmw_id[]' value='" + x.rmw_id + "'>" + "<input type='hidden' class='form-control form-control-sm' id='heat_no_id_" + x.count + "' name='heat_no_id[]' value='" + x.heat_no_id + "'>" + "<input type='hidden' class='form-control form-control-sm' id='inv_id_" + x.count + "' name='inv_id[]' value='" + x.inv_id + "'>";
-      },
-      searchable: false,
-      orderable: false
-    }, {
-      data: function data(x) {
-        return "<input type='number' readonly step='0.01' class='form-control form-control-sm' id='remaining_qty_" + x.count + "' name='remaining_qty[]' value='" + x.remaining_qty + "'>";
-      },
-      searchable: false,
-      orderable: false
-    }, {
-      data: function data(x) {
-        return "<input type='date' class='form-control form-control-sm' id='ship_date_" + x.count + "' name='ship_date[]' value='" + x.ship_date + "'>";
-      },
-      searchable: false,
-      orderable: false
+      orderable: false,
+      width: '10%'
     }],
     initCompelete: function initCompelete(settings, json) {
       $("#tbl_jo_details").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
@@ -1017,292 +1005,108 @@ function makeJODetailsList(arr) {
   });
 }
 
-function getMaterialHeatNo(withdrawal_slip_no, state) {
+function getMaterialHeatNo(withdrawal_slip_no, prod_code, state) {
   var materials = [];
   var $msg = "";
   var $status = "";
-  $.each(joDetails_arr, function (i, x) {
-    $('.loadingOverlay').show();
-    var op = "<option value=''></option>";
-    $('#material_heat_no_' + i).html(op);
-    $.ajax({
-      url: getMaterialHeatNoURL,
-      type: 'GET',
-      dataType: 'JSON',
-      data: {
-        _token: token,
-        rmw_no: withdrawal_slip_no,
-        prod_code: x.prod_code,
-        state: state
-      }
-    }).done(function (data, textStatus, xhr) {
-      materials = data.materials;
-      $msg = data.msg;
-      $status = data.status;
-      $.each(materials, function (indx, mat) {
-        op += "<option value='" + mat.rmw_id + "' " + "data-heat_no='" + mat.heat_no + "' " + "data-uom='" + mat.uom + "' " + "data-rmw_issued_qty='" + mat.rmw_issued_qty + "' " + "data-rmw_scheduled_qty='" + mat.rmw_scheduled_qty + "' " + "data-rmw_id='" + mat.rmw_id + "' " + "data-inv_id='" + mat.inv_id + "' " + "data-rmw_length='" + mat.rmw_length + "' " + "data-upd_inv_id='" + mat.upd_inv_id + "' " + "data-material_type='" + mat.material_type + "' " + "data-for_over_issuance='" + mat.for_over_issuance + "' " + "data-standard_material_used='" + mat.standard_material_used + "' " + "data-description='" + mat.description + "' " + "data-size='" + mat.size + "' " + "data-item_code='" + mat.item_code + "' " + "data-schedule='" + mat.schedule + "' " + "data-lot_no='" + mat.lot_no + "' " + "'>" + mat.text + "</option>";
-      });
-      $('#material_heat_no_' + i).append(op);
-      $('#material_heat_no_' + i).select2({
-        allowClear: true,
-        placeholder: 'Select a Heat No.',
-        width: '100%'
-      });
-
-      if (state == 'edit') {
-        $('#material_heat_no_' + i).val(x.heat_no_id).trigger('change');
-      } // if (materials.length > 0) {
-      //     if ($('#rmw_no').val() == "" && data.msg == "") {
-      //         $('.material_heat_no').prop('disabled', true);
-      //         $('#rmw_no').prop('readonly', false);
-      //     }
-      //     if ($('#rmw_no').val() !== "" && data.msg == "") {
-      //         $('#rmw_no').prop('readonly', true);
-      //         $('.material_heat_no').prop('disabled', false);
-      //     }
-      // } else {
-      //     $('.material_heat_no').prop('disabled', true);
-      //     $('#rmw_no').prop('readonly', false);
-      //     if ($('#rmw_no').val() !== "" && data.msg !== "") {
-      //         $('#rmw_no').prop('readonly', false);
-      //         $('.material_heat_no').prop('disabled', true);
-      //         msg(data.msg, data.status);
-      //     }
-      // }
-      // for (var y = 0; y < joDetails_arr.length; y++) {
-      //     for (var x = 0; x < materials.length; x++) {
-      //         var rmw_length = "";
-      //         var rmw_qty = "";
-      //         if (materials[x].rmw_length !== 'N/A') {
-      //             rmw_length = " | (" + materials[x].rmw_length + ")";
-      //             rmw_qty = " | (" + materials[x].rmw_issued_qty + materials[x].uom +")";
-      //         }
-      //         op += "<option value='" + materials[x].heat_no + "' "+
-      //                 "data-rmw_issued_qty='" + materials[x].rmw_issued_qty + "' " +
-      //                 "data-rmw_scheduled_qty='" + materials[x].rmw_scheduled_qty + "' " +
-      //                 "data-rmw_id='" + materials[x].rmw_id + "' " +
-      //                 "data-inv_id='" + materials[x].inv_id + "' " +
-      //                 "data-heat_no='" + materials[x].heat_no + "' " +
-      //                 "data-mat_heat_no_text='" + materials[x].heat_no + rmw_length + rmw_qty + "' " +
-      //                 "data-uom='" + materials[x].uom + "'>" + 
-      //                     materials[x].heat_no + rmw_length + rmw_qty +
-      //             "</option>";
-      //     }
-      //     $('#material_heat_no_' + y).html(op);
-      //     var materialval = (joDetails_arr[y].material_heat_no != "") ? joDetails_arr[y].material_heat_no : "";
-      //     $('#material_heat_no_' + y).val(materialval);
-      //     getMaterialused(materialval, y);
-      //     op = "<option value=''></option>";
-      // }
-
-    }).fail(function (xhr, textStatus, errorThrown) {
-      ErrorMsg(xhr);
-    }).always(function () {
-      $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
-      $('.loadingOverlay').hide();
-    });
-  });
-
-  if (materials.length > 0) {
-    msg($msg, $status);
-  }
-}
-
-function getMaterialHeatNoEdit() {
   var op = "<option value=''></option>";
+  $('.material_heat_no').html(op);
   $.ajax({
     url: getMaterialHeatNoURL,
     type: 'GET',
     dataType: 'JSON',
     data: {
       _token: token,
-      rmw_no: $('#rmw_no').val(),
-      state: 'edit'
-    },
-    success: function success(returnData) {
-      // $.each(MainData, function(i, x) {
-      //     console.log(x);
-      // });
-      var materials = returnData.materials;
-      console.log(MainData);
-
-      for (var y = 0; y < MainData.length; y++) {
-        //op = "<option value=''></option>";
-        //$('#material_heat_no_'+y).val(MainData[y].material_heat_no);
-        for (var x = 0; x < materials.length; x++) {
-          if (MainData[y].material_heat_no == materials[x].heat_no) {
-            op += "<option value='" + materials[x].heat_no + "' " + "data-rmw_issued_qty='" + materials[x].rmw_issued_qty + "' " + "data-rmw_scheduled_qty='" + materials[x].rmw_scheduled_qty + "' " + "data-rmw_id='" + materials[x].rmw_id + "' " + "data-inv_id='" + materials[x].inv_id + "' " + "data-uom='" + materials[x].uom + "' selected>" + materials[x].heat_no + rmw_length + rmw_qty + "</option>"; // "<option value='" + materials[x].heat_no + "' data-uom='" + materials[x].uom +"' data-rmw_issued_qty='"+materials[x].rmw_issued_qty+"' selected>"+materials[x].heat_no+"</option>";
-          } else {
-            op += "<option value='" + materials[x].heat_no + "' " + "data-rmw_issued_qty='" + materials[x].rmw_issued_qty + "' " + "data-rmw_scheduled_qty='" + materials[x].rmw_scheduled_qty + "' " + "data-rmw_id='" + materials[x].rmw_id + "' " + "data-inv_id='" + materials[x].inv_id + "' " + "data-uom='" + materials[x].uom + "'>" + materials[x].heat_no + rmw_length + rmw_qty + "</option>"; //"<option value='" + materials[x].heat_no + "' data-uom='" + materials[x].uom +"' data-rmw_issued_qty='"+materials[x].rmw_issued_qty+"'>"+materials[x].heat_no+"</option>";
-          }
-        }
-
-        $('#material_heat_no_' + y).html(op);
-        var rmw_issued_qty = $('#material_heat_no_' + y).find('option:selected').attr('data-rmw_issued_qty');
-        var uom = $('#material_heat_no_' + y).find('option:selected').attr('data-uom');
-        $('#rmw_issued_qty_' + y).val(rmw_issued_qty);
-        $('#uom_span_' + y).val(uom);
-        $('#uom_' + y).val(uom);
-        getMaterialusedEdit(MainData[y].material_heat_no, y);
-      }
-    },
-    error: function error(xhr, textStatus, thrownError) {
-      msg(thrownError, textStatus);
-    }
-  });
-}
-
-function getMaterialused(heat_no, count) {
-  var op = "<option value=''></option>";
-  $.ajax({
-    url: getMaterialUsedURL,
-    type: 'GET',
-    dataType: 'JSON',
-    data: {
-      _token: token,
-      heat_no: heat_no
+      rmw_no: withdrawal_slip_no,
+      prod_code: prod_code,
+      state: state
     }
   }).done(function (data, textStatus, xhr) {
-    if (joDetails_arr.length > 0) {
-      if ($('#is_same').is(':checked')) {
-        $('#material_used_' + count).html(op);
-        var material = data[0];
-        var rmw_issued_qty = material.rmw_issued_qty;
-        var uom = material.uom;
-        var inv_id = material.inv_id;
-        var rmw_id = material.rmw_id;
-        var material_heat_no = material.heat_no;
-        $.each(data, function (i, x) {
-          $('#rmw_issued_qty_' + count).val(rmw_issued_qty);
-          $('#uom_' + count).val(uom);
-          $('#uom_span_' + count).html(uom);
-          $('#inv_id_' + count).val(inv_id);
-          $('#rmw_id_' + count).val(rmw_id);
-          compareStandardMaterialUsed(count, p_pcode, x); //x = description,schedule,size
+    materials = data.materials;
+    $msg = data.msg;
+    $status = data.status;
+    material_count = 0;
 
-          op = "<option value='" + x.description + "' selected>" + x.description + "</option>";
-          $('#material_used_' + count).append(op);
-          $('#btn_over_issuance_' + count).attr('data-inv_id', inv_id);
-          $('#btn_over_issuance_' + count).attr('data-rmw_issued_qty', rmw_issued_qty);
-        });
-      } else {
-        $.each(joDetails_arr, function (i, x) {
-          $('#material_used_' + count).html(op);
-        });
-        $.each(data, function (i, x) {
-          var rmw_issued_qty = x.rmw_issued_qty;
-          var uom = x.uom;
-          var inv_id = x.inv_id;
-          var rmw_id = x.rmw_id;
-          var material_heat_no = x.heat_no;
-          $('#rmw_issued_qty_' + count).val(rmw_issued_qty);
-          $('#uom_' + count).val(uom);
-          $('#uom_span_' + count).html(uom);
-          $('#inv_id_' + count).val(inv_id);
-          $('#rmw_id_' + count).val(rmw_id);
-          compareStandardMaterialUsed(count, p_pcode, x); //x = description,schedule,size
+    if (arr_materials.length > 0) {
+      arr_materials = [];
+    }
 
-          op = "<option value='" + x.description + "' selected>" + x.description + "</option>";
-          $('#material_used_' + count).append(op);
-          $('#btn_over_issuance_' + count).attr('data-inv_id', inv_id);
-          $('#btn_over_issuance_' + count).attr('data-rmw_issued_qty', rmw_issued_qty);
-        });
-      }
-    } else {
-      $('#material_used_' + count).html(op);
-      $.each(data, function (i, x) {
-        compareStandardMaterialUsed(count, p_pcode, x); //x = description,schedule,size
-
-        op = "<option value='" + x.description + "' selected>" + x.description + "</option>";
-        $('#material_used_' + count).append(op);
+    console.log(materials);
+    $.each(materials, function (indx, mat) {
+      arr_materials.push({
+        count: '',
+        sched_qty: '',
+        material_heat_no: mat.heat_no,
+        rmw_issued_qty: mat.rmw_issued_qty,
+        material_code: mat.mat_code,
+        standard_material_used: mat.standard_material_used,
+        lot_no: mat.lot_no,
+        blade_consumption: '',
+        cut_weight: mat.cut_weight,
+        cut_length: mat.cut_length,
+        cut_width: mat.cut_width,
+        mat_length: mat.rmw_length,
+        mat_weight: mat.std_weight,
+        description: mat.description,
+        assign_qty: '',
+        remaining_qty: '',
+        upd_inv_id: mat.upd_inv_id,
+        inv_id: mat.inv_id,
+        rmwd_id: mat.rmw_id,
+        size: mat.size
       });
+      material_count++; // op += "<option value='" + mat.rmw_id + "' " +
+      //     "data-heat_no='" + mat.heat_no + "' " +
+      //     "data-uom='" + mat.uom + "' " +
+      //     "data-rmw_issued_qty='" + mat.rmw_issued_qty + "' " +
+      //     "data-rmw_scheduled_qty='" + mat.rmw_scheduled_qty + "' " +
+      //     "data-rmw_id='" + mat.rmw_id + "' " +
+      //     "data-inv_id='" + mat.inv_id + "' " +
+      //     "data-rmw_length='" + mat.rmw_length + "' " +
+      //     "data-upd_inv_id='" + mat.upd_inv_id + "' " +
+      //     "data-material_type='" + mat.material_type + "' " +
+      //     "data-for_over_issuance='" + mat.for_over_issuance + "' " +
+      //     "data-standard_material_used='" + mat.standard_material_used + "' " +
+      //     "data-description='" + mat.description + "' " +
+      //     "data-size='" + mat.size + "' " +
+      //     "data-item_code='" + mat.item_code + "' " +
+      //     "data-schedule='" + mat.schedule + "' " +
+      //     "data-lot_no='" + mat.lot_no + "' " +
+      //     "'>" +
+      //     mat.text +
+      //     "</option>";
+    });
+
+    if (state == 'edit') {
+      $.each(arr_materials, function (i, x) {
+        $('#material_heat_no_' + i).append(op);
+        $('#material_heat_no_' + i).select2({
+          allowClear: true,
+          placeholder: 'Select a Heat No.',
+          width: '100%'
+        });
+        $('#material_heat_no_' + i).val(x.heat_no_id).trigger('change');
+      });
+    } else {
+      // $('.material_heat_no').append(op);
+      // $('.material_heat_no').select2({
+      //     allowClear: true,
+      //     placeholder: 'Select a Heat No.',
+      //     width: '100%'
+      // });
+      console.log(arr_materials);
+      makeMaterialsDataTable(arr_materials);
     }
   }).fail(function (xhr, textStatus, errorThrown) {
     ErrorMsg(xhr);
-  });
-}
-
-function getMaterialusedEdit(heat_no) {
-  var count = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-  var op = "<option value=''></option>";
-  $.ajax({
-    url: getMaterialUsedURL,
-    type: 'GET',
-    dataType: 'JSON',
-    data: {
-      _token: token,
-      heat_no: heat_no
-    },
-    success: function success(returnData) {
-      for (var x = 0; x < returnData.length; x++) {
-        op = "<option value='" + returnData[x].description + "'>" + returnData[x].description + "</option>";
-        $('#material_used_' + $(this).attr('data-count')).append(op);
-        compareStandardMaterialUsed($(this).attr('data-count'), $(this).attr('data-p_code'), x); //x = description,schedule,size
-      }
-    }
-  });
-}
-
-function compareStandardMaterialUsed(count, product_code, material_used) {
-  $.ajax({
-    url: getStandardMaterialUsedURL,
-    type: 'GET',
-    dataType: 'JSON',
-    data: {
-      _token: token,
-      product_code: product_code
-    }
-  }).done(function (data, textStatus, xhr) {
-    var standard_material_used = data.standard_material_used;
-    var selected_mat_used = ""; //console.log(standard_material_used +" = "+material_used);
-
-    if (typeof material_used == 'string') {
-      selected_mat_used = material_used;
-    } else {
-      if (standard_material_used == material_used.size) {
-        selected_mat_used = material_used.size;
-      } else if (standard_material_used = material_used.schedule) {
-        selected_mat_used = material_used.schedule;
-      } else {
-        selected_mat_used = material_used.description;
-      }
-    }
-
-    if (selected_mat_used !== null || selected_mat_used !== '') {
-      if (standard_material_used != selected_mat_used) {
-        var error = "This is not the Product's Standard Material";
-        $('#material_used_' + count).addClass('is-invalid');
-        $('#material_used_' + count + '_feedback').addClass('invalid-feedback');
-        $('#material_used_' + count + '_feedback').html(error);
-      } else {
-        $('#material_used_' + count).removeClass('is-invalid');
-        $('#material_used_' + count + '_feedback').removeClass('invalid-feedback');
-        $('#material_used_' + count + '_feedback').html('');
-      }
-    } else {
-      $('#material_used_' + count).removeClass('is-invalid');
-      $('#material_used_' + count + '_feedback').removeClass('invalid-feedback');
-      $('#material_used_' + count + '_feedback').html(''); //msg("Please assign a standard material for "+product_code, 'warning');
-    }
-  }).fail(function (xhr, textStatus, errorThrown) {
-    msg(errorThrown, textStatus);
   }).always(function () {
-    $('.loadingOverlay').hide();
+    $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+    $('.loadingOverlay-modal').hide();
   });
-}
 
-function sum_sched_qty() {
-  var rows = $('#tbl_jo_details')["0"].rows.length - 1;
-  var sum = 0;
-
-  for (var x = 0; x < rows; x++) {
-    if ($('#tbl_jo_details')["0"].children[1].children[x].cells[8].children["0"].value != "") {
-      var sched_qty = $('#tbl_jo_details')["0"].children[1].children[x].cells[8].children["0"].value;
-      sum += parseFloat(sched_qty == "" ? 0 : sched_qty);
-    }
+  if (materials.length > 0) {
+    msg($msg, $status);
   }
-
-  $('#total_sched_qty').val(sum);
 }
 
 function SaveJODetails() {
@@ -1314,7 +1118,6 @@ function SaveJODetails() {
     jo_no = $('#jono').val();
   }
 
-  console.log();
   $.ajax({
     url: savejodetailsURL,
     type: 'POST',
@@ -1567,7 +1370,7 @@ function getTravelSheet() {
     travel_Sheet = data;
     makeTravelSheet(travel_Sheet);
   }).fail(function (xhr, textStatus, errorThrown) {
-    msg(errorThrown, textStatus);
+    ErrorMsg(xhr);
   });
 }
 
@@ -1646,6 +1449,279 @@ function makeTravelSheet(arr) {
 function clear() {
   $('.clear').val("");
   $('#total_sched_qty').val(0);
+}
+
+function makeItemDataTable(arr) {
+  $('#tbl_item').dataTable().fnClearTable();
+  $('#tbl_item').dataTable().fnDestroy();
+  $('#tbl_item').dataTable({
+    data: arr,
+    searching: false,
+    lengthChange: false,
+    paging: false,
+    columns: [{
+      data: 'sc_no',
+      searchable: false,
+      sortable: false
+    }, {
+      data: 'prod_code',
+      searchable: false,
+      sortable: false
+    }, {
+      data: 'description',
+      searchable: false,
+      sortable: false
+    }, {
+      data: 'order_qty',
+      searchable: false,
+      sortable: false
+    }],
+    initComplete: function initComplete() {
+      $('.dataTables_info').hide();
+    }
+  });
+}
+
+function makeMaterialsDataTable(arr) {
+  var count = 0;
+  $('#tbl_materials').dataTable().fnClearTable();
+  $('#tbl_materials').dataTable().fnDestroy();
+  $('#tbl_materials').dataTable({
+    data: arr,
+    searching: false,
+    lengthChange: false,
+    scrollY: '300px',
+    scrollX: true,
+    paging: false,
+    columns: [{
+      data: function data(x) {
+        var indx = count;
+
+        if (x.count !== '') {
+          indx = x.count;
+        }
+
+        return "<button type='button' class='btn btn-sm bg-red btn_remove_material' data-count='" + indx + "'>" + "<i class='fa fa-times'></i>" + "</button>" + "<input type='hidden' name='upd_inv_id[]' class='upd_inv_id' value='" + x.upd_inv_id + "'/>" + "<input type='hidden' name='inv_id[]' class='inv_id' value='" + x.inv_id + "'/>" + "<input type='hidden' name='rmwd_id[]' class='rmwd_id' value='" + x.rmwd_id + "'/>" + "<input type='hidden' name='size[]' class='size' value='" + x.size + "'/>";
+      },
+      searchable: false,
+      sortable: false
+    }, {
+      data: function data(x) {
+        return "<input type='number' step='0.01' name='sched_qty[]' class='form-control form-control-sm sched_qty' value='" + x.sched_qty + "'/>";
+      },
+      searchable: false,
+      sortable: false
+    }, {
+      data: function data(x) {
+        var indx = count;
+
+        if (x.count !== '') {
+          indx = x.count;
+        }
+
+        return "<input type='text' name='material_heat_no[]' id='material_heat_no_" + indx + "' class='form-control form-control-sm material_heat_no' value='" + x.material_heat_no + "' />";
+      },
+      searchable: false,
+      sortable: false
+    }, // { data: function(x) {
+    //     return "<select name='material_heat_no[]' id='material_heat_no_"+indx+"' class='form-control form-control-sm material_heat_no' value='"+x.material_heat_no+"'></select>";
+    // }, searchable: false, sortable: false },
+    {
+      data: function data(x) {
+        return "<div class='input-group input-group-sm'>" + "<input type='number' step='0.01' name='rmw_issued_qty[]' class='form-control form-control-sm rmw_issued_qty' value='" + x.rmw_issued_qty + "' readonly>" + "<div class='input-group-append'>" + "<span class='input-group-text'>PCS</span>" + "</div>";
+      },
+      searchable: false,
+      sortable: false
+    }, {
+      data: function data(x) {
+        var indx = count;
+
+        if (x.count !== '') {
+          indx = x.count;
+        }
+
+        return "<input type='text' name='material_used[]' id='material_used_" + indx + "' class='form-control form-control-sm material_used' value='" + x.description + "' readonly/>" + "<div id='material_used_" + indx + "_feedback' class='material_used__feedback'></div>";
+      },
+      searchable: false,
+      sortable: false
+    }, {
+      data: function data(x) {
+        return "<input type='text' name='lot_no[]' class='form-control form-control-sm lot_no' value='" + x.lot_no + "'/>";
+      },
+      searchable: false,
+      sortable: false
+    }, {
+      data: function data(x) {
+        return "<input type='text' name='blade_consumption[]' class='form-control form-control-sm blade_consumption' value='" + x.blade_consumption + "'/>";
+      },
+      searchable: false,
+      sortable: false
+    }, {
+      data: function data(x) {
+        return "<input type='text' name='cut_weight[]' class='form-control form-control-sm cut_weight' value='" + x.cut_weight + "'/>";
+      },
+      searchable: false,
+      sortable: false
+    }, {
+      data: function data(x) {
+        return "<input type='text' name='cut_length[]' class='form-control form-control-sm cut_length'value='" + x.cut_length + "' />";
+      },
+      searchable: false,
+      sortable: false
+    }, {
+      data: function data(x) {
+        return "<input type='text' name='cut_width[]' class='form-control form-control-sm cut_width' value='" + x.cut_width + "'/>";
+      },
+      searchable: false,
+      sortable: false
+    }, {
+      data: function data(x) {
+        return "<input type='text' name='mat_length[]' class='form-control form-control-sm mat_length' value='" + x.mat_length + "' />";
+      },
+      searchable: false,
+      sortable: false
+    }, {
+      data: function data(x) {
+        return "<input type='text' name='mat_weight[]' class='form-control form-control-sm mat_weight' value='" + x.mat_weight + "'/>";
+      },
+      searchable: false,
+      sortable: false
+    }, {
+      data: function data(x) {
+        return "<input type='number' step='0.01' name='assign_qty[]' class='form-control form-control-sm assign_qty' value='" + x.assign_qty + "'/>";
+      },
+      searchable: false,
+      sortable: false
+    }, {
+      data: function data(x) {
+        return "<input type='number' step='0.01' name='remaining_qty[]' class='form-control form-control-sm remaining_qty' value='" + x.remaining_qty + "'/>";
+      },
+      searchable: false,
+      sortable: false
+    }],
+    createdRow: function createdRow(row, data, dataIndex) {
+      var dataRow = $(row);
+      var mat_used_input = $(dataRow[0].cells[4].firstChild);
+      var cut_weight_input = $(dataRow[0].cells[7].firstChild);
+      var cut_length_input = $(dataRow[0].cells[8].firstChild);
+      var cut_width_input = $(dataRow[0].cells[9].firstChild);
+
+      if (data.mat_code == data.standard_material_used) {
+        mat_used_input.removeClass('is-invalid');
+        mat_used_input.next().removeClass('invalid-feedback').html('');
+        cut_weight_input.prop('readonly', true);
+        cut_length_input.prop('readonly', true);
+        cut_width_input.prop('readonly', true);
+      } else {
+        var error = "This is not the Product's Standard Material";
+        mat_used_input.addClass('is-invalid');
+        mat_used_input.next().addClass('invalid-feedback').html(error);
+        cut_weight_input.prop('readonly', false);
+        cut_length_input.prop('readonly', false);
+        cut_width_input.prop('readonly', false);
+      }
+
+      $(row).attr('id', 'tr_' + count);
+      count++;
+    },
+    fnDrawCallback: function fnDrawCallback(oSettings) {
+      $('.dataTables_scrollBody').slimScroll({
+        height: '300px'
+      });
+    },
+    initComplete: function initComplete() {
+      $('#tbl_materials_wrapper > .dt-buttons > .btn').removeClass('btn-secondary');
+      $('#tbl_materials_wrapper > .dt-buttons > .btn').addClass('bg-green');
+      $('.dataTables_info').hide(); // $('#add_material_row').click();
+
+      $('.sched_qty:first').focus();
+    }
+  });
+}
+
+function populateOldMaterialData() {
+  for (var index = 0; index < arr_materials.length; index++) {
+    var tr = $('#tr_' + index);
+    arr_materials[index].sched_qty = tr.children()[1].firstChild.value;
+    arr_materials[index].lot_no = tr.children()[5].firstChild.value;
+    arr_materials[index].blade_consumption = tr.children()[6].firstChild.value;
+    arr_materials[index].cut_weight = tr.children()[7].firstChild.value;
+    arr_materials[index].cut_length = tr.children()[8].firstChild.value;
+    arr_materials[index].cut_width = tr.children()[9].firstChild.value;
+    arr_materials[index].mat_length = tr.children()[10].firstChild.value;
+    arr_materials[index].mat_weight = tr.children()[11].firstChild.value;
+    arr_materials[index].assign_qty = tr.children()[12].firstChild.value;
+    arr_materials[index].remaining_qty = tr.children()[13].firstChild.value;
+  }
+}
+
+function saveMaterials() {
+  //$('.loadingOverlay-modal').show();
+  var param = {
+    _token: token,
+    sched_qty: $('input[name="sched_qty[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    material_heat_no: $('input[name="material_heat_no[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    rmw_issued_qty: $('input[name="rmw_issued_qty[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    material_used: $('input[name="material_used[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    lot_no: $('input[name="lot_no[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    blade_consumption: $('input[name="blade_consumption[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    cut_weight: $('input[name="cut_weight[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    cut_length: $('input[name="cut_length[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    cut_width: $('input[name="cut_width[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    mat_length: $('input[name="mat_length[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    mat_weight: $('input[name="mat_weight[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    assign_qty: $('input[name="assign_qty[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    remaining_qty: $('input[name="remaining_qty[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    inv_id: $('input[name="inv_id[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    rmwd_id: $('input[name="rmwd_id[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    rmw_no: $('#rmw_no').val(),
+    ship_date: $('#ship_date').val(),
+    sc_no: $('#sc_no').val(),
+    prod_code: $('#prod_code').val(),
+    description: $('#code_description').val(),
+    quantity: $('#back_order_qty').val()
+  };
+  console.log(param); // $.ajax({
+  //     url: savejodetailsURL,
+  //     type: 'POST',
+  //     dataType: 'JSON',
+  //     data: param
+  // }).done(function(data, textStatus, xhr) {
+  // }).fail(function(xhr, textStatus, errorThrown) {
+  //     ErrorMsg(xhr);
+  // }).always(function(xhr, textStatus) {
+  //     $('.loadingOverlay-modal').hide();
+  // });
 }
 
 /***/ }),

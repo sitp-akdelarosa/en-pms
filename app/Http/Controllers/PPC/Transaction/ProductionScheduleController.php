@@ -507,6 +507,7 @@ class ProductionScheduleController extends Controller
                     ->select('id')->where('trans_no',$req->rmw_no)->first();
 
         $with_rmw = '';
+        $materials;
 
         if (count((array)$rmw) > 0) {
             $with_rmw = " AND rmwi.trans_no = '".$req->rmw_no."'";
@@ -522,8 +523,10 @@ class ProductionScheduleController extends Controller
                                         rmw.id as rmw_id,
                                         rmw.inv_id as inv_id,
                                         pui.length as rmw_length,
+                                        pmc.std_weight as std_weight,
                                         pui.id as upd_inv_id,
                                         pui.item_code as item_code,
+                                        pmc.material_code as mat_code,
                                         '' as lot_no,
                                         CASE 
                                             WHEN pui.materials_type LIKE '%BAR%' THEN 'BAR'
@@ -555,7 +558,13 @@ class ProductionScheduleController extends Controller
                                                     where product_code = '".$req->prod_code."') as standard_material_used,
                                         pui.description as description,
                                         pui.size as size,
-                                        pui.`schedule` as `schedule`
+                                        pui.`schedule` as `schedule`,
+                                        (SELECT cut_weight from ppc_product_codes
+                                                    where product_code = '".$req->prod_code."' limit 1) as cut_weight,
+                                        (SELECT cut_length from ppc_product_codes
+                                                    where product_code = '".$req->prod_code."' limit 1) as cut_length,
+                                        (SELECT cut_width from ppc_product_codes
+                                                    where product_code = '".$req->prod_code."' limit 1) as cut_width
                                     FROM ppc_update_inventories as pui
                                     left join admin_assign_material_types as apl 
                                     on apl.material_type = pui.materials_type
@@ -566,8 +575,11 @@ class ProductionScheduleController extends Controller
 
                                     inner join ppc_raw_material_withdrawal_infos as rmwi 
                                     on rmw.trans_id = rmwi.id
+                                    
+                                    inner join ppc_material_codes as pmc
+                                    on pmc.material_code = pui.item_code
 
-                                    WHERE rmw.issued_qty <> 0 AND rmwi.`status` <> 'OPEN' AND apl.user_id = ".Auth::user()->id.$with_rmw."
+                                    WHERE rmw.issued_qty <> 0 AND rmwi.`status` <> 'UNCONFIRMED' AND apl.user_id = ".Auth::user()->id.$with_rmw."
                                     group by rmwi.trans_no,
                                         rmw.trans_id,
                                         pui.id,
@@ -577,6 +589,7 @@ class ProductionScheduleController extends Controller
                                         rmw.id,
                                         rmw.inv_id,
                                         pui.item_code,
+                                        pmc.material_code,
                                         pui.length,
                                         pui.description,
                                         pui.size,
@@ -601,8 +614,10 @@ class ProductionScheduleController extends Controller
                                             pw.id as rmw_id,
                                             pw.inv_id as inv_id,
                                             pui.length as rmw_length,
+                                            pmc.std_weight as std_weight,
                                             pui.id as upd_inv_id,
                                             pui.item_code as item_code,
+                                            pmc.material_code as mat_code,
                                             pui.item_class as material_type,
                                             pui.lot_no as lot_no,
                                             CONCAT(
@@ -614,7 +629,14 @@ class ProductionScheduleController extends Controller
                                             ppc.standard_material_used as standard_material_used,
                                             pui.description as description,
                                             pui.size as size,
-                                            pui.`schedule` as `schedule`
+                                            pui.`schedule` as `schedule`,
+                                            (SELECT cut_weight from ppc_product_codes
+                                                    where product_code = '".$req->prod_code."' limit 1) as cut_weight,
+                                            (SELECT cut_length from ppc_product_codes
+                                                        where product_code = '".$req->prod_code."' limit 1) as cut_length,
+                                            (SELECT cut_width from ppc_product_codes
+                                                        where product_code = '".$req->prod_code."' limit 1) as cut_width
+
                                         FROM ppc_update_inventories as pui
                                         inner join ppc_product_codes as ppc
                                         on pui.item_code = ppc.product_code
@@ -629,8 +651,11 @@ class ProductionScheduleController extends Controller
                                         inner join ppc_product_withdrawal_infos as pwi 
                                         on pw.trans_id = pwi.id
 
+                                        inner join ppc_material_codes as pmc
+                                        on pmc.material_code = pui.item_code
+
                                         WHERE pw.issued_qty <> 0 
-                                        AND pwi.`status` <> 'OPEN'
+                                        AND pwi.`status` <> 'UNCONFIRMED'
                                         AND apl.user_id = ".Auth::user()->id."
                                         AND pwi.trans_no = '".$req->rmw_no."'
 
@@ -643,6 +668,7 @@ class ProductionScheduleController extends Controller
                                             pw.id,
                                             pw.inv_id,
                                             pui.item_code,
+                                            pmc.material_code,
                                             pui.length,
                                             pui.description,
                                             pui.size,
@@ -686,7 +712,12 @@ class ProductionScheduleController extends Controller
                                 'size' => $material->size,
                                 'schedule' => $material->schedule,
                                 'item_code' => $material->item_code,
-                                'lot_no' => $material->lot_no
+                                'lot_no' => $material->lot_no,
+                                'std_weight' => $material->std_weight,
+                                'cut_weight' => $material->cut_weight,
+                                'cut_length' => $material->cut_length,
+                                'cut_width' => $material->cut_width,
+                                'mat_code' => $material->mat_code
                             ]);
                         }
                     }
@@ -1204,5 +1235,10 @@ class ProductionScheduleController extends Controller
                 });
             });
         })->download('xlsx');
+    }
+
+    public function SaveMaterials(Request $req)
+    {
+        # code...
     }
 }
