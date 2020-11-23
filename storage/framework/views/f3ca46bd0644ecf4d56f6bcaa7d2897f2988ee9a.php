@@ -93,6 +93,7 @@ foreach ($user_accesses as $user_access){
                                         <th>Product Code</th>
                                         <th>Description</th>
                                         <th>Back Order Qty.</th>
+                                        <th>Sched. Qty.</th>
                                         
                                     </tr>
                                 </thead>
@@ -269,6 +270,7 @@ foreach ($user_accesses as $user_access){
         var OverIssuanceURL = "<?php echo e(url('/transaction/production-schedule/over-issuance')); ?>";
         var excelSearchFilterURL = "<?php echo e(url('/transaction/production-schedule/excel-filter-orders')); ?>";
         var SaveMaterialsURL = "<?php echo e(url('/transaction/production-schedule/save-materials')); ?>";
+        var getMaterialsURL = "<?php echo e(url('/transaction/production-schedule/get-materials')); ?>";
         var code_permission = 'T0004';
         
     </script>

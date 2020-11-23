@@ -15,6 +15,12 @@ class CreateTempItemMaterialsTable extends Migration
     {
         Schema::create('temp_item_materials', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('upd_inv_id')->length(11)->default(0)->nullable();
+            $table->integer('inv_id')->length(11)->default(0)->nullable();
+            $table->integer('rmwd_id')->length(11)->default(0)->nullable();
+            $table->double('size',20,2)->default(0.00)->nullable();
+            $table->double('computed_per_piece',20,2)->default(0.00)->nullable();
+            $table->string('material_type')->nullable();
             $table->double('sched_qty',20,2)->default(0.00)->nullable();
             $table->string('material_heat_no')->nullable();
             $table->double('rmw_issued_qty',20,2)->default(0.00)->nullable();
@@ -28,8 +34,6 @@ class CreateTempItemMaterialsTable extends Migration
             $table->double('mat_weight',20,2)->default(0.00)->nullable();
             $table->double('assign_qty',20,2)->default(0.00)->nullable();
             $table->double('remaining_qty',20,2)->default(0.00)->nullable();
-            $table->integer('inv_id')->length(11)->default(0)->nullable();
-            $table->integer('rmwd_id')->length(11)->default(0)->nullable();
             $table->string('rmw_no')->nullable();
             $table->date('ship_date')->nullable();
             $table->string('sc_no')->nullable();

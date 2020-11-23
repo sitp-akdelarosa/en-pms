@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class TempItemMaterial extends Model
 {
     protected $fillable = [
+        'upd_inv_id',
+        'inv_id',
+        'rmwd_id',
+        'size',
+        'computed_per_piece',
+        'material_type',
         'sched_qty',
         'material_heat_no',
         'rmw_issued_qty',
@@ -20,8 +26,6 @@ class TempItemMaterial extends Model
         'mat_weight',
         'assign_qty',
         'remaining_qty',
-        'inv_id',
-        'rmwd_id',
         'rmw_no',
         'ship_date',
         'sc_no',
@@ -29,5 +33,7 @@ class TempItemMaterial extends Model
         'description',
         'quantity',
         'create_user',
+        'created_at',
+        'updated_at'
     ];
 }

@@ -99,6 +99,7 @@ foreach ($user_accesses as $user_access){
                                         <th>Product Code</th>
                                         <th>Description</th>
                                         <th>Back Order Qty.</th>
+                                        <th>Sched. Qty.</th>
                                         {{-- <th width="12%">Material Heat No.</th>
                                         <th width="7%">Withdrawal Qty(PCS)</th>
                                         <th width="15%">Material Used</th>
@@ -281,6 +282,7 @@ foreach ($user_accesses as $user_access){
         var OverIssuanceURL = "{{ url('/transaction/production-schedule/over-issuance') }}";
         var excelSearchFilterURL = "{{ url('/transaction/production-schedule/excel-filter-orders') }}";
         var SaveMaterialsURL = "{{ url('/transaction/production-schedule/save-materials') }}";
+        var getMaterialsURL = "{{ url('/transaction/production-schedule/get-materials') }}";
         var code_permission = 'T0004';
         
     </script>
