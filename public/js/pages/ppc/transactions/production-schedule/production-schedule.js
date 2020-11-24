@@ -536,7 +536,9 @@ $(function () {
             swal("Successful", "The travel sheet has been cancelled.");
             ProdSummaries(prodSummariesURL);
             travel_Sheet = [];
-            getTravelSheet();
+            TravelSheetDataTable(getTravelSheetURL, {
+              _token: token
+            });
           } else {
             swal("Failed", "The travel sheet has been processing of goods.");
           }
@@ -966,7 +968,9 @@ function initializePage() {
   });
   checkAllCheckboxesInTable('.check-all_prod_sum', '.check_item');
   makeJODetailsList(joDetails_arr);
-  getTravelSheet();
+  TravelSheetDataTable(getTravelSheetURL, {
+    _token: token
+  });
   $('.material_heat_no').prop('disabled', true);
   $('#btn_save_div').hide();
   $('#btn_check_over_issuance_div').hide();
@@ -1080,16 +1084,6 @@ function ProdSummariesTable(ajax_url, object_data) {
       $('.loadingOverlay-modal').hide();
     }
   });
-}
-
-function getDatatablesearch() {
-  if ($('#from').val() != "" && $('#to').val() != "") {
-    ProdSummaries(prodSummariesURL + '?fromvalue=' + $('#from').val() + '&tovalue=' + $('#to').val()); // getDatatable('tbl_prod_sum',prodSummariesURL + '?fromvalue='+ $('#from').val()+'&tovalue='+ $('#to').val(),dataColumn,[],0);
-  } else if ($('#from').val() != "") {
-    ProdSummaries(prodSummariesURL + '?fromvalue=' + $('#from').val()); // getDatatable('tbl_prod_sum',prodSummariesURL + '?fromvalue='+ $('#from').val(),dataColumn,[],0);
-  } else {
-    msg("From Input is required", "warning");
-  }
 }
 
 function makeJODetailsList(arr) {
@@ -1326,7 +1320,9 @@ function SaveJODetails() {
     });
     joDetails_arr = [];
     makeJODetailsList(joDetails_arr);
-    getTravelSheet();
+    TravelSheetDataTable(getTravelSheetURL, {
+      _token: token
+    });
   }).fail(function (xhr, textStatus, errorThrown) {
     ErrorMsg(xhr);
   }).always(function (xhr, textStatus) {
@@ -1399,7 +1395,7 @@ function getTables() {
       makeJODetailsList(joDetails_arr);
       getMaterialHeatNo(data[0].rmw_no, 'edit');
       var showform = document.getElementById('formbaba').style.display = 'inline';
-      makeTravelSheet(travel_Sheet);
+      TravelSheetDataTable(travel_Sheet);
     } else {
       msg('No J.O. details found.', 'failed');
     }
@@ -1452,33 +1448,21 @@ function getTablesAll() {
   });
 }
 
-function getTravelSheet() {
-  travel_Sheet = [];
-  $.ajax({
-    url: getTravelSheetURL,
-    type: 'GET',
-    dataType: 'JSON',
-    data: {
-      _token: token
-    }
-  }).done(function (data, textStatus, xhr) {
-    travel_Sheet = data;
-    makeTravelSheet(travel_Sheet);
-  }).fail(function (xhr, textStatus, errorThrown) {
-    ErrorMsg(xhr);
-  });
-}
-
-function makeTravelSheet(arr) {
+function TravelSheetDataTable(ajax_url, object_data) {
   $('#tbl_travel_sheet').dataTable().fnClearTable();
   $('#tbl_travel_sheet').dataTable().fnDestroy();
   $('#tbl_travel_sheet').dataTable({
-    data: arr,
+    ajax: {
+      url: ajax_url,
+      data: object_data,
+      error: function error(xhr, textStatus, errorThrown) {
+        ErrorMsg(xhr);
+      }
+    },
+    processing: true,
     order: [[11, 'desc']],
     columns: [{
-      data: function data(_data2) {
-        return '<span class="cancel_travel_sheet"' + ' data-jo_no="' + _data2.jo_no + '" data-prod_code="' + _data2.product_code + '" ' + ' data-issued_qty="' + _data2.issued_qty + '"data-id="' + _data2.id + '" ' + ' data-status="' + _data2.status + '"  data-sched_qty="' + _data2.sched_qty + '" ' + ' data-qty_per_sheet="' + _data2.qty_per_sheet + '"  data-iso_code="' + _data2.iso_code + '"' + ' data-sc_no="' + _data2.sc_no + '" data-idJO="' + _data2.idJO + '"' + ' title="Cancel Travel Sheet"><i class="text-red fa fa-times"></i> </span>';
-      },
+      data: 'action',
       name: 'action',
       orderable: false,
       searchable: false
@@ -1510,29 +1494,7 @@ function makeTravelSheet(arr) {
       data: 'material_heat_no',
       name: 'material_heat_no'
     }, {
-      data: function data(_data3) {
-        switch (_data3.status) {
-          case 0:
-            return 'No quantity issued';
-            break;
-
-          case 1:
-            return 'Ready of printing';
-            break;
-
-          case 2:
-            return 'On Production';
-            break;
-
-          case 3:
-            return 'Cancelled';
-            break;
-
-          case 5:
-            return 'CLOSED';
-            break;
-        }
-      },
+      data: 'status',
       name: 'status'
     }, {
       data: 'updated_at',

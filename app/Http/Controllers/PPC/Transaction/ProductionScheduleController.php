@@ -366,260 +366,6 @@ class ProductionScheduleController extends Controller
         return response()->json(['jocode' => $jo_no, 'result' => $result]);
     }
 
-    // public function SaveJODetails(Request $req)
-    // {
-    //     $jo_no_count = [];
-    //     $qty = [];
-    //     $jocode = '';
-    //     $back_order_qty_total = 0;
-    //     $total_sched_qty = 0;
-    //     $result = 'nothing happens';
-    //     $jo_no = '';
-    //     $prod_code_unique = $req->prod_code[0];
-    //     if (empty($req->jo_no)) {
-
-    //         foreach ($req->id as $key => $id) {
-    //             if ($req->prod_code[$key] == $prod_code_unique) {
-    //                 $back_order_qty_total += $req->quantity[$key];
-    //                 $total_sched_qty += $req->sched_qty[$key];
-    //             } else {
-    //                 $back_order_qty_total = $req->quantity[$key];
-    //                 $total_sched_qty = $req->sched_qty[$key];
-    //             }
-
-    //             if (sizeof($req->id) - 1 == $key) {
-    //                 array_push($qty, ['order_qty' => $back_order_qty_total, 'sched_qty' => $total_sched_qty]);
-    //             } else if ($req->prod_code[$key] != $req->prod_code[$key + 1] && $key <= sizeof($req->id) - 2) {
-    //                 array_push($qty, ['order_qty' => $back_order_qty_total, 'sched_qty' => $total_sched_qty]);
-    //                 $back_order_qty_total = 0;
-    //                 $total_sched_qty = 0;
-    //             }
-
-    //             $prod_code_unique = $req->prod_code[$key];
-    //         }
-
-    //         $row = 0;
-    //         foreach (array_unique($req->prod_code, SORT_REGULAR) as $key => $id) {
-
-    //             $f = Auth::user()->firstname;
-    //             $l = Auth::user()->lastname;
-
-    //             $jocode = $this->_helper->TransactionNo($f[0] . $l[0] . '-JO');
-
-    //             $jo_sum = new PpcJoDetailsSummary();
-    //             $jo_sum->jo_no = $jocode;
-    //             $jo_sum->total_sched_qty = $qty[$row]['sched_qty'];
-    //             $jo_sum->rmw_no = (isset($req->rmw_no))? $req->rmw_no : '';
-    //             $jo_sum->create_user = Auth::user()->id;
-    //             $jo_sum->update_user = Auth::user()->id;
-    //             $jo_sum->save();
-
-    //             PpcJoTravelSheet::create([
-    //                 'jo_summary_id' => $jo_sum->id,
-    //                 'jo_no' => $jocode,
-    //                 'sc_no' => $req->sc_no[$key],
-    //                 'prod_code' => $req->prod_code[$key],
-    //                 'description' => $req->description[$key],
-    //                 'order_qty' => $qty[$row]['order_qty'],
-    //                 'sched_qty' => $qty[$row]['sched_qty'],
-    //                 'issued_qty' => 0,
-    //                 'material_used' => $req->material_used[$key],
-    //                 'material_heat_no' => $req->material_heat_no[$key],
-    //                 'uom' => $req->uom[$key],
-    //                 'lot_no' => $req->lot_no[$key],
-    //                 'ship_date' => $req->ship_date[$key],
-    //                 'status' => 0,
-    //                 'create_user' => Auth::user()->id,
-    //                 'update_user' => Auth::user()->id,
-    //             ]);
-    //             $row++;
-    //             $jo_no_count[] = $jo_sum->id;
-    //             $jo_no = $jo_no . ' ' . $jocode;
-    //         }
-
-    //         //Overwrite
-    //         // foreach ($req->id as $key => $id) {
-    //         //     PpcRawMaterialWithdrawalDetails::where('material_heat_no',$req->material_heat_no[$key])
-    //         //         ->where('create_user' , Auth::user()->id)
-    //         //         ->update(['sc_no' =>'']);
-    //         // }
-
-    //         $prod_code_unique = $req->prod_code[0];
-    //         $jo_no_lenght = 0;
-    //         foreach ($req->id as $key => $id) {
-    //             PpcProductionSummary::where('id', $id)->increment('sched_qty', $req->sched_qty[$key]);
-
-    //             $rawmats = PpcRawMaterialWithdrawalDetails::where('id', $req->rmw_id[$key])
-    //                 ->where('create_user', Auth::user()->id)
-    //                 ->first();
-    //             if (isset($rawmats->id)) {
-    //                 $Coma = ', ';
-    //                 if ($rawmats->sc_no == '') {
-    //                     $Coma = ' ';
-    //                 }
-    //                 if (strpos($rawmats->sc_no, $req->sc_no[$key]) === false) {
-    //                     PpcRawMaterialWithdrawalDetails::where('id', $req->rmw_id[$key])
-    //                         ->where('create_user', Auth::user()->id)
-    //                         ->update(['sc_no' => $req->sc_no[$key] . $Coma . $rawmats->sc_no]);
-    //                 }
-    //             }
-
-    //             if ($req->prod_code[$key] == $prod_code_unique) {
-    //                 PpcJoDetails::create([
-    //                     'jo_summary_id' => $jo_no_count[$jo_no_lenght],
-    //                     'sc_no' => $req->sc_no[$key],
-    //                     'product_code' => $req->prod_code[$key],
-    //                     'description' => $req->description[$key],
-    //                     'back_order_qty' => $req->quantity[$key],
-    //                     'sched_qty' => $req->sched_qty[$key],
-    //                     'material_used' => $req->material_used[$key],
-    //                     'material_heat_no' => $req->material_heat_no[$key],
-    //                     'uom' => $req->uom[$key],
-    //                     'lot_no' => $req->lot_no[$key],
-    //                     'create_user' => Auth::user()->id,
-    //                     'update_user' => Auth::user()->id,
-    //                     'inv_id' => $req->inv_id[$key],
-    //                     'rmw_id' => $req->rmw_id[$key],
-    //                     'rmw_issued_qty' => $req->rmw_issued_qty[$key],
-    //                     'material_type' => $req->material_type[$key],
-    //                     'for_over_issuance' => $req->for_over_issuance[$key],
-    //                     'heat_no_id' => $req->heat_no_id[$key],
-    //                     'ship_date' => $req->ship_date[$key]
-    //                 ]);
-
-    //             } else {
-    //                 $jo_no_lenght++;
-    //                 PpcJoDetails::create([
-    //                     'jo_summary_id' => $jo_no_count[$jo_no_lenght],
-    //                     'sc_no' => $req->sc_no[$key],
-    //                     'product_code' => $req->prod_code[$key],
-    //                     'description' => $req->description[$key],
-    //                     'back_order_qty' => $req->quantity[$key],
-    //                     'sched_qty' => $req->sched_qty[$key],
-    //                     'material_used' => $req->material_used[$key],
-    //                     'material_heat_no' => $req->material_heat_no[$key],
-    //                     'uom' => $req->uom[$key],
-    //                     'lot_no' => $req->lot_no[$key],
-    //                     'create_user' => Auth::user()->id,
-    //                     'update_user' => Auth::user()->id,
-    //                     'inv_id' => $req->inv_id[$key],
-    //                     'rmw_id' => $req->rmw_id[$key],
-    //                     'rmw_issued_qty' => $req->rmw_issued_qty[$key],
-    //                     'material_type' => $req->material_type[$key],
-    //                     'for_over_issuance' => $req->for_over_issuance[$key],
-    //                     'heat_no_id' => $req->heat_no_id[$key],
-    //                     'ship_date' => $req->ship_date[$key]
-    //                 ]);
-    //             }
-    //             $prod_code_unique = $req->prod_code[$key];
-    //         }
-
-    //         $this->_audit->insert([
-    //             'user_type' => Auth::user()->user_type,
-    //             'module_id' => $this->_moduleID,
-    //             'module' => 'Production Schedule',
-    //             'action' => 'Inserted data Jo_No:' . $jo_no,
-    //             'user' => Auth::user()->id,
-    //             'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
-    //         ]);
-
-    //     } else {
-    //         $past_details = [];
-
-    //         $jo_summary = PpcJoDetailsSummary::select('id', 'jo_no','rmw_no')
-    //             ->where('jo_no', $req->jo_no)
-    //             ->first();
-
-    //         if ($jo_summary->rmw_no == null) {
-    //             PpcJoDetailsSummary::where('id',$jo_summary->id)
-    //                                 ->update(['rmw_no' => $req->rmw_no]);
-    //         }
-
-    //         $jo_no = $jo_summary->jo_no;
-
-    //         $detailsDecrement = PpcJoDetails::select('sc_no', 'product_code', 'sched_qty')->where('jo_summary_id', $jo_summary->id)->get();
-
-    //         foreach ($detailsDecrement as $key => $dt) {
-    //             PpcProductionSummary::where('sc_no', $dt->sc_no)
-    //                 ->where('prod_code', $dt->product_code)
-    //                 ->decrement('sched_qty', (int) $dt->sched_qty);
-    //         }
-
-    //         PpcJoDetails::where('jo_summary_id', $jo_summary->id)->delete();
-
-    //         PpcJoDetailsSummary::where('jo_no', $req->jo_no)
-    //             ->where('create_user', Auth::user()->id)
-    //             ->update([
-    //                 'total_sched_qty' => $req->total_sched_qty,
-    //                 'update_user' => Auth::user()->id,
-    //                 'updated_at' => date('Y-m-d h:i:s'),
-    //             ]);
-
-    //         foreach ($req->id as $key => $id) {
-
-    //             PpcProductionSummary::where('sc_no', $req->sc_no[$key])
-    //                 ->where('prod_code', $req->prod_code[$key])
-    //                 ->increment('sched_qty', $req->sched_qty[$key]);
-
-    //             PpcJoDetails::create([
-    //                 'jo_summary_id' => $jo_summary->id,
-    //                 'sc_no' => $req->sc_no[$key],
-    //                 'product_code' => $req->prod_code[$key],
-    //                 'description' => $req->description[$key],
-    //                 'back_order_qty' => $req->quantity[$key],
-    //                 'sched_qty' => $req->sched_qty[$key],
-    //                 'material_used' => $req->material_used[$key],
-    //                 'material_heat_no' => $req->material_heat_no[$key],
-    //                 'uom' => $req->uom[$key],
-    //                 'lot_no' => $req->lot_no[$key],
-    //                 'create_user' => Auth::user()->id,
-    //                 'update_user' => Auth::user()->id,
-    //                 'inv_id' => $req->inv_id[$key],
-    //                 'rmw_id' => $req->rmw_id[$key],
-    //                 'rmw_issued_qty' => $req->rmw_issued_qty[$key],
-    //                 'material_type' => $req->material_type[$key],
-    //                 'for_over_issuance' => $req->for_over_issuance[$key],
-    //                 'heat_no_id' => $req->heat_no_id[$key],
-    //                 'ship_date' => $req->ship_date[$key]
-    //             ]);
-
-    //             $back_order_qty_total += $req->quantity[$key];
-    //         }
-
-    //         PpcJoTravelSheet::where('jo_summary_id', $jo_summary->id)->update([
-    //             'sc_no' => $req->sc_no[0],
-    //             'prod_code' => $req->prod_code[0],
-    //             'description' => $req->description[0],
-    //             'order_qty' => $back_order_qty_total,
-    //             'sched_qty' => $req->total_sched_qty,
-    //             'issued_qty' => 0,
-    //             'material_used' => $req->material_used[0],
-    //             'material_heat_no' => $req->material_heat_no[0],
-    //             'uom' => $req->uom[0],
-    //             'lot_no' => $req->lot_no[0],
-    //             'ship_date' => $req->ship_date[$key],
-    //             'status' => 0,
-    //             'update_user' => Auth::user()->id,
-    //             // 'inv_id' => $req->inv_id[$key],
-    //             // 'rmw_id' => $req->rmw_id[$key],
-    //             // 'rmw_issued_qty' => $req->rmw_issued_qty[$key],
-    //             // 'material_type' => $req->material_type[$key],
-    //             // 'for_over_issuance' => $req->for_over_issuance[$key],
-    //             // 'heat_no_id' => $req->heat_no_id[$key]
-    //         ]);
-
-    //         $this->_audit->insert([
-    //             'user_type' => Auth::user()->user_type,
-    //             'module_id' => $this->_moduleID,
-    //             'module' => 'Production Schedule',
-    //             'action' => 'Edited data Jo_No: ' . $jo_no,
-    //             'user' => Auth::user()->id,
-    //             'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
-    //         ]);
-    //     }
-    //     return response()->json(['jocode' => $jo_no, 'result' => $result]);
-    // }
-
     public function JOsuggest(Request $req)
     {
         $jocode = PpcJoTravelSheet::select('jo_no', 'status')
@@ -1307,51 +1053,52 @@ class ProductionScheduleController extends Controller
 
     public function getTravel_sheet(Request $req)
     {
-        $data = DB::table('ppc_jo_travel_sheets as jt')
-                    ->leftJoin('ppc_pre_travel_sheets as ts', 'ts.jo_no', '=', 'jt.jo_no')
-                    ->leftjoin('ppc_product_codes as pc', 'jt.prod_code', '=', 'pc.product_code')
-                    ->leftjoin('admin_assign_production_lines as pl', 'pl.product_line', '=', 'pc.product_type')
-                    ->where('pl.user_id', Auth::user()->id)
-                    ->where('jt.create_user', Auth::user()->id)
-                    ->orderBy('jt.jo_no', 'desc')
-                    ->groupBy(
-                        'jt.id',
-                        'ts.id',
-                        'ts.qty_per_sheet',
-                        'ts.iso_code',
-                        'jt.jo_no',
-                        'jt.sc_no',
-                        'jt.prod_code',
-                        'jt.description',
-                        'ts.issued_qty',
-                        'jt.material_used',
-                        'jt.material_heat_no',
-                        'ts.status',
-                        'jt.updated_at')
-                    ->select([
-                        DB::raw("jt.id as idJO"),
-                        DB::raw("IFNULL(ts.qty_per_sheet,0) as qty_per_sheet"),
-                        DB::raw("IFNULL(ts.iso_code,'') as iso_code"),
-                        DB::raw("IFNULL(ts.id,'') as id"),
-                        DB::raw("jt.jo_no as jo_no"),
-                        DB::raw("jt.sc_no as sc_no"),
-                        DB::raw("jt.prod_code as product_code"),
-                        DB::raw("ifnull(pc.code_description,jt.description) as description"),
-                        DB::raw("SUM(jt.order_qty) as back_order_qty"),
-                        DB::raw("SUM(jt.sched_qty) as sched_qty"),
-                        DB::raw("IFNULL(ts.issued_qty,0) as issued_qty"),
-                        DB::raw("jt.material_used as material_used"),
-                        DB::raw("jt.material_heat_no as material_heat_no"),
-                        DB::raw("IFNULL(ts.status,0) as status"),
-                        DB::raw("jt.updated_at as updated_at")
-                    ])->get();
-        return response()->json($data);
+        $data = DB::table('v_jo_list')
+                    ->where('user_id', Auth::user()->id);
 
-        // return DataTables::of($data)
-		// 				->editColumn('idJO', function($data) {
-		// 					return $data->idJO;
-		// 				})
-		// 				->make(true);
+        // return response()->json($data);
+
+        return DataTables::of($data)
+						->addColumn('action', function($data) {
+                            return "<button type='button' class='btn btn-sm bg-blue btn_edit_jo'
+                                        data-jo_no='".$data->jo_no."' data-prod_code='".$data->product_code."'
+                                        data-issued_qty='".$data->issued_qty."' title='Edit J.O. Details'
+                                        data-status='".$data->status."' data-sched_qty='".$data->sched_qty."'
+                                        data-qty_per_sheet='".$data->qty_per_sheet."' data-iso_code='".$data->iso_code."'
+                                        data-sc_no='".$data->sc_no."' data-idJO='".$data->jo_summary_id."'
+                                    >
+                                        <i class='fa fa-edit'></i>
+                                    </button>
+                                    <button type='button' class='btn btn-sm bg-red btn_cancel_jo'
+                                        data-jo_no='".$data->jo_no."' data-prod_code='".$data->product_code."'
+                                        data-issued_qty='".$data->issued_qty."' title='Cancel J.O. Details'
+                                        data-status='".$data->status."' data-sched_qty='".$data->sched_qty."'
+                                        data-qty_per_sheet='".$data->qty_per_sheet."' data-iso_code='".$data->iso_code."'
+                                        data-sc_no='".$data->sc_no."' data-idJO='".$data->jo_summary_id."'
+                                    >
+                                        <i class='fa fa-times'></i>
+                                    </button>";
+                        })
+                        ->editColumn('status', function($data) {
+                            switch ($data->status) {
+                                case 0:
+                                    return 'No quantity issued';
+                                    break;
+                                case 1:
+                                    return 'Ready of printing';
+                                    break;
+                                case 2:
+                                    return 'On Production';
+                                    break;
+                                case 3:
+                                    return 'Cancelled';
+                                    break;
+                                case 5:
+                                    return 'CLOSED';
+                                    break;
+                            }
+                        })
+						->make(true);
     }
 
     public function cancel_TravelSheet(Request $req)
