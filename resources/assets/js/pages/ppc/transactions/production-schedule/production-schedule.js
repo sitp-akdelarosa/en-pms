@@ -1308,7 +1308,7 @@ function SaveJODetails() {
             prod_code: $('input[name="prod_code[]"]').map(function(){return $(this).val();}).get(),
             description: $('input[name="description[]"]').map(function(){return $(this).val();}).get(),
             quantity: $('input[name="quantity[]"]').map(function(){return $(this).val();}).get(),
-            sched_qty: $('input[name="sched_qty[]"]').map(function(){return $(this).val();}).get(),
+            sched_qty: $('input[name="sched_qty_item[]"]').map(function(){return $(this).val();}).get(),
             filtercount:rows,
             total_sched_qty:$('#total_sched_qty').val(),
             jo_no:jo_no

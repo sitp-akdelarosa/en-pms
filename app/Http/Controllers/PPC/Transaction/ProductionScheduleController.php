@@ -120,12 +120,56 @@ class ProductionScheduleController extends Controller
         $result = 'nothing happens';
         $jo_no = '';
         $prod_code_unique = $req->prod_code[0];
+        $lot_no_unique = '';
+        $heat_no_unique = '';
+        $one_JO = [];
+        $multiple_JO = [];
 
         if (empty($req->jo_no)) {
             foreach ($req->id as $key => $id) {
                 if ($req->prod_code[$key] == $prod_code_unique) {
                     $back_order_qty_total += $req->quantity[$key];
                     $total_sched_qty += $req->sched_qty[$key];
+
+                    // $materials = DB::table('temp_item_materials')->where([
+                    //             ['sc_no', '=', $req->sc_no[$key]],
+                    //             ['prod_code', '=', $req->prod_code[$key]],
+                    //             ['quantity', '=', (float)$req->quantity[$key]],
+                    //             ['create_user', '=', Auth::user()->id],
+                    //         ])->get();
+
+                    // $lot_no_unique = $materials[0]->lot_no;
+                    // $heat_no_unique = $materials[0]->material_heat_no;
+
+                    // foreach ($materials as $km => $mat) {
+
+                    //     if ($mat->lot_no == $lot_no_unique && $heat_no_unique == $mat->material_heat_no) {
+                    //         array_push($one_JO, [
+                    //             'sc_no' => $req->sc_no[$key], 
+                    //             'product_code' => $req->prod_code[$key],
+                    //             'description' => $req->description[$key],
+                    //             'back_order_qty' => (float)$req->quantity[$key],
+                    //             'sched_qty' => $mat->sched_qty,
+                    //             'material_used' => $mat->material_used,
+                    //             'material_heat_no' => $mat->material_heat_no,
+                    //             'uom' => 'PCS',
+                    //             'lot_no' => $mat->lot_no,
+                    //             'inv_id' => $mat->inv_id,
+                    //             'rmw_issued_qty' => $mat->rmw_issued_qty,
+                    //             'material_type' => $mat->material_type,
+                    //             'computed_per_piece' => $mat->computed_per_piece,
+                    //             'rmwd_id' => $mat->rmwd_id,
+                    //             'upd_inv_id' => $mat->upd_inv_id,
+                    //             'ship_date' => $mat->ship_date,
+                    //             'assign_qty' => $mat->assign_qty,
+                    //             'remaining_qty' => $mat->remaining_qty
+                    //         ]);
+                    //     }
+
+                    //     $lot_no_unique = $mat->lot_no;
+                    //     $heat_no_unique = $mat->material_heat_no;
+                    // }
+
                 } else {
                     $back_order_qty_total = $req->quantity[$key];
                     $total_sched_qty = $req->sched_qty[$key];
@@ -151,7 +195,7 @@ class ProductionScheduleController extends Controller
 
                 $jocode = $this->_helper->TransactionNo($f[0] . $l[0] . '-JO');
 
-                $materials = TempItemMaterial::where([
+                $materials = DB::table('temp_item_materials')->where([
                                 ['sc_no', '=', $req->sc_no[$key]],
                                 ['prod_code', '=', $req->prod_code[$key]],
                                 ['quantity', '=', (float)$req->quantity[$key]],
@@ -228,11 +272,15 @@ class ProductionScheduleController extends Controller
 
                 if ($prod_sum->quantity > $prod_sum->sched_qty) {
                     PpcProductionSummary::where('id', $id)->update([
-                        'status' => 'SCHEDULED'
+                        'status' => 'SCHEDULED',
+                        'update_user' => Auth::user()->id,
+                        'updated_at' => date('Y-m-d H:i:S')
                     ]);
                 } else if ($prod_sum->quantity == $prod_sum->sched_qty) {
                     PpcProductionSummary::where('id', $id)->update([
-                        'status' => 'COMPLETE'
+                        'status' => 'COMPLETE',
+                        'update_user' => Auth::user()->id,
+                        'updated_at' => date('Y-m-d H:i:S')
                     ]);
                 }
 
@@ -312,7 +360,7 @@ class ProductionScheduleController extends Controller
                 ['prod_code', '=', $req->prod_code[$key]],
                 ['quantity', '=', (float)$req->quantity[$key]],
                 ['create_user', '=', Auth::user()->id],
-            ])->get();
+            ])->delete();
         }
 
         return response()->json(['jocode' => $jo_no, 'result' => $result]);

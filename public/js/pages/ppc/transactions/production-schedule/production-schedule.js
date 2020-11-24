@@ -1299,7 +1299,7 @@ function SaveJODetails() {
       quantity: $('input[name="quantity[]"]').map(function () {
         return $(this).val();
       }).get(),
-      sched_qty: $('input[name="sched_qty[]"]').map(function () {
+      sched_qty: $('input[name="sched_qty_item[]"]').map(function () {
         return $(this).val();
       }).get(),
       filtercount: rows,
