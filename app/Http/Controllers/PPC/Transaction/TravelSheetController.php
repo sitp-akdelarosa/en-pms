@@ -456,30 +456,12 @@ class TravelSheetController extends Controller
             'ship_date' => 'required'
 		]);
 
-        // if (!isset($req->iso_no) && is_null($req->iso_no)) {
-        //     // $errors['errors']['iso_no'] = 'Please fill out ISO No. field.';
+        $sc_no = [];
 
-        //     array_push($errors['errors'], ['iso_no']);
-        // }
-
-        // if(!isset($req->issued_qty_per_sheet)  && is_null($req->issued_qty_per_sheet)) {
-        //     //$errors['errors']['issued_qty_per_sheet'] = 'Please fill out Qty. per Sheet field.';
-        //     array_push($errors['errors'], ['issued_qty_per_sheet']);
-        // }
-
-        // if(!isset($req->issued_qty)  && is_null($req->issued_qty)) {
-        //     //$errors['errors']['issued_qty'] = 'Please fill out Issued Qty. field.';
-        //     array_push($errors['errors'], ['issued_qty']);
-        // }
-
-        // if(!isset($req->ship_date)  && is_null($req->ship_date)) {
-        //     //$errors['errors']['iso_no'] = 'Please fill out ISO No. field.';
-        //     array_push($errors['errors'], ['ship_date']);
-        // }
-
-        // if (count($errors['errors']) > 0) {
-        //     return response()->json($errors, 422);
-        // }
+        // fixing sc number array
+        foreach ($req->scno as $key => $scno) {
+            array_push($sc_no,$scno);
+        }
 
         if(!isset($req->process)){
             $data = [ 'msg' => "Please Input some Procces.", 'status' => "warning" ];
@@ -492,9 +474,10 @@ class TravelSheetController extends Controller
                 return $data;
             }
         }
-
+        
         foreach ($req->issued_qty_per_sheet as $key => $issued_qty_per_sheet) {
-            if ($issued_qty_per_sheet == '' || $req->scno[$key] == ''){
+            $scno = (isset($req->scno[$key]))? $req->scno[$key] : $sc_no[$key];
+            if ($issued_qty_per_sheet == '' || $scno == ''){
                 $data = [ 'msg' => "Please Fill up all the fields on Product Table", 'status' => "warning" ];
                 return $data;
             }
@@ -532,13 +515,22 @@ class TravelSheetController extends Controller
                         $jo_sequence = '';
                     }
 
+                    $scno = (isset($req->scno[$key]))? $req->scno[$key] : $sc_no[$key];
+                    $stringed_scno = "";
+
+                    if (!is_string($scno)) {
+                        $stringed_scno = strtoupper(implode(',', $scno));
+                    } else {
+                        $stringed_scno = strtoupper($scno);
+                    }
+
                     PpcPreTravelSheetProducts::create([
                         'pre_travel_sheet_id' => $pre_ts->id,
                         'jo_no' => strtoupper($req->jo_no),
                         'prod_code' => strtoupper($req->prod_code),
                         'issued_qty_per_sheet' => $issued_qty_per_sheet,
                         'jo_sequence' => ($jo_sequence == '')? $req->jo_no : $req->jo_no.'-'.$jo_sequence,
-                        'sc_no' => strtoupper(implode(',', $req->scno[$key])),
+                        'sc_no' => $stringed_scno,
                         'create_user' => Auth::user()->id,
                         'update_user' => Auth::user()->id,
                     ]);
@@ -598,13 +590,22 @@ class TravelSheetController extends Controller
                         $jo_sequence = '';
                     }
 
+                    $scno = (isset($req->scno[$key]))? $req->scno[$key] : $sc_no[$key];
+                    $stringed_scno = "";
+
+                    if (!is_string($scno)) {
+                        $stringed_scno = strtoupper(implode(',', $scno));
+                    } else {
+                        $stringed_scno = strtoupper($scno);
+                    }
+
                     PpcPreTravelSheetProducts::create([
                         'pre_travel_sheet_id' => $pre_ts->id,
                         'jo_no' => strtoupper($req->jo_no),
                         'prod_code' => strtoupper($req->prod_code),
                         'issued_qty_per_sheet' => $issued_qty_per_sheet,
                         'jo_sequence' => ($jo_sequence == '')? $req->jo_no : $req->jo_no.'-'.$jo_sequence,
-                        'sc_no' => strtoupper(implode(',', $req->scno[$key])),
+                        'sc_no' => $stringed_scno,
                         'create_user' => Auth::user()->id,
                         'update_user' => Auth::user()->id,
                     ]);
