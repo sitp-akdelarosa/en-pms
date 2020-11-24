@@ -846,7 +846,9 @@ $(function () {
             }
         });
 
-        if ($('#ship_date').val() == "" && $('#ship_date').val() == null) {
+        var ship_date = $('#ship_date').val();
+
+        if ($('#ship_date').val() == "") {
             msg('Please fill out Ship Date input field.', 'warning');
         } else if (error > 0) {
             msg('Please fill out all input field in the table.', 'warning');
@@ -934,6 +936,10 @@ $(function () {
     });
 
 });
+
+function isValidDate(d){
+    return !isNaN((new Date(d)).getTime());
+}
 
 function checkOverIssuance(count) {
     var computed_per_piece_whole = ($('#computed_per_piece_'+count).val() == '')? 0 :parseInt($('#computed_per_piece_'+count).val());
