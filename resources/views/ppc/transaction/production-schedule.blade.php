@@ -232,10 +232,17 @@ foreach ($user_accesses as $user_access){
             </div>
 
             <div class="tab-pane" id="travel_sheet">
+                <div class="row justify-content-center">
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-block btn-lg bg-blue" id="btn_jo_filter">
+                            <i class="fa fa-search"></i> Search / Filter
+                        </button>
+                    </div>
+                </div>
                 <div class="row justify-content-center mb-15">
                     <div class="col-md-12">
                         <div class="table-reponsive">
-                            <table class="table table-sm table-striped table-bordered dt-responsive nowrap" style="width:100%" id="tbl_travel_sheet">
+                            <table class="table table-sm table-striped table-bordered nowrap" style="width:100%" id="tbl_travel_sheet">
                                 <thead class="thead-dark">
                                     <tr>
                                         <th ></th>
@@ -283,6 +290,7 @@ foreach ($user_accesses as $user_access){
         var excelSearchFilterURL = "{{ url('/transaction/production-schedule/excel-filter-orders') }}";
         var SaveMaterialsURL = "{{ url('/transaction/production-schedule/save-materials') }}";
         var getMaterialsURL = "{{ url('/transaction/production-schedule/get-materials') }}";
+        var getJODetailsURL = "{{ url('/transaction/production-schedule/get-jo-details') }}";
         var code_permission = 'T0004';
         
     </script>

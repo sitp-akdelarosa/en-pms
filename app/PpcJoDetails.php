@@ -27,7 +27,14 @@ class PpcJoDetails extends Model
 					'heat_no_id',
 					'ship_date',
 					'assign_qty',
-					'remaining_qty'
+					'remaining_qty',
+					'prod_sched_id',
+					'blade_consumption',
+					'cut_weight',
+					'cut_length',
+					'cut_width',
+					'mat_length',
+					'mat_weight'
     			];
 
     public function jo_summary()

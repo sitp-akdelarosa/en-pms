@@ -322,6 +322,10 @@ Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', '
 				->name('transaction.production-schedule.save-materials');
 			Route::get('/get-materials', 'PPC\Transaction\ProductionScheduleController@Materials')
 				->name('transaction.production-schedule.get-materials');
+			Route::get('/get-jo-details', 'PPC\Transaction\ProductionScheduleController@getJODetails')
+				->name('transaction.production-schedule.get-jo-details');
+			Route::get('/search-filter-jo', 'PPC\Transaction\ProductionScheduleController@filterJO')
+				->name('transaction.production-schedule.search-filter-jo');
 		});
 
 		Route::group(['prefix' => 'raw-material-withdrawal'], function () {

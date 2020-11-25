@@ -50,7 +50,26 @@ class ProductionScheduleController extends Controller
         return DataTables::of($Datalist)
 						->editColumn('id', function($data) {
 							return $data->id;
-						})
+                        })
+                        ->editColumn('status', function($data) {
+                            switch ($data->status) {
+                                case 0:
+                                    return '';
+                                    break;
+                                case 1:
+                                    return 'Travel Sheet Prepared';
+                                    break;
+                                case 2:
+                                    return 'On Production';
+                                    break;
+                                case 3:
+                                    return 'Travel Sheet Cancelled';
+                                    break;
+                                case 5:
+                                    return 'CLOSED';
+                                    break;
+                            }
+                        })
 						->make(true);
     }
 
@@ -60,7 +79,26 @@ class ProductionScheduleController extends Controller
          return DataTables::of($Datalist)
 						->editColumn('id', function($data) {
 							return $data->id;
-						})
+                        })
+                        ->editColumn('status', function($data) {
+                            switch ($data->status) {
+                                case 0:
+                                    return '';
+                                    break;
+                                case 1:
+                                    return 'Travel Sheet Prepared';
+                                    break;
+                                case 2:
+                                    return 'On Production';
+                                    break;
+                                case 3:
+                                    return 'Travel Sheet Cancelled';
+                                    break;
+                                case 5:
+                                    return 'CLOSED';
+                                    break;
+                            }
+                        })
 						->make(true);
     }
 
@@ -212,30 +250,6 @@ class ProductionScheduleController extends Controller
 
                 foreach ($materials as $km => $mat) {
 
-                    // PpcJoDetails::create([
-                    //     'jo_summary_id' => $jo_sum->id,
-                    //     'sc_no' => $req->sc_no[$key],
-                    //     'product_code' => $req->prod_code[$key],
-                    //     'description' => $req->description[$key],
-                    //     'back_order_qty' => $req->quantity[$key],
-                    //     'sched_qty' => $mat->sched_qty,
-                    //     'material_used' => $mat->material_used,
-                    //     'material_heat_no' => $mat->material_heat_no,
-                    //     'uom' => 'PCS',
-                    //     'lot_no' => $mat->lot_no,
-                    //     'create_user' => Auth::user()->id,
-                    //     'update_user' => Auth::user()->id,
-                    //     'inv_id' => $mat->inv_id,
-                    //     'rmw_id' => $mat->rmwd_id,
-                    //     'rmw_issued_qty' => $mat->rmw_issued_qty,
-                    //     'material_type' => $mat->material_type,
-                    //     'computed_per_piece' => $mat->computed_per_piece,
-                    //     'assign_qty' => $mat->assign_qty,
-                    //     'remaining_qty' => $mat->remaining_qty,
-                    //     'heat_no_id' => $mat->upd_inv_id,
-                    //     'ship_date' => $mat->ship_date
-                    // ]);
-
                      PpcJoTravelSheet::create([
                         'jo_summary_id' => $jo_sum->id,
                         'jo_no' => $jocode,
@@ -266,24 +280,6 @@ class ProductionScheduleController extends Controller
             $prod_code_unique = $req->prod_code[0];
             $jo_no_lenght = 0;
             foreach ($req->id as $key => $id) {
-                PpcProductionSummary::where('id', $id)->increment('sched_qty', $req->sched_qty[$key]);
-
-                $prod_sum = PpcProductionSummary::where('id', $id)->select('quantity','sched_qty')->first();
-
-                if ($prod_sum->quantity > $prod_sum->sched_qty) {
-                    PpcProductionSummary::where('id', $id)->update([
-                        'status' => 'SCHEDULED',
-                        'update_user' => Auth::user()->id,
-                        'updated_at' => date('Y-m-d H:i:S')
-                    ]);
-                } else if ($prod_sum->quantity == $prod_sum->sched_qty) {
-                    PpcProductionSummary::where('id', $id)->update([
-                        'status' => 'COMPLETE',
-                        'update_user' => Auth::user()->id,
-                        'updated_at' => date('Y-m-d H:i:S')
-                    ]);
-                }
-
                 $materials = TempItemMaterial::where([
                                 ['sc_no', '=', $req->sc_no[$key]],
                                 ['prod_code', '=', $req->prod_code[$key]],
@@ -313,6 +309,27 @@ class ProductionScheduleController extends Controller
                     $jo_no_lenght++;
                 }
 
+                PpcProductionSummary::where('id', $id)
+                                    ->increment('sched_qty', $req->sched_qty[$key],[
+                                        'jo_summary_id' => $jo_no_count[$jo_no_lenght]
+                                    ]);
+
+                $prod_sum = PpcProductionSummary::where('id', $id)->select('quantity','sched_qty')->first();
+
+                if ($prod_sum->quantity > $prod_sum->sched_qty) {
+                    PpcProductionSummary::where('id', $id)->update([
+                        'status' => 'SCHEDULED',
+                        'update_user' => Auth::user()->id,
+                        'updated_at' => date('Y-m-d H:i:S')
+                    ]);
+                } else if ($prod_sum->quantity == $prod_sum->sched_qty) {
+                    PpcProductionSummary::where('id', $id)->update([
+                        'status' => 'COMPLETE',
+                        'update_user' => Auth::user()->id,
+                        'updated_at' => date('Y-m-d H:i:S')
+                    ]);
+                }
+
                 foreach ($materials as $km => $mat) {
                     PpcJoDetails::create([
                         'jo_summary_id' => $jo_no_count[$jo_no_lenght],
@@ -331,11 +348,20 @@ class ProductionScheduleController extends Controller
                         'rmw_id' => $mat->rmwd_id,
                         'rmw_issued_qty' => $mat->rmw_issued_qty,
                         'material_type' => $mat->material_type,
+                        'blade_consumption' => $mat->blade_consumption,
                         'computed_per_piece' => $mat->computed_per_piece,
                         'assign_qty' => $mat->assign_qty,
                         'remaining_qty' => $mat->remaining_qty,
                         'heat_no_id' => $mat->upd_inv_id,
-                        'ship_date' => $mat->ship_date
+                        'ship_date' => $mat->ship_date,
+                        'prod_sched_id' => $id,
+                        'cut_weight' => $mat->cut_weight,
+                        'cut_length' => $mat->cut_length,
+                        'cut_width' => $mat->cut_width,
+                        'mat_length' => $mat->mat_length,
+                        'mat_weight' => $mat->mat_weight,
+                        'upd_inv_id' => $mat->upd_inv_id,
+                        'size' => $mat->size
                     ]);
                 }
                 $prod_code_unique = $req->prod_code[$key];
@@ -1060,7 +1086,7 @@ class ProductionScheduleController extends Controller
 
         return DataTables::of($data)
 						->addColumn('action', function($data) {
-                            return "<button type='button' class='btn btn-sm bg-blue btn_edit_jo'
+                            return "<button type='button' class='btn btn-sm bg-blue btn_show_jo'
                                         data-jo_no='".$data->jo_no."' data-prod_code='".$data->product_code."'
                                         data-issued_qty='".$data->issued_qty."' title='Edit J.O. Details'
                                         data-status='".$data->status."' data-sched_qty='".$data->sched_qty."'
@@ -1328,5 +1354,104 @@ class ProductionScheduleController extends Controller
                 ])->get();
 
         return $data;
+    }
+
+    public function getJODetails(Request $req)
+    {
+        $data = PpcJoDetails::where('jo_summary_id',$req->jo_summary_id);
+        return DataTables::of($data)->make(true);
+    }
+
+    public function filterJO(Request $req)
+    {
+        $srch_date= "";
+        $srch_jo_no = "";
+        $srch_prod_code = "";
+        $srch_sc_no = "";
+        $srch_description = "";
+        $srch_material_used = "";
+        $srch_material_heat_no = "";
+        $srch_status = "";
+
+        if (!is_null($req->srch_date_from) && !is_null($req->srch_date_to)) {
+            $srch_date = " AND DATE_FORMAT(updated_at, '%Y-%m-%d') BETWEEN '".$req->srch_date_from."' AND '".$req->srch_date_to."'";
+        }
+
+        if (!is_null($req->srch_jo_no)) {
+            $srch_jo_no = " AND jo_no = '".$req->srch_jo_no."'";
+        }
+
+        if (!is_null($req->srch_prod_code)) {
+            $srch_prod_code = " AND product_code = '".$req->srch_prod_code."'";
+        }
+
+        if (!is_null($req->srch_description)) {
+            $srch_description = " AND `description` = '".$req->srch_description."'";
+        }
+
+        if (!is_null($req->srch_material_used)) {
+            $srch_material_used = " AND material_used = '".$req->srch_material_used."'";
+        }
+
+        if (!is_null($req->srch_material_heat_no)) {
+            $srch_material_heat_no = " AND material_heat_no = '".$req->srch_material_heat_no."'";
+        }
+
+        if (!is_null($req->srch_status)) {
+            $srch_status = " AND `status` = '".$req->srch_status."'";
+        }
+
+        $data = DB::table('v_jo_list')
+                    ->where('user_id', Auth::user()->id)
+                    ->whereRaw("user_id = ".Auth::user()->id.$srch_date.
+                        $srch_jo_no.
+                        $srch_prod_code.
+                        $srch_description.
+                        $srch_material_used.
+                        $srch_material_heat_no.
+                        $srch_status
+                    );
+
+        return DataTables::of($data)
+						->addColumn('action', function($data) {
+                            return "<button type='button' class='btn btn-sm bg-blue btn_show_jo'
+                                        data-jo_no='".$data->jo_no."' data-prod_code='".$data->product_code."'
+                                        data-issued_qty='".$data->issued_qty."' title='Edit J.O. Details'
+                                        data-status='".$data->status."' data-sched_qty='".$data->sched_qty."'
+                                        data-qty_per_sheet='".$data->qty_per_sheet."' data-iso_code='".$data->iso_code."'
+                                        data-sc_no='".$data->sc_no."' data-idJO='".$data->jo_summary_id."'
+                                    >
+                                        <i class='fa fa-edit'></i>
+                                    </button>
+                                    <button type='button' class='btn btn-sm bg-red btn_cancel_jo'
+                                        data-jo_no='".$data->jo_no."' data-prod_code='".$data->product_code."'
+                                        data-issued_qty='".$data->issued_qty."' title='Cancel J.O. Details'
+                                        data-status='".$data->status."' data-sched_qty='".$data->sched_qty."'
+                                        data-qty_per_sheet='".$data->qty_per_sheet."' data-iso_code='".$data->iso_code."'
+                                        data-sc_no='".$data->sc_no."' data-idJO='".$data->jo_summary_id."'
+                                    >
+                                        <i class='fa fa-times'></i>
+                                    </button>";
+                        })
+                        ->editColumn('status', function($data) {
+                            switch ($data->status) {
+                                case 0:
+                                    return 'No quantity issued';
+                                    break;
+                                case 1:
+                                    return 'Ready of printing';
+                                    break;
+                                case 2:
+                                    return 'On Production';
+                                    break;
+                                case 3:
+                                    return 'Cancelled';
+                                    break;
+                                case 5:
+                                    return 'CLOSED';
+                                    break;
+                            }
+                        })
+						->make(true);
     }
 }

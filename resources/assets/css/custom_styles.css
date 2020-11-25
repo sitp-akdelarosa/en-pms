@@ -54,6 +54,10 @@ input {
     .modal-full-xl {
         width: 90%;
     }
+
+    .modal-full-xxl {
+        width: 98%;
+    }
 }
 
 .table-checkbox {
@@ -178,6 +182,11 @@ div.dataTables_scrollBody table thead .sorting:before,
 div.dataTables_scrollBody table thead .sorting_asc:before,
 div.dataTables_scrollBody table thead .sorting_desc:before {
     display: none;
+}
+
+table.dataTable tbody th,
+table.dataTable tbody td {
+    white-space: nowrap;
 }
 
 .DTFC_LeftBodyLiner {

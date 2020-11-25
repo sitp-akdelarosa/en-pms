@@ -17,6 +17,7 @@ class PpcProductionSummary extends Model
                     'status',
     				'date_upload',
     				'create_user',
-    				'update_user',
+					'update_user',
+					'jo_summary_id'
     			];
 }

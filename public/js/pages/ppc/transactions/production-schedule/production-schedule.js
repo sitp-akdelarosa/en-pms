@@ -933,11 +933,17 @@ $(function () {
     var count = $(this).attr('data-count');
     checkOverIssuance(count);
   });
+  $('#btn_jo_filter').on('click', function () {
+    $('.srch-clear').val('');
+    $('#modal_jo_search').modal('show');
+  });
+  $("#frm_search_jo").on('submit', function (e) {
+    e.preventDefault();
+    $('.loadingOverlay-modal').show();
+    var search_param = objectifyForm($(this).serializeArray());
+    TravelSheetDataTable($(this).attr('action'), search_param);
+  });
 });
-
-function isValidDate(d) {
-  return !isNaN(new Date(d).getTime());
-}
 
 function checkOverIssuance(count) {
   var computed_per_piece_whole = $('#computed_per_piece_' + count).val() == '' ? 0 : parseInt($('#computed_per_piece_' + count).val());
@@ -1303,10 +1309,7 @@ function SaveJODetails() {
   }).done(function (data, textStatus, xhr) {
     EditMode = false;
     clear();
-    msg("Scheduled Successful \n JO Number:" + data.jocode, "success"); // if(data.result == 'warning'){
-    //     msg("Some of Schedule Quantity is greater than Quantity","warning");
-    // }
-
+    msg("Scheduled Successful \n JO Number:" + data.jocode, "success");
     $('#jono').prop('readonly', true);
     $('#tbl_jo_details').dataTable().fnClearTable();
     $('#tbl_jo_details').dataTable().fnDestroy();
@@ -1449,9 +1452,10 @@ function getTablesAll() {
 }
 
 function TravelSheetDataTable(ajax_url, object_data) {
-  $('#tbl_travel_sheet').dataTable().fnClearTable();
-  $('#tbl_travel_sheet').dataTable().fnDestroy();
-  $('#tbl_travel_sheet').dataTable({
+  var table = $('#tbl_travel_sheet').DataTable();
+  table.clear();
+  table.destroy();
+  table = $('#tbl_travel_sheet').DataTable({
     ajax: {
       url: ajax_url,
       data: object_data,
@@ -1459,47 +1463,113 @@ function TravelSheetDataTable(ajax_url, object_data) {
         ErrorMsg(xhr);
       }
     },
+    serverSide: true,
     processing: true,
     order: [[11, 'desc']],
     columns: [{
       data: 'action',
       name: 'action',
       orderable: false,
-      searchable: false
+      searchable: false,
+      width: '5.33%'
     }, {
       data: 'jo_no',
-      name: 'jo_no'
+      name: 'jo_no',
+      width: '8.33%'
     }, {
       data: 'sc_no',
-      name: 'sc_no'
+      name: 'sc_no',
+      width: '8.33%'
     }, {
       data: 'product_code',
-      name: 'prod_code'
+      name: 'prod_code',
+      width: '8.33%'
     }, {
       data: 'description',
-      name: 'description'
+      name: 'description',
+      width: '11.33%'
     }, {
       data: 'back_order_qty',
-      name: 'order_qty'
+      name: 'order_qty',
+      width: '8.33%'
     }, {
       data: 'sched_qty',
-      name: 'sched_qty'
+      name: 'sched_qty',
+      width: '8.33%'
     }, {
       data: 'issued_qty',
-      name: 'issued_qty'
+      name: 'issued_qty',
+      width: '8.33%'
     }, {
       data: 'material_used',
-      name: 'material_used'
+      name: 'material_used',
+      width: '8.33%'
     }, {
       data: 'material_heat_no',
-      name: 'material_heat_no'
+      name: 'material_heat_no',
+      width: '8.33%'
     }, {
       data: 'status',
-      name: 'status'
+      name: 'status',
+      width: '8.33%'
     }, {
       data: 'updated_at',
-      name: 'updated_at'
-    }]
+      name: 'updated_at',
+      width: '8.33%'
+    }],
+    createdRow: function createdRow(row, data, dataIndex) {
+      if (data.status == 'On Production') {
+        $(row).css('background-color', 'rgb(121 204 241)'); // BLUE
+
+        $(row).css('color', '#000000');
+      }
+
+      if (data.status == 'Cancelled') {
+        $(row).css('background-color', '#ff6266'); // RED
+
+        $(row).css('color', '#fff');
+      }
+
+      if (data.status == 'CLOSED') {
+        $(row).css('background-color', 'rgb(139 241 191)'); // GREEN
+
+        $(row).css('color', '#000000');
+      }
+    },
+    fnDrawCallback: function fnDrawCallback() {
+      $("#tbl_travel_sheet").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
+    },
+    initComplete: function initComplete() {
+      $('.loadingOverlay-modal').hide();
+    }
+  });
+  $('#tbl_travel_sheet tbody').on('click', ' .btn_show_jo', function () {
+    var jo_summary_id = $(this).attr('data-idJO');
+    var jo_no = $(this).attr('data-jo_no');
+    $('#j_jo_no').val(jo_no);
+    JOdetailsDataTable(getJODetailsURL, {
+      _toke: token,
+      jo_summary_id: jo_summary_id
+    });
+    $('#modal_jo_details').modal('show');
+  });
+  $('#tbl_travel_sheet tbody').on('click', ' .btn_cancel_jo', function () {
+    var jo_no = $(this).attr('data-jo_no');
+    swal({
+      title: "Are you sure to cancel?",
+      text: "This will cancel the J.O. #: " + jo_no + ".",
+      type: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#f95454",
+      confirmButtonText: "Yes",
+      cancelButtonText: "No",
+      closeOnConfirm: true,
+      closeOnCancel: true
+    }, function (isConfirm) {
+      if (isConfirm) {
+        swal("Cancelled!", "J.O. # " + jo_no + " was successfully cancelled.");
+      } else {}
+    });
   });
 }
 
@@ -1772,6 +1842,341 @@ function makeMaterialsDataTable(arr) {
       $('.dataTables_info').hide(); // $('#add_material_row').click();
 
       $('.sched_qty:first').focus();
+    }
+  });
+}
+
+function JOdetailsDataTable(ajax_url, ajax_data) {
+  var count = 0;
+  $('#tbl_jo_item_details').dataTable().fnClearTable();
+  $('#tbl_jo_item_details').dataTable().fnDestroy();
+  $('#tbl_jo_item_details').dataTable({
+    ajax: {
+      url: ajax_url,
+      data: ajax_data,
+      error: function error(xhr, textStatus, errorThrown) {
+        ErrorMsg(xhr);
+      }
+    },
+    processing: true,
+    searching: false,
+    lengthChange: false,
+    // scrollY: '300px',
+    paging: false,
+    // columns: [
+    //     { 
+    //         data: function(x) {
+    //             var indx = count;
+    //             if (x.count !== '') {
+    //                 indx = x.count;
+    //             }
+    //             return "<button type='button' class='btn btn-sm bg-red btn_remove_material' data-count='"+indx+"'>"+
+    //                         "<i class='fa fa-times'></i>" +
+    //                     "</button>";
+    //         }, name: 'id', searchable: false, sortable: false, width: '3.55%'
+    //     },
+    //     { data: 'sc_no', name: 'sc_no', width: '5.55%' },
+    //     { data: 'product_code', name: 'product_code', width: '5.55%' },
+    //     { data: 'description', name: 'description', width: '5.55%' },
+    //     { data: 'back_order_qty', name: 'back_order_qty', width: '5.55%' },
+    //     { data: 'sched_qty', name: 'sched_qty', width: '5.55%' },
+    //     { data: 'material_heat_no', name: 'material_heat_no', width: '5.55%' },
+    //     { data: 'rmw_issued_qty', name: 'rmw_issued_qty', width: '5.55%' },
+    //     { data: 'material_used', name: 'material_used', width: '8.55%' },
+    //     { data: 'lot_no', name: 'lot_no', width: '5.55%' },
+    //     { data: 'blade_consumption', name: 'blade_consumption', width: '5.55%' },
+    //     { data: 'cut_weight', name: 'cut_weight', width: '5.55%' },
+    //     { data: 'cut_length', name: 'cut_length', width: '5.55%' },
+    //     { data: 'cut_width', name: 'cut_width', width: '5.55%' },
+    //     { data: 'mat_length', name: 'mat_length', width: '5.55%' },
+    //     { data: 'mat_weight', name: 'mat_weight', width: '5.55%' },
+    //     { data: 'assign_qty', name: 'assign_qty', width: '5.55%' },
+    //     { data: 'remaining_qty', name: 'remaining_qty', width: '5.55%' }
+    //     // { data: 'computed_per_piece', name: 'computed_per_piece', width: '5.55%'},
+    //     // { data: 'create_user', name: 'create_user' },
+    //     // { data: 'created_at', name: 'created_at' },
+    //     // { data: 'heat_no_id', name: 'heat_no_id' },
+    //     // { data: 'inv_id', name: 'inv_id' },
+    //     // { data: 'jo_summary_id', name: 'jo_summary_id' },
+    //     // { data: 'material_type', name: 'material_type' },
+    //     // { data: 'prod_sched_id', name: 'prod_sched_id' },
+    //     // { data: 'rmw_id', name: 'rmw_id' },
+    //     // { data: 'ship_date', name: 'ship_date' },
+    //     // { data: 'uom', name: 'uom' },
+    //     // { data: 'update_user', name: 'update_user' },
+    //     // { data: 'updated_at', name: 'updated_at' }
+    // ],
+    columns: [{
+      data: function data(x) {
+        var indx = count;
+
+        if (x.count !== undefined) {
+          indx = x.count;
+        }
+
+        return "<button type='button' class='btn btn-sm bg-red btn_remove_material' data-count='" + indx + "'>" + "<i class='fa fa-times'></i>" + "</button>" + "<input type='hidden' data-count='" + indx + "' name='j_upd_inv_id[]' id='j_upd_inv_id_" + indx + "' class='j_upd_inv_id' value='" + x.upd_inv_id + "'/>" + "<input type='hidden' data-count='" + indx + "' name='j_inv_id[]' id='j_inv_id_" + indx + "' class='j_inv_id' value='" + x.inv_id + "'/>" + "<input type='hidden' data-count='" + indx + "' name='j_rmwd_id[]' id='j_rmwd_id_" + indx + "' class='j_rmwd_id' value='" + x.rmw_id + "'/>" + "<input type='hidden' data-count='" + indx + "' name='j_size[]' id='j_size_" + indx + "' class='j_size' value='" + x.size + "'/>" + "<input type='hidden' data-count='" + indx + "' name='j_computed_per_piece[]' id='j_computed_per_piece_" + indx + "' class='j_computed_per_piece' value='" + x.computed_per_piece + "'/>" + "<input type='hidden' data-count='" + indx + "' name='j_material_type[]' id='j_material_type_" + indx + "' class='j_material_type' value='" + x.material_type + "'/>" + "<input type='hidden' data-count='" + indx + "' name='j_count[]' id='j_count_" + indx + "' class='j_count' value='" + indx + "'/>";
+      },
+      searchable: false,
+      sortable: false,
+      width: "3.14%"
+    }, {
+      data: function data(x) {
+        var indx = count;
+
+        if (x.count !== undefined) {
+          indx = x.count;
+        }
+
+        return x.sc_no + "<input type='hidden' data-count='" + indx + "' name='j_sc_no[]' id='j_sc_no_" + indx + "' class='j_sc_no' value='" + x.sc_no + "'/>";
+      },
+      searchable: false,
+      sortable: false,
+      width: "7.14%"
+    }, {
+      data: function data(x) {
+        var indx = count;
+
+        if (x.count !== undefined) {
+          indx = x.count;
+        }
+
+        return x.product_code + "<input type='hidden' data-count='" + indx + "' name='j_prod_code[]' id='j_prod_code_" + indx + "' class='j_prod_code' value='" + x.product_code + "'/>";
+      },
+      searchable: false,
+      sortable: false,
+      width: "7.14%"
+    }, {
+      data: function data(x) {
+        var indx = count;
+
+        if (x.count !== undefined) {
+          indx = x.count;
+        }
+
+        return x.description + "<input type='hidden' data-count='" + indx + "' name='j_description[]' id='j_description_" + indx + "' class='j_description' value='" + x.description + "'/>";
+      },
+      searchable: false,
+      sortable: false,
+      width: "7.14%"
+    }, {
+      data: function data(x) {
+        var indx = count;
+
+        if (x.count !== undefined) {
+          indx = x.count;
+        }
+
+        return x.back_order_qty + "<input type='hidden' data-count='" + indx + "' name='j_order_qty[]' id='j_order_qty_" + indx + "' class='j_order_qty' value='" + x.back_order_qty + "'/>";
+      },
+      searchable: false,
+      sortable: false,
+      width: "7.14%"
+    }, {
+      data: function data(x) {
+        var indx = count;
+
+        if (x.count !== undefined) {
+          indx = x.count;
+        }
+
+        return "<input type='number' step='0.01' data-count='" + indx + "' name='j_sched_qty[]' id='j_sched_qty_" + indx + "' class='form-control form-control-sm jo_validate j_sched_qty' value='" + x.sched_qty + "'/>" + "<div id='j_sched_qty_" + indx + "_feedback' class='j_sched_qty__feedback'></div>";
+      },
+      searchable: false,
+      sortable: false,
+      width: "7.14%"
+    }, {
+      data: function data(x) {
+        var indx = count;
+
+        if (x.count !== undefined) {
+          indx = x.count;
+        }
+
+        return "<input type='text' data-count='" + indx + "' name='j_material_heat_no[]' id='j_material_heat_no_" + indx + "' class='form-control form-control-sm j_material_heat_no' value='" + x.material_heat_no + "' readonly />";
+      },
+      searchable: false,
+      sortable: false,
+      width: "13.14%"
+    }, {
+      data: function data(x) {
+        var indx = count;
+
+        if (x.count !== undefined) {
+          indx = x.count;
+        }
+
+        return "<div class='input-group input-group-sm'>" + "<input type='number' data-count='" + indx + "' step='0.01' id='j_rmw_issued_qty_" + indx + "' name='j_rmw_issued_qty[]' class='form-control form-control-sm j_rmw_issued_qty' value='" + x.rmw_issued_qty + "' readonly>" + "<div class='input-group-append'>" + "<span class='input-group-text'>PCS</span>" + "</div>";
+      },
+      searchable: false,
+      sortable: false,
+      width: "7.14%"
+    }, {
+      data: function data(x) {
+        var indx = count;
+
+        if (x.count !== undefined) {
+          indx = x.count;
+        }
+
+        return "<input type='text' data-count='" + indx + "' name='j_material_used[]' id='j_material_used_" + indx + "' class='form-control form-control-sm j_material_used' value='" + x.material_used + "' readonly/>" + "<div id='j_material_used_" + indx + "_feedback' class='j_material_used__feedback'></div>";
+      },
+      searchable: false,
+      sortable: false,
+      width: "20.14%"
+    }, {
+      data: function data(x) {
+        var indx = count;
+
+        if (x.count !== undefined) {
+          indx = x.count;
+        }
+
+        return "<input type='text' data-count='" + indx + "' name='j_lot_no[]' class='form-control form-control-sm jo_validate j_lot_no' value='" + x.lot_no + "'/>";
+      },
+      searchable: false,
+      sortable: false,
+      width: "6.14%"
+    }, {
+      data: function data(x) {
+        var indx = count;
+
+        if (x.count !== undefined) {
+          indx = x.count;
+        }
+
+        return "<input type='number' data-count='" + indx + "' step='0.01' id='j_blade_consumption_" + indx + "' name='j_blade_consumption[]' class='form-control form-control-sm jo_validate j_blade_consumption' value='" + x.blade_consumption + "'/>";
+      },
+      searchable: false,
+      sortable: false,
+      width: "7.14%"
+    }, {
+      data: function data(x) {
+        var indx = count;
+
+        if (x.count !== undefined) {
+          indx = x.count;
+        }
+
+        return "<input type='number' data-count='" + indx + "' step='0.01' id='j_cut_weight_" + indx + "' name='j_cut_weight[]' class='form-control form-control-sm jo_validate j_cut_weight' value='" + x.cut_weight + "'/>";
+      },
+      searchable: false,
+      sortable: false,
+      width: "5.14%"
+    }, {
+      data: function data(x) {
+        var indx = count;
+
+        if (x.count !== undefined) {
+          indx = x.count;
+        }
+
+        return "<input type='number' data-count='" + indx + "' step='0.01' id='j_cut_length_" + indx + "' name='j_cut_length[]' class='form-control form-control-sm j_cut_length'value='" + x.cut_length + "' />";
+      },
+      searchable: false,
+      sortable: false,
+      width: "5.14%"
+    }, {
+      data: function data(x) {
+        var indx = count;
+
+        if (x.count !== undefined) {
+          indx = x.count;
+        }
+
+        return "<input type='number' data-count='" + indx + "' step='0.01' id='j_cut_width_" + indx + "' name='j_cut_width[]' class='form-control form-control-sm j_cut_width' value='" + x.cut_width + "'/>";
+      },
+      searchable: false,
+      sortable: false,
+      width: "5.14%"
+    }, {
+      data: function data(x) {
+        var indx = count;
+
+        if (x.count !== undefined) {
+          indx = x.count;
+        }
+
+        return "<input type='number' data-count='" + indx + "' step='0.01' id='j_mat_length_" + indx + "' name='j_mat_length[]' class='form-control form-control-sm j_mat_length' value='" + x.mat_length + "' readonly/>";
+      },
+      searchable: false,
+      sortable: false,
+      width: "5.14%"
+    }, {
+      data: function data(x) {
+        var indx = count;
+
+        if (x.count !== undefined) {
+          indx = x.count;
+        }
+
+        return "<input type='number' data-count='" + indx + "' step='0.01' id='j_mat_weight_" + indx + "' name='j_mat_weight[]' class='form-control form-control-sm jo_validate j_mat_weight' value='" + x.mat_weight + "' readonly/>";
+      },
+      searchable: false,
+      sortable: false,
+      width: "5.14%"
+    }, {
+      data: function data(x) {
+        var indx = count;
+
+        if (x.count !== undefined) {
+          indx = x.count;
+        }
+
+        return "<input type='number' data-count='" + indx + "' step='0.01' id='j_assign_qty_" + indx + "' name='j_assign_qty[]' class='form-control form-control-sm jo_validate j_assign_qty' value='" + x.assign_qty + "'/>";
+      },
+      searchable: false,
+      sortable: false,
+      width: "5.14%"
+    }, {
+      data: function data(x) {
+        var indx = count;
+
+        if (x.count !== undefined) {
+          indx = x.count;
+        }
+
+        return "<input type='number' data-count='" + indx + "' step='0.01' id='j_remaining_qty_" + indx + "' name='j_remaining_qty[]' class='form-control form-control-sm j_remaining_qty' value='" + x.remaining_qty + "' readonly/>";
+      },
+      searchable: false,
+      sortable: false,
+      width: "5.14%"
+    }],
+    createdRow: function createdRow(row, data, dataIndex) {
+      var dataRow = $(row);
+      var mat_used_input = $(dataRow[0].cells[4].firstChild);
+      var cut_weight_input = $(dataRow[0].cells[7].firstChild);
+      var cut_length_input = $(dataRow[0].cells[8].firstChild);
+      var cut_width_input = $(dataRow[0].cells[9].firstChild);
+
+      if (data.material_code == data.standard_material_used) {
+        mat_used_input.removeClass('is-invalid');
+        mat_used_input.next().removeClass('invalid-feedback').html('');
+        cut_weight_input.prop('readonly', true).removeClass('jo_validate');
+        cut_length_input.prop('readonly', true).removeClass('jo_validate');
+        cut_width_input.prop('readonly', true).removeClass('jo_validate');
+      } else {
+        var error = "This is not the Product's Standard Material";
+        mat_used_input.addClass('is-invalid');
+        mat_used_input.next().addClass('invalid-feedback').html(error);
+        cut_weight_input.prop('readonly', false).addClass('jo_validate');
+        cut_length_input.prop('readonly', false).addClass('jo_validate');
+        cut_width_input.prop('readonly', false).addClass('jo_validate');
+      }
+
+      $(row).attr('id', 'j_tr_' + count);
+      count++;
+    },
+    fnDrawCallback: function fnDrawCallback(oSettings) {
+      // $('.dataTables_scrollBody').slimScroll({
+      //     height: '300px'
+      // });
+      $("#tbl_jo_item_details").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
+    },
+    initComplete: function initComplete() {
+      $('#tbl_jo_details_wrapper > .dt-buttons > .btn').removeClass('btn-secondary');
+      $('#tbl_jo_details_wrapper > .dt-buttons > .btn').addClass('bg-green');
+      $("#tbl_jo_item_details").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>"); // $('#add_material_row').click();
+      // $('.sched_qty:first').focus();
     }
   });
 }
