@@ -200,6 +200,15 @@
                         </div>
                     </div>
 
+                    <div class="col-md-3">
+                        <div class="input-group input-group-sm mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Ship Date</span>
+                            </div>
+                            <input type="date" class="form-control validate clear" name="j_ship_date" id="j_ship_date">
+                        </div>
+                    </div>
+
                 </div>
 
                 <div class="row">
@@ -232,7 +241,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn bg-red" data-dismiss="modal">Close</button>
-                <button type="button" id="btn_save_material" class="btn bg-blue float-right permission-button">
+                <button type="button" id="btn_save_jo_item" class="btn bg-blue float-right permission-button">
                     <i class="fa fa-floppy-o"></i> Save
                 </button>
             </div>
@@ -264,74 +273,74 @@
                                 <label for="srch_date" class="col-sm-2 control-label mt-5">Date:</label>
                                 <div class="col-sm-10">
                                     <div class="input-group input-group-sm">
-                                        <input type="date" class="form-control validate srch-clear" name="srch_date_from" id="srch_date_from">
+                                        <input type="date" class="form-control validate srch-clear" name="srch_jdate_from" id="srch_jdate_from">
                                         
                                         <div class="input-group-append">
                                             <span class="input-group-text">-</span>
                                         </div>
-                                        <input type="date" class="form-control validate srch-clear" name="srch_date_to" id="srch_date_to">
+                                        <input type="date" class="form-control validate srch-clear" name="srch_jdate_to" id="srch_jdate_to">
                                         
                                     </div>
-                                    <div id="srch_date_from_feedback"></div>
-                                    <div id="srch_date_to_feedback"></div>
+                                    <div id="srch_jdate_from_feedback"></div>
+                                    <div id="srch_jdate_to_feedback"></div>
                                 </div>
                             </div>
 
                             <div class="form-group row">
-                                <label for="srch_jo_no" class="col-sm-2 control-label mt-5">J.O. No.:</label>
+                                <label for="srch_jjo_no" class="col-sm-2 control-label mt-5">J.O. No.:</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control validate srch-clear" name="srch_jo_no" id="srch_jo_no">
-                                    <div id="srch_jo_no_feedback"></div>
+                                    <input type="text" class="form-control validate srch-clear" name="srch_jjo_no" id="srch_jjo_no">
+                                    <div id="srch_jjo_no_feedback"></div>
                                 </div>
                             </div>
                             
 
                             <div class="form-group row">
-                                <label for="srch_prod_code" class="col-sm-2 control-label mt-5">Prod. Code:</label>
+                                <label for="srch_jprod_code" class="col-sm-2 control-label mt-5">Prod. Code:</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control validate srch-clear" name="srch_prod_code" id="srch_prod_code">
-                                    <div id="srch_prod_code_feedback"></div>
+                                    <input type="text" class="form-control validate srch-clear" name="srch_jprod_code" id="srch_jprod_code">
+                                    <div id="srch_jprod_code_feedback"></div>
                                 </div>
                             </div>
 
                             <div class="form-group row">
-                                <label for="srch_sc_no" class="col-sm-2 control-label mt-5">SC No.:</label>
+                                <label for="srch_jsc_no" class="col-sm-2 control-label mt-5">SC No.:</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control validate srch-clear" name="srch_sc_no" id="srch_sc_no">
-                                    <div id="srch_sc_no_feedback"></div>
+                                    <input type="text" class="form-control validate srch-clear" name="srch_jsc_no" id="srch_jsc_no">
+                                    <div id="srch_jsc_no_feedback"></div>
                                 </div>
                             </div>                            
                         </div>
 
                         <div class="col-md-6">
                             <div class="form-group row">
-                                <label for="srch_description" class="col-sm-2 control-label mt-5">Description:</label>
+                                <label for="srch_jdescription" class="col-sm-2 control-label mt-5">Description:</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control validate srch-clear" name="srch_description" id="srch_description">
-                                    <div id="srch_description_feedback"></div>
+                                    <input type="text" class="form-control validate srch-clear" name="srch_jdescription" id="srch_jdescription">
+                                    <div id="srch_jdescription_feedback"></div>
                                 </div>
                             </div>
 
                             <div class="form-group row">
-                                <label for="srch_material_used" class="col-sm-2 control-label mt-5">Mat. Used:</label>
+                                <label for="srch_jmaterial_used" class="col-sm-2 control-label mt-5">Mat. Used:</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control validate srch-clear" name="srch_material_used" id="srch_material_used">
-                                    <div id="srch_material_used_feedback"></div>
+                                    <input type="text" class="form-control validate srch-clear" name="srch_jmaterial_used" id="srch_jmaterial_used">
+                                    <div id="srch_jmaterial_used_feedback"></div>
                                 </div>
                             </div>
 
                             <div class="form-group row">
-                                <label for="srch_material_heat_no" class="col-sm-2 control-label mt-5">Mat. Heat #:</label>
+                                <label for="srch_jmaterial_heat_no" class="col-sm-2 control-label mt-5">Mat. Heat #:</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control validate srch-clear" name="srch_material_heat_no" id="srch_material_heat_no">
-                                    <div id="srch_material_heat_no_feedback"></div>
+                                    <input type="text" class="form-control validate srch-clear" name="srch_jmaterial_heat_no" id="srch_jmaterial_heat_no">
+                                    <div id="srch_jmaterial_heat_no_feedback"></div>
                                 </div>
                             </div>
 
                             <div class="form-group row">
-                                <label for="srch_status" class="col-sm-2 control-label mt-5">Status:</label>
+                                <label for="srch_jstatus" class="col-sm-2 control-label mt-5">Status:</label>
                                 <div class="col-sm-10">
-                                    <select class="form-control validate srch-clear" name="srch_status" id="srch_status">
+                                    <select class="form-control validate srch-clear" name="srch_jstatus" id="srch_jstatus">
                                         <option value=""></option>
                                         <option value="0">No quantity issued</option>
                                         <option value="1">Ready of printing</option>
@@ -339,7 +348,7 @@
                                         <option value="3">Cancelled</option>
                                         <option value="5">Closed</option>
                                     </select>
-                                    <div id="srch_status_feedback"></div>
+                                    <div id="srch_jstatus_feedback"></div>
                                 </div>
                             </div>
                         </div>

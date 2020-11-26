@@ -279,6 +279,8 @@ foreach ($user_accesses as $user_access){
         var SaveMaterialsURL = "<?php echo e(url('/transaction/production-schedule/save-materials')); ?>";
         var getMaterialsURL = "<?php echo e(url('/transaction/production-schedule/get-materials')); ?>";
         var getJODetailsURL = "<?php echo e(url('/transaction/production-schedule/get-jo-details')); ?>";
+        var deleteJoDetailItemURL = "<?php echo e(url('/transaction/production-schedule/delete-jo-detail-item')); ?>";
+        var editJoDetailItemURL = "<?php echo e(url('/transaction/production-schedule/edit-jo-detail-item')); ?>";
         var code_permission = 'T0004';
         
     </script>

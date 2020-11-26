@@ -65,6 +65,9 @@ class ProductionScheduleController extends Controller
                                 case 3:
                                     return 'Travel Sheet Cancelled';
                                     break;
+                                case 4:
+                                    return 'Scheduled';
+                                    break;
                                 case 5:
                                     return 'CLOSED';
                                     break;
@@ -93,6 +96,9 @@ class ProductionScheduleController extends Controller
                                     break;
                                 case 3:
                                     return 'Travel Sheet Cancelled';
+                                    break;
+                                case 4:
+                                    return 'Scheduled';
                                     break;
                                 case 5:
                                     return 'CLOSED';
@@ -264,7 +270,7 @@ class ProductionScheduleController extends Controller
                         'uom' => 'PCS',
                         'lot_no' => $mat->lot_no,
                         'ship_date' => $mat->ship_date,
-                        'status' => 0,
+                        'status' => 4, // 4 = scheduled
                         'create_user' => Auth::user()->id,
                         'update_user' => Auth::user()->id,
                     ]);
@@ -311,24 +317,9 @@ class ProductionScheduleController extends Controller
 
                 PpcProductionSummary::where('id', $id)
                                     ->increment('sched_qty', $req->sched_qty[$key],[
-                                        'jo_summary_id' => $jo_no_count[$jo_no_lenght]
+                                        'jo_summary_id' => $jo_no_count[$jo_no_lenght],
+                                        'status' => 4
                                     ]);
-
-                $prod_sum = PpcProductionSummary::where('id', $id)->select('quantity','sched_qty')->first();
-
-                if ($prod_sum->quantity > $prod_sum->sched_qty) {
-                    PpcProductionSummary::where('id', $id)->update([
-                        'status' => 'SCHEDULED',
-                        'update_user' => Auth::user()->id,
-                        'updated_at' => date('Y-m-d H:i:S')
-                    ]);
-                } else if ($prod_sum->quantity == $prod_sum->sched_qty) {
-                    PpcProductionSummary::where('id', $id)->update([
-                        'status' => 'COMPLETE',
-                        'update_user' => Auth::user()->id,
-                        'updated_at' => date('Y-m-d H:i:S')
-                    ]);
-                }
 
                 foreach ($materials as $km => $mat) {
                     PpcJoDetails::create([
@@ -1092,6 +1083,7 @@ class ProductionScheduleController extends Controller
                                         data-status='".$data->status."' data-sched_qty='".$data->sched_qty."'
                                         data-qty_per_sheet='".$data->qty_per_sheet."' data-iso_code='".$data->iso_code."'
                                         data-sc_no='".$data->sc_no."' data-idJO='".$data->jo_summary_id."'
+                                        data-id='".$data->travel_sheet_id."' data-status='".$data->status."'
                                     >
                                         <i class='fa fa-edit'></i>
                                     </button>
@@ -1101,6 +1093,7 @@ class ProductionScheduleController extends Controller
                                         data-status='".$data->status."' data-sched_qty='".$data->sched_qty."'
                                         data-qty_per_sheet='".$data->qty_per_sheet."' data-iso_code='".$data->iso_code."'
                                         data-sc_no='".$data->sc_no."' data-idJO='".$data->jo_summary_id."'
+                                        data-id='".$data->travel_sheet_id."' data-status='".$data->status."'
                                     >
                                         <i class='fa fa-times'></i>
                                     </button>";
@@ -1129,22 +1122,41 @@ class ProductionScheduleController extends Controller
 
     public function cancel_TravelSheet(Request $req)
     {
+        // 3 = Cancel
         PpcJoTravelSheet::where('id', $req->idJTS)->update(['status' => 3]);
 
-        $detailsDecrement = PpcJoDetails::select('sc_no', 'product_code', 'sched_qty', 'material_heat_no')->where('jo_summary_id', $req->idJTS)->get();
-        foreach ($detailsDecrement as $key => $dt) {
-            PpcProductionSummary::where('sc_no', $dt->sc_no)
-                ->where('prod_code', $dt->product_code)
-                ->decrement('sched_qty', (int) $dt->sched_qty);
+        $detailsDecrement = DB::table('ppc_jo_details')
+                                ->select('sc_no', 'product_code', 'sched_qty', 'material_heat_no', 'prod_sched_id', 'rmw_id')
+                                ->where('jo_summary_id', $req->idJTS)
+                                ->get();
 
-            PpcRawMaterialWithdrawalDetails::where('material_heat_no', $dt->material_heat_no)
-                ->where('create_user', Auth::user()->id)
+        foreach ($detailsDecrement as $key => $dt) {
+            $check_prod_sched = PpcProductionSummary::where('id', $dt->prod_sched_id)->select('sched_qty')->first();
+
+            if (($check_prod_sched->sched_qty > 0) && ($check_prod_sched->sched_qty !== $dt->sched_qty)) {
+                PpcProductionSummary::where('id', $dt->prod_sched_id)->decrement('sched_qty', (float) $dt->sched_qty);
+            }
+
+            PpcRawMaterialWithdrawalDetails::where('id', $dt->rmw_id)
+                // ->where('create_user', Auth::user()->id)
                 ->update(['sc_no' => DB::raw("REPLACE(sc_no, '" . $dt->sc_no . ", ', '')")]);
 
-            PpcRawMaterialWithdrawalDetails::where('material_heat_no', $dt->material_heat_no)
-                ->where('create_user', Auth::user()->id)
+            PpcRawMaterialWithdrawalDetails::where('id', $dt->rmw_id)
+                // ->where('create_user', Auth::user()->id)
                 ->update(['sc_no' => DB::raw("REPLACE(sc_no, '" . $dt->sc_no . "', '')")]);
         }
+
+        PpcJoDetailsSummary::where('id',$req->idJTS)->update([
+            'cancelled' => 1,
+            'updated_at' => date('Y-m-d H:i:s'),
+            'update_user' => Auth::user()->id
+        ]);
+
+        PpcJoDetails::where('jo_summary_id', $req->idJTS)->update([
+            'cancelled' => 1,
+            'updated_at' => date('Y-m-d H:i:s'),
+            'update_user' => Auth::user()->id
+        ]);
 
         PpcPreTravelSheet::where('id', $req->id)->update(['status' => 3]);
 
@@ -1373,32 +1385,32 @@ class ProductionScheduleController extends Controller
         $srch_material_heat_no = "";
         $srch_status = "";
 
-        if (!is_null($req->srch_date_from) && !is_null($req->srch_date_to)) {
-            $srch_date = " AND DATE_FORMAT(updated_at, '%Y-%m-%d') BETWEEN '".$req->srch_date_from."' AND '".$req->srch_date_to."'";
+        if (!is_null($req->srch_jdate_from) && !is_null($req->srch_jdate_to)) {
+            $srch_date = " AND DATE_FORMAT(updated_at, '%Y-%m-%d') BETWEEN '".$req->srch_jdate_from."' AND '".$req->srch_jdate_to."'";
         }
 
-        if (!is_null($req->srch_jo_no)) {
-            $srch_jo_no = " AND jo_no = '".$req->srch_jo_no."'";
+        if (!is_null($req->srch_jjo_no)) {
+            $srch_jo_no = " AND jo_no = '".$req->srch_jjo_no."'";
         }
 
-        if (!is_null($req->srch_prod_code)) {
-            $srch_prod_code = " AND product_code = '".$req->srch_prod_code."'";
+        if (!is_null($req->srch_jprod_code)) {
+            $srch_prod_code = " AND product_code = '".$req->srch_jprod_code."'";
         }
 
-        if (!is_null($req->srch_description)) {
-            $srch_description = " AND `description` = '".$req->srch_description."'";
+        if (!is_null($req->srch_jdescription)) {
+            $srch_description = " AND `description` = '".$req->srch_jdescription."'";
         }
 
-        if (!is_null($req->srch_material_used)) {
-            $srch_material_used = " AND material_used = '".$req->srch_material_used."'";
+        if (!is_null($req->srch_jmaterial_used)) {
+            $srch_material_used = " AND material_used = '".$req->srch_jmaterial_used."'";
         }
 
-        if (!is_null($req->srch_material_heat_no)) {
-            $srch_material_heat_no = " AND material_heat_no = '".$req->srch_material_heat_no."'";
+        if (!is_null($req->srch_jmaterial_heat_no)) {
+            $srch_material_heat_no = " AND material_heat_no = '".$req->srch_jmaterial_heat_no."'";
         }
 
-        if (!is_null($req->srch_status)) {
-            $srch_status = " AND `status` = '".$req->srch_status."'";
+        if (!is_null($req->srch_jstatus)) {
+            $srch_status = " AND `status` = '".$req->srch_jstatus."'";
         }
 
         $data = DB::table('v_jo_list')
@@ -1453,5 +1465,111 @@ class ProductionScheduleController extends Controller
                             }
                         })
 						->make(true);
+    }
+
+    public function deleteJoDetailItem(Request $req)
+    {
+        $deleted = false;
+        $data = [
+            'msg' => 'Deleting J.O. item has failed.',
+            'status' => 'failed'
+        ];
+
+        $deleted_items = PpcJoDetails::where('id', $req->id)->first();
+
+        if (isset($req->id)) {
+            $deleted = PpcJoDetails::where('id', $req->id)->delete();
+        }
+
+        if ($deleted) {
+            $data = [
+                'msg' => 'J.O. item has successfully deleted.',
+                'status' => 'success'
+            ];
+
+            $this->_audit->insert([
+                'user_type' => Auth::user()->user_type,
+                'module_id' => $this->_moduleID,
+                'module' => 'Production Schedule',
+                'action' => 'deleted SC No. '.$deleted_items->sc_no,
+                'user' => Auth::user()->id,
+                'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
+            ]);
+        }
+
+        return response()->json($data);
+    }
+
+    public function editJoDetailItem(Request $req)
+    {
+        $updated = false;
+        $upd_count = 0;
+
+        $data = [
+            'msg' => 'Updating J.O. Detail item has failed.',
+            'status' => 'failed',
+            'jo_summary_id' => 0
+        ];
+
+        if (isset($req->j_jd_id)) {
+            foreach ($req->j_jd_id as $key => $id) {
+                $updated = DB::table('ppc_jo_details')->where('id',$id)
+                            ->update([
+                                'sc_no' => $req->j_sc_no[$key],
+                                'product_code' => $req->j_prod_code[$key],
+                                'description' => $req->j_description[$key],
+                                'back_order_qty' => $req->j_order_qty[$key],
+                                'sched_qty' => $req->j_sched_qty[$key],
+                                'material_used' => $req->j_material_used[$key],
+                                'material_heat_no' => $req->j_material_heat_no[$key],
+                                'lot_no' => $req->j_lot_no[$key],
+                                'inv_id' => $req->j_inv_id[$key],
+                                'rmw_issued_qty' => $req->j_rmw_issued_qty[$key],
+                                'material_type' => $req->j_material_type[$key],
+                                'computed_per_piece' => $req->j_computed_per_piece[$key],
+                                'rmw_id' => $req->j_rmwd_id[$key],
+                                'heat_no_id' => $req->j_heat_no_id[$key],
+                                'ship_date' => $req->j_ship_date,
+                                'assign_qty' => $req->j_assign_qty[$key],
+                                'remaining_qty' => $req->j_remaining_qty[$key],
+                                'prod_sched_id' => $req->j_prod_sched_id[$key],
+                                'blade_consumption' => $req->j_blade_consumption[$key],
+                                'cut_weight' => $req->j_cut_weight[$key],
+                                'cut_length' => $req->j_cut_length[$key],
+                                'cut_width' => $req->j_cut_width[$key],
+                                'mat_length' => $req->j_mat_length[$key],
+                                'mat_weight' => $req->j_mat_weight[$key],
+                                'upd_inv_id' => $req->j_upd_inv_id[$key],
+                                'size' => $req->j_size[$key],
+                                'update_user' => Auth::user()->id,
+                                'updated_at' => date('Y-m-d H:i:s')
+                                
+                            ]);
+                if ($updated) {
+                    $upd_count++;
+
+                    $this->_audit->insert([
+                        'user_type' => Auth::user()->user_type,
+                        'module_id' => $this->_moduleID,
+                        'module' => 'Production Schedule',
+                        'action' => 'edited SC No. '.$req->j_sc_no[$key],
+                        'user' => Auth::user()->id,
+                        'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
+                    ]);
+                }
+            }
+
+            if ($upd_count > 0) {
+                
+
+                $data = [
+                    'msg' => 'J.O. Detail item has successfully updated.',
+                    'status' => 'success',
+                    'jo_summary_id' => $req->j_jo_summary_id[0]
+                ];
+            }
+        }
+
+        return response()->json($data);
     }
 }

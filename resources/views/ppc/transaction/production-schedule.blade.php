@@ -291,6 +291,8 @@ foreach ($user_accesses as $user_access){
         var SaveMaterialsURL = "{{ url('/transaction/production-schedule/save-materials') }}";
         var getMaterialsURL = "{{ url('/transaction/production-schedule/get-materials') }}";
         var getJODetailsURL = "{{ url('/transaction/production-schedule/get-jo-details') }}";
+        var deleteJoDetailItemURL = "{{ url('/transaction/production-schedule/delete-jo-detail-item') }}";
+        var editJoDetailItemURL = "{{ url('/transaction/production-schedule/edit-jo-detail-item') }}";
         var code_permission = 'T0004';
         
     </script>

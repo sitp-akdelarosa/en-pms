@@ -11,6 +11,7 @@ var unique_heat_no = [];
 var tbl_materials = $('#tbl_materials').DataTable();
 var arr_materials = [];
 var material_count = 0;
+var saved_jo_details_arr = [];
 
 $(function () {
     initializePage();
@@ -429,7 +430,7 @@ $(function () {
         $(".check_item_prod_sum").prop("disabled", true);
     });
 
-    $('#tbl_travel_sheet').on('click', '.cancel_travel_sheet', function() {
+    $('#tbl_travel_sheet').on('click', '.btn_cancel_jo', function() {
        var id = $(this).attr('data-id');
        var jo_no = $(this).attr('data-jo_no');
        var idJTS = $(this).attr('data-idJO');
@@ -459,7 +460,7 @@ $(function () {
                 }).done(function(data, textStatus, xhr) {
                     if(data.status == 'success'){
                         swal("Successful", "The travel sheet has been cancelled.");
-                        ProdSummaries(prodSummariesURL);
+                        ProdSummariesTable(prodSummariesURL,{ _token: token });
                         travel_Sheet = [];
                         TravelSheetDataTable(getTravelSheetURL, { _token: token });
                     }else{ 
@@ -947,6 +948,10 @@ $(function () {
         var search_param = objectifyForm($(this).serializeArray());
 
         TravelSheetDataTable($(this).attr('action'), search_param);
+    });
+
+    $('#btn_save_jo_item').on('click', function() {
+        editJoDetailItem();
     });
 });
 
@@ -1498,9 +1503,18 @@ function TravelSheetDataTable(ajax_url, object_data) {
     $('#tbl_travel_sheet tbody').on('click', ' .btn_show_jo',function() {
         var jo_summary_id = $(this).attr('data-idJO');
         var jo_no = $(this).attr('data-jo_no');
+        var status = $(this).attr('data-status');
+
+        if (status == 3) {
+            $('#btn_save_jo_item').prop('disabled', true);
+            $('#j_ship_date').prop('readonly', true);
+        } else {
+            $('#btn_save_jo_item').prop('disabled', false);
+            $('#j_ship_date').prop('readonly', false);
+        }
 
         $('#j_jo_no').val(jo_no);
-        JOdetailsDataTable(getJODetailsURL, {_toke: token, jo_summary_id: jo_summary_id});
+        JOdetailsDataTable(getJODetailsURL, {_toke: token, jo_summary_id: jo_summary_id},status);
         $('#modal_jo_details').modal('show');
     });
 
@@ -1756,7 +1770,7 @@ function makeMaterialsDataTable(arr) {
     });
 }
 
-function JOdetailsDataTable(ajax_url,ajax_data) {
+function JOdetailsDataTable(ajax_url,ajax_data,status) {
     var count = 0;
     $('#tbl_jo_item_details').dataTable().fnClearTable();
     $('#tbl_jo_item_details').dataTable().fnDestroy();
@@ -1771,53 +1785,7 @@ function JOdetailsDataTable(ajax_url,ajax_data) {
         processing: true,
         searching: false,
         lengthChange: false,
-        // scrollY: '300px',
         paging: false,
-        // columns: [
-        //     { 
-        //         data: function(x) {
-        //             var indx = count;
-        //             if (x.count !== '') {
-        //                 indx = x.count;
-        //             }
-        //             return "<button type='button' class='btn btn-sm bg-red btn_remove_material' data-count='"+indx+"'>"+
-        //                         "<i class='fa fa-times'></i>" +
-        //                     "</button>";
-        //         }, name: 'id', searchable: false, sortable: false, width: '3.55%'
-        //     },
-        //     { data: 'sc_no', name: 'sc_no', width: '5.55%' },
-        //     { data: 'product_code', name: 'product_code', width: '5.55%' },
-        //     { data: 'description', name: 'description', width: '5.55%' },
-        //     { data: 'back_order_qty', name: 'back_order_qty', width: '5.55%' },
-        //     { data: 'sched_qty', name: 'sched_qty', width: '5.55%' },
-        //     { data: 'material_heat_no', name: 'material_heat_no', width: '5.55%' },
-        //     { data: 'rmw_issued_qty', name: 'rmw_issued_qty', width: '5.55%' },
-        //     { data: 'material_used', name: 'material_used', width: '8.55%' },
-        //     { data: 'lot_no', name: 'lot_no', width: '5.55%' },
-        //     { data: 'blade_consumption', name: 'blade_consumption', width: '5.55%' },
-        //     { data: 'cut_weight', name: 'cut_weight', width: '5.55%' },
-        //     { data: 'cut_length', name: 'cut_length', width: '5.55%' },
-        //     { data: 'cut_width', name: 'cut_width', width: '5.55%' },
-        //     { data: 'mat_length', name: 'mat_length', width: '5.55%' },
-        //     { data: 'mat_weight', name: 'mat_weight', width: '5.55%' },
-        //     { data: 'assign_qty', name: 'assign_qty', width: '5.55%' },
-        //     { data: 'remaining_qty', name: 'remaining_qty', width: '5.55%' }
-            
-            
-        //     // { data: 'computed_per_piece', name: 'computed_per_piece', width: '5.55%'},
-        //     // { data: 'create_user', name: 'create_user' },
-        //     // { data: 'created_at', name: 'created_at' },
-        //     // { data: 'heat_no_id', name: 'heat_no_id' },
-        //     // { data: 'inv_id', name: 'inv_id' },
-        //     // { data: 'jo_summary_id', name: 'jo_summary_id' },
-        //     // { data: 'material_type', name: 'material_type' },
-        //     // { data: 'prod_sched_id', name: 'prod_sched_id' },
-        //     // { data: 'rmw_id', name: 'rmw_id' },
-        //     // { data: 'ship_date', name: 'ship_date' },
-        //     // { data: 'uom', name: 'uom' },
-        //     // { data: 'update_user', name: 'update_user' },
-        //     // { data: 'updated_at', name: 'updated_at' }
-        // ],
         columns: [
             { 
                 data: function(x) {
@@ -1825,9 +1793,14 @@ function JOdetailsDataTable(ajax_url,ajax_data) {
                     if (x.count !== undefined) {
                         indx = x.count;
                     }
-                    return "<button type='button' class='btn btn-sm bg-red btn_remove_material' data-count='"+indx+"'>"+
+                    return "<button type='button' class='btn btn-sm bg-red btn_remove_detail' "+
+                                "data-jo_summary_id='"+x.jo_summary_id+"' data-id='"+x.id+"' data-count='"+indx+"'>"+
                                 "<i class='fa fa-times'></i>" +
                             "</button>"+
+                            "<input type='hidden' data-count='"+indx+"' name='j_jd_id[]' id='j_jd_id_"+indx+"' class='j_jd_id' value='"+x.id+"'/>" +
+                            "<input type='hidden' data-count='"+indx+"' name='j_jo_summary_id[]' id='j_jo_summary_id_"+indx+"' class='j_jo_summary_id' value='"+x.jo_summary_id+"'/>" +
+                            "<input type='hidden' data-count='"+indx+"' name='j_prod_sched_id[]' id='j_prod_sched_id_"+indx+"' class='j_prod_sched_id' value='"+x.prod_sched_id+"'/>" +
+                            "<input type='hidden' data-count='"+indx+"' name='j_heat_no_id[]' id='j_heat_no_id_"+indx+"' class='j_heat_no_id' value='"+x.heat_no_id+"'/>" +
                             "<input type='hidden' data-count='"+indx+"' name='j_upd_inv_id[]' id='j_upd_inv_id_"+indx+"' class='j_upd_inv_id' value='"+x.upd_inv_id+"'/>" +
                             "<input type='hidden' data-count='"+indx+"' name='j_inv_id[]' id='j_inv_id_"+indx+"' class='j_inv_id' value='"+x.inv_id+"'/>" +
                             "<input type='hidden' data-count='"+indx+"' name='j_rmwd_id[]' id='j_rmwd_id_"+indx+"' class='j_rmwd_id' value='"+x.rmw_id+"'/>" +
@@ -1835,7 +1808,7 @@ function JOdetailsDataTable(ajax_url,ajax_data) {
                             "<input type='hidden' data-count='"+indx+"' name='j_computed_per_piece[]' id='j_computed_per_piece_"+indx+"' class='j_computed_per_piece' value='"+x.computed_per_piece+"'/>" +
                             "<input type='hidden' data-count='"+indx+"' name='j_material_type[]' id='j_material_type_"+indx+"' class='j_material_type' value='"+x.material_type+"'/>"+
                             "<input type='hidden' data-count='"+indx+"' name='j_count[]' id='j_count_"+indx+"' class='j_count' value='"+indx+"'/>";
-                }, searchable: false, sortable: false, width: "3.14%" 
+                }, searchable: false, sortable: false, width: '3.55%' 
             },
             { 
                 data: function(x) {
@@ -1844,7 +1817,7 @@ function JOdetailsDataTable(ajax_url,ajax_data) {
                         indx = x.count;
                     }
                     return x.sc_no+"<input type='hidden' data-count='"+indx+"' name='j_sc_no[]' id='j_sc_no_"+indx+"' class='j_sc_no' value='"+x.sc_no+"'/>";
-                }, searchable: false, sortable: false, width: "7.14%" 
+                }, searchable: false, sortable: false, width: '5.55%' 
             },
             { 
                 data: function(x) {
@@ -1853,7 +1826,7 @@ function JOdetailsDataTable(ajax_url,ajax_data) {
                         indx = x.count;
                     }
                     return x.product_code+"<input type='hidden' data-count='"+indx+"' name='j_prod_code[]' id='j_prod_code_"+indx+"' class='j_prod_code' value='"+x.product_code+"'/>";
-                }, searchable: false, sortable: false, width: "7.14%" 
+                }, searchable: false, sortable: false, width: '5.55%' 
             },
             { 
                 data: function(x) {
@@ -1862,7 +1835,7 @@ function JOdetailsDataTable(ajax_url,ajax_data) {
                         indx = x.count;
                     }
                     return x.description+"<input type='hidden' data-count='"+indx+"' name='j_description[]' id='j_description_"+indx+"' class='j_description' value='"+x.description+"'/>";
-                }, searchable: false, sortable: false, width: "7.14%" 
+                }, searchable: false, sortable: false, width: '5.55%' 
             },
             { 
                 data: function(x) {
@@ -1871,7 +1844,7 @@ function JOdetailsDataTable(ajax_url,ajax_data) {
                         indx = x.count;
                     }
                     return x.back_order_qty+"<input type='hidden' data-count='"+indx+"' name='j_order_qty[]' id='j_order_qty_"+indx+"' class='j_order_qty' value='"+x.back_order_qty+"'/>";
-                }, searchable: false, sortable: false, width: "7.14%" 
+                }, searchable: false, sortable: false, width: '5.55%' 
             },
             { 
                 data: function(x) {
@@ -1881,7 +1854,7 @@ function JOdetailsDataTable(ajax_url,ajax_data) {
                     }
                     return "<input type='number' step='0.01' data-count='"+indx+"' name='j_sched_qty[]' id='j_sched_qty_"+indx+"' class='form-control form-control-sm jo_validate j_sched_qty' value='"+x.sched_qty+"'/>"+
                     "<div id='j_sched_qty_" + indx +"_feedback' class='j_sched_qty__feedback'></div>";
-                }, searchable: false, sortable: false, width: "7.14%" 
+                }, searchable: false, sortable: false, width: '5.55%' 
             },
             { 
                 data: function(x) {
@@ -1890,7 +1863,7 @@ function JOdetailsDataTable(ajax_url,ajax_data) {
                         indx = x.count;
                     }
                     return "<input type='text' data-count='"+indx+"' name='j_material_heat_no[]' id='j_material_heat_no_"+indx+"' class='form-control form-control-sm j_material_heat_no' value='"+x.material_heat_no+"' readonly />";
-                }, searchable: false, sortable: false, width: "13.14%" 
+                }, searchable: false, sortable: false, width: '5.55%' 
             },
 
             { 
@@ -1904,7 +1877,7 @@ function JOdetailsDataTable(ajax_url,ajax_data) {
                             "<div class='input-group-append'>" +
                                 "<span class='input-group-text'>PCS</span>" +
                             "</div>";
-                }, searchable: false, sortable: false, width: "7.14%" 
+                }, searchable: false, sortable: false, width: '5.55%' 
             },
             { 
                 data: function(x) {
@@ -1914,7 +1887,7 @@ function JOdetailsDataTable(ajax_url,ajax_data) {
                     }
                     return "<input type='text' data-count='"+indx+"' name='j_material_used[]' id='j_material_used_"+indx+"' class='form-control form-control-sm j_material_used' value='"+x.material_used+"' readonly/>" +
                     "<div id='j_material_used_" + indx +"_feedback' class='j_material_used__feedback'></div>";
-                }, searchable: false, sortable: false, width: "20.14%" 
+                }, searchable: false, sortable: false, width: '8.55%' 
             },
             { 
                 data: function(x) {
@@ -1923,7 +1896,7 @@ function JOdetailsDataTable(ajax_url,ajax_data) {
                         indx = x.count;
                     }
                     return "<input type='text' data-count='"+indx+"' name='j_lot_no[]' class='form-control form-control-sm jo_validate j_lot_no' value='"+x.lot_no+"'/>";
-                }, searchable: false, sortable: false, width: "6.14%" 
+                }, searchable: false, sortable: false, width: '5.55%' 
             },
             { 
                 data: function(x) {
@@ -1932,7 +1905,7 @@ function JOdetailsDataTable(ajax_url,ajax_data) {
                         indx = x.count;
                     }
                     return "<input type='number' data-count='"+indx+"' step='0.01' id='j_blade_consumption_"+indx+"' name='j_blade_consumption[]' class='form-control form-control-sm jo_validate j_blade_consumption' value='"+x.blade_consumption+"'/>";
-                }, searchable: false, sortable: false, width: "7.14%" 
+                }, searchable: false, sortable: false, width: '5.55%' 
             },
             { 
                 data: function(x) {
@@ -1941,7 +1914,7 @@ function JOdetailsDataTable(ajax_url,ajax_data) {
                         indx = x.count;
                     }
                     return "<input type='number' data-count='"+indx+"' step='0.01' id='j_cut_weight_"+indx+"' name='j_cut_weight[]' class='form-control form-control-sm jo_validate j_cut_weight' value='"+x.cut_weight+"'/>";
-                }, searchable: false, sortable: false, width: "5.14%" 
+                }, searchable: false, sortable: false, width: '5.55%' 
             },
             { 
                 data: function(x) {
@@ -1950,7 +1923,7 @@ function JOdetailsDataTable(ajax_url,ajax_data) {
                         indx = x.count;
                     }
                     return "<input type='number' data-count='"+indx+"' step='0.01' id='j_cut_length_"+indx+"' name='j_cut_length[]' class='form-control form-control-sm j_cut_length'value='"+x.cut_length+"' />";
-                }, searchable: false, sortable: false, width: "5.14%" 
+                }, searchable: false, sortable: false, width: '5.55%' 
             },
             { 
                 data: function(x) {
@@ -1959,7 +1932,7 @@ function JOdetailsDataTable(ajax_url,ajax_data) {
                         indx = x.count;
                     }
                     return "<input type='number' data-count='"+indx+"' step='0.01' id='j_cut_width_"+indx+"' name='j_cut_width[]' class='form-control form-control-sm j_cut_width' value='"+x.cut_width+"'/>";
-                }, searchable: false, sortable: false, width: "5.14%" 
+                }, searchable: false, sortable: false, width: '5.55%' 
             },
             { 
                 data: function(x) {
@@ -1968,7 +1941,7 @@ function JOdetailsDataTable(ajax_url,ajax_data) {
                         indx = x.count;
                     }
                     return "<input type='number' data-count='"+indx+"' step='0.01' id='j_mat_length_"+indx+"' name='j_mat_length[]' class='form-control form-control-sm j_mat_length' value='"+x.mat_length+"' readonly/>";
-                }, searchable: false, sortable: false, width: "5.14%" 
+                }, searchable: false, sortable: false, width: '5.55%' 
             },
             { 
                 data: function(x) {
@@ -1977,7 +1950,7 @@ function JOdetailsDataTable(ajax_url,ajax_data) {
                         indx = x.count;
                     }
                     return "<input type='number' data-count='"+indx+"' step='0.01' id='j_mat_weight_"+indx+"' name='j_mat_weight[]' class='form-control form-control-sm jo_validate j_mat_weight' value='"+x.mat_weight+"' readonly/>";
-                }, searchable: false, sortable: false, width: "5.14%" 
+                }, searchable: false, sortable: false, width: '5.55%' 
             },
             { 
                 data: function(x) {
@@ -1986,7 +1959,7 @@ function JOdetailsDataTable(ajax_url,ajax_data) {
                         indx = x.count;
                     }
                     return "<input type='number' data-count='"+indx+"' step='0.01' id='j_assign_qty_"+indx+"' name='j_assign_qty[]' class='form-control form-control-sm jo_validate j_assign_qty' value='"+x.assign_qty+"'/>";
-                }, searchable: false, sortable: false, width: "5.14%" 
+                }, searchable: false, sortable: false, width: '5.55%' 
             },
             { 
                 data: function(x) {
@@ -1995,16 +1968,20 @@ function JOdetailsDataTable(ajax_url,ajax_data) {
                         indx = x.count;
                     }
                     return "<input type='number' data-count='"+indx+"' step='0.01' id='j_remaining_qty_"+indx+"' name='j_remaining_qty[]' class='form-control form-control-sm j_remaining_qty' value='"+x.remaining_qty+"' readonly/>";
-                }, searchable: false, sortable: false, width: "5.14%" 
+                }, searchable: false, sortable: false, width: '5.55%' 
             },
             
         ],
         createdRow: function(row, data, dataIndex) {
             var dataRow = $(row);
-            var mat_used_input = $(dataRow[0].cells[4].firstChild);
-            var cut_weight_input = $(dataRow[0].cells[7].firstChild);
-            var cut_length_input = $(dataRow[0].cells[8].firstChild);
-            var cut_width_input = $(dataRow[0].cells[9].firstChild);
+            var sched_qty = $(dataRow[0].cells[5].firstChild);
+            var mat_used_input = $(dataRow[0].cells[8].firstChild);
+            var lot_no = $(dataRow[0].cells[9].firstChild);
+            var blade_consp = $(dataRow[0].cells[10].firstChild);
+            var cut_weight_input = $(dataRow[0].cells[11].firstChild);
+            var cut_length_input = $(dataRow[0].cells[12].firstChild);
+            var cut_width_input = $(dataRow[0].cells[13].firstChild);
+            var assign_qty = $(dataRow[0].cells[16].firstChild);
 
             if (data.material_code == data.standard_material_used) {
                 mat_used_input.removeClass('is-invalid');
@@ -2023,6 +2000,19 @@ function JOdetailsDataTable(ajax_url,ajax_data) {
                 cut_length_input.prop('readonly', false).addClass('jo_validate');
                 cut_width_input.prop('readonly', false).addClass('jo_validate');
             }
+
+            if (data.cancelled == 1) {
+                sched_qty.prop('readonly', true).removeClass('jo_validate');
+                lot_no.prop('readonly', true).removeClass('jo_validate');
+                blade_consp.prop('readonly', true).removeClass('jo_validate');
+                cut_weight_input.prop('readonly', true).removeClass('jo_validate');
+                cut_length_input.prop('readonly', true).removeClass('jo_validate');
+                cut_width_input.prop('readonly', true).removeClass('jo_validate');
+                assign_qty.prop('readonly', true).removeClass('jo_validate');
+            }
+
+            saved_jo_details_arr.push(data);
+
             $(row).attr('id', 'j_tr_'+count);
 
             count++;
@@ -2034,14 +2024,40 @@ function JOdetailsDataTable(ajax_url,ajax_data) {
             $("#tbl_jo_item_details").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
         },
         initComplete: function() {
-            $('#tbl_jo_details_wrapper > .dt-buttons > .btn').removeClass('btn-secondary');
-            $('#tbl_jo_details_wrapper > .dt-buttons > .btn').addClass('bg-green');
-
             $("#tbl_jo_item_details").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
 
-            // $('#add_material_row').click();
-            // $('.sched_qty:first').focus();
+            if (saved_jo_details_arr.length > 0) {
+                $('#j_ship_date').val(saved_jo_details_arr[0].ship_date);
+            }
+
+            if (status == 3) {
+                $('.btn_remove_detail').prop('disabled', true);
+            } else {
+                $('.btn_remove_detail').prop('disabled', false);
+            }
         }
+    });
+
+    $('#tbl_jo_item_details tbody').on('click', '.btn_remove_detail', function() {
+        var  id = $(this).attr('data-id');
+        var jo_summary_id = $(this).attr('data-jo_summary_id');
+        swal({
+            title: "Are you sure to delete this Item?",
+            text: "This data will be deleted from this J.O. Number.",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#f95454",
+            confirmButtonText: "Yes",
+            cancelButtonText: "No",
+            closeOnConfirm: true,
+            closeOnCancel: false
+        }, function(isConfirm){
+            if (isConfirm) {
+               deleteJoDetailItem(id, jo_summary_id);
+            } else {
+                swal("Cancelled", "The data is safe and not deleted.");
+            }
+        });
     });
 }
 
@@ -2154,4 +2170,75 @@ function getMaterials(param, handleData) {
     }).always(function(xhr, textStatus) {
         
     });
+}
+
+function deleteJoDetailItem(id, jo_summary_id) {
+    $.ajax({
+        url: deleteJoDetailItemURL,
+        type: 'POST',
+        dataType: 'JSON',
+        data: {
+            _token: token,
+            id: id
+        }
+    }).done(function(data, textStatus, xhr) {
+        JOdetailsDataTable(getJODetailsURL, {_toke: token, jo_summary_id: jo_summary_id});
+        TravelSheetDataTable(getTravelSheetURL, { _token: token });
+        msg(data.msg,data.status);
+    }).fail(function(xhr, textStatus, errorThrown) {
+        ErrorMsg(xhr);
+    }).always(function(xhr, textStatus) {
+        $('.loadingOverlay-modal').hide();
+    });
+}
+
+function editJoDetailItem() {
+    $('.loadingOverlay-modal').show();
+    var param = {
+        _token: token,
+        j_jd_id: $('input[name="j_jd_id[]"]').map(function () { return $(this).val(); }).get(),
+        j_upd_inv_id: $('input[name="j_upd_inv_id[]"]').map(function () { return $(this).val(); }).get(),
+        j_inv_id: $('input[name="j_inv_id[]"]').map(function () { return $(this).val(); }).get(),
+        j_rmwd_id: $('input[name="j_rmwd_id[]"]').map(function () { return $(this).val(); }).get(),
+        j_size: $('input[name="j_size[]"]').map(function () { return $(this).val(); }).get(),
+        j_computed_per_piece: $('input[name="j_computed_per_piece[]"]').map(function () { return $(this).val(); }).get(),
+        j_material_type: $('input[name="j_material_type[]"]').map(function () { return $(this).val(); }).get(),
+        j_sc_no: $('input[name="j_sc_no[]"]').map(function () { return $(this).val(); }).get(),
+        j_prod_code: $('input[name="j_prod_code[]"]').map(function () { return $(this).val(); }).get(),
+        j_description: $('input[name="j_description[]"]').map(function () { return $(this).val(); }).get(),
+        j_order_qty: $('input[name="j_order_qty[]"]').map(function () { return $(this).val(); }).get(),
+        j_sched_qty: $('input[name="j_sched_qty[]"]').map(function () { return $(this).val(); }).get(),
+        j_material_heat_no: $('input[name="j_material_heat_no[]"]').map(function () { return $(this).val(); }).get(),
+        j_rmw_issued_qty: $('input[name="j_rmw_issued_qty[]"]').map(function () { return $(this).val(); }).get(),
+        j_material_used: $('input[name="j_material_used[]"]').map(function () { return $(this).val(); }).get(),
+        j_lot_no: $('input[name="j_lot_no[]"]').map(function () { return $(this).val(); }).get(),
+        j_blade_consumption: $('input[name="j_blade_consumption[]"]').map(function () { return $(this).val(); }).get(),
+        j_cut_weight: $('input[name="j_cut_weight[]"]').map(function () { return $(this).val(); }).get(),
+        j_cut_length: $('input[name="j_cut_length[]"]').map(function () { return $(this).val(); }).get(),
+        j_cut_width: $('input[name="j_cut_width[]"]').map(function () { return $(this).val(); }).get(),
+        j_mat_length: $('input[name="j_mat_length[]"]').map(function () { return $(this).val(); }).get(),
+        j_mat_weight: $('input[name="j_mat_weight[]"]').map(function () { return $(this).val(); }).get(),
+        j_assign_qty: $('input[name="j_assign_qty[]"]').map(function () { return $(this).val(); }).get(),
+        j_remaining_qty: $('input[name="j_remaining_qty[]"]').map(function () { return $(this).val(); }).get(),
+        j_heat_no_id: $('input[name="j_heat_no_id[]"]').map(function () { return $(this).val(); }).get(),
+        j_prod_sched_id: $('input[name="j_prod_sched_id[]"]').map(function () { return $(this).val(); }).get(),
+        j_jo_summary_id: $('input[name="j_jo_summary_id[]"]').map(function () { return $(this).val(); }).get(),
+        j_ship_date: $('#j_ship_date').val()
+    }
+
+    $.ajax({
+        url: editJoDetailItemURL,
+        type: 'POST',
+        dataType: 'JSON',
+        data: param
+    }).done(function(data, textStatus, xhr) {
+        JOdetailsDataTable(getJODetailsURL, {_toke: token, jo_summary_id: data.jo_summary_id});
+        TravelSheetDataTable(getTravelSheetURL, { _token: token });
+        msg(data.msg,data.status);
+    }).fail(function(xhr, textStatus, errorThrown) {
+        ErrorMsg(xhr);
+    }).always(function(xhr, textStatus) {
+        $('.loadingOverlay-modal').hide();
+    });
+    
 }

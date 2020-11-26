@@ -7,6 +7,11 @@
 
 require('./bootstrap');
 
+import $ from 'jquery';
+
+window.jQuery = $;
+window.$ = $;
+
 window.Vue = require('vue');
 window.axios = require('axios');
 

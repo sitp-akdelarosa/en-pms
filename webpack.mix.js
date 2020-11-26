@@ -32,7 +32,8 @@ mix.js('resources/assets/js/app.js', 'public/js')
 	], 'public/css/main.css')   
 
     .scripts([
-    	'public/js/app.js',
+        'public/js/app.js',
+        //'resources/assets/plugins/jquery/dist/jquery.min.js',
 	    'resources/assets/plugins/bootstrap/dist/js/bootstrap.min.js',
 	    'resources/assets/plugins/jquery-slimscroll/jquery.slimscroll.min.js',
 	    'resources/assets/plugins/fastclick/lib/fastclick.js',
@@ -71,6 +72,7 @@ mix.js('resources/assets/js/app.js', 'public/js')
 
     .scripts([
         'public/js/app.js',
+        //'resources/assets/plugins/jquery/dist/jquery.min.js',
         'resources/assets/plugins/bootstrap/dist/js/bootstrap.min.js',
         'resources/assets/plugins/jquery-slimscroll/jquery.slimscroll.min.js',
         'resources/assets/plugins/fastclick/lib/fastclick.js',
