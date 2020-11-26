@@ -872,8 +872,10 @@ $(function () {
     var count = $(this).attr('data-count');
     var material_type = $('#material_type_' + count).val();
     var material_length = $('#mat_length_' + count).val() == '' ? 0 : parseFloat($('#mat_length_' + count).val());
+    var material_width = 0;
     var cut_legnth = $('#cut_legnth_' + count).val() == '' ? 0 : parseFloat($('#cut_length_' + count).val());
     var cut_weight = $('#cut_weight_' + count).val() == '' ? 0 : parseFloat($('#cut_weight_' + count).val());
+    var cut_width = $('#cut_width_' + count).val() == '' ? 0 : parseFloat($('#cut_width_' + count).val());
     var size = $('#size_' + count).val() == '' ? 0 : parseFloat($('#size_' + count).val());
     var sched_qty = $(this).val() == '' ? 0 : parseFloat($(this).val());
     var blade_consumption = $('#blade_consumption_' + count).val() == '' ? 0 : parseFloat($('#blade_consumption_' + count).val());
@@ -892,6 +894,22 @@ $(function () {
 
         break;
 
+      case 'PIPE':
+        qty_pcs = material_length / (cut_legnth + blade_consumption) * 2;
+        $('#computed_per_piece_' + count).val(qty_pcs.toFixed(2));
+        break;
+
+      case 'PIPE':
+        // calculate product plate
+        var prod_plate = cut_legnth * cut_width; // calculate material plate
+
+        var mat_plate = material_length * material_width + blade_consumption; // somehow addition 1.8 for product cut length
+        // Calculate stocks
+
+        qty_pcs = mat_plate / prod_plate;
+        $('#computed_per_piece_' + count).val(qty_pcs.toFixed(2));
+        break;
+
       default:
         break;
     }
@@ -904,8 +922,10 @@ $(function () {
     var count = $(this).attr('data-count');
     var material_type = $('#material_type_' + count).val();
     var material_length = $('#mat_length_' + count).val() == '' ? 0 : parseFloat($('#mat_length_' + count).val());
+    var material_width = 0;
     var cut_legnth = $('#cut_legnth_' + count).val() == '' ? 0 : parseFloat($('#cut_length_' + count).val());
     var cut_weight = $('#cut_weight_' + count).val() == '' ? 0 : parseFloat($('#cut_weight_' + count).val());
+    var cut_width = $('#cut_width_' + count).val() == '' ? 0 : parseFloat($('#cut_width_' + count).val());
     var size = $('#size_' + count).val() == '' ? 0 : parseFloat($('#size_' + count).val());
     var sched_qty = $('#sched_qty_' + count).val() == '' ? 0 : parseFloat($('#sched_qty_' + count).val());
     var blade_consumption = $(this).val() == '' ? 0 : parseFloat($(this).val());
@@ -924,6 +944,22 @@ $(function () {
 
         break;
 
+      case 'PIPE':
+        qty_pcs = material_length / (cut_legnth + blade_consumption) * 2;
+        $('#computed_per_piece_' + count).val(qty_pcs.toFixed(2));
+        break;
+
+      case 'PIPE':
+        // calculate product plate
+        var prod_plate = cut_legnth * cut_width; // calculate material plate
+
+        var mat_plate = material_length * material_width + blade_consumption; // somehow addition 1.8 for product cut length
+        // Calculate stocks
+
+        qty_pcs = mat_plate / prod_plate;
+        $('#computed_per_piece_' + count).val(qty_pcs.toFixed(2));
+        break;
+
       default:
         break;
     }
@@ -935,6 +971,110 @@ $(function () {
   $('#tbl_materials_body').on('change', '.assign_qty', function () {
     var count = $(this).attr('data-count');
     checkOverIssuance(count);
+  });
+  $('#tbl_jo_item_details').on('change', '.j_sched_qty', function () {
+    var count = $(this).attr('data-count');
+    var material_type = $('#j_material_type_' + count).val();
+    var material_length = $('#j_mat_length_' + count).val() == '' ? 0 : parseFloat($('#j_mat_length_' + count).val());
+    var material_width = 0;
+    var cut_legnth = $('#j_cut_legnth_' + count).val() == '' ? 0 : parseFloat($('#j_cut_length_' + count).val());
+    var cut_weight = $('#j_cut_weight_' + count).val() == '' ? 0 : parseFloat($('#j_cut_weight_' + count).val());
+    var cut_width = $('#j_cut_width_' + count).val() == '' ? 0 : parseFloat($('#j_cut_width_' + count).val());
+    var size = $('#j_size_' + count).val() == '' ? 0 : parseFloat($('#size_' + count).val());
+    var sched_qty = $(this).val() == '' ? 0 : parseFloat($(this).val());
+    var blade_consumption = $('#j_blade_consumption_' + count).val() == '' ? 0 : parseFloat($('#j_blade_consumption_' + count).val());
+    var qty_pcs = 0;
+
+    switch (material_type) {
+      case 'BAR':
+        if (cut_weight !== 0 && $('#j_blade_consumption_' + count).val() !== '') {
+          qty_pcs = material_length / (cut_legnth + blade_consumption);
+          $('#j_computed_per_piece_' + count).val(qty_pcs.toFixed(2));
+        } else if (cut_weight == 0 && $('#cut_weight_' + count).val() == '' && $('#j_blade_consumption_' + count).val() !== '') {
+          var length = cut_weight / size / size / 6.2 * 1000000;
+          qty_pcs = material_length / (length + blade_consumption);
+          $('#j_computed_per_piece_' + count).val(qty_pcs.toFixed(2));
+        }
+
+        break;
+
+      case 'PIPE':
+        qty_pcs = material_length / (cut_legnth + blade_consumption) * 2;
+        $('#j_computed_per_piece_' + count).val(qty_pcs.toFixed(2));
+        break;
+
+      case 'PIPE':
+        // calculate product plate
+        var prod_plate = cut_legnth * cut_width; // calculate material plate
+
+        var mat_plate = material_length * material_width + blade_consumption; // somehow addition 1.8 for product cut length
+        // Calculate stocks
+
+        qty_pcs = mat_plate / prod_plate;
+        $('#j_computed_per_piece_' + count).val(qty_pcs.toFixed(2));
+        break;
+
+      default:
+        break;
+    }
+
+    if ($('#j_assign_qty_' + count).val() !== '') {
+      checkJODetailsOverIssuance(count);
+    }
+  });
+  $('#tbl_jo_item_details').on('change', '.j_blade_consumption', function () {
+    var count = $(this).attr('data-count');
+    var material_type = $('#j_material_type_' + count).val();
+    var material_length = $('#j_mat_length_' + count).val() == '' ? 0 : parseFloat($('#j_mat_length_' + count).val());
+    var material_width = 0;
+    var cut_legnth = $('#j_cut_legnth_' + count).val() == '' ? 0 : parseFloat($('#j_cut_length_' + count).val());
+    var cut_weight = $('#j_cut_weight_' + count).val() == '' ? 0 : parseFloat($('#j_cut_weight_' + count).val());
+    var cut_width = $('#j_cut_width_' + count).val() == '' ? 0 : parseFloat($('#j_cut_width_' + count).val());
+    var size = $('#j_size_' + count).val() == '' ? 0 : parseFloat($('#j_size_' + count).val());
+    var sched_qty = $('#j_sched_qty_' + count).val() == '' ? 0 : parseFloat($('#j_sched_qty_' + count).val());
+    var blade_consumption = $(this).val() == '' ? 0 : parseFloat($(this).val());
+    var qty_pcs = 0;
+
+    switch (material_type) {
+      case 'BAR':
+        if (cut_weight !== 0 && $(this).val() !== '') {
+          qty_pcs = material_length / (cut_legnth + blade_consumption);
+          $('#j_computed_per_piece_' + count).val(qty_pcs.toFixed(2));
+        } else if (cut_weight == 0 && $('#j_cut_weight_' + count).val() == '' && $(this).val() !== '') {
+          var length = cut_weight / size / size / 6.2 * 1000000;
+          qty_pcs = material_length / (length + blade_consumption);
+          $('#j_computed_per_piece_' + count).val(qty_pcs.toFixed(2));
+        }
+
+        break;
+
+      case 'PIPE':
+        qty_pcs = material_length / (cut_legnth + blade_consumption) * 2;
+        $('#j_computed_per_piece_' + count).val(qty_pcs.toFixed(2));
+        break;
+
+      case 'PIPE':
+        // calculate product plate
+        var prod_plate = cut_legnth * cut_width; // calculate material plate
+
+        var mat_plate = material_length * material_width + blade_consumption; // somehow addition 1.8 for product cut length
+        // Calculate stocks
+
+        qty_pcs = mat_plate / prod_plate;
+        $('#j_computed_per_piece_' + count).val(qty_pcs.toFixed(2));
+        break;
+
+      default:
+        break;
+    }
+
+    if ($('#j_assign_qty_' + count).val() !== '') {
+      checkJODetailsOverIssuance(count);
+    }
+  });
+  $('#tbl_jo_item_details').on('change', '.j_assign_qty', function () {
+    var count = $(this).attr('data-count');
+    checkJODetailsOverIssuance(count);
   });
   $('#btn_jo_filter').on('click', function () {
     $('.srch-clear').val('');
@@ -969,6 +1109,26 @@ function checkOverIssuance(count) {
   }
 
   $('#remaining_qty_' + count).val((assign_qty * excess).toFixed(2));
+}
+
+function checkJODetailsOverIssuance(count) {
+  var computed_per_piece_whole = $('#j_computed_per_piece_' + count).val() == '' ? 0 : parseInt($('#j_computed_per_piece_' + count).val());
+  var computed_per_piece_deci = $('#j_computed_per_piece_' + count).val() == '' ? 0 : parseFloat($('#j_computed_per_piece_' + count).val());
+  var excess = (computed_per_piece_deci - computed_per_piece_whole).toFixed(2);
+  var assign_qty = $('#j_assign_qty_' + count).val() == '' ? 0 : parseFloat($('#j_assign_qty_' + count).val());
+  var over = 0;
+  var sched_qty = $('#j_sched_qty_' + count).val() == '' ? 0 : parseFloat($('#j_sched_qty_' + count).val());
+  over = sched_qty - computed_per_piece_whole * assign_qty;
+
+  if (over > 0) {
+    $('#j_sched_qty_' + count).addClass('is-invalid');
+    $('#j_sched_qty_' + count).next().addClass('invalid-feedback').html("Over Issuance.");
+  } else {
+    $('#j_sched_qty_' + count).removeClass('is-invalid');
+    $('#j_sched_qty_' + count).next().removeClass('invalid-feedback').html('');
+  }
+
+  $('#j_remaining_qty_' + count).val((assign_qty * excess).toFixed(2));
 }
 
 function initializePage() {
