@@ -71,8 +71,8 @@
 									<thead>
 										<tr>
 											<td class="text-center" rowspan="2" colspan="3"><img src="{{ asset('/barcode.php').'?codetype=CODE39&size=30&text='.$header->jo_sequence.'&print=true' }}" class="img-fluid" alt="{{ $header->jo_sequence }}"></td> 
-											<td class="text-center" colspan="2">Type:</td>
-											<td class="text-center" colspan="3">{{ $header->type }}</td>
+											<td class="text-center">Type:</td>
+											<td class="text-center" colspan="4">{{ $header->type }}</td>
 											<td class="text-center" colspan="2">Material Used:</td>
 											<td class="text-center">{{ $header->bar_size }}</td>
 											{{-- <td>{{ $header->bar_size.' x '.$header->cut_weight }}</td> --}}
@@ -81,8 +81,8 @@
 											{{-- <td colspan="2">Material Used:</td>
 											<td>{{ $header->material_used }}</td>
 											<td>{{ $header->bar_size.' x '.$header->cut_weight }}</td> --}}
-											<td class="text-center" colspan="2">Part Code:</td>
-											<td class="text-center" colspan="3">{{ $header->prod_code }}</td>
+											<td class="text-center">Part Code:</td>
+											<td class="text-center" colspan="4">{{ $header->prod_code }}</td>
 
 											<td class="text-center" colspan="2">Material Heat #:</td>
 											<td class="text-center" >{{ $header->material_heat_no }}</td>
@@ -90,8 +90,8 @@
 										<tr>
 											<td>Job Order Qty.</td>
 											<td class="text-center" colspan="2">{{ $header->sched_qty }}</td>
-											<td class="text-center" colspan="2" rowspan="2">Description</td>  {{-- rowspan="2" --}}
-											<td class="text-center" colspan="3" rowspan="2">{{ $header->description }}</td>{{-- colspan="2" rowspan="2" --}}
+											<td class="text-center">Description</td>  {{-- rowspan="2" --}}
+											<td class="text-center" colspan="4" rowspan="2">{{ $header->description }}</td>{{-- colspan="2" rowspan="2" --}}
 											{{-- <td colspan="2">{{ $header->issued_qty }}</td> --}}
 											
 											<td class="text-center" colspan="2">Supplier Heat #:</td>
@@ -99,7 +99,7 @@
 										</tr>
 										<tr>
 											<td>Product Line</td>
-											<td class="text-center" colspan="2">{{ $header->product_line }}</td>
+											<td class="text-center" colspan="3">{{ $header->product_line }}</td>
 											<td class="text-center">Cut Wt.</td>
 											<td class="text-center">Cut Length</td>
 											<td class="text-center">Cut Width</td>

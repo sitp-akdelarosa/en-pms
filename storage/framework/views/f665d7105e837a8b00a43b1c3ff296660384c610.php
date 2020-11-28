@@ -69,16 +69,16 @@
 									<thead>
 										<tr>
 											<td class="text-center" rowspan="2" colspan="3"><img src="<?php echo e(asset('/barcode.php').'?codetype=CODE39&size=30&text='.$header->jo_sequence.'&print=true'); ?>" class="img-fluid" alt="<?php echo e($header->jo_sequence); ?>"></td> 
-											<td class="text-center" colspan="2">Type:</td>
-											<td class="text-center" colspan="3"><?php echo e($header->type); ?></td>
+											<td class="text-center">Type:</td>
+											<td class="text-center" colspan="4"><?php echo e($header->type); ?></td>
 											<td class="text-center" colspan="2">Material Used:</td>
 											<td class="text-center"><?php echo e($header->bar_size); ?></td>
 											
 										</tr>
 										<tr>
 											
-											<td class="text-center" colspan="2">Part Code:</td>
-											<td class="text-center" colspan="3"><?php echo e($header->prod_code); ?></td>
+											<td class="text-center">Part Code:</td>
+											<td class="text-center" colspan="4"><?php echo e($header->prod_code); ?></td>
 
 											<td class="text-center" colspan="2">Material Heat #:</td>
 											<td class="text-center" ><?php echo e($header->material_heat_no); ?></td>
@@ -86,8 +86,8 @@
 										<tr>
 											<td>Job Order Qty.</td>
 											<td class="text-center" colspan="2"><?php echo e($header->sched_qty); ?></td>
-											<td class="text-center" colspan="2" rowspan="2">Description</td>  
-											<td class="text-center" colspan="3" rowspan="2"><?php echo e($header->description); ?></td>
+											<td class="text-center">Description</td>  
+											<td class="text-center" colspan="4" rowspan="2"><?php echo e($header->description); ?></td>
 											
 											
 											<td class="text-center" colspan="2">Supplier Heat #:</td>
@@ -95,7 +95,7 @@
 										</tr>
 										<tr>
 											<td>Product Line</td>
-											<td class="text-center" colspan="2"><?php echo e($header->product_line); ?></td>
+											<td class="text-center" colspan="3"><?php echo e($header->product_line); ?></td>
 											<td class="text-center">Cut Wt.</td>
 											<td class="text-center">Cut Length</td>
 											<td class="text-center">Cut Width</td>

@@ -204,11 +204,7 @@ foreach ($user_accesses as $user_access){
                             </button>
                         </div>
 
-                        <div class="col-md-1 col-sm-2 mb-5" id="btn_edit_div">
-                            <button type="button" id="btn_edit" class="btn bg-blue btn-block permission-button">
-                                <i class="fa fa-edit"></i> Edit
-                            </button>
-                        </div>
+                        
                         <div class="col-md-1 col-sm-2 mb-5" id="btn_cancel_div">
                             <button type="button" id="btn_cancel" class="btn bg-red btn-block">
                                 <i class="fa fa-times"></i> Cancel

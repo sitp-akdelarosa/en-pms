@@ -1089,7 +1089,7 @@ class ProductionScheduleController extends Controller
                                     return 'No quantity issued';
                                     break;
                                 case 1:
-                                    return 'Ready of printing';
+                                    return 'Ready to Issue';
                                     break;
                                 case 2:
                                     return 'On Production';
@@ -1427,7 +1427,7 @@ class ProductionScheduleController extends Controller
                                     return 'No quantity issued';
                                     break;
                                 case 1:
-                                    return 'Ready of printing';
+                                    return 'Ready to Issue';
                                     break;
                                 case 2:
                                     return 'On Production';
