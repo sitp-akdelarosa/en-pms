@@ -1095,9 +1095,10 @@ $(function () {
 
 function checkOverIssuance(count) {
   var computed_per_piece_whole = $('#computed_per_piece_' + count).val() == '' ? 0 : parseInt($('#computed_per_piece_' + count).val());
-  var computed_per_piece_deci = $('#computed_per_piece_' + count).val() == '' ? 0 : parseFloat($('#computed_per_piece_' + count).val());
-  var excess = (computed_per_piece_deci - computed_per_piece_whole).toFixed(2);
   var assign_qty = $('#assign_qty_' + count).val() == '' ? 0 : parseFloat($('#assign_qty_' + count).val());
+  var blade_consumption = $('#blade_consumption_' + count).val() == '' ? 0 : parseFloat($('#blade_consumption_' + count).val());
+  var material_length = $('#mat_length_' + count).val() == '' ? 0 : parseFloat($('#mat_length_' + count).val());
+  var cut_legnth = $('#cut_legnth_' + count).val() == '' ? 0 : parseFloat($('#cut_length_' + count).val());
   var over = 0;
   var sched_qty = $('#sched_qty_' + count).val() == '' ? 0 : parseFloat($('#sched_qty_' + count).val());
   over = sched_qty - computed_per_piece_whole * assign_qty;
@@ -1108,16 +1109,19 @@ function checkOverIssuance(count) {
   } else {
     $('#sched_qty_' + count).removeClass('is-invalid');
     $('#sched_qty_' + count).next().removeClass('invalid-feedback').html('');
-  }
+  } // remaining qty
 
-  $('#remaining_qty_' + count).val((assign_qty * excess).toFixed(2));
+
+  var remaining_qty = (material_length - (cut_legnth + blade_consumption) * computed_per_piece_whole) * assign_qty / material_length;
+  $('#remaining_qty_' + count).val(remaining_qty.toFixed(4));
 }
 
 function checkJODetailsOverIssuance(count) {
   var computed_per_piece_whole = $('#j_computed_per_piece_' + count).val() == '' ? 0 : parseInt($('#j_computed_per_piece_' + count).val());
-  var computed_per_piece_deci = $('#j_computed_per_piece_' + count).val() == '' ? 0 : parseFloat($('#j_computed_per_piece_' + count).val());
-  var excess = (computed_per_piece_deci - computed_per_piece_whole).toFixed(2);
   var assign_qty = $('#j_assign_qty_' + count).val() == '' ? 0 : parseFloat($('#j_assign_qty_' + count).val());
+  var blade_consumption = $('#j_blade_consumption_' + count).val() == '' ? 0 : parseFloat($('#j_blade_consumption_' + count).val());
+  var material_length = $('#j_mat_length_' + count).val() == '' ? 0 : parseFloat($('#j_mat_length_' + count).val());
+  var cut_legnth = $('#j_cut_legnth_' + count).val() == '' ? 0 : parseFloat($('#j_cut_length_' + count).val());
   var over = 0;
   var sched_qty = $('#j_sched_qty_' + count).val() == '' ? 0 : parseFloat($('#j_sched_qty_' + count).val());
   over = sched_qty - computed_per_piece_whole * assign_qty;
@@ -1128,9 +1132,11 @@ function checkJODetailsOverIssuance(count) {
   } else {
     $('#j_sched_qty_' + count).removeClass('is-invalid');
     $('#j_sched_qty_' + count).next().removeClass('invalid-feedback').html('');
-  }
+  } // remaining qty
 
-  $('#j_remaining_qty_' + count).val((assign_qty * excess).toFixed(2));
+
+  var remaining_qty = (material_length - (cut_legnth + blade_consumption) * computed_per_piece_whole) * assign_qty / material_length;
+  $('#j_remaining_qty_' + count).val(remaining_qty.toFixed(4));
 }
 
 function initializePage() {
