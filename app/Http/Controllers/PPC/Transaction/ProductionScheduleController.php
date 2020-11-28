@@ -169,195 +169,50 @@ class ProductionScheduleController extends Controller
         $one_JO = [];
         $multiple_JO = [];
 
+        $ref_id = 0;
+
         if (empty($req->jo_no)) {
+            $ref_id = rand(); // randomize ref_id for this save session;
+
             foreach ($req->id as $key => $id) {
-                if ($req->prod_code[$key] == $prod_code_unique) {
-                    $back_order_qty_total += $req->quantity[$key];
-                    $total_sched_qty += $req->sched_qty[$key];
 
-                    // $materials = DB::table('temp_item_materials')->where([
-                    //             ['sc_no', '=', $req->sc_no[$key]],
-                    //             ['prod_code', '=', $req->prod_code[$key]],
-                    //             ['quantity', '=', (float)$req->quantity[$key]],
-                    //             ['create_user', '=', Auth::user()->id],
-                    //         ])->get();
-
-                    // $lot_no_unique = $materials[0]->lot_no;
-                    // $heat_no_unique = $materials[0]->material_heat_no;
-
-                    // foreach ($materials as $km => $mat) {
-
-                    //     if ($mat->lot_no == $lot_no_unique && $heat_no_unique == $mat->material_heat_no) {
-                    //         array_push($one_JO, [
-                    //             'sc_no' => $req->sc_no[$key], 
-                    //             'product_code' => $req->prod_code[$key],
-                    //             'description' => $req->description[$key],
-                    //             'back_order_qty' => (float)$req->quantity[$key],
-                    //             'sched_qty' => $mat->sched_qty,
-                    //             'material_used' => $mat->material_used,
-                    //             'material_heat_no' => $mat->material_heat_no,
-                    //             'uom' => 'PCS',
-                    //             'lot_no' => $mat->lot_no,
-                    //             'inv_id' => $mat->inv_id,
-                    //             'rmw_issued_qty' => $mat->rmw_issued_qty,
-                    //             'material_type' => $mat->material_type,
-                    //             'computed_per_piece' => $mat->computed_per_piece,
-                    //             'rmwd_id' => $mat->rmwd_id,
-                    //             'upd_inv_id' => $mat->upd_inv_id,
-                    //             'ship_date' => $mat->ship_date,
-                    //             'assign_qty' => $mat->assign_qty,
-                    //             'remaining_qty' => $mat->remaining_qty
-                    //         ]);
-                    //     }
-
-                    //     $lot_no_unique = $mat->lot_no;
-                    //     $heat_no_unique = $mat->material_heat_no;
-                    // }
-
-                } else {
-                    $back_order_qty_total = $req->quantity[$key];
-                    $total_sched_qty = $req->sched_qty[$key];
-                }
-
-                if (sizeof($req->id) - 1 == $key) {
-                    array_push($qty, ['order_qty' => $back_order_qty_total, 'sched_qty' => $total_sched_qty]);
-                } else if ($req->prod_code[$key] != $req->prod_code[$key + 1] && $key <= sizeof($req->id) - 2) {
-                    array_push($qty, ['order_qty' => $back_order_qty_total, 'sched_qty' => $total_sched_qty]);
-                    $back_order_qty_total = 0;
-                    $total_sched_qty = 0;
-                }
-
-                $prod_code_unique = $req->prod_code[$key];
-            }
-
-            $row = 0;
-
-            foreach (array_unique($req->prod_code, SORT_REGULAR) as $key => $id) {
-
-                $f = Auth::user()->firstname;
-                $l = Auth::user()->lastname;
-
-                $jocode = $this->_helper->TransactionNo($f[0] . $l[0] . '-JO');
-
-                $materials = DB::table('temp_item_materials')->where([
-                                ['sc_no', '=', $req->sc_no[$key]],
-                                ['prod_code', '=', $req->prod_code[$key]],
-                                ['quantity', '=', (float)$req->quantity[$key]],
-                                ['create_user', '=', Auth::user()->id],
-                            ])->get();
-
-                $jo_sum = new PpcJoDetailsSummary();
-                $jo_sum->jo_no = $jocode;
-                $jo_sum->total_sched_qty = $qty[$row]['sched_qty'];
-                $jo_sum->rmw_no = (isset($materials[0]->rmw_no))? $materials[0]->rmw_no : '';
-                $jo_sum->create_user = Auth::user()->id;
-                $jo_sum->update_user = Auth::user()->id;
-                $jo_sum->save();
+                $materials = DB::table('temp_item_materials')->where('sc_id',$id)->get();
 
                 foreach ($materials as $km => $mat) {
-
-                     PpcJoTravelSheet::create([
-                        'jo_summary_id' => $jo_sum->id,
-                        'jo_no' => $jocode,
-                        'sc_no' => $req->sc_no[$key],
-                        'prod_code' => $req->prod_code[$key],
-                        'description' => $req->description[$key],
-                        'order_qty' => $qty[$row]['order_qty'],
-                        'sched_qty' => $qty[$row]['sched_qty'],
-                        'issued_qty' => 0,
-                        'material_used' => $mat->material_used,
-                        'material_heat_no' => $mat->material_heat_no,
-                        'uom' => 'PCS',
-                        'lot_no' => $mat->lot_no,
-                        'ship_date' => $mat->ship_date,
-                        'status' => 4, // 4 = scheduled
-                        'create_user' => Auth::user()->id,
-                        'update_user' => Auth::user()->id,
-                    ]);
-                }
-                            
-               
-                $row++;
-                $jo_no_count[] = $jo_sum->id;
-                $jo_no = $jo_no . ' ' . $jocode;
-            }
-
-
-            $prod_code_unique = $req->prod_code[0];
-            $jo_no_lenght = 0;
-            foreach ($req->id as $key => $id) {
-                $materials = TempItemMaterial::where([
-                                ['sc_no', '=', $req->sc_no[$key]],
-                                ['prod_code', '=', $req->prod_code[$key]],
-                                ['quantity', '=', (float)$req->quantity[$key]],
-                                ['create_user', '=', Auth::user()->id],
-                            ])->get();
-
-                foreach ($materials as $km => $mat) {
-                    $rawmats = PpcRawMaterialWithdrawalDetails::where('id', $mat->rmwd_id)
-                                        ->select('sc_no')
-                                        ->where('create_user', Auth::user()->id)
-                                        ->first();
-                    if (isset($rawmats->id)) {
-                        $Coma = ', ';
-                        if ($rawmats->sc_no == '') {
-                            $Coma = ' ';
-                        }
-                        if (strpos($rawmats->sc_no, $req->sc_no[$key]) === false) {
-                            PpcRawMaterialWithdrawalDetails::where('id', $mat->rmwd_id)
-                                ->where('create_user', Auth::user()->id)
-                                ->update(['sc_no' => $req->sc_no[$key] . $Coma . $rawmats->sc_no]);
-                        }
-                    }
-                }
-
-                if ($req->prod_code[$key] !== $prod_code_unique) {
-                    $jo_no_lenght++;
-                }
-
-                PpcProductionSummary::where('id', $id)
-                                    ->increment('sched_qty', $req->sched_qty[$key],[
-                                        'jo_summary_id' => $jo_no_count[$jo_no_lenght],
-                                        'status' => 4
-                                    ]);
-
-                foreach ($materials as $km => $mat) {
-                    PpcJoDetails::create([
-                        'jo_summary_id' => $jo_no_count[$jo_no_lenght],
-                        'sc_no' => $req->sc_no[$key],
-                        'product_code' => $req->prod_code[$key],
-                        'description' => $req->description[$key],
-                        'back_order_qty' => $req->quantity[$key],
-                        'sched_qty' => $mat->sched_qty,
-                        'material_used' => $mat->material_used,
-                        'material_heat_no' => $mat->material_heat_no,
-                        'uom' => 'PCS',
-                        'lot_no' => $mat->lot_no,
-                        'create_user' => Auth::user()->id,
-                        'update_user' => Auth::user()->id,
+                    DB::table('temp_save_boms')->insert([
+                        'upd_inv_id' => $mat->upd_inv_id,
                         'inv_id' => $mat->inv_id,
-                        'rmw_id' => $mat->rmwd_id,
-                        'rmw_issued_qty' => $mat->rmw_issued_qty,
-                        'material_type' => $mat->material_type,
-                        'blade_consumption' => $mat->blade_consumption,
+                        'rmwd_id' => $mat->rmwd_id,
+                        'size' => $mat->size,
                         'computed_per_piece' => $mat->computed_per_piece,
-                        'assign_qty' => $mat->assign_qty,
-                        'remaining_qty' => $mat->remaining_qty,
-                        'heat_no_id' => $mat->upd_inv_id,
-                        'ship_date' => $mat->ship_date,
-                        'prod_sched_id' => $id,
+                        'material_type' => $mat->material_type,
+                        'sched_qty' => $mat->sched_qty,
+                        'material_heat_no' => $mat->material_heat_no,
+                        'rmw_issued_qty' => $mat->rmw_issued_qty,
+                        'material_used' => $mat->material_used,
+                        'lot_no' => $mat->lot_no,
+                        'blade_consumption' => $mat->blade_consumption,
                         'cut_weight' => $mat->cut_weight,
                         'cut_length' => $mat->cut_length,
                         'cut_width' => $mat->cut_width,
                         'mat_length' => $mat->mat_length,
                         'mat_weight' => $mat->mat_weight,
-                        'upd_inv_id' => $mat->upd_inv_id,
-                        'size' => $mat->size
+                        'assign_qty' => $mat->assign_qty,
+                        'remaining_qty' => $mat->remaining_qty,
+                        'rmw_no' => $mat->rmw_no,
+                        'ship_date' => $mat->ship_date,
+                        'sc_no' => $req->sc_no[$key],
+                        'prod_code' => $req->prod_code[$key],
+                        'description' => $req->description[$key],
+                        'quantity' => $req->quantity[$key],
+                        'create_user' => Auth::user()->id,
+                        'sc_id' => $id,
+                        'ref_id' => $ref_id,
                     ]);
                 }
-                $prod_code_unique = $req->prod_code[$key];
             }
 
+            $jo_no = $this->SegregateBOMs($ref_id);
             $this->_audit->insert([
                 'user_type' => Auth::user()->user_type,
                 'module_id' => $this->_moduleID,
@@ -367,20 +222,144 @@ class ProductionScheduleController extends Controller
                 'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
             ]);
 
-
         }
 
         // delete materials
         foreach ($req->id as $key => $id) {
-            TempItemMaterial::where([
-                ['sc_no', '=', $req->sc_no[$key]],
-                ['prod_code', '=', $req->prod_code[$key]],
-                ['quantity', '=', (float)$req->quantity[$key]],
-                ['create_user', '=', Auth::user()->id],
-            ])->delete();
+            TempItemMaterial::where('sc_id',$id)->delete();
         }
 
         return response()->json(['jocode' => $jo_no, 'result' => $result]);
+    }
+
+    public function SegregateBOMs($ref_id)
+    {
+        /*
+            JOB ORDER = 1 JO
+            1 same Product code
+            2 or more SC no.
+            1 RM Heat no.
+            1 Lot No.
+        **/
+
+        $arr_jo = [];
+        $jo_no = '';
+
+        // get potential J.O. designation
+        $boms = DB::table('temp_save_boms')
+                ->select(
+                    'ref_id','prod_code','material_heat_no','lot_no', DB::raw("sum(sched_qty) as sched_qty"),'rmw_no'
+                )
+                ->where('ref_id',$ref_id)
+                ->groupBy('ref_id','prod_code','material_heat_no','lot_no','rmw_no')
+                ->get();
+
+        foreach ($boms as $key => $bom) {
+            $f = Auth::user()->firstname;
+            $l = Auth::user()->lastname;
+
+            $jocode = $this->_helper->TransactionNo($f[0] . $l[0] . '-JO');
+
+            $jo_sum = new PpcJoDetailsSummary();
+            $jo_sum->jo_no = $jocode;
+            $jo_sum->total_sched_qty = $bom->sched_qty;
+            $jo_sum->rmw_no = (isset($bom->rmw_no))? $bom->rmw_no : '';
+            $jo_sum->create_user = Auth::user()->id;
+            $jo_sum->update_user = Auth::user()->id;
+            $jo_sum->save();
+
+            array_push($arr_jo, [
+                'jo_id' => $jo_sum->id,
+                'jo_no' => $jo_sum->jo_no,
+                'ref_id' => $bom->ref_id,
+                'prod_code' => $bom->prod_code,
+                'material_heat_no' => $bom->material_heat_no,
+                'lot_no' => $bom->lot_no,
+                'rmw_no' => $bom->rmw_no
+            ]);
+
+            $com = '';
+            if ($jo_no !== '') {
+                $com = ', ';
+            }
+
+            $jo_no .= $com.$jo_sum->jo_no;
+        }
+
+        
+
+        foreach ($arr_jo as $key => $jo) {
+            $details = DB::table('temp_save_boms')->where([
+                            ['ref_id', '=', $jo['ref_id']], 
+                            ['prod_code', '=', $jo['prod_code']], 
+                            ['material_heat_no', '=', $jo['material_heat_no']], 
+                            ['lot_no', '=', $jo['lot_no']], 
+                            ['rmw_no', '=', $jo['rmw_no']]
+                        ])->get();
+
+            
+
+            foreach ($details as $key => $dt) {
+
+                $rmwd = DB::table('ppc_raw_material_withdrawal_details')->where('id', $dt->rmwd_id)
+                            ->select('sc_no','id')
+                            ->where('create_user', Auth::user()->id)
+                            ->first();
+
+                if (isset($rmwd->id)) {
+                    $Coma = ', ';
+                    if ($rmwd->sc_no == '') {
+                        $Coma = ' ';
+                    }
+                    if (strpos($rmwd->sc_no, $dt->sc_no) === false) {
+                        PpcRawMaterialWithdrawalDetails::where('id', $dt->rmwd_id)
+                            ->where('create_user', Auth::user()->id)
+                            ->update(['sc_no' => $dt->sc_no . $Coma . $rmwd->sc_no]);
+                    }
+                }
+
+                PpcProductionSummary::where('id', $dt->sc_id)
+                                    ->increment('sched_qty', $dt->sched_qty,[
+                                        'jo_summary_id' => $jo['jo_id'],
+                                        'status' => 4
+                                    ]);
+
+                PpcJoDetails::create([
+                    'jo_summary_id' => $jo['jo_id'],
+                    'sc_no' => $dt->sc_no,
+                    'product_code' => $dt->prod_code,
+                    'description' => $dt->description,
+                    'back_order_qty' => $dt->quantity,
+                    'sched_qty' => $dt->sched_qty,
+                    'material_used' => $dt->material_used,
+                    'material_heat_no' => $dt->material_heat_no,
+                    'uom' => 'PCS',
+                    'lot_no' => $dt->lot_no,
+                    'create_user' => Auth::user()->id,
+                    'update_user' => Auth::user()->id,
+                    'inv_id' => $dt->inv_id,
+                    'rmw_id' => $dt->rmwd_id,
+                    'rmw_issued_qty' => $dt->rmw_issued_qty,
+                    'material_type' => $dt->material_type,
+                    'blade_consumption' => $dt->blade_consumption,
+                    'computed_per_piece' => $dt->computed_per_piece,
+                    'assign_qty' => $dt->assign_qty,
+                    'remaining_qty' => $dt->remaining_qty,
+                    'heat_no_id' => $dt->upd_inv_id,
+                    'ship_date' => $dt->ship_date,
+                    'prod_sched_id' => $dt->sc_id,
+                    'cut_weight' => $dt->cut_weight,
+                    'cut_length' => $dt->cut_length,
+                    'cut_width' => $dt->cut_width,
+                    'mat_length' => $dt->mat_length,
+                    'mat_weight' => $dt->mat_weight,
+                    'upd_inv_id' => $dt->upd_inv_id,
+                    'size' => $dt->size
+                ]);
+            }
+        }
+
+        return $jo_no;
     }
 
     public function JOsuggest(Request $req)
@@ -543,6 +522,7 @@ class ProductionScheduleController extends Controller
                                         rmw.id as rmw_id,
                                         rmw.inv_id as inv_id,
                                         pui.length as rmw_length,
+                                        pui.width as rmw_width,
                                         pmc.std_weight as std_weight,
                                         pui.id as upd_inv_id,
                                         pui.item_code as item_code,
@@ -611,6 +591,7 @@ class ProductionScheduleController extends Controller
                                         pui.item_code,
                                         pmc.material_code,
                                         pui.length,
+                                        pui.width,
                                         pui.description,
                                         pui.size,
                                         pui.`schedule`,
@@ -634,6 +615,7 @@ class ProductionScheduleController extends Controller
                                             pw.id as rmw_id,
                                             pw.inv_id as inv_id,
                                             pui.length as rmw_length,
+                                            pui.width as rmw_width,
                                             pmc.std_weight as std_weight,
                                             pui.id as upd_inv_id,
                                             pui.item_code as item_code,
@@ -690,6 +672,7 @@ class ProductionScheduleController extends Controller
                                             pui.item_code,
                                             pmc.material_code,
                                             pui.length,
+                                            pui.width,
                                             pui.description,
                                             pui.size,
                                             pui.`schedule`,
@@ -722,6 +705,7 @@ class ProductionScheduleController extends Controller
                                 'rmw_id' => $material->rmw_id,
                                 'inv_id' => $material->inv_id,
                                 'rmw_length' => $material->rmw_length,
+                                'rmw_width' => $material->rmw_width,
                                 'upd_inv_id' => $material->upd_inv_id,
                                 'id' => $material->rmw_id,
                                 'text' => $material->text,
@@ -1288,16 +1272,12 @@ class ProductionScheduleController extends Controller
 
         $params = [];
 
-        TempItemMaterial::where([
-            ['sc_no', '=', $req->sc_no],
-            ['prod_code', '=', $req->prod_code],
-            ['quantity', '=', $req->quantity],
-            ['create_user', '=', Auth::user()->id],
-        ])->delete();
+        TempItemMaterial::where('sc_id',$req->sc_id)->delete();
 
         if (count($req->count) > 0) {
             foreach ($req->count as $key => $cnt) {
                 array_push($params, [
+                    'sc_id' => $req->sc_id,
                     'upd_inv_id' => $req->upd_inv_id[$key],
                     'inv_id' => $req->inv_id[$key],
                     'rmwd_id' => $req->rmwd_id[$key],
@@ -1358,12 +1338,7 @@ class ProductionScheduleController extends Controller
 
     public function Materials(Request $req)
     {
-        $data = TempItemMaterial::where([
-                    ['sc_no', '=', $req->sc_no],
-                    ['prod_code', '=', $req->prod_code],
-                    ['quantity', '=', (float)$req->order_qty],
-                    ['create_user', '=', Auth::user()->id],
-                ])->get();
+        $data = TempItemMaterial::where('sc_id',$req->sc_id)->get();
 
         return $data;
     }

@@ -187,7 +187,7 @@ $(function () {
             joDetails_arr.splice(0,1);
             counts--;
         }
-        getMaterialHeatNo($('#rmw_no').val());
+        //getMaterialHeatNo($('#rmw_no').val());
         makeJODetailsList(joDetails_arr);
         if ($('#tbl_jo_details_body > tr').length < 1) {
             $('#tbl_jo_details_body').html('<tr id="no_data">'+
@@ -735,6 +735,7 @@ $(function () {
 
         var materials;
         var param = {
+            sc_id: $(this).attr('data-dataid'),
             sc_no: $(this).attr('data-sc_no'),
             prod_code: $(this).attr('data-prod_code'),
             description: $(this).attr('data-description'),
@@ -743,6 +744,7 @@ $(function () {
 
         arr_items.push(param);
 
+        $('#sc_id').val($(this).attr('data-dataid'));
         $('#item_count').val($(this).attr('data-count'));
         $('#sc_no').val($(this).attr('data-sc_no'));
         $('#prod_code').val($(this).attr('data-prod_code'));
@@ -1375,6 +1377,7 @@ function getMaterialHeatNo(withdrawal_slip_no,prod_code,state) {
                     material_heat_no: mat.heat_no,
                     rmw_issued_qty:  mat.rmw_issued_qty,
                     material_code: mat.mat_code,
+                    material_used: mat.description,
                     standard_material_used: mat.standard_material_used,
                     lot_no: mat.lot_no,
                     blade_consumption: '',
@@ -1814,7 +1817,7 @@ function makeMaterialsDataTable(arr) {
                     if (x.count !== '') {
                         indx = x.count;
                     }
-                    return "<input type='text' data-count='"+indx+"' name='material_used[]' id='material_used_"+indx+"' class='form-control form-control-sm material_used' value='"+x.description+"' readonly/>" +
+                    return "<input type='text' data-count='"+indx+"' name='material_used[]' id='material_used_"+indx+"' class='form-control form-control-sm material_used' value='"+x.material_used+"' readonly/>" +
                     "<div id='material_used_" + indx +"_feedback' class='material_used__feedback'></div>";
                 }, searchable: false, sortable: false, width: "20.14%" 
             },
@@ -2281,6 +2284,7 @@ function saveMaterials() {
         rmw_no: $('#rmw_no').val(),
         ship_date: $('#ship_date').val(),
         sc_no: $('#sc_no').val(),
+        sc_id: $('#sc_id').val(),
         prod_code: $('#prod_code').val(),
         description: $('#code_description').val(),
         quantity: $('#back_order_qty').val(),
@@ -2297,16 +2301,17 @@ function saveMaterials() {
         var total = 0;
 
         for(var i = 0; i < input.length; i++){
-            sched_qty += parseFloat($(input[i]).val());
+            sched_qty += (isNaN(parseFloat($(input[i]).val())))? 0 :  parseFloat($(input[i]).val());
         }
         $('#td_item_' + $('#item_count').val()).html(sched_qty + "<input type='hidden' "+
                     "id='sched_qty_item_"+$('#item_count').val()+"' "+
                     "class='form-control form-control-sm sched_qty_item' name='sched_qty_item[]' "+
                     "value='"+sched_qty+"'>");
 
-        var sched_item = $('.sched_qty_item');
-        for(var i = 0; i < sched_item.length; i++){
-            total += parseFloat($(sched_item[i]).val());
+        var sched_item_input = $('.sched_qty_item');
+        for(var i = 0; i < sched_item_input.length; i++){
+            var sched_item = (isNaN(parseFloat($(sched_item_input[i]).val())))? 0 :  parseFloat($(sched_item_input[i]).val());
+            total += sched_item;
         }
 
         $('#total_sched_qty').val(total)
@@ -2338,6 +2343,8 @@ function getMaterials(param, handleData) {
         dataType: 'JSON',
         data: param
     }).done(function(data, textStatus, xhr) {
+
+        console.log(data);
         
         handleData(data);
     }).fail(function(xhr, textStatus, errorThrown) {

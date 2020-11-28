@@ -124,6 +124,7 @@
                                     <i class="fa fa-search"></i>
                                 </button>
                             </div>
+                            <input type="hidden" class="clear" name="sc_id" id="sc_id">
                             <input type="hidden" class="form-control clear" name="item_count" id="item_count">
                             <input type="hidden" class="form-control clear" name="sc_no" id="sc_no">
                             <input type="hidden" class="form-control clear" name="prod_code" id="prod_code">
