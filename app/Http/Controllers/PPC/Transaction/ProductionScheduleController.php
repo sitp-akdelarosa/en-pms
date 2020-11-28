@@ -262,6 +262,7 @@ class ProductionScheduleController extends Controller
 
             $jo_sum = new PpcJoDetailsSummary();
             $jo_sum->jo_no = $jocode;
+            $jo_sum->status = 0;
             $jo_sum->total_sched_qty = $bom->sched_qty;
             $jo_sum->rmw_no = (isset($bom->rmw_no))? $bom->rmw_no : '';
             $jo_sum->create_user = Auth::user()->id;

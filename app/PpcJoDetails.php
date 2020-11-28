@@ -34,7 +34,10 @@ class PpcJoDetails extends Model
 					'cut_length',
 					'cut_width',
 					'mat_length',
-					'mat_weight'
+					'mat_weight',
+					'upd_inv_id',
+					'size',
+					'cancelled'
     			];
 
     public function jo_summary()
