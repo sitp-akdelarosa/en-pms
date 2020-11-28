@@ -16,6 +16,7 @@ use App\PpcPreTravelSheetProducts;
 use App\PpcPreTravelSheetProcess;
 use App\ProdTravelSheet;
 use App\PpcJoTravelSheet;
+use App\PpcJoDetailsSummary;
 use App\PpcJoDetails;
 use App\ProdTravelSheetProcess;
 use App\AdminSettingIso;
@@ -53,219 +54,66 @@ class TravelSheetController extends Controller
         $jo_details = [];
         switch ($req->status) {
             case 1:
-                $status = 'AND ts.status IS NULL';
+                $status = 'AND `status` IS NULL';
                 break;
             case 2:
-                $status = 'AND ts.status = 1'; // 
+                $status = 'AND `status` = 1'; // 
                 break;
             case 3:
-                $status = 'AND ts.status = 2';
+                $status = 'AND `status` = 2';
                 break;  
             case 5:
-                $status = 'AND ts.status = 5';
+                $status = 'AND `status` = 5';
                 break;   
             default:
                 $status = '';
                 break;
         }
         if (isset($req->fromvalue)) {
-                $from = PpcJoTravelSheet::select('id')
-                            ->where('jo_no', 'like', '%'.$req->fromvalue.'%')
-                            ->first();
-                $to =  PpcJoTravelSheet::select('id')
-                            ->where('jo_no', 'like', '%'.$req->tovalue.'%')
-                            ->first();
-                if (isset($from) && isset($to))
-                {
-                    $FROM = $from->id;
-                    $TO = $to->id;
+            $from = PpcJoDetailsSummary::select('id')
+                        ->where('jo_no', 'like', '%'.$req->fromvalue.'%')
+                        ->first();
+            $to =  PpcJoDetailsSummary::select('id')
+                        ->where('jo_no', 'like', '%'.$req->tovalue.'%')
+                        ->first();
+            if (isset($from) && isset($to))
+            {
+                $FROM = $from->id;
+                $TO = $to->id;
 
-                    if($req->tovalue == ''){
-                        $TO = $FROM;
-                    }
+                if($req->tovalue == ''){
+                    $TO = $FROM;
                 }
-
-                $data = DB::table('ppc_jo_travel_sheets as jt')
-                        ->leftJoin('ppc_pre_travel_sheets as ts', 'ts.jo_no','=','jt.jo_no')
-                        ->leftjoin('ppc_product_codes as pc', 'jt.prod_code', '=', 'pc.product_code')
-                        ->leftjoin('admin_assign_production_lines as pl', 'pl.product_line', '=', 'pc.product_type')
-                        ->where('jt.create_user' ,Auth::user()->id)
-                        ->where('pl.user_id' ,Auth::user()->id)
+            }
+            
+            $data = DB::table('v_jo_list')
+                        ->where('user_id', Auth::user()->id)
+                        ->whereBetween('jo_summary_id', [$FROM, $TO])
                         ->whereRaw("1=1 ".$status)
-                        ->where('jt.status' , '!=',3)
-                        ->whereBetween('jt.id', [$FROM, $TO])
-                        ->orderBy('jt.jo_no','desc')
-                        ->groupBy(
-                            'jt.jo_summary_id',
-                            // 'ts.id',
-                            'ts.qty_per_sheet',
-                            'ts.iso_code',
-                            'jt.jo_no',
-                            'jt.sc_no',
-                            'jt.prod_code',
-                            'ts.issued_qty',
-                            'ts.ship_date',
-                            'jt.description',
-                            'ts.issued_qty',
-                            'jt.material_used',
-                            'jt.material_heat_no',
-                            'jt.created_at',
-                            'ts.status')
-                        ->select(
-                            DB::raw("jt.jo_summary_id as idJO"),
-                            DB::raw("ts.qty_per_sheet as qty_per_sheet"),
-                            DB::raw("ts.iso_code as iso_code"),
-                            DB::raw("IFNULL(ts.id,'') as id"),
-                            DB::raw("jt.jo_no as jo_no"),
-                            DB::raw("jt.sc_no as sc_no"),
-                            DB::raw("ts.ship_date as ship_date"),
-                            DB::raw("ts.remarks as remarks"),
-                            DB::raw("jt.prod_code as product_code"),
-                            DB::raw("ifnull(pc.code_description,jt.description) as description"),
-                            DB::raw("SUM(jt.order_qty) as back_order_qty"),
-                            DB::raw("SUM(jt.sched_qty) as sched_qty"),
-                            DB::raw("IFNULL(ts.issued_qty,0) as issued_qty"),
-                            DB::raw("jt.material_used as material_used"),
-                            DB::raw("jt.material_heat_no as material_heat_no"),
-                            DB::raw("DATE_FORMAT(jt.created_at,'%Y-%m-%d %H:%i:%s') AS created_at"),
-                            DB::raw("IFNULL(ts.status,0) as status")
-                        )->get();
+                        ->get();
 
-                foreach ($data as $key => $dt) {
-                    array_push($jo_details, [
-                        'qty_per_sheet' => $dt->qty_per_sheet,
-                        'iso_code' => $dt->iso_code,
-                        'id' => $dt->id,
-                        'idJO' => $dt->idJO,
-                        'jo_no' => $dt->jo_no,
-                        'sc_no' => $dt->sc_no,
-                        'product_code' => $dt->product_code,
-                        'description' => $dt->description,
-                        'back_order_qty' => $dt->back_order_qty,
-                        'sched_qty' => $dt->sched_qty,
-                        'issued_qty' => $dt->issued_qty,
-                        'ship_date' => $dt->ship_date,
-                        'remarks' => (is_null($dt->remarks))? '' : $dt->remarks,
-                        'material_used' => $dt->material_used,
-                        'material_heat_no' => $dt->material_heat_no,
-                        'created_at' => $dt->created_at,
-                        'status' => $dt->status
-                    ]);
-                }
-
-                
-              
-                $data = DB::table('ppc_jo_travel_sheets as jt')
-                        ->leftJoin('ppc_pre_travel_sheets as ts', 'ts.jo_no','=','jt.jo_no')
-                        ->leftjoin('ppc_product_codes as pc', 'jt.prod_code', '=', 'pc.product_code')
-                        ->leftjoin('admin_assign_production_lines as pl', 'pl.product_line', '=', 'pc.product_type')
-                        ->where('pl.user_id' ,Auth::user()->id)
-                        ->where('jt.create_user', '!=', Auth::user()->id)
-                        ->whereBetween('jt.id', [$FROM, $TO])
-                        ->whereRaw("1=1 ".$status)
-                        ->where('jt.status' , '!=',3)
-                        ->orderBy('jt.jo_no','desc')
-                        ->groupBy(
-                            'jt.jo_summary_id',
-                            // 'ts.id',
-                            'ts.qty_per_sheet',
-                            'ts.iso_code',
-                            'jt.jo_no',
-                            'jt.sc_no',
-                            'jt.prod_code',
-                            'jt.description',
-                            'ts.issued_qty',
-                            'jt.material_used',
-                            'jt.material_heat_no',
-                            'jt.created_at',
-                            'ts.status')
-                        ->select(
-                            DB::raw("jt.jo_summary_id as idJO"),
-                            DB::raw("ts.qty_per_sheet as qty_per_sheet"),
-                            DB::raw("ts.iso_code as iso_code"),
-                            DB::raw("IFNULL(ts.id,'') as id"),
-                            DB::raw("jt.jo_no as jo_no"),
-                            DB::raw("jt.sc_no as sc_no"),
-                            DB::raw("jt.prod_code as product_code"),
-                            DB::raw("ifnull(pc.code_description,jt.description) as description"),
-                            DB::raw("SUM(jt.order_qty) as back_order_qty"),
-                            DB::raw("SUM(jt.sched_qty) as sched_qty"),
-                            DB::raw("IFNULL(ts.issued_qty,0) as issued_qty"),
-                            DB::raw("jt.material_used as material_used"),
-                            DB::raw("jt.material_heat_no as material_heat_no"),
-                            DB::raw("DATE_FORMAT(jt.created_at,'%Y-%m-%d %H:%i:%s') AS created_at"),
-                            DB::raw("IFNULL(ts.status,0) as status")
-                        )->get();
-
-                foreach ($data as $key => $dt) {
-                    array_push($jo_details, [
-                        'qty_per_sheet' => $dt->qty_per_sheet,
-                        'iso_code' => $dt->iso_code,
-                        'id' => $dt->id,
-                        'idJO' => $dt->idJO,
-                        'jo_no' => $dt->jo_no,
-                        'sc_no' => $dt->sc_no,
-                        'product_code' => $dt->product_code,
-                        'description' => $dt->description,
-                        'back_order_qty' => $dt->back_order_qty,
-                        'sched_qty' => $dt->sched_qty,
-                        'issued_qty' => $dt->issued_qty,
-                        'ship_date' => $dt->ship_date,
-                        'remarks' => (is_null($dt->remarks))? '' : $dt->remarks,
-                        'material_used' => $dt->material_used,
-                        'material_heat_no' => $dt->material_heat_no,
-                        'created_at' => $dt->created_at,
-                        'status' => $dt->status
-                    ]);
-                }
+            foreach ($data as $key => $dt) {
+                array_push($jo_details, [
+                    'qty_per_sheet' => $dt->qty_per_sheet,
+                    'iso_code' => $dt->iso_code,
+                    'id' => $dt->travel_sheet_id,
+                    'idJO' => $dt->jo_summary_id,
+                    'jo_no' => $dt->jo_no,
+                    'sc_no' => $dt->sc_no,
+                    'product_code' => $dt->product_code,
+                    'description' => $dt->description,
+                    'back_order_qty' => $dt->back_order_qty,
+                    'sched_qty' => $dt->sched_qty,
+                    'issued_qty' => $dt->issued_qty,
+                    'ship_date' => $dt->ship_date,
+                    'remarks' => (is_null($dt->remarks))? '' : $dt->remarks,
+                    'material_used' => $dt->material_used,
+                    'material_heat_no' => $dt->material_heat_no,
+                    'created_at' => $dt->updated_at,
+                    'status' => $dt->status
+                ]);
+            }
         }else{
-            // $data = DB::table('ppc_jo_travel_sheets as jt')
-            //         ->leftJoin('ppc_pre_travel_sheets as ts', 'ts.jo_no','=','jt.jo_no')
-            //         ->leftjoin('ppc_product_codes as pc', 'jt.prod_code', '=', 'pc.product_code')
-            //         ->leftjoin('admin_assign_production_lines as pl', 'pl.product_line', '=', 'pc.product_type')
-            //         ->where('pl.user_id' ,Auth::user()->id)
-            //         ->where('jt.create_user' , Auth::user()->id)
-            //         ->whereRaw("1=1 ".$status)
-            //         ->orderBy('jt.jo_no','desc')
-            //         ->groupBy(
-            //             'jt.jo_summary_id',
-            //             // 'ts.id',
-            //             'ts.qty_per_sheet',
-            //             'ts.iso_code',
-            //             'jt.jo_no',
-            //             'jt.sc_no',
-            //             'jt.prod_code',
-            //             'jt.description',
-            //             'ts.issued_qty',
-            //             'ts.ship_date',
-            //             'ts.remarks',
-            //             'jt.material_used',
-            //             'jt.material_heat_no',
-            //             'jt.order_qty',
-            //             'jt.sched_qty',
-            //             'jt.created_at',
-            //             'ts.status')
-            //         ->select(
-            //             DB::raw("jt.jo_summary_id as idJO"),
-            //             DB::raw("ts.qty_per_sheet as qty_per_sheet"),
-            //             DB::raw("ts.iso_code as iso_code"),
-            //             DB::raw("ts.ship_date as ship_date"),
-            //             DB::raw("ts.remarks as remarks"),
-            //             DB::raw("IFNULL(ts.id,'') as id"),
-            //             DB::raw("jt.jo_no as jo_no"),
-            //             DB::raw("jt.sc_no as sc_no"),
-            //             DB::raw("jt.prod_code as product_code"),
-            //             DB::raw("ifnull(pc.code_description,jt.description) as description"),
-            //             DB::raw("jt.order_qty as back_order_qty"),
-            //             DB::raw("jt.sched_qty as sched_qty"),
-            //             // DB::raw("SUM(jt.order_qty) as back_order_qty"),
-            //             // DB::raw("SUM(jt.sched_qty) as sched_qty"),
-            //             DB::raw("IFNULL(ts.issued_qty,0) as issued_qty"),
-            //             DB::raw("jt.material_used as material_used"),
-            //             DB::raw("jt.material_heat_no as material_heat_no"),
-            //             DB::raw("DATE_FORMAT(jt.created_at,'%Y-%m-%d %H:%i:%s') AS created_at"),
-            //             DB::raw("IFNULL(ts.status,0) as status")
-            //         )->get();
 
             $data = DB::table('v_jo_list')
                     ->where('user_id', Auth::user()->id)->get();
@@ -557,7 +405,7 @@ class TravelSheetController extends Controller
                     ]);
                 }
 
-                PpcJoTravelSheet::where('jo_no' , $req->jo_no)->update(['status' => 1 ]);
+                PpcJoDetailsSummary::where('jo_no' , $req->jo_no)->update(['status' => 1 ]);
                 
                 $this->saveProdTravelSheet($req->jo_no,$req->iso_no);
             }
