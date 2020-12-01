@@ -229,18 +229,20 @@ foreach ($user_accesses as $user_access){
                             <table class="table table-sm table-striped table-bordered nowrap" style="width:100%" id="tbl_travel_sheet">
                                 <thead class="thead-dark">
                                     <tr>
-                                        <th ></th>
-                                        <th >Job Order No.</th>
-                                        <th >SC No.</th>
-                                        <th >Product Code</th>
-                                        <th >Description</th>
-                                        <th >Order Qty.</th>
-                                        <th >Sched Qty.</th>
-                                        <th >Issued Qty.</th>
-                                        <th >Material Used</th>
-                                        <th >Material Heat No.</th>
-                                        <th >Status</th>
-                                        <th >Update Date</th>
+                                        <th></th>
+                                        <th>Job Order No.</th>
+                                        <th>SC No.</th>
+                                        <th>Product Code</th>
+                                        <th>Description</th>
+                                        <th>Order Qty.</th>
+                                        <th>Sched Qty.</th>
+                                        <th>Issued Qty.</th>
+                                        <th>Withdrawal No.</th>
+                                        <th>Material Used</th>
+                                        <th>Material Heat No.</th>
+                                        <th>Lot No.</th>
+                                        <th>Status</th>
+                                        <th>Update Date</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbl_jo_details_body"></tbody>
