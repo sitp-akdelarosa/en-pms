@@ -436,22 +436,22 @@ class TravelSheetController extends Controller
         ProdTravelSheet::where('jo_no',$jo_no)->delete();
 
         $travel_sheet = DB::table('ppc_pre_travel_sheet_products as tsp')
-                            ->join('ppc_jo_travel_sheets as jts','tsp.jo_no','=','jts.jo_no')
+                            ->join('v_jo_list as ts','tsp.jo_no','=','ts.jo_no')
                             ->where('tsp.jo_no',$jo_no)
                             ->select(
                                 DB::raw('tsp.pre_travel_sheet_id as id'),
                                 DB::raw('tsp.prod_code as prod_code'),
                                 DB::raw('tsp.issued_qty_per_sheet as issued_qty'),
                                 DB::raw('tsp.jo_sequence as jo_sequence'),
-                                DB::raw('jts.jo_no as jo_no'),
+                                DB::raw('ts.jo_no as jo_no'),
                                 DB::raw('tsp.sc_no as sc_no'),
-                                DB::raw('jts.description as description'),
-                                DB::raw('jts.order_qty as order_qty'),
-                                DB::raw('jts.sched_qty as sched_qty'),
-                                DB::raw('jts.material_used as material_used'),
-                                DB::raw('jts.material_heat_no as material_heat_no'),
-                                DB::raw('jts.lot_no as prod_heat_no'),
-                                DB::raw("IF(LEFT(jts.prod_code,1) = 'Z','Finish','Semi-Finish') as type")
+                                DB::raw('ts.description as description'),
+                                DB::raw('ts.back_order_qty as order_qty'),
+                                DB::raw('ts.sched_qty as sched_qty'),
+                                DB::raw('ts.material_used as material_used'),
+                                DB::raw('ts.material_heat_no as material_heat_no'),
+                                DB::raw('ts.lot_no as prod_heat_no'),
+                                DB::raw("IF(LEFT(ts.product_code,1) = 'Z','Finish','Semi-Finish') as type")
                             )
                             ->get();
 
