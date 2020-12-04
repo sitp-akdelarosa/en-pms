@@ -27,7 +27,7 @@ Echo.channel('travel-sheet')
 Echo.channel('notification')
 	.listen('Notify', function(e) {
 		var noti = e.notification;
-		msg('A','success');
+		msg('You have Notification.','success');
 		$.each(noti, function(i, x) {
 			if (x.to == $('meta[name=user_id]').attr('content')) {
 				getUnreadNotification();

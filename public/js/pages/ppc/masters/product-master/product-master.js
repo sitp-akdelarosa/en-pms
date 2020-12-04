@@ -1613,6 +1613,7 @@ function delete_product(checkboxClass,deleteURL) {
 		$('#btn_save').html('<i class="fa fa-floppy-o"></i> Save');
 
 	} else {
+		$('.loadingOverlay').hide();
 		msg("Please select at least 1 item.", "failed");
 	}
 

@@ -27,7 +27,6 @@ foreach ($user_accesses as $user_access){
             <li><a class="active" href="#production_summary" data-toggle="tab">Production Summary</a></li>
             <li><a href="#jo_details" data-toggle="tab">JO Details</a></li>
             <li><a href="#travel_sheet" data-toggle="tab">J.O. Details List</a></li>
-            
         </ul>
         <div class="tab-content">
 
@@ -67,22 +66,62 @@ foreach ($user_accesses as $user_access){
 
             <div class="tab-pane" id="jo_details">
                 <div class="row">
-                    <div class="col-md-2 pull-right">
+                    <div class="col-md-3">
                         <div class="input-group input-group-sm mb-3">
                             <div class="input-group-prepend">
-                                <span class="input-group-text">Status</span>
+                                <span class="input-group-text">Ship Date</span>
                             </div>
-                            <select class="form-control" name="status" id="status">
-                                <option value="">New</option>
-                                
-                                <option value="scheduled">Scheduled</option>
-                            </select>
+                            <input type="date" class="form-control validate clear" name="ship_date" id="ship_date">
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="input-group input-group-sm mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Withdrawal Slip No.</span>
+                            </div>
+                            <input type="text" class="form-control clear" name="rmw_no" id="rmw_no">
+                            <div class="input-group-append">
+                                <button class="btn btn-sm bg-blue" id="btn_search_withdrawal">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                            <input type="hidden" class="clear" name="sc_id" id="sc_id">
+                            <input type="hidden" class="form-control clear" name="item_count" id="item_count">
+                            <input type="hidden" class="form-control clear" name="sc_no" id="sc_no">
+                            <input type="hidden" class="form-control clear" name="prod_code" id="prod_code">
+                            <input type="hidden" class="form-control clear" name="code_description" id="code_description">
+                            <input type="hidden" class="form-control clear" name="back_order_qty" id="back_order_qty">
                         </div>
                     </div>
                 </div>
-
-                <div class="row justify-content-center mb-15">
+                
+                <div class="row mb-15">
                     <div class="col-md-8">
+                        <div class="table-reponsive">
+                            <table class="table table-sm table-bordered table-striped nowrap" style="width:100%" id="tbl_materials">
+                                <thead class="thead-dark">
+                                    <th></th>
+                                    <th>Sched Qty</th>
+                                    <th>Heat No.</th>
+                                    <th>Withdrawal Qty.(PCS)</th>
+                                    <th>Material Used</th>
+                                    <th>Lot No.</th>
+                                    <th>Blade Consumption</th>
+                                    <th>Cut Weight</th>
+                                    <th>Cut Length</th>
+                                    <th>Cut Width</th>
+                                    <th>Mat. Length</th>
+                                    <th>Mat. Std. Weight</th>
+                                    <th>Assign Qty</th>
+                                    <th>Remaining Qty</th>
+                                </thead>
+                                <tbody id="tbl_materials_body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
                         
                         <div class="table-reponsive">
                             <table class="table table-sm table-bordered table-striped nowrap" style="width:100%" id="tbl_jo_details">
@@ -108,11 +147,7 @@ foreach ($user_accesses as $user_access){
                     <div class="row justify-content-center mb-15">
                         <div class="col-md-4">
 
-                            <div class="form-group row">
-                                <div class="col-sm-12">
-                                    <p><input type="checkbox" class="table-checkbox" id="is_same" checked> Same In:Material Heat No. , Material Used and Lot No.</p>
-                                </div>
-                            </div>
+                            
 
                             <div class="form-group row">
                                 <div class="col-sm-12">

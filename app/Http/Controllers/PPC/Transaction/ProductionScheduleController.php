@@ -287,8 +287,6 @@ class ProductionScheduleController extends Controller
             $jo_no .= $com.$jo_sum->jo_no;
         }
 
-        
-
         foreach ($arr_jo as $key => $jo) {
             $details = DB::table('temp_save_boms')->where([
                             ['ref_id', '=', $jo['ref_id']], 
@@ -315,7 +313,7 @@ class ProductionScheduleController extends Controller
                     if (strpos($rmwd->sc_no, $dt->sc_no) === false) {
                         PpcRawMaterialWithdrawalDetails::where('id', $dt->rmwd_id)
                             ->where('create_user', Auth::user()->id)
-                            ->update(['sc_no' => $dt->sc_no . $Coma . $rmwd->sc_no]);
+                            ->increment('assigned_qty', $dt->assign_qty, ['sc_no' => $dt->sc_no . $Coma . $rmwd->sc_no]);
                     }
                 }
 
@@ -504,12 +502,20 @@ class ProductionScheduleController extends Controller
         ];
 
         $rmw = DB::table('ppc_raw_material_withdrawal_infos')
-                    ->select('id')->where('trans_no',$req->rmw_no)->first();
+                    ->select('id','status')->where('trans_no',$req->rmw_no)->first();
 
         $with_rmw = '';
         $materials = [];
 
         if (count((array)$rmw) > 0) {
+            if ($rmw->status !== 'CONFIRMED') {
+                $data = [
+                    'msg' => 'Withdrawal Slip # '.$req->rmw_no.' is not yet confirmed or it was cancelled.',
+                    'status' => 'failed',
+                    'materials' => []
+                ];
+                return response()->json($data);
+            } 
             $with_rmw = " AND rmwi.trans_no = '".$req->rmw_no."'";
 
             $heat_no = [];
@@ -580,7 +586,9 @@ class ProductionScheduleController extends Controller
                                     inner join ppc_material_codes as pmc
                                     on pmc.material_code = pui.item_code
 
-                                    WHERE rmw.issued_qty <> 0 AND rmwi.`status` <> 'UNCONFIRMED' AND apl.user_id = ".Auth::user()->id.$with_rmw."
+                                    WHERE rmw.issued_qty <> 0 AND rmwi.`status` <> 'UNCONFIRMED' 
+                                    AND apl.user_id = ".Auth::user()->id." 
+                                    AND rmwi.trans_no = '".$req->rmw_no."'
                                     group by rmwi.trans_no,
                                         rmw.trans_id,
                                         pui.id,
@@ -602,9 +610,18 @@ class ProductionScheduleController extends Controller
             
         } else {
             $pw = DB::table('ppc_product_withdrawal_infos')
-                    ->select('id')->where('trans_no',$req->rmw_no)->first();
+                    ->select('id','status')->where('trans_no',$req->rmw_no)->first();
 
             if (count((array)$pw) > 0) {
+                if ($pw->status !== 'CONFIRMED') {
+                    $data = [
+                        'msg' => 'Withdrawal Slip # '.$req->rmw_no.' is not yet confirmed or it was cancelled.',
+                        'status' => 'failed',
+                        'materials' => []
+                    ];
+                    return response()->json($data);
+                } 
+
                 $heat_no = [];
 
                 $materials = DB::select("SELECT pwi.trans_no,
@@ -694,10 +711,22 @@ class ProductionScheduleController extends Controller
                     ];
                 } else {
                     foreach ($materials as $key => $material) {
-                        $exists = PpcJoDetails::where('rmw_id', $material->rmw_id)
-                                                ->where('sched_qty',$material->rmw_issued_qty)
-                                                ->count();
-                        if ($exists < 1) {
+                        $jo = DB::table('ppc_jo_details as jd')
+                                    ->select(
+                                        DB::raw("jd.rmw_id as rmw_id"), 
+                                        DB::raw("rmwd.issued_qty as issued_qty"), 
+                                        DB::raw("sum(jd.assign_qty) as assign_qty"),
+                                        DB::raw("case
+                                                    when rmwd.issued_qty <= sum(jd.assign_qty) then 1
+                                                    else 0
+                                                end as scheduled")
+                                    )
+                                    ->join('ppc_raw_material_withdrawal_details as rmwd','rmwd.id','=','jd.rmw_id')
+                                    ->where('jd.rmw_id', $material->rmw_id)
+                                    ->groupBy('jd.rmw_id','rmwd.issued_qty')
+                                    ->first();
+
+                        //if ($jo->scheduled == 0) {
                             array_push($heat_no,[
                                 'heat_no' => $material->heat_no,
                                 'uom' => $material->uom, 
@@ -724,7 +753,7 @@ class ProductionScheduleController extends Controller
                                 'cut_width' => $material->cut_width,
                                 'mat_code' => $material->mat_code
                             ]);
-                        }
+                        //}
                     }
 
                     $data = [

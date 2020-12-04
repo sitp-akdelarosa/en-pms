@@ -458,7 +458,7 @@ class ProductionOutputController extends Controller
                             ->leftJoin('ppc_product_codes as pc','pc.product_code','=','ts.prod_code')
                             ->where('ts.jo_sequence','=',$jo_sequence)
                             // ->where('ts.jo_sequence','like',$jo_sequence.'%')
-                            ->where('ts.status','!=', 3)
+                            //->where('ts.status','!=', 3)
                             // ->whereIn('p.div_code',$div_codes)
                             ->select(
                                 DB::raw("p.travel_sheet_id as travel_sheet_id"),

@@ -116,6 +116,62 @@ $(function () {
   $(document).on('shown.bs.modal', function () {
     $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
   });
+  $('body').on('keydown', '.mat_validate', function (e) {
+    var self = $(this),
+        form = self.parents('form:eq(0)'),
+        focusable,
+        next;
+
+    if (e.keyCode == 40) {
+      focusable = form.find('.usr_ctrl').filter(':visible');
+      next = focusable.eq(focusable.index(this) + 1);
+
+      if (next.is(":disabled")) {
+        next = focusable.eq(focusable.index(this) + 2);
+      }
+
+      if (next.length) {
+        next.focus();
+      }
+
+      return false;
+    }
+
+    if (e.keyCode == 38) {
+      focusable = form.find('.usr_ctrl').filter(':visible');
+      next = focusable.eq(focusable.index(this) - 1);
+
+      if (next.is(":disabled")) {
+        next = focusable.eq(focusable.index(this) - 2);
+      }
+
+      if (next.length) {
+        next.focus();
+      }
+
+      return false;
+    }
+
+    if (e.keyCode === 13) {
+      focusable = form.find('.usr_ctrl').filter(':visible');
+      next = focusable.eq(focusable.index(this));
+
+      if (next.length) {
+        switch (e.target.type) {
+          case "submit":
+            next.form.submit();
+            break;
+
+          default:
+            next.click();
+        }
+
+        next.focus();
+      }
+
+      return false;
+    }
+  });
   $('#tbl_prod_sum_body').on('change', '.check_item_prod_sum', function (e) {
     e.preventDefault();
 
@@ -229,19 +285,6 @@ $(function () {
     } //console.log(joDetails_arr);
 
   });
-  $('#jono').on('change', function () {
-    $('.check_item_prod_sum').prop('checked', false);
-
-    if ($(this).val() == "") {
-      $(".check_item_prod_sum").prop("disabled", true);
-      clear();
-    } else {
-      $(".check_item_prod_sum").prop("disabled", false);
-    }
-
-    getTables();
-  });
-  $("#status").on('change', changestatus);
   $('#tbl_jo_details_body').on('click', '.remove_jo_details', function () {
     var count = $(this).attr('data-count');
     var id = $(this).attr('data-dataid');
@@ -1208,6 +1251,7 @@ function initializePage() {
   });
   checkAllCheckboxesInTable('.check-all_prod_sum', '.check_item');
   makeJODetailsList(joDetails_arr);
+  makeMaterialsDataTable([]);
   TravelSheetDataTable(getTravelSheetURL, {
     _token: token
   });
@@ -1216,45 +1260,6 @@ function initializePage() {
   $('#btn_check_over_issuance_div').hide();
   $('#btn_edit_div').show();
   $('#btn_cancel_div').hide();
-}
-
-function changestatus() {
-  if ($('#status').val() == "") {
-    $('#status').val("");
-    $('#tbl_jo_details').dataTable().fnClearTable();
-    $('#tbl_jo_details').dataTable().fnDestroy();
-    joDetails_arr = [];
-    makeJODetailsList(joDetails_arr);
-    var showform = document.getElementById('formbaba').style.display = 'inline';
-    schedmode = false;
-    joDetails_arr = [];
-    $('#sched_qty').attr('disabled', false);
-    $('.material_heat_no').attr('disabled', false);
-    $('.material_used').attr('disabled', false);
-    $('.lot_no').attr('disabled', false);
-    $(".remove_jo_details").css("visibility", "visible");
-    clear();
-  } else {
-    var hideform = document.getElementById('formbaba').style.display = 'none';
-    getTablesAll();
-    schedmode = true;
-    joDetails_arr = [];
-    $('.check_item_prod_sum').prop('checked', false);
-  }
-}
-
-function ProdSummaries(PRODURL) {
-  $('.loadingOverlay').show();
-  $.ajax({
-    url: PRODURL,
-    type: 'GET',
-    dataType: 'JSON'
-  }).done(function (data, textStatus, xhr) {
-    ProdSummariesTable(data);
-  }).fail(function (xhr, textStatus, errorThrown) {
-    $('.loadingOverlay').hide();
-    ErrorMsg(xhr);
-  }).always(function () {});
 }
 
 function ProdSummariesTable(ajax_url, object_data) {
@@ -1337,11 +1342,19 @@ function makeJODetailsList(arr) {
     bLengthChange: false,
     paging: false,
     order: [[1, 'asc']],
-    //scrollX: true,
+    searching: false,
     columns: [{
       data: function data(x) {
         var totalsched_qty = x.totalsched_qty == null || x.totalsched_qty == 'null' ? 0 : x.totalsched_qty;
-        return "<button type='button' class='btn btn-sm bg-blue open_materials' data-count='" + x.count + "' " + "data-id='" + x.id + "' data-dataid='" + x.dataid + "' " + "data-sc_no='" + x.sc_no + "' data-prod_code='" + x.prod_code + "' " + "data-description='" + x.description + "' data-quantity='" + x.quantity + "' " + "data-ship_date='" + x.ship_date + "' " + ">" + "<i class='fa fa-edit'></i>" + "</button>" + "<button type='button' class='btn btn-sm bg-red remove_jo_details' data-count='" + x.count + "' data-id='" + x.id + "' data-dataid='" + x.dataid + "'>" + "<i class='fa fa-times'></i>" + "</button>" + "<input type='hidden' name='dataid[]' value='" + x.dataid + "'>" + "<input type='hidden' id='totalsched_qty" + x.count + "' name='totalsched_qty[]' value='" + totalsched_qty + "'>";
+        return "<button type='button' class='btn btn-sm bg-red remove_jo_details' data-count='" + x.count + "' data-id='" + x.id + "' data-dataid='" + x.dataid + "'>" + "<i class='fa fa-times'></i>" + "</button>" + // "<button type='button' class='btn btn-sm bg-blue open_materials' data-count='"+x.count+"' " +
+        //         "data-id='"+x.id+"' data-dataid='"+x.dataid+"' " +
+        //         "data-sc_no='"+x.sc_no+"' data-prod_code='"+x.prod_code+"' " +
+        //         "data-description='"+x.description+"' data-quantity='"+x.quantity+"' " +
+        //         "data-ship_date='"+x.ship_date+"' " +
+        //     ">"+
+        //     "<i class='fa fa-edit'></i>"+
+        // "</button>" +
+        "<input type='hidden' name='dataid[]' value='" + x.dataid + "'>" + "<input type='hidden' id='totalsched_qty" + x.count + "' name='totalsched_qty[]' value='" + totalsched_qty + "'>";
       },
       searchable: false,
       orderable: false,
@@ -1582,110 +1595,6 @@ function validateTable() {
   return "true";
 }
 
-function getTables() {
-  var datas = $("#jono").val();
-  $.ajax({
-    url: getjotables,
-    type: 'GET',
-    datatype: "json",
-    loadonce: true,
-    data: {
-      _token: token,
-      JOno: datas
-    }
-  }).done(function (data, textStatus, xhr) {
-    console.log(data);
-    var totalsched = 0;
-    joDetails_arr = [];
-    MainData = data;
-    EditMode = true;
-
-    if (data.length > 0) {
-      for (var x = 0; x < data.length; x++) {
-        joDetails_arr.push({
-          count: x,
-          dataid: data[x].id,
-          id: data[x].id,
-          sc_no: data[x].sc_no,
-          prod_code: data[x].product_code,
-          description: data[x].description,
-          quantity: data[x].back_order_qty,
-          sched_qty: data[x].sched_qty,
-          totalsched_qty: 0,
-          material_used: data[x].material_used,
-          material_heat_no: data[x].material_heat_no,
-          uom: data[x].uom,
-          lot_no: data[x].lot_no,
-          inv_id: data[x].inv_id,
-          rmw_id: data[x].rmw_id,
-          heat_no_id: data[x].heat_no_id,
-          ship_date: data[x].ship_date
-        });
-        totalsched += data[x].sched_qty;
-        $('#created_by').val(data[x].create_user);
-        $('#created_date').val(data[x].created_at);
-        $('#updated_by').val(data[x].update_user);
-        $('#updated_date').val(data[x].updated_at);
-      }
-
-      $('#rmw_no').val(data[0].rmw_no);
-      $('#total_sched_qty').val(totalsched);
-      makeJODetailsList(joDetails_arr);
-      getMaterialHeatNo(data[0].rmw_no, 'edit');
-      var showform = document.getElementById('formbaba').style.display = 'inline';
-      TravelSheetDataTable(travel_Sheet);
-    } else {
-      msg('No J.O. details found.', 'failed');
-    }
-  }).fail(function (xhr, textStatus, errorThrown) {
-    ErrorMsg(xhr);
-  });
-}
-
-function getTablesAll() {
-  $.ajax({
-    url: getjotablesALL,
-    type: 'GET',
-    datatype: "json",
-    loadonce: true,
-    data: {
-      _token: token
-    },
-    success: function success(returnData) {
-      for (var x = 0; x < returnData.length; x++) {
-        joDetails_arr.push({
-          count: x,
-          id: x,
-          sc_no: returnData[x].sc_no,
-          prod_code: returnData[x].product_code,
-          description: returnData[x].description,
-          quantity: returnData[x].back_order_qty,
-          sched_qty: returnData[x].sched_qty,
-          material_used: returnData[x].material_used,
-          material_heat_no: returnData[x].material_heat_no,
-          uom: returnData[x].uom,
-          lot_no: returnData[x].lot_no,
-          inv_id: returnData[x].inv_id,
-          rmw_id: returnData[x].rmw_id,
-          heat_no_id: returnData[x].heat_no_id,
-          ship_date: returnData[x].ship_date
-        });
-      }
-
-      makeJODetailsList(joDetails_arr);
-      $('.sched_qty').attr('disabled', true);
-      $('.material_heat_no').attr('disabled', true);
-      $('.material_used').attr('disabled', true);
-      $('.lot_no').attr('disabled', true);
-      $(".remove_jo_details").css("visibility", "hidden");
-      getMaterialHeatNoEdit();
-    },
-    error: function error(xhr, textStatus, errorThrown) {
-      msg(errorThrown, textStatus);
-    }
-  });
-}
-
 function TravelSheetDataTable(ajax_url, object_data) {
   var table = $('#tbl_travel_sheet').DataTable();
   table.clear();
@@ -1870,8 +1779,6 @@ function makeMaterialsDataTable(arr) {
     data: arr,
     searching: false,
     lengthChange: false,
-    scrollY: '300px',
-    scrollX: true,
     paging: false,
     columns: [{
       data: function data(x) {
@@ -1881,7 +1788,7 @@ function makeMaterialsDataTable(arr) {
           indx = x.count;
         }
 
-        return "<button type='button' class='btn btn-sm bg-red btn_remove_material' data-count='" + indx + "'>" + "<i class='fa fa-times'></i>" + "</button>" + "<input type='hidden' data-count='" + indx + "' name='upd_inv_id[]' id='upd_inv_id_" + indx + "' class='upd_inv_id' value='" + x.upd_inv_id + "'/>" + "<input type='hidden' data-count='" + indx + "' name='inv_id[]' id='inv_id_" + indx + "' class='inv_id' value='" + x.inv_id + "'/>" + "<input type='hidden' data-count='" + indx + "' name='rmwd_id[]' id='rmwd_id_" + indx + "' class='rmwd_id' value='" + x.rmwd_id + "'/>" + "<input type='hidden' data-count='" + indx + "' name='size[]' id='size_" + indx + "' class='size' value='" + x.size + "'/>" + "<input type='hidden' data-count='" + indx + "' name='computed_per_piece[]' id='computed_per_piece_" + indx + "' class='computed_per_piece' value='" + x.computed_per_piece + "'/>" + "<input type='hidden' data-count='" + indx + "' name='material_type[]' id='material_type_" + indx + "' class='material_type' value='" + x.material_type + "'/>" + "<input type='hidden' data-count='" + indx + "' name='count[]' id='count_" + indx + "' class='count' value='" + indx + "'/>";
+        return "<button type='button' class='btn btn-sm bg-red btn_remove_material' data-count='" + indx + "'>" + "<i class='fa fa-times'></i>" + "</button>" + "<input type='hidden' data-count='" + indx + "' name='upd_inv_id[]' id='upd_inv_id_" + indx + "' class='upd_inv_id' value='" + x.upd_inv_id + "'/>" + "<input type='hidden' data-count='" + indx + "' name='inv_id[]' id='inv_id_" + indx + "' class='inv_id' value='" + x.inv_id + "'/>" + "<input type='hidden' data-count='" + indx + "' name='rmwd_id[]' id='rmwd_id_" + indx + "' class='rmwd_id' value='" + x.rmwd_id + "'/>" + "<input type='hidden' data-count='" + indx + "' name='size[]' id='size_" + indx + "' class='size' value='" + x.size + "'/>" + "<input type='hidden' data-count='" + indx + "' name='computed_per_piece[]' id='computed_per_piece_" + indx + "' class='computed_per_piece' value='" + x.computed_per_piece + "'/>" + "<input type='hidden' data-count='" + indx + "' name='material_type[]' id='material_type_" + indx + "' class='material_type' value='" + x.material_type + "'/>" + "<input type='hidden' data-count='" + indx + "' name='count[]' id='count_" + indx + "' class='count' value='" + indx + "'/>" + "<input type='hidden' data-count='" + indx + "' name='material_code[]' id='material_code_" + indx + "' class='material_code' value='" + x.material_code + "'/>";
       },
       searchable: false,
       sortable: false,
@@ -1894,7 +1801,7 @@ function makeMaterialsDataTable(arr) {
           indx = x.count;
         }
 
-        return "<input type='number' step='0.01' data-count='" + indx + "' name='sched_qty[]' id='sched_qty_" + indx + "' class='form-control form-control-sm mat_validate sched_qty' value='" + x.sched_qty + "'/>" + "<div id='sched_qty_" + indx + "_feedback' class='sched_qty__feedback'></div>";
+        return "<input type='number' step='1' data-count='" + indx + "' name='sched_qty[]' id='sched_qty_" + indx + "' class='form-control form-control-sm mat_validate sched_qty' value='" + x.sched_qty + "'/>" + "<div id='sched_qty_" + indx + "_feedback' class='sched_qty__feedback'></div>";
       },
       searchable: false,
       sortable: false,
@@ -1912,10 +1819,7 @@ function makeMaterialsDataTable(arr) {
       searchable: false,
       sortable: false,
       width: "13.14%"
-    }, // { data: function(x) {
-    //     return "<select name='material_heat_no[]' id='material_heat_no_"+indx+"' class='form-control form-control-sm material_heat_no' value='"+x.material_heat_no+"'></select>";
-    // }, searchable: false, sortable: false },
-    {
+    }, {
       data: function data(x) {
         var indx = count;
 
@@ -2090,6 +1994,7 @@ function makeMaterialsDataTable(arr) {
       });
     },
     initComplete: function initComplete() {
+      $("#tbl_materials").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
       $('#tbl_materials_wrapper > .dt-buttons > .btn').removeClass('btn-secondary');
       $('#tbl_materials_wrapper > .dt-buttons > .btn').addClass('bg-green');
       $('.dataTables_info').hide(); // $('#add_material_row').click();

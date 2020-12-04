@@ -1347,21 +1347,82 @@ function showDescription() {
 }
 
 function delete_material(checkboxClass,deleteURL) {
+	$('.loadingOverlay').show();
 	var chkArray = [];
 	$(checkboxClass+":checked").each(function() {
-		chkArray.push($(this).val());
+		chkArray.push($(this).attr('data-id'));
 	});
 
 	if (chkArray.length > 0) {
-		confirm_delete(chkArray,token,deleteURL,true,'tbl_material_code',matCodeListURL,material_dataColumn);
+		swal({
+	        title: "Are you sure?",
+	        text: "You will not be able to recover your data!",
+	        type: "warning",
+	        showCancelButton: true,
+	        confirmButtonColor: "#f95454",
+	        confirmButtonText: "Yes",
+	        cancelButtonText: "No",
+	        closeOnConfirm: true,
+	        closeOnCancel: false
+	    }, function(isConfirm){
+	        if (isConfirm) {
+	        	$.ajax({
+	        		url: deleteURL,
+	        		type: 'POST',
+	        		dataType: 'JSON',
+	        		data: {
+	        			_token:token,
+	        			id: chkArray
+	        		},
+	        	}).done(function(data, textStatus, xhr) {
+	        		msg(data.msg,data.status)
+	                materialCodesDataTable();
+	        	}).fail(function(xhr, textStatus, errorThrown) {
+	        		ErrorMsg(xhr);
+	        	}).always(function() {
+	        		$('.loadingOverlay').hide();
+	        	});
+	        } else {
+				$('.loadingOverlay').hide();
+				$('#tbl_material_code .dt-checkboxes-select-all').click();
+	            swal("Cancelled", "Your data is safe and not deleted.");
+	        }
+	    });
+
+
 		clearCode();
+		$('#material_code').prop('readonly', true);
+		$('#code_description').prop('readonly', true);
+		$('#material_id').val('');
+		$('#material_code').val('');
+		$('#code_description').val('');
+		$('#material_type').val('');
 		$('#btn_save').html('<i class="fa fa-floppy-o"></i> Save');
+
 	} else {
-		msg("Please select at least 1 item." , "failed");
+		$('.loadingOverlay').hide();
+		msg("Please select at least 1 item.", "failed");
 	}
 
-	$('.check_all_product').prop('checked',false);
+	$('#tbl_material_code .dt-checkboxes-select-all input[type=checkbox]').prop('checked',false);
 }
+
+// function delete_material(checkboxClass,deleteURL) {
+// 	var chkArray = [];
+// 	$(checkboxClass+":checked").each(function() {
+// 		chkArray.push($(this).val());
+// 	});
+
+// 	if (chkArray.length > 0) {
+// 		confirm_delete(chkArray,token,deleteURL,true,'tbl_material_code',matCodeListURL,material_dataColumn);
+// 		clearCode();
+// 		$('#btn_save').html('<i class="fa fa-floppy-o"></i> Save');
+// 	} else {
+// 		msg("Please select at least 1 item." , "failed");
+// 	}
+
+// 	$('.check_all_product').prop('checked',false);
+// }
 
 function autoAssignSelectBox(code) {
 	if (code != '') {
