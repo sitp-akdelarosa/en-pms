@@ -49,7 +49,7 @@ class CuttingScheduleController extends Controller
 
         return DataTables::of($data)
 						->addColumn('action', function($data) {
-							return "<input type='checkbox' class='table-checkbox chk_jo' value='".$data->jo_no."' />";
+							return "<input type='checkbox' class='table-checkbox chk_jo' value='".$data->jo_no."' data-jo='".$data->jo_no."' />";
                         })
                         ->editColumn('status', function($data) {
                             switch ($data->status) {

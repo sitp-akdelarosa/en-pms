@@ -141,25 +141,24 @@ $(function () {
   $('#btn_save').on('click', function () {
     var jo_no = [];
     var table = $('#tbl_jo').DataTable();
+    var error = 0;
 
     for (var x = 0; x < table.context[0].aoData.length; x++) {
       var DataRow = table.context[0].aoData[x];
 
       if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
         var checkbox = table.context[0].aoData[x].anCells[0].firstChild;
-        jo_no.push($(checkbox).val());
+        jo_no.push($(checkbox).attr('data-jo'));
       }
     }
 
     if ($('#leader').val() == '') {
       msg('Please select a Leader input.', 'failed');
-    }
-
-    if ($('#iso_control_no').val() == '') {
+    } else if ($('#iso_control_no').val() == '') {
       msg('Please select a ISO Control # input.', 'failed');
-    }
-
-    if (jo_no.length > 0) {
+    } else if (jo_no.length < 1) {
+      msg('Please select at least 1 item of data.', 'failed');
+    } else {
       var param = {
         _token: token,
         withdrawal_slip: $('#withdrawal_slip_no').val(),
@@ -171,8 +170,6 @@ $(function () {
 
       };
       saveCuttSched(param);
-    } else {
-      msg('Please select at least 1 item of data.', 'failed');
     }
   });
   $('#btn_print_preview').on('click', function () {
@@ -184,14 +181,23 @@ $(function () {
 
       if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
         var checkbox = table.context[0].aoData[x].anCells[0].firstChild;
-        jo_no.push($(checkbox).val());
+        jo_no.push($(checkbox).attr('data-jo'));
       }
     }
 
     jo_string = jo_no.join();
-    param = "?iso_control_no=" + $('#iso_control_no').val() + "&&withdrawal_slip=" + $('#withdrawal_slip_no').val() + "&&jo_no=" + jo_string + "&&leader=" + $('#leader').val() + "&&date_issued=" + $('#date_issued').val() + "&&prepared_by=" + $('#prepared_by').val() + "&&type=";
-    var print_preview = pdfCuttingScheduleURL + param;
-    window.open(print_preview, '_tab');
+
+    if ($('#leader').val() == '') {
+      msg('Please select a Leader input.', 'failed');
+    } else if ($('#iso_control_no').val() == '') {
+      msg('Please select a ISO Control # input.', 'failed');
+    } else if (jo_no.length < 1) {
+      msg('Please select at least 1 item of data.', 'failed');
+    } else {
+      param = "?iso_control_no=" + $('#iso_control_no').val() + "&&withdrawal_slip=" + $('#withdrawal_slip_no').val() + "&&jo_no=" + jo_string + "&&leader=" + $('#leader').val() + "&&date_issued=" + $('#date_issued').val() + "&&prepared_by=" + $('#prepared_by').val() + "&&type=";
+      var print_preview = pdfCuttingScheduleURL + param;
+      window.open(print_preview, '_tab');
+    }
   });
   $('#tbl_cut_sched').on('click', '.btn_reprint', function () {
     var tbl_cut_sched = $('#tbl_cut_sched').DataTable();
