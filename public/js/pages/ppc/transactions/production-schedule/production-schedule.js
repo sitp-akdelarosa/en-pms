@@ -110,6 +110,8 @@ $(function () {
     OrdersDataTable($(this).attr('action'), search_param);
   });
   $('#btn_search_withdrawal').on('click', function () {
+    $('#btn_save').show();
+    $('#btn_cancel').show();
     MaterialsDataTable(getMaterialsURL, {
       _token: token,
       rmw_no: $('#rmw_no').val()
@@ -117,6 +119,8 @@ $(function () {
   });
   $('#rmw_no').on('keydown', function (e) {
     if (e.keyCode === 13) {
+      $('#btn_save').show();
+      $('#btn_cancel').show();
       MaterialsDataTable(getMaterialsURL, {
         _token: token,
         rmw_no: $(this).val()
@@ -289,25 +293,16 @@ $(function () {
         error++;
       }
     });
-    var count = 0;
-    var row = '';
-    $('.rmw_qty').each(function (i, x) {
-      var rmw_issued_qty = parseFloat($(x).val());
-      var assign_qty = parseFloat($('#assign_qty_' + count).val());
-
-      if (assign_qty > rmw_issued_qty) {
-        over_assign_error++;
-        var com = '';
-
-        if (row !== '') {
-          com = ', ';
-        }
-
-        row += com + (count + 1);
-      }
-
-      count++;
+    var assign_qty = 0;
+    var rmw_issued_qty = parseFloat($('#rmw_qty').val());
+    $('.assign_qty').each(function (i, x) {
+      assign_qty += parseFloat($(x).val());
     });
+
+    if (assign_qty > rmw_issued_qty) {
+      over_assign_error++;
+    }
+
     var count_over = 0;
     var row_over = '';
     $('.sched_qty_feedback').each(function (i, x) {
@@ -328,7 +323,7 @@ $(function () {
     if (error > 0) {
       msg('Please fill out all input field in the table.', 'warning');
     } else if (over_assign_error > 0) {
-      msg('Assign qty is greater than Scheduled qty in row: ' + row + '.', 'warning');
+      msg('Assign qty is greater than Scheduled qty.', 'warning');
     } else if ($('#rmw_no').val() == "" && $('#rmw_no').val() == null) {
       msg('Please fill out Withdrawal Slip input field.', 'warning');
     } else if (over_issuance_error > 0) {
@@ -406,12 +401,49 @@ $(function () {
     }, status);
     $('#modal_jo_details').modal('show');
   });
+  $('#tbl_travel_sheet tbody').on('click', ' .btn_cancel_jo', function () {
+    var tbl_travel_sheet = $('#tbl_travel_sheet').DataTable();
+    var data = tbl_travel_sheet.row($(this).parents('tr')).data();
+    data._token = token;
+    swal({
+      title: "Are you sure to cancel?",
+      text: "This will cancel the J.O. #: " + data.jo_no + ".",
+      type: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#f95454",
+      confirmButtonText: "Yes",
+      cancelButtonText: "No",
+      closeOnConfirm: true,
+      closeOnCancel: true
+    }, function (isConfirm) {
+      if (isConfirm) {
+        CancelTravelSheet(data); //swal("Cancelled!", "J.O. # "+jo_no+" was successfully cancelled.");
+      }
+    });
+  });
+  $('#btn_cancel').on('click', function () {
+    $('#rmw_no').val('');
+    $('#btn_save').hide();
+    $('#btn_cancel').hide();
+    OrdersDataTable(ordersURL, {
+      _token: token
+    });
+    MaterialsDataTable(getMaterialsURL, {
+      _token: token,
+      rmw_no: $('#rmw_no').val()
+    });
+    TravelSheetDataTable(getTravelSheetURL, {
+      _token: token
+    });
+  });
 });
 
 function initializePage() {
   check_permission(code_permission, function (output) {
     if (output == 1) {}
   });
+  $('#btn_save').hide();
+  $('#btn_cancel').hide();
   OrdersDataTable(ordersURL, {
     _token: token
   });
@@ -1172,7 +1204,7 @@ function TravelSheetDataTable(ajax_url, object_data) {
     },
     serverSide: true,
     processing: true,
-    order: [[11, 'desc']],
+    order: [[13, 'desc']],
     columns: [{
       data: 'action',
       name: 'action',
@@ -1257,27 +1289,6 @@ function TravelSheetDataTable(ajax_url, object_data) {
     initComplete: function initComplete() {
       $('.loadingOverlay-modal').hide();
     }
-  });
-  $('#tbl_travel_sheet tbody').on('click', ' .btn_cancel_jo', function () {
-    var tbl_travel_sheet = $('#tbl_travel_sheet').DataTable();
-    var data = tbl_travel_sheet.row($(this).parents('tr')).data();
-    data._token = token;
-    console.log(data);
-    swal({
-      title: "Are you sure to cancel?",
-      text: "This will cancel the J.O. #: " + data.jo_no + ".",
-      type: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#f95454",
-      confirmButtonText: "Yes",
-      cancelButtonText: "No",
-      closeOnConfirm: true,
-      closeOnCancel: true
-    }, function (isConfirm) {
-      if (isConfirm) {
-        CancelTravelSheet(data); //swal("Cancelled!", "J.O. # "+jo_no+" was successfully cancelled.");
-      }
-    });
   });
 }
 

@@ -108,44 +108,7 @@ foreach ($user_accesses as $user_access){
 
                 <form id="formbaba">
                     <div class="row justify-content-center mb-15">
-                        <div class="col-md-4">
-
-                            
-
-                            <div class="form-group row">
-                                <div class="col-sm-12">
-                                    <div class="input-group input-group-sm">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">Total Schedule Quantity:</span>
-                                        </div>
-                                        <input type="number" step="0.01" class="form-control clear" name="total_sched_qty" id="total_sched_qty" readonly value="0">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <div class="col-sm-12">
-                                    <div class="input-group input-group-sm">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">Total Heat No. Qty.:</span>
-                                        </div>
-                                        <input type="number" class="form-control clear" name="total_heat_qty" id="total_heat_qty" readonly value="0">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <div class="col-sm-12">
-                                    <div class="input-group input-group-sm">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">Job Order No.:</span>
-                                        </div>
-                                        <input list="jo_no" name="jo_no" class="form-control clear" id="jono" readonly>
-                                        <datalist id="jo_no"></datalist>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        
 
                         <div class="col-md-4">
                             <div class="form-group row">
@@ -169,7 +132,9 @@ foreach ($user_accesses as $user_access){
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
+                        <div class="col-md-4">
                             <div class="form-group row">
                                 <div class="col-sm-12">
                                     <div class="input-group input-group-sm">
@@ -276,7 +241,6 @@ foreach ($user_accesses as $user_access){
         // var getjotables = "<?php echo e(url('/transaction/production-schedule/getjotables')); ?>";
         // var getjotablesALL = "<?php echo e(url('/transaction/production-schedule/getjoALL')); ?>";
         // var getTravelSheetURL = "<?php echo e(url('/transaction/production-schedule/getTravelSheet')); ?>";
-        // var cancelTravelSheetURL = "<?php echo e(url('/transaction/production-schedule/cancelTravelSheet')); ?>";
         // var OverIssuanceURL = "<?php echo e(url('/transaction/production-schedule/over-issuance')); ?>";
         // var SaveMaterialsURL = "<?php echo e(url('/transaction/production-schedule/save-materials')); ?>";
         // var getMaterialsURL = "<?php echo e(url('/transaction/production-schedule/get-materials')); ?>";

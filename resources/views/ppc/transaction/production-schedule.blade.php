@@ -127,13 +127,13 @@ foreach ($user_accesses as $user_access){
 
                 <form id="formbaba">
                     <div class="row justify-content-center mb-15">
-                        <div class="col-md-4">
+                        {{-- <div class="col-md-4">
 
-                            {{-- <div class="form-group row">
+                            <div class="form-group row">
                                 <div class="col-sm-12">
                                     <p><input type="checkbox" class="table-checkbox" id="is_same" checked> Same In:Material Heat No. , Material Used and Lot No.</p>
                                 </div>
-                            </div> --}}
+                            </div>
 
                             <div class="form-group row">
                                 <div class="col-sm-12">
@@ -168,7 +168,7 @@ foreach ($user_accesses as $user_access){
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
 
                         <div class="col-md-4">
                             <div class="form-group row">
@@ -192,7 +192,9 @@ foreach ($user_accesses as $user_access){
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
+                        <div class="col-md-4">
                             <div class="form-group row">
                                 <div class="col-sm-12">
                                     <div class="input-group input-group-sm">
@@ -303,7 +305,6 @@ foreach ($user_accesses as $user_access){
         // var getjotables = "{{ url('/transaction/production-schedule/getjotables') }}";
         // var getjotablesALL = "{{ url('/transaction/production-schedule/getjoALL') }}";
         // var getTravelSheetURL = "{{ url('/transaction/production-schedule/getTravelSheet') }}";
-        // var cancelTravelSheetURL = "{{ url('/transaction/production-schedule/cancelTravelSheet') }}";
         // var OverIssuanceURL = "{{ url('/transaction/production-schedule/over-issuance') }}";
         // var SaveMaterialsURL = "{{ url('/transaction/production-schedule/save-materials') }}";
         // var getMaterialsURL = "{{ url('/transaction/production-schedule/get-materials') }}";
