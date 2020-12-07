@@ -942,7 +942,7 @@ function TravelSheetDataTable(ajax_url, object_data) {
             { data: 'action', name: 'action', orderable: false, searchable: false, width: '3.14%' },
             { data: 'jo_no', name: 'jo_no', width: '7.14%' },
             { data: 'sc_no', name: 'sc_no', width: '7.14%' },
-            { data: 'product_code', name: 'prod_code', width: '7.14%' },
+            { data: 'product_code', name: 'product_code', width: '7.14%' },
             { data: 'description', name: 'description', width: '11.14%' },
             { data: 'back_order_qty', name: 'order_qty', width: '7.14%' },
             { data: 'sched_qty', name: 'sched_qty', width: '7.14%' },
