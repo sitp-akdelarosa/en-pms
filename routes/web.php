@@ -417,17 +417,24 @@ Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', '
 		Route::group(['prefix' => 'cutting-schedule'], function () {
 			Route::get('/', 'PPC\Transaction\CuttingScheduleController@index')
 				->name('transaction.cutting-schedule');
-
-			Route::get('/materials', 'PPC\Transaction\CuttingScheduleController@getJoDetailsCut')
-				->name('transaction.cutting-schedule.materials');
-			Route::get('/prodline', 'PPC\Transaction\CuttingScheduleController@getProdline')
-				->name('transaction.cutting-schedule.prodline');
-			Route::get('/cut-sched-details', 'PPC\Transaction\CuttingScheduleController@getCutSchedDetails')
-				->name('transaction.cutting-schedule.cut-sched-details');
-			Route::post('/save', 'PPC\Transaction\CuttingScheduleController@save')
-				->name('transaction.cutting-schedule.save');
+			Route::get('/jo-list', 'PPC\Transaction\CuttingScheduleController@JOList')
+				->name('transaction.cutting-schedule.jo-list');
 			Route::get('/cut-sched-leader', 'PPC\Transaction\CuttingScheduleController@getLeader')
 				->name('transaction.cutting-schedule.cut-sched-leader');
+			Route::POST('/save-cutt-sched', 'PPC\Transaction\CuttingScheduleController@saveCuttingSched')
+				->name('transaction.cutting-schedule.save-cutt-sched');
+			Route::get('/cut-sched-list', 'PPC\Transaction\CuttingScheduleController@getCutSchedList')
+				->name('transaction.cutting-schedule.cut-sched-list');
+
+			// Route::get('/materials', 'PPC\Transaction\CuttingScheduleController@getJoDetailsCut')
+			// 	->name('transaction.cutting-schedule.materials');
+			// Route::get('/prodline', 'PPC\Transaction\CuttingScheduleController@getProdline')
+			// 	->name('transaction.cutting-schedule.prodline');
+			// Route::get('/cut-sched-details', 'PPC\Transaction\CuttingScheduleController@getCutSchedDetails')
+			// 	->name('transaction.cutting-schedule.cut-sched-details');
+			// Route::post('/save', 'PPC\Transaction\CuttingScheduleController@save')
+			// 	->name('transaction.cutting-schedule.save');
+			
 		});
 	});
 

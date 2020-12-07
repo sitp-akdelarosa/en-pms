@@ -554,7 +554,7 @@ class ProductionScheduleController extends Controller
                                     return 'Ready to Issue';
                                     break;
                                 case 2:
-                                    return 'On Production';
+                                    return 'In Production';
                                     break;
                                 case 3:
                                     return 'Cancelled';

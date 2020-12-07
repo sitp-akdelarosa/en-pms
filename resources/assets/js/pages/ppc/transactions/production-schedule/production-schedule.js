@@ -955,7 +955,7 @@ function TravelSheetDataTable(ajax_url, object_data) {
             { data: 'updated_at', name: 'updated_at', width: '7.14%' },
         ],
         createdRow: function(row, data, dataIndex) {
-            if (data.status == 'On Production') {
+            if (data.status == 'In Production') {
                 $(row).css('background-color', 'rgb(121 204 241)'); // BLUE
 				$(row).css('color', '#000000');
             }

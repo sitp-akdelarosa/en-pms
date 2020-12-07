@@ -6,6 +6,7 @@ use App\AdminSettingIso;
 use App\Http\Controllers\HelpersController;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use PDF;
 
 class PDFController extends Controller
@@ -51,41 +52,69 @@ class PDFController extends Controller
 
 		// $iso = AdminSettingIso::where('iso_code',$req->iso_control_no)->first();
 
-		foreach ($req->no as $key => $no) {
-			array_push(
-				$cut_data,
-				(object)array(
-					'id'=>$req->id[$key],
-					'jo_no' => $req->no[$key],
-					'p_alloy' => $req->p_alloy[$key],
-					'p_size' => $req->p_size[$key],
-					'p_item' => $req->p_item[$key],
-					'p_class' => $req->p_class[$key],
-					'cut_weight' => $req->cut_weight[$key],
-					'cut_length' => $req->cut_length[$key],
-					'cut_width' => $req->cut_width[$key],
-					'schedule' => $req->schedule[$key],
-					'qty_needed_inbox' => $req->qty_needed_inbox[$key],
-					'sc_no' => $req->sc_no[$key],
-					'jo_qty' => $req->jo_qty[$key],
-					'needed_qty' => $req->needed_qty[$key],
-					'qty_cut' => '0',
-					'plate_qty' => $req->issued_qty[$key],
-					'item' => $req->item[$key],
-					'size' => $req->size[$key],
-					'material_heat_no' => $req->mat_heat_no[$key],
-					'lot_no' => $req->lot_no[$key],
-					'supplier_heat_no' => $req->supplier_heat_no[$key],
-					'material_used' => $req->material_used[$key]
-				)
-			);
-		}
+		$jo_no_arr = explode(',',$req->jo_no);
+
+		$cut_data = DB::table('v_jo_list_for_cutting_sched')
+						->select(
+							// DB::raw("id as id"),
+							DB::raw("jo_no as jo_no"),
+							DB::raw("alloy as alloy"),
+							DB::raw("size as size"),
+							DB::raw("item as item"),
+							DB::raw("class as class"),
+							DB::raw("lot_no as lot_no"),
+							DB::raw("sc_no as sc_no"),
+							DB::raw("sched_qty as jo_qty"),
+							DB::raw("cut_weight as cut_weight"),
+							DB::raw("cut_length as cut_length"),
+							DB::raw("cut_width as cut_width"),
+							DB::raw("material_used as material_used"),
+							DB::raw("material_heat_no as material_heat_no"),
+							DB::raw("supplier_heat_no as supplier_heat_no"),
+							DB::raw("assign_qty as qty_needed")
+						)
+						->where('user_id', Auth::user()->id)
+						->where('rmw_no', $req->withdrawal_slip)
+						->whereIn('jo_no',$jo_no_arr)
+						->where('status','<>','3')
+						->get();
+		
+
+		// foreach ($req->no as $key => $no) {
+		// 	array_push(
+		// 		$cut_data,
+		// 		(object)array(
+		// 			'id'=>$req->id[$key],
+		// 			'jo_no' => $req->no[$key],
+		// 			'p_alloy' => $req->p_alloy[$key],
+		// 			'p_size' => $req->p_size[$key],
+		// 			'p_item' => $req->p_item[$key],
+		// 			'p_class' => $req->p_class[$key],
+		// 			'cut_weight' => $req->cut_weight[$key],
+		// 			'cut_length' => $req->cut_length[$key],
+		// 			'cut_width' => $req->cut_width[$key],
+		// 			'schedule' => $req->schedule[$key],
+		// 			'qty_needed_inbox' => $req->qty_needed_inbox[$key],
+		// 			'sc_no' => $req->sc_no[$key],
+		// 			'jo_qty' => $req->jo_qty[$key],
+		// 			'needed_qty' => $req->needed_qty[$key],
+		// 			'qty_cut' => '0',
+		// 			'plate_qty' => $req->issued_qty[$key],
+		// 			'item' => $req->item[$key],
+		// 			'size' => $req->size[$key],
+		// 			'material_heat_no' => $req->mat_heat_no[$key],
+		// 			'lot_no' => $req->lot_no[$key],
+		// 			'supplier_heat_no' => $req->supplier_heat_no[$key],
+		// 			'material_used' => $req->material_used[$key]
+		// 		)
+		// 	);
+		// }
 
 		$leader = DB::table('users')->where('id',$req->leader)->select(DB::raw("CONCAT(firstname,' ',lastname) as fullname"))->first();
 
 		$data = [
 			'date_issued' => $this->_helper->convertDate($req->date_issued, 'F d, Y'),
-			'raw_materials' => (array)$cut_data,
+			'cut_data' => (array)$cut_data,
 			'machine_no' => $req->machine_no,
 			'prepared_by' => $req->prepared_by,
 			'leader' => $leader->fullname,
@@ -125,50 +154,15 @@ class PDFController extends Controller
 		// $jo = [];
 		$cut_data = [];
 
-		// $saved_cutting = DB::table('ppc_cutting_schedule_details')->where('cutt_id', $req->id)->get();
-
-		// foreach ($saved_cutting as $key => $cut) {
-		//     array_push($jo, "'" . $cut->item_no . "'");
-		// }
-
-		// $jos = implode(",", $jo);
-
-		$cut_data = DB::select("SELECT 
-									id,
-									item_no AS jo_no,
-									alloy AS p_alloy,
-									size AS p_size,
-									size AS p_size,
-									item AS p_item,
-									class AS p_class,
-									cut_weight,
-									cut_length,
-									cut_width,
-									schedule,
-									qty_needed_inbox,
-									sc_no,
-									jo_qty,
-									qty_needed AS needed_qty,
-									plate_qty,
-									material_desc_item AS item,
-									material_desc_size AS size,
-									material_desc_heat_no AS material_heat_no,
-									material_desc_lot_no AS lot_no,
-									material_desc_supplier_heat_no AS supplier_heat_no,
-									material_used
-								FROM ppc_cutting_schedule_details 
-								WHERE cutt_id=$req->id");
-		// $cut_data = DB::select("SELECT * FROM vcuttingsched where jo_no in (" . $jos . ")");
-
-		// $cut_data = DB::table('vcuttingsched')->whereIn('jo_no',$jo)->get();
-
-		// return dd($cut_data);
+		$cut_data = DB::table('ppc_cutting_schedule_details')
+						->where('cutt_id', $req->id)
+						->get();
 
 		$iso = AdminSettingIso::where('iso_code', $info->iso_control_no)->first();
 
 		$data = [
 			'date_issued' => $info->date_issued,
-			'raw_materials' => (array) $cut_data,
+			'cut_data' => (array)$cut_data,
 			'machine_no' => $info->machine_no,
 			'prepared_by' => $info->prepared_by,
 			'leader' => $info->leader,

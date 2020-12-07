@@ -23,7 +23,7 @@
 
 <?php $__env->startSection('body'); ?>
 <?php
-$page = sizeof($raw_materials)/ 5;
+$page = sizeof($cut_data)/ 5;
 $page = ceil($page); 
 $countrows = 0;
 
@@ -79,84 +79,23 @@ for ($x = 1; $x <= $page; $x++) {
                 <tbody>
                     <?php $cnt = 1; ?>
 
-                    <?php $__currentLoopData = array_slice($raw_materials,$countrows); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $rm): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <?php
-								
-						$mat_heat_no = $rm->material_heat_no;
-						$sup_heat_no = " / ".$rm->supplier_heat_no;
-						$needed_qty="";
-						$plate_qty="";
-						$dim="";
-
-						$schedule = $rm->schedule;
-						$size = $rm->size;
-						$schedOrSize = "";
-
-						if (!isset($rm->material_heat_no)) {
-							$mat_heat_no ="";
-						}
-						if (!isset($rm->supplier_heat_no) || trim($rm->supplier_heat_no,"") == "undefined") {
-							$sup_heat_no ="";
-						}
-						
-						if (isset($rm->cut_weight)) {
-							$cut = " x ".$rm->cut_weight;
-							if ($rm->cut_weight == "0.00N/A" || $rm->cut_weight == "0.00KG"){
-								$cut = " x ".$rm->cut_length;
-							}
-						}else{
-							$cut = " x ".$rm->cut_length;	
-						}
-						if (trim($schedule) != "" && trim($size) == "") {
-							$schedOrSize = $schedule;
-						}else if(trim($schedule) == "" && trim($size) != ""){
-							$schedOrSize = $size;
-						}else if(trim($schedule) != "" && trim($size) != ""){
-							$schedOrSize = $size." x ".$schedule ;
-						}
-						$mat_description_upper="";
-						$mat_description_lower="";
-						if ($rm->qty_needed_inbox) {
-							if (isset($rm->plate_qty)) {
-								$plate_qty = "<td rowspan='1'>".$rm->plate_qty."</td>";
-								$mat_description_lower="<td rowspan='1'>". $rm->needed_qty ."</td>";
-							}else {
-								$needed_qty = "<td rowspan='2'>".$rm->needed_qty."</td>";
-							}
-							$mat_description_upper .= "<td style='border-right: none;'>". $rm->item ."</td>";
-							$mat_description_upper .= "<td style='border-left: none;'>".$schedOrSize.$cut."</td>";
-						} else {
-							$plate_qty="";
-							$needed_qty = "<td rowspan='2'>".$rm->needed_qty."</td>";
-							$mat_description_upper = "<td colspan='2'>".$schedOrSize.$cut."</td>";
-							$mat_description_lower="";
-						}
-					?>
+                    <?php $__currentLoopData = array_slice($cut_data,$countrows); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $rm): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <tr>
-                        <td height="50px"><?php echo e($rm->jo_no); ?></td>
-                        <td><?php echo e($rm->p_alloy); ?></td>
-                        <td><?php echo e($rm->p_size); ?></td>
-                        <td><?php echo e($rm->p_item); ?></td>
-                        <td><?php echo e($rm->p_class); ?></td>
-                        <td><?php echo e($rm->lot_no); ?></td>
-                        <td><?php echo e($rm->sc_no); ?></td>
-                        <td><?php echo e($rm->jo_qty); ?></td>
-                        <td><?php echo e($rm->cut_weight); ?></td>
-                        <td><?php echo e($rm->cut_length); ?></td>
-                        <td><?php echo e($rm->cut_width); ?></td>
-                        <td><?php echo e($rm->material_used); ?></td>
-                        <td><?php echo e($rm->material_heat_no); ?></td>
-                        <td><?php echo e($rm->supplier_heat_no); ?></td>
-                        <td>
-                            <?php if($rm->qty_needed_inbox !== '' && $rm->qty_needed_inbox !== 0 && !isset($rm->qty_needed_inbox)): ?>
-                                <?php echo e($rm->needed_qty); ?>
-
-                            <?php else: ?>
-                                <?php echo e($rm->needed_qty. '('.$rm->plate_qty.')'); ?>
-
-                            <?php endif; ?>
-                            
-                        </td>
+                        <td height="50px"><?php echo e($rm[0]->jo_no); ?></td>
+                        <td><?php echo e($rm[0]->alloy); ?></td>
+                        <td><?php echo e($rm[0]->size); ?></td>
+                        <td><?php echo e($rm[0]->item); ?></td>
+                        <td><?php echo e($rm[0]->class); ?></td>
+                        <td><?php echo e($rm[0]->lot_no); ?></td>
+                        <td><?php echo e($rm[0]->sc_no); ?></td>
+                        <td><?php echo e($rm[0]->jo_qty); ?></td>
+                        <td><?php echo e($rm[0]->cut_weight); ?></td>
+                        <td><?php echo e($rm[0]->cut_length); ?></td>
+                        <td><?php echo e($rm[0]->cut_width); ?></td>
+                        <td><?php echo e($rm[0]->material_used); ?></td>
+                        <td><?php echo e($rm[0]->material_heat_no); ?></td>
+                        <td><?php echo e($rm[0]->supplier_heat_no); ?></td>
+                        <td><?php echo e($rm[0]->qty_needed); ?></td>
                     </tr>
                     <?php
 						$cnt++;
