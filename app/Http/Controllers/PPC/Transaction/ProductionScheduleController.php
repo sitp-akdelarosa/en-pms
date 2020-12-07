@@ -513,6 +513,9 @@ class ProductionScheduleController extends Controller
         return response()->json($data);
     }
 
+    /**
+     * Get Travel sheet / List of J.O.
+     */
     public function getTravel_sheet(Request $req)
     {
         $data = DB::table('v_jo_list')
@@ -565,6 +568,9 @@ class ProductionScheduleController extends Controller
 						->make(true);
     }
 
+    /**
+     * Cancel Travel sheet / List of J.O.
+     */
     public function CancelTravelSheet(Request $req)
     {
         // 3 = Cancel
@@ -624,6 +630,216 @@ class ProductionScheduleController extends Controller
 
         return response()->json($data);
     }
+
+    /**
+     * Filter Travel sheet / List of J.O.
+     */
+
+    public function filterJO(Request $req)
+    {
+        $srch_date= "";
+        $srch_jo_no = "";
+        $srch_prod_code = "";
+        $srch_sc_no = "";
+        $srch_description = "";
+        $srch_material_used = "";
+        $srch_material_heat_no = "";
+        $srch_status = "";
+
+        if (!is_null($req->srch_jdate_from) && !is_null($req->srch_jdate_to)) {
+            $srch_date = " AND DATE_FORMAT(updated_at, '%Y-%m-%d') BETWEEN '".$req->srch_jdate_from."' AND '".$req->srch_jdate_to."'";
+        }
+
+        if (!is_null($req->srch_jjo_no)) {
+            $srch_jo_no = " AND jo_no = '".$req->srch_jjo_no."'";
+        }
+
+        if (!is_null($req->srch_jprod_code)) {
+            $srch_prod_code = " AND product_code = '".$req->srch_jprod_code."'";
+        }
+
+        if (!is_null($req->srch_jdescription)) {
+            $srch_description = " AND `description` = '".$req->srch_jdescription."'";
+        }
+
+        if (!is_null($req->srch_jmaterial_used)) {
+            $srch_material_used = " AND material_used = '".$req->srch_jmaterial_used."'";
+        }
+
+        if (!is_null($req->srch_jmaterial_heat_no)) {
+            $srch_material_heat_no = " AND material_heat_no = '".$req->srch_jmaterial_heat_no."'";
+        }
+
+        if (!is_null($req->srch_jstatus)) {
+            $srch_status = " AND `status` = '".$req->srch_jstatus."'";
+        }
+
+        $data = DB::table('v_jo_list')
+                    ->where('user_id', Auth::user()->id)
+                    ->whereRaw("user_id = ".Auth::user()->id.$srch_date.
+                        $srch_jo_no.
+                        $srch_prod_code.
+                        $srch_description.
+                        $srch_material_used.
+                        $srch_material_heat_no.
+                        $srch_status
+                    );
+
+        return DataTables::of($data)
+						->addColumn('action', function($data) {
+                            return "<button type='button' class='btn btn-sm bg-blue btn_show_jo'
+                                        data-jo_no='".$data->jo_no."' data-prod_code='".$data->product_code."'
+                                        data-issued_qty='".$data->issued_qty."' title='Edit J.O. Details'
+                                        data-status='".$data->status."' data-sched_qty='".$data->sched_qty."'
+                                        data-qty_per_sheet='".$data->qty_per_sheet."' data-iso_code='".$data->iso_code."'
+                                        data-sc_no='".$data->sc_no."' data-idJO='".$data->jo_summary_id."'
+                                    >
+                                        <i class='fa fa-edit'></i>
+                                    </button>
+                                    <button type='button' class='btn btn-sm bg-red btn_cancel_jo'
+                                        data-jo_no='".$data->jo_no."' data-prod_code='".$data->product_code."'
+                                        data-issued_qty='".$data->issued_qty."' title='Cancel J.O. Details'
+                                        data-status='".$data->status."' data-sched_qty='".$data->sched_qty."'
+                                        data-qty_per_sheet='".$data->qty_per_sheet."' data-iso_code='".$data->iso_code."'
+                                        data-sc_no='".$data->sc_no."' data-idJO='".$data->jo_summary_id."'
+                                    >
+                                        <i class='fa fa-times'></i>
+                                    </button>";
+                        })
+                        ->editColumn('status', function($data) {
+                            switch ($data->status) {
+                                case 0:
+                                    return 'No quantity issued';
+                                    break;
+                                case 1:
+                                    return 'Ready to Issue';
+                                    break;
+                                case 2:
+                                    return 'On Production';
+                                    break;
+                                case 3:
+                                    return 'Cancelled';
+                                    break;
+                                case 5:
+                                    return 'CLOSED';
+                                    break;
+                            }
+                        })
+						->make(true);
+    }
+
+    /**
+     * Delete of J.O. Detail
+     */
+    public function deleteJoDetailItem(Request $req)
+    {
+        $deleted = false;
+        $data = [
+            'msg' => 'Deleting J.O. item has failed.',
+            'status' => 'failed'
+        ];
+
+        $deleted_items = PpcJoDetails::where('id', $req->id)->first();
+
+        if (isset($req->id)) {
+            $deleted = PpcJoDetails::where('id', $req->id)->delete();
+        }
+
+        if ($deleted) {
+            $data = [
+                'msg' => 'J.O. item has successfully deleted.',
+                'status' => 'success'
+            ];
+
+            $this->_audit->insert([
+                'user_type' => Auth::user()->user_type,
+                'module_id' => $this->_moduleID,
+                'module' => 'Production Schedule',
+                'action' => 'deleted SC No. '.$deleted_items->sc_no,
+                'user' => Auth::user()->id,
+                'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
+            ]);
+        }
+
+        return response()->json($data);
+    }
+
+    /**
+     * Edit of J.O. Detail
+     */
+    public function editJoDetailItem(Request $req)
+    {
+        $updated = false;
+        $upd_count = 0;
+
+        $data = [
+            'msg' => 'Updating J.O. Detail item has failed.',
+            'status' => 'failed',
+            'jo_summary_id' => 0
+        ];
+
+        if (isset($req->j_jd_id)) {
+            foreach ($req->j_jd_id as $key => $id) {
+                $updated = DB::table('ppc_jo_details')->where('id',$id)
+                            ->update([
+                                'sc_no' => $req->j_sc_no[$key],
+                                'product_code' => $req->j_prod_code[$key],
+                                'description' => $req->j_description[$key],
+                                'back_order_qty' => $req->j_order_qty[$key],
+                                'sched_qty' => $req->j_sched_qty[$key],
+                                'material_used' => $req->j_material_used[$key],
+                                'material_heat_no' => $req->j_material_heat_no[$key],
+                                'lot_no' => $req->j_lot_no[$key],
+                                'inv_id' => $req->j_inv_id[$key],
+                                'rmw_issued_qty' => $req->j_rmw_issued_qty[$key],
+                                'material_type' => $req->j_material_type[$key],
+                                'computed_per_piece' => $req->j_computed_per_piece[$key],
+                                'rmw_id' => $req->j_rmwd_id[$key],
+                                'heat_no_id' => $req->j_heat_no_id[$key],
+                                'ship_date' => $req->j_ship_date,
+                                'assign_qty' => $req->j_assign_qty[$key],
+                                'remaining_qty' => $req->j_remaining_qty[$key],
+                                'prod_sched_id' => $req->j_prod_sched_id[$key],
+                                'blade_consumption' => $req->j_blade_consumption[$key],
+                                'cut_weight' => $req->j_cut_weight[$key],
+                                'cut_length' => $req->j_cut_length[$key],
+                                'cut_width' => $req->j_cut_width[$key],
+                                'mat_length' => $req->j_mat_length[$key],
+                                'mat_weight' => $req->j_mat_weight[$key],
+                                'upd_inv_id' => $req->j_upd_inv_id[$key],
+                                'size' => $req->j_size[$key],
+                                'update_user' => Auth::user()->id,
+                                'updated_at' => date('Y-m-d H:i:s')
+                                
+                            ]);
+                if ($updated) {
+                    $upd_count++;
+
+                    $this->_audit->insert([
+                        'user_type' => Auth::user()->user_type,
+                        'module_id' => $this->_moduleID,
+                        'module' => 'Production Schedule',
+                        'action' => 'edited SC No. '.$req->j_sc_no[$key],
+                        'user' => Auth::user()->id,
+                        'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
+                    ]);
+                }
+            }
+
+            if ($upd_count > 0) {
+                
+
+                $data = [
+                    'msg' => 'J.O. Detail item has successfully updated.',
+                    'status' => 'success',
+                    'jo_summary_id' => $req->j_jo_summary_id[0]
+                ];
+            }
+        }
+
+        return response()->json($data);
+    }
+
 
     public function excelFilteredData(Request $req)
     {
@@ -731,6 +947,8 @@ class ProductionScheduleController extends Controller
             });
         })->download('xlsx');
     }
+
+    
 
 
 
@@ -1749,202 +1967,7 @@ class ProductionScheduleController extends Controller
         return DataTables::of($data)->make(true);
     }
 
-    public function filterJO(Request $req)
-    {
-        $srch_date= "";
-        $srch_jo_no = "";
-        $srch_prod_code = "";
-        $srch_sc_no = "";
-        $srch_description = "";
-        $srch_material_used = "";
-        $srch_material_heat_no = "";
-        $srch_status = "";
+    
 
-        if (!is_null($req->srch_jdate_from) && !is_null($req->srch_jdate_to)) {
-            $srch_date = " AND DATE_FORMAT(updated_at, '%Y-%m-%d') BETWEEN '".$req->srch_jdate_from."' AND '".$req->srch_jdate_to."'";
-        }
-
-        if (!is_null($req->srch_jjo_no)) {
-            $srch_jo_no = " AND jo_no = '".$req->srch_jjo_no."'";
-        }
-
-        if (!is_null($req->srch_jprod_code)) {
-            $srch_prod_code = " AND product_code = '".$req->srch_jprod_code."'";
-        }
-
-        if (!is_null($req->srch_jdescription)) {
-            $srch_description = " AND `description` = '".$req->srch_jdescription."'";
-        }
-
-        if (!is_null($req->srch_jmaterial_used)) {
-            $srch_material_used = " AND material_used = '".$req->srch_jmaterial_used."'";
-        }
-
-        if (!is_null($req->srch_jmaterial_heat_no)) {
-            $srch_material_heat_no = " AND material_heat_no = '".$req->srch_jmaterial_heat_no."'";
-        }
-
-        if (!is_null($req->srch_jstatus)) {
-            $srch_status = " AND `status` = '".$req->srch_jstatus."'";
-        }
-
-        $data = DB::table('v_jo_list')
-                    ->where('user_id', Auth::user()->id)
-                    ->whereRaw("user_id = ".Auth::user()->id.$srch_date.
-                        $srch_jo_no.
-                        $srch_prod_code.
-                        $srch_description.
-                        $srch_material_used.
-                        $srch_material_heat_no.
-                        $srch_status
-                    );
-
-        return DataTables::of($data)
-						->addColumn('action', function($data) {
-                            return "<button type='button' class='btn btn-sm bg-blue btn_show_jo'
-                                        data-jo_no='".$data->jo_no."' data-prod_code='".$data->product_code."'
-                                        data-issued_qty='".$data->issued_qty."' title='Edit J.O. Details'
-                                        data-status='".$data->status."' data-sched_qty='".$data->sched_qty."'
-                                        data-qty_per_sheet='".$data->qty_per_sheet."' data-iso_code='".$data->iso_code."'
-                                        data-sc_no='".$data->sc_no."' data-idJO='".$data->jo_summary_id."'
-                                    >
-                                        <i class='fa fa-edit'></i>
-                                    </button>
-                                    <button type='button' class='btn btn-sm bg-red btn_cancel_jo'
-                                        data-jo_no='".$data->jo_no."' data-prod_code='".$data->product_code."'
-                                        data-issued_qty='".$data->issued_qty."' title='Cancel J.O. Details'
-                                        data-status='".$data->status."' data-sched_qty='".$data->sched_qty."'
-                                        data-qty_per_sheet='".$data->qty_per_sheet."' data-iso_code='".$data->iso_code."'
-                                        data-sc_no='".$data->sc_no."' data-idJO='".$data->jo_summary_id."'
-                                    >
-                                        <i class='fa fa-times'></i>
-                                    </button>";
-                        })
-                        ->editColumn('status', function($data) {
-                            switch ($data->status) {
-                                case 0:
-                                    return 'No quantity issued';
-                                    break;
-                                case 1:
-                                    return 'Ready to Issue';
-                                    break;
-                                case 2:
-                                    return 'On Production';
-                                    break;
-                                case 3:
-                                    return 'Cancelled';
-                                    break;
-                                case 5:
-                                    return 'CLOSED';
-                                    break;
-                            }
-                        })
-						->make(true);
-    }
-
-    public function deleteJoDetailItem(Request $req)
-    {
-        $deleted = false;
-        $data = [
-            'msg' => 'Deleting J.O. item has failed.',
-            'status' => 'failed'
-        ];
-
-        $deleted_items = PpcJoDetails::where('id', $req->id)->first();
-
-        if (isset($req->id)) {
-            $deleted = PpcJoDetails::where('id', $req->id)->delete();
-        }
-
-        if ($deleted) {
-            $data = [
-                'msg' => 'J.O. item has successfully deleted.',
-                'status' => 'success'
-            ];
-
-            $this->_audit->insert([
-                'user_type' => Auth::user()->user_type,
-                'module_id' => $this->_moduleID,
-                'module' => 'Production Schedule',
-                'action' => 'deleted SC No. '.$deleted_items->sc_no,
-                'user' => Auth::user()->id,
-                'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
-            ]);
-        }
-
-        return response()->json($data);
-    }
-
-    public function editJoDetailItem(Request $req)
-    {
-        $updated = false;
-        $upd_count = 0;
-
-        $data = [
-            'msg' => 'Updating J.O. Detail item has failed.',
-            'status' => 'failed',
-            'jo_summary_id' => 0
-        ];
-
-        if (isset($req->j_jd_id)) {
-            foreach ($req->j_jd_id as $key => $id) {
-                $updated = DB::table('ppc_jo_details')->where('id',$id)
-                            ->update([
-                                'sc_no' => $req->j_sc_no[$key],
-                                'product_code' => $req->j_prod_code[$key],
-                                'description' => $req->j_description[$key],
-                                'back_order_qty' => $req->j_order_qty[$key],
-                                'sched_qty' => $req->j_sched_qty[$key],
-                                'material_used' => $req->j_material_used[$key],
-                                'material_heat_no' => $req->j_material_heat_no[$key],
-                                'lot_no' => $req->j_lot_no[$key],
-                                'inv_id' => $req->j_inv_id[$key],
-                                'rmw_issued_qty' => $req->j_rmw_issued_qty[$key],
-                                'material_type' => $req->j_material_type[$key],
-                                'computed_per_piece' => $req->j_computed_per_piece[$key],
-                                'rmw_id' => $req->j_rmwd_id[$key],
-                                'heat_no_id' => $req->j_heat_no_id[$key],
-                                'ship_date' => $req->j_ship_date,
-                                'assign_qty' => $req->j_assign_qty[$key],
-                                'remaining_qty' => $req->j_remaining_qty[$key],
-                                'prod_sched_id' => $req->j_prod_sched_id[$key],
-                                'blade_consumption' => $req->j_blade_consumption[$key],
-                                'cut_weight' => $req->j_cut_weight[$key],
-                                'cut_length' => $req->j_cut_length[$key],
-                                'cut_width' => $req->j_cut_width[$key],
-                                'mat_length' => $req->j_mat_length[$key],
-                                'mat_weight' => $req->j_mat_weight[$key],
-                                'upd_inv_id' => $req->j_upd_inv_id[$key],
-                                'size' => $req->j_size[$key],
-                                'update_user' => Auth::user()->id,
-                                'updated_at' => date('Y-m-d H:i:s')
-                                
-                            ]);
-                if ($updated) {
-                    $upd_count++;
-
-                    $this->_audit->insert([
-                        'user_type' => Auth::user()->user_type,
-                        'module_id' => $this->_moduleID,
-                        'module' => 'Production Schedule',
-                        'action' => 'edited SC No. '.$req->j_sc_no[$key],
-                        'user' => Auth::user()->id,
-                        'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
-                    ]);
-                }
-            }
-
-            if ($upd_count > 0) {
-                
-
-                $data = [
-                    'msg' => 'J.O. Detail item has successfully updated.',
-                    'status' => 'success',
-                    'jo_summary_id' => $req->j_jo_summary_id[0]
-                ];
-            }
-        }
-
-        return response()->json($data);
-    }
+    
 }

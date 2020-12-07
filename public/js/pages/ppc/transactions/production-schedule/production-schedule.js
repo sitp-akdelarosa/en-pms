@@ -97,6 +97,7 @@ var selected_products = [];
 var selected_material = {};
 var saved_jo_details_arr = [];
 var ref_id = [];
+var materials_data = [];
 initializePage();
 $(function () {
   $('#btn_filter').on('click', function () {
@@ -383,7 +384,7 @@ $(function () {
     var tbl_travel_sheet = $('#tbl_travel_sheet').DataTable();
     var data = tbl_travel_sheet.row($(this).parents('tr')).data();
     var jo_summary_id = data.jo_summary_id;
-    var jo_no = data.jo_summary_id;
+    var jo_no = data.jo_no;
     var status = $(this).attr('data-status');
 
     if (status == 3) {
@@ -435,6 +436,19 @@ $(function () {
     TravelSheetDataTable(getTravelSheetURL, {
       _token: token
     });
+  });
+  $('#btn_save_jo_item').on('click', function () {
+    editJoDetailItem();
+  });
+  $('#btn_jo_filter').on('click', function () {
+    $('.srch-clear').val('');
+    $('#modal_jo_search').modal('show');
+  });
+  $("#frm_search_jo").on('submit', function (e) {
+    e.preventDefault();
+    $('.loadingOverlay-modal').show();
+    var search_param = objectifyForm($(this).serializeArray());
+    TravelSheetDataTable($(this).attr('action'), search_param);
   });
 });
 
@@ -699,6 +713,7 @@ function MaterialsDataTable(ajax_url, object_data) {
       searchable: false,
       width: '10%'
     }],
+    createdRow: function createdRow(row, data, dataIndex) {},
     initComplete: function initComplete() {
       $('.loadingOverlay').hide();
       $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
@@ -1645,6 +1660,139 @@ function CancelTravelSheet(param) {
     ErrorMsg(xhr);
   }).always(function (xhr, textStatus) {
     $('.loadingOverlay').hide();
+  });
+}
+
+function deleteJoDetailItem(id, jo_summary_id) {
+  $.ajax({
+    url: deleteJoDetailItemURL,
+    type: 'POST',
+    dataType: 'JSON',
+    data: {
+      _token: token,
+      id: id
+    }
+  }).done(function (data, textStatus, xhr) {
+    JOdetailsDataTable(getJODetailsURL, {
+      _toke: token,
+      jo_summary_id: jo_summary_id
+    });
+    TravelSheetDataTable(getTravelSheetURL, {
+      _token: token
+    });
+    msg(data.msg, data.status);
+  }).fail(function (xhr, textStatus, errorThrown) {
+    ErrorMsg(xhr);
+  }).always(function (xhr, textStatus) {
+    $('.loadingOverlay-modal').hide();
+  });
+}
+
+function editJoDetailItem() {
+  $('.loadingOverlay-modal').show();
+  var param = {
+    _token: token,
+    j_jd_id: $('input[name="j_jd_id[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_upd_inv_id: $('input[name="j_upd_inv_id[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_inv_id: $('input[name="j_inv_id[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_rmwd_id: $('input[name="j_rmwd_id[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_size: $('input[name="j_size[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_computed_per_piece: $('input[name="j_computed_per_piece[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_material_type: $('input[name="j_material_type[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_sc_no: $('input[name="j_sc_no[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_prod_code: $('input[name="j_prod_code[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_description: $('input[name="j_description[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_order_qty: $('input[name="j_order_qty[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_sched_qty: $('input[name="j_sched_qty[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_material_heat_no: $('input[name="j_material_heat_no[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_rmw_issued_qty: $('input[name="j_rmw_issued_qty[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_material_used: $('input[name="j_material_used[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_lot_no: $('input[name="j_lot_no[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_blade_consumption: $('input[name="j_blade_consumption[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_cut_weight: $('input[name="j_cut_weight[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_cut_length: $('input[name="j_cut_length[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_cut_width: $('input[name="j_cut_width[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_mat_length: $('input[name="j_mat_length[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_mat_weight: $('input[name="j_mat_weight[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_assign_qty: $('input[name="j_assign_qty[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_remaining_qty: $('input[name="j_remaining_qty[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_heat_no_id: $('input[name="j_heat_no_id[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_prod_sched_id: $('input[name="j_prod_sched_id[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_jo_summary_id: $('input[name="j_jo_summary_id[]"]').map(function () {
+      return $(this).val();
+    }).get(),
+    j_ship_date: $('#j_ship_date').val()
+  };
+  $.ajax({
+    url: editJoDetailItemURL,
+    type: 'POST',
+    dataType: 'JSON',
+    data: param
+  }).done(function (data, textStatus, xhr) {
+    JOdetailsDataTable(getJODetailsURL, {
+      _toke: token,
+      jo_summary_id: data.jo_summary_id
+    });
+    TravelSheetDataTable(getTravelSheetURL, {
+      _token: token
+    });
+    msg(data.msg, data.status);
+  }).fail(function (xhr, textStatus, errorThrown) {
+    ErrorMsg(xhr);
+  }).always(function (xhr, textStatus) {
+    $('.loadingOverlay-modal').hide();
   });
 }
 
