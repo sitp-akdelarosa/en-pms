@@ -25,7 +25,7 @@ foreach ($user_accesses as $user_access){
     <div class="nav-tabs-custom">
         <ul class="nav nav-tabs">
             <li><a class="active" href="#production_summary" data-toggle="tab">Production Summary</a></li>
-            <li><a href="#jo_details" data-toggle="tab">JO Details</a></li>
+            <li><a href="#jo_details" data-toggle="tab">JO Details Preparation</a></li>
             <li><a href="#travel_sheet" data-toggle="tab">J.O. Details List</a></li>
         </ul>
         <div class="tab-content">
@@ -43,21 +43,21 @@ foreach ($user_accesses as $user_access){
                 <div class="row justify-content-center">
                     <div class="col-md-10">
                         <div class="table-responsive">
-                            <table class="table table-sm table-hover table-striped table-bordered nowrap" style="width: 100%" id="tbl_prod_sum">
+                            <table class="table table-sm table-hover table-striped table-bordered nowrap" style="width: 100%" id="tbl_orders">
                                 <thead class="thead-dark">
                                     <tr>
-                                        <th width="3%"></th>
-                                        <th width="11%">SC No.</th>
-                                        <th width="11%">Product Code</th>
-                                        <th width="19%">Description</th>
-                                        <th width="11%">Order Qty</th>
-                                        <th width="11%">Sched Qty</th>
-                                        <th width="11%">P.O. No.</th>
-                                        <th width="11%">Status</th>
-                                        <th width="11%">Upload Date</th>
+                                        
+                                        <th>SC No.</th>
+                                        <th>Product Code</th>
+                                        <th>Description</th>
+                                        <th>Order Qty</th>
+                                        <th>Sched Qty</th>
+                                        <th>P.O. No.</th>
+                                        <th>Status</th>
+                                        <th>Upload Date</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tbl_prod_sum_body"></tbody>
+                                <tbody id="tbl_orders_body"></tbody>
                             </table>
                         </div>
                     </div>
@@ -66,14 +66,6 @@ foreach ($user_accesses as $user_access){
 
             <div class="tab-pane" id="jo_details">
                 <div class="row">
-                    <div class="col-md-3">
-                        <div class="input-group input-group-sm mb-3">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">Ship Date</span>
-                            </div>
-                            <input type="date" class="form-control validate clear" name="ship_date" id="ship_date">
-                        </div>
-                    </div>
 
                     <div class="col-md-3">
                         <div class="input-group input-group-sm mb-3">
@@ -86,61 +78,32 @@ foreach ($user_accesses as $user_access){
                                     <i class="fa fa-search"></i>
                                 </button>
                             </div>
-                            <input type="hidden" class="clear" name="sc_id" id="sc_id">
-                            <input type="hidden" class="form-control clear" name="item_count" id="item_count">
-                            <input type="hidden" class="form-control clear" name="sc_no" id="sc_no">
-                            <input type="hidden" class="form-control clear" name="prod_code" id="prod_code">
-                            <input type="hidden" class="form-control clear" name="code_description" id="code_description">
-                            <input type="hidden" class="form-control clear" name="back_order_qty" id="back_order_qty">
                         </div>
                     </div>
                 </div>
                 
-                <div class="row mb-15">
-                    <div class="col-md-8">
+                <div class="row justify-content-center mb-15">
+                    <div class="col-md-10">
                         <div class="table-reponsive">
                             <table class="table table-sm table-bordered table-striped nowrap" style="width:100%" id="tbl_materials">
                                 <thead class="thead-dark">
                                     <th></th>
-                                    <th>Sched Qty</th>
-                                    <th>Heat No.</th>
+                                    <th>Material Code</th>
+                                    <th>Description</th>
+                                    <th>Heat #</th>
                                     <th>Withdrawal Qty.(PCS)</th>
-                                    <th>Material Used</th>
-                                    <th>Lot No.</th>
-                                    <th>Blade Consumption</th>
-                                    <th>Cut Weight</th>
-                                    <th>Cut Length</th>
-                                    <th>Cut Width</th>
-                                    <th>Mat. Length</th>
-                                    <th>Mat. Std. Weight</th>
-                                    <th>Assign Qty</th>
-                                    <th>Remaining Qty</th>
+                                    <th>Size</th>
+                                    <th>Length</th>
+                                    <th>Weight</th>
+                                    <th>width</th>
+                                    <th>Material Type</th>
                                 </thead>
                                 <tbody id="tbl_materials_body"></tbody>
                             </table>
                         </div>
                     </div>
 
-                    <div class="col-md-4">
-                        
-                        <div class="table-reponsive">
-                            <table class="table table-sm table-bordered table-striped nowrap" style="width:100%" id="tbl_jo_details">
-                                <thead class="thead-dark">
-                                    <tr>
-                                        <th></th>
-                                        <th>SC No.</th>
-                                        <th>Product Code</th>
-                                        <th>Description</th>
-                                        <th>Back Order Qty.</th>
-                                        <th>Sched. Qty.</th>
-                                        
-                                    </tr>
-                                </thead>
-                                <tbody id="tbl_jo_details_body"></tbody>
-                            </table>
-                        </div>
-                            
-                    </div>
+                    
                 </div>
 
                 <form id="formbaba">
@@ -280,7 +243,7 @@ foreach ($user_accesses as $user_access){
                                         <th>Update Date</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tbl_jo_details_body"></tbody>
+                                <tbody id="tbl_travel_sheet_body"></tbody>
                             </table>
                         </div>      
                     </div>
@@ -297,20 +260,26 @@ foreach ($user_accesses as $user_access){
 <?php $__env->startPush('scripts'); ?>
     <script type="text/javascript">
         var token = $('meta[name="csrf-token"]').attr('content');
-        var prodSummariesURL = "<?php echo e(url('/transaction/production-schedule/get-production-list')); ?>";
-        var getMaterialUsedURL = "<?php echo e(url('/transaction/production-schedule/get-material-used')); ?>";
-        var getStandardMaterialUsedURL = "<?php echo e(url('/transaction/production-schedule/get-standard-material-used')); ?>";
-        var getMaterialHeatNoURL = "<?php echo e(url('/transaction/production-schedule/get-material-heat-no')); ?>";
-        var savejodetailsURL = "<?php echo e(url('/transaction/production-schedule/SaveJODetails')); ?>";
-        var getjosuggest = "<?php echo e(url('/transaction/production-schedule/JOsuggest')); ?>";
-        var getjotables = "<?php echo e(url('/transaction/production-schedule/getjotables')); ?>";
-        var getjotablesALL = "<?php echo e(url('/transaction/production-schedule/getjoALL')); ?>";
-        var getTravelSheetURL = "<?php echo e(url('/transaction/production-schedule/getTravelSheet')); ?>";
-        var cancelTravelSheetURL = "<?php echo e(url('/transaction/production-schedule/cancelTravelSheet')); ?>";
-        var OverIssuanceURL = "<?php echo e(url('/transaction/production-schedule/over-issuance')); ?>";
-        var excelSearchFilterURL = "<?php echo e(url('/transaction/production-schedule/excel-filter-orders')); ?>";
-        var SaveMaterialsURL = "<?php echo e(url('/transaction/production-schedule/save-materials')); ?>";
+        var ordersURL = "<?php echo e(url('/transaction/production-schedule/get-orders')); ?>";
         var getMaterialsURL = "<?php echo e(url('/transaction/production-schedule/get-materials')); ?>";
+        var getProductsURL = "<?php echo e(url('/transaction/production-schedule/get-products')); ?>";
+        var saveItemMaterialsURL = "<?php echo e(url('/transaction/production-schedule/save-item-materials')); ?>";
+        var getItemMaterialsURL = "<?php echo e(url('/transaction/production-schedule/get-item-materials')); ?>";
+        var saveJODetailsURL = "<?php echo e(url('/transaction/production-schedule/save-jo-details')); ?>";
+        var getTravelSheetURL = "<?php echo e(url('/transaction/production-schedule/get-travel-sheet')); ?>";
+        var cancelTravelSheetURL = "<?php echo e(url('/transaction/production-schedule/cancel-travel-sheet')); ?>";
+        // var getMaterialUsedURL = "<?php echo e(url('/transaction/production-schedule/get-material-used')); ?>";
+        // var getStandardMaterialUsedURL = "<?php echo e(url('/transaction/production-schedule/get-standard-material-used')); ?>";
+        // var getMaterialHeatNoURL = "<?php echo e(url('/transaction/production-schedule/get-material-heat-no')); ?>";
+        // var savejodetailsURL = "<?php echo e(url('/transaction/production-schedule/SaveJODetails')); ?>";
+        // var getjosuggest = "<?php echo e(url('/transaction/production-schedule/JOsuggest')); ?>";
+        // var getjotables = "<?php echo e(url('/transaction/production-schedule/getjotables')); ?>";
+        // var getjotablesALL = "<?php echo e(url('/transaction/production-schedule/getjoALL')); ?>";
+        // var getTravelSheetURL = "<?php echo e(url('/transaction/production-schedule/getTravelSheet')); ?>";
+        // var cancelTravelSheetURL = "<?php echo e(url('/transaction/production-schedule/cancelTravelSheet')); ?>";
+        // var OverIssuanceURL = "<?php echo e(url('/transaction/production-schedule/over-issuance')); ?>";
+        // var SaveMaterialsURL = "<?php echo e(url('/transaction/production-schedule/save-materials')); ?>";
+        // var getMaterialsURL = "<?php echo e(url('/transaction/production-schedule/get-materials')); ?>";
         var getJODetailsURL = "<?php echo e(url('/transaction/production-schedule/get-jo-details')); ?>";
         var deleteJoDetailItemURL = "<?php echo e(url('/transaction/production-schedule/delete-jo-detail-item')); ?>";
         var editJoDetailItemURL = "<?php echo e(url('/transaction/production-schedule/edit-jo-detail-item')); ?>";

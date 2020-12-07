@@ -59,6 +59,16 @@ $( document ).ajaxError(function( event, jqxhr, settings, thrownError ) {
 });
 
 $( function() {
+	$(document).on('shown.bs.tab', function () {
+        $($.fn.dataTable.tables(true)).DataTable()
+            .columns.adjust();
+    });
+
+    $(document).on('shown.bs.modal', function () {
+		$($.fn.dataTable.tables(true)).DataTable()
+			.columns.adjust();
+	});
+	
 	$.ajaxPrefilter(function(options, originalOptions, xhr) {
 		var token = $('meta[name="csrf_token"]').attr('content');
 
@@ -720,6 +730,14 @@ function objectifyForm(formArray) {
 function toFixed(num, fixed) {
     var re = new RegExp('^-?\\d+(?:\.\\d{0,' + (fixed || -1) + '})?');
     return num.toString().match(re)[0];
+}
+
+function isNumberKey(evt) {
+	var charCode = (evt.which) ? evt.which : evt.keyCode;
+	if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)) {
+		return false;
+	}
+	return true;
 }
 
 function SessionTimeOutTimer() {

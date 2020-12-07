@@ -44,7 +44,11 @@ class ProductionScheduleController extends Controller
         return view('ppc.transaction.production-schedule', ['user_accesses' => $user_accesses]);
     }
 
-    public function GetProductionList(Request $req)
+    /**
+     * Get Orders
+     */
+
+    public function getOrders(Request $req)
     {
         $Datalist = DB::select(DB::raw("CALL GET_production_summaries(".Auth::user()->id.",NULL,NULL,NULL,NULL,NULL,NULL)"));
         return DataTables::of($Datalist)
@@ -76,6 +80,9 @@ class ProductionScheduleController extends Controller
 						->make(true);
     }
 
+    /**
+     * Filter Orders
+     */
     public function filterOrders(Request $req)
     {
          $Datalist = $this->getFilteredOrders($req);
@@ -108,6 +115,9 @@ class ProductionScheduleController extends Controller
 						->make(true);
     }
 
+    /**
+     * Get Filtered Orders
+     */
     public function getFilteredOrders($req)
     {
         $srch_date_upload_from = "NULL";
@@ -154,7 +164,578 @@ class ProductionScheduleController extends Controller
         return $Datalist;
     }
 
+    /**
+     * Get Materials
+     */
+    public function getMaterials(Request $req)
+    {
+        $data = DB::select(DB::raw("CALL GET_withdrawals('".$req->rmw_no."',".Auth::user()->id.")"));
+        return DataTables::of($data)
+                        ->editColumn('action', function($data) {
+                            return "<button class='btn btn-sm bg-red btn_remove_material'>
+                                        <i class='fa fa-times'></i>
+                                    </button>
+                                    <button class='btn btn-sm bg-blue btn_open_modal' 
+                                        data-rmwd_id='".$data->rmwd_id."' 
+                                        data-inv_id='".$data->inv_id."'
+                                        data-rmw_no='".$data->rmw_no."'
+                                        data-item_code='".$data->item_code."' 
+                                        data-description='".$data->description."'
+                                        data-heat_no='".$data->heat_no."'
+                                        data-rmw_qty='".$data->rmw_qty."'
+                                        >
+                                        <i class='fa fa-edit'></i>
+                                    </button>
+                                    ";
+                        })->make(true);
+    }
+
+    /**
+     * Get Products
+     */
+    public function getProducts(Request $req)
+    {
+        $Datalist = DB::table('v_item_order_details')->where('user_id', Auth::user()->id);
+        return DataTables::of($Datalist)
+						->editColumn('action', function($data) {
+							return "<input type='checkbox' class='table-checkbox chk_product' value='".$data->id."'/>";
+                        })
+                        ->editColumn('status', function($data) {
+                            switch ($data->status) {
+                                case 0:
+                                    return '';
+                                    break;
+                                case 1:
+                                    return 'Travel Sheet Prepared';
+                                    break;
+                                case 2:
+                                    return 'On Production';
+                                    break;
+                                case 3:
+                                    return 'Travel Sheet Cancelled';
+                                    break;
+                                case 4:
+                                    return 'Scheduled';
+                                    break;
+                                case 5:
+                                    return 'CLOSED';
+                                    break;
+                            }
+                        })
+						->make(true);
+    }
+
+    /**
+     * Save Items Materials
+     */
+    public function SaveItemMaterials(Request $req)
+    {
+        $data = [
+            'msg' => 'Saving materials has failed.',
+            'status' => 'failed',
+            'ref_id' => 0
+        ];
+
+        $prods = '';
+        $ref_id = 0;
+
+        $params = [];
+
+        DB::table('temp_item_materials')
+            ->whereIn('prod_sum_id', $req->prod_sum_id)
+            ->where('create_user', Auth::user()->id)
+            ->delete();
+
+        if (isset($req->count)) {
+            $ref_id = rand(); // randomize ref_id for this save session;
+            $comma = '';
+            foreach ($req->count as $key => $count) {
+                array_push($params, [
+                    'prod_sum_id' => $req->prod_sum_id[$key],
+                    'prod_code' => $req->prod_code[$key],
+                    'description' => $req->description[$key],
+                    'back_order_qty' => $req->back_order_qty[$key],
+                    'sc_no' => $req->sc_no[$key],
+                    'sched_qty' => $req->sched_qty[$key],
+                    'material_code' => $req->material_code[$key],
+                    'heat_no' => $req->heat_no[$key],
+                    'rmw_qty' => $req->rmw_qty[$key],
+                    'material_used' => $req->material_used[$key],
+                    'lot_no' => $req->lot_no[$key],
+                    'blade_consumption' => $req->blade_consumption[$key],
+                    'cut_weight' => $req->cut_weight[$key],
+                    'cut_length' => $req->cut_length[$key],
+                    'cut_width' => $req->cut_width[$key],
+                    'mat_length' => $req->mat_length[$key],
+                    'mat_weight' => $req->mat_weight[$key],
+                    'mat_width' => $req->mat_width[$key],
+                    'assign_qty' => $req->assign_qty[$key],
+                    'remaining_qty' => $req->remaining_qty[$key],
+                    'standard_material_used' => $req->standard_material_used[$key],
+                    'upd_inv_id' => $req->upd_inv_id[$key],
+                    'inv_id' => $req->inv_id[$key],
+                    'rmwd_id' => $req->rmwd_id[$key],
+                    'size' => $req->size[$key],
+                    'material_type' => $req->material_type[$key],
+                    'qty_per_piece' => $req->qty_per_piece[$key],
+                    'ship_date' => $req->ship_date[$key],
+                    'rmw_no' => $req->rmw_no,
+                    'create_user' => Auth::user()->id,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
+                    'ref_id' => $ref_id
+                ]);
+
+                if ($prods !== '') {
+                    $comma = ', ';
+                }
+
+                $prods .= $comma.$req->prod_code[$key];
+            }
+
+            $insert = array_chunk($params, 1000);
+
+            $saved = false;
+            foreach ($insert as $batch) {
+                $saved = DB::table('temp_item_materials')->insert($batch);
+            }
+
+            if ($saved) {
+                $data = [
+                    'msg' => 'Materials were successfully saved.',
+                    'status' => 'success',
+                    'ref_id' => $ref_id
+                ];
+
+                $this->_audit->insert([
+                    'user_type' => Auth::user()->user_type,
+                    'module_id' => $this->_moduleID,
+                    'module' => 'Production Schedule',
+                    'action' => 'Prepared BOM for '.$prods,
+                    'user' => Auth::user()->id,
+                    'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
+                ]);
+            }
+        }
+
+        return $data;
+    }
+    
+    /**
+     * Get Items Materials
+     */
+    public function getItemMaterials(Request $req)
+    {
+        $data = DB::table('temp_item_materials')
+                ->where([
+                    ['inv_id', '=', $req->inv_id],
+                    ['upd_inv_id', '=', $req->upd_inv_id],
+                    ['rmwd_id', '=', $req->rmwd_id],
+                    ['create_user', '=', Auth::user()->id]
+                ])
+                ->get();
+
+        return response()->json($data);
+    }
+
+    /**
+     * Save JO Details
+     */
     public function SaveJODetails(Request $req)
+    {
+        /*
+            JOB ORDER = 1 JO
+            1 same Product code
+            2 or more SC no.
+            1 RM Heat no.
+            1 Lot No.
+        **/
+
+        $data = [
+            'msg' => 'Saving J.O. Details has failed.',
+            'status' => 'failed'
+        ];
+
+        $arr_jo = [];
+        $jo_no = '';
+
+        if (isset($req->ref_id)) {
+            // get potential J.O. designation
+            $bom_count = DB::table('temp_item_materials')
+                            ->select(
+                                'ref_id','prod_code','heat_no','lot_no', DB::raw("sum(sched_qty) as sched_qty"),'rmw_no'
+                            )
+                            ->whereIn('ref_id',$req->ref_id)
+                            ->where('create_user', Auth::user()->id)
+                            ->groupBy('ref_id','prod_code','heat_no','lot_no','rmw_no')
+                            ->count();
+
+            if ($bom_count < 1) {
+                $data = [
+                    'msg' => "You haven't picked Items yet.",
+                    'status' => 'failed'
+                ];
+                return response()->json($data);
+            } else {
+
+                $boms = DB::table('temp_item_materials')
+                            ->select(
+                                'ref_id','prod_code','heat_no','lot_no', DB::raw("sum(sched_qty) as sched_qty"),'rmw_no'
+                            )
+                            ->whereIn('ref_id',$req->ref_id)
+                            ->where('create_user', Auth::user()->id)
+                            ->groupBy('ref_id','prod_code','heat_no','lot_no','rmw_no')
+                            ->get();
+
+                foreach ($boms as $key => $bom) {
+                    $f = Auth::user()->firstname;
+                    $l = Auth::user()->lastname;
+
+                    $jocode = $this->_helper->TransactionNo($f[0] . $l[0] . '-JO');
+
+                    $jo_sum = new PpcJoDetailsSummary();
+                    $jo_sum->jo_no = $jocode;
+                    $jo_sum->status = 0;
+                    $jo_sum->total_sched_qty = $bom->sched_qty;
+                    $jo_sum->rmw_no = (isset($bom->rmw_no))? $bom->rmw_no : '';
+                    $jo_sum->create_user = Auth::user()->id;
+                    $jo_sum->update_user = Auth::user()->id;
+                    $jo_sum->save();
+
+                    array_push($arr_jo, [
+                        'jo_id' => $jo_sum->id,
+                        'jo_no' => $jo_sum->jo_no,
+                        'ref_id' => $bom->ref_id,
+                        'prod_code' => $bom->prod_code,
+                        'heat_no' => $bom->heat_no,
+                        'lot_no' => $bom->lot_no,
+                        'rmw_no' => $bom->rmw_no
+                    ]);
+
+                    $com = '';
+                    if ($jo_no !== '') {
+                        $com = ', ';
+                    }
+
+                    $jo_no .= $com.$jo_sum->jo_no;
+                }
+
+                foreach ($arr_jo as $key => $jo) {
+                    $details = DB::table('temp_item_materials')->where([
+                                    ['ref_id', '=', $jo['ref_id']], 
+                                    ['prod_code', '=', $jo['prod_code']], 
+                                    ['heat_no', '=', $jo['heat_no']], 
+                                    ['lot_no', '=', $jo['lot_no']], 
+                                    ['rmw_no', '=', $jo['rmw_no']],
+                                    ['create_user', '=', Auth::user()->id]
+                                ])->get();
+
+                    
+
+                    foreach ($details as $key => $dt) {
+
+                        $rmwd = DB::table('ppc_raw_material_withdrawal_details')->where('id', $dt->rmwd_id)
+                                    ->select('sc_no','id')
+                                    ->where('create_user', Auth::user()->id)
+                                    ->first();
+
+                        if (isset($rmwd->id)) {
+                            $Coma = ', ';
+                            if ($rmwd->sc_no == '') {
+                                $Coma = ' ';
+                            }
+                            if (strpos($rmwd->sc_no, $dt->sc_no) === false) {
+                                PpcRawMaterialWithdrawalDetails::where('id', $dt->rmwd_id)
+                                    ->where('create_user', Auth::user()->id)
+                                    ->increment('assigned_qty', $dt->assign_qty, ['sc_no' => $dt->sc_no . $Coma . $rmwd->sc_no]);
+                            }
+                        }
+
+                        PpcProductionSummary::where('id', $dt->prod_sum_id)
+                                            ->increment('sched_qty', $dt->sched_qty,[
+                                                'jo_summary_id' => $jo['jo_id'],
+                                                'status' => 4
+                                            ]);
+
+                        PpcJoDetails::create([
+                            'jo_summary_id' => $jo['jo_id'],
+                            'sc_no' => $dt->sc_no,
+                            'product_code' => $dt->prod_code,
+                            'description' => $dt->description,
+                            'back_order_qty' => $dt->back_order_qty,
+                            'sched_qty' => $dt->sched_qty,
+                            'material_used' => $dt->material_used,
+                            'material_heat_no' => $dt->heat_no,
+                            'uom' => 'PCS',
+                            'lot_no' => $dt->lot_no,
+                            'create_user' => Auth::user()->id,
+                            'update_user' => Auth::user()->id,
+                            'inv_id' => $dt->inv_id,
+                            'rmw_id' => $dt->rmwd_id,
+                            'rmw_issued_qty' => $dt->rmw_qty,
+                            'material_type' => $dt->material_type,
+                            'blade_consumption' => $dt->blade_consumption,
+                            'computed_per_piece' => $dt->qty_per_piece,
+                            'assign_qty' => $dt->assign_qty,
+                            'remaining_qty' => $dt->remaining_qty,
+                            'heat_no_id' => $dt->upd_inv_id,
+                            'ship_date' => $dt->ship_date,
+                            'prod_sched_id' => $dt->prod_sum_id,
+                            'cut_weight' => $dt->cut_weight,
+                            'cut_length' => $dt->cut_length,
+                            'cut_width' => $dt->cut_width,
+                            'mat_length' => $dt->mat_length,
+                            'mat_weight' => $dt->mat_weight,
+                            'mat_width' => $dt->mat_width,
+                            'upd_inv_id' => $dt->upd_inv_id,
+                            'size' => $dt->size
+                        ]);
+                    }
+                }
+
+                DB::table('temp_item_materials')
+                        ->whereIn('ref_id',$req->ref_id)
+                        ->where('create_user', Auth::user()->id)
+                        ->delete();
+
+                $data = [
+                    'msg' => "Job Order # " .$jo_no. " Has made.",
+                    'status' => 'success'
+                ];
+            }
+        } else {
+            $data = [
+                'msg' => "You haven't picked Items yet.",
+                'status' => 'failed'
+            ];
+        }
+
+        return response()->json($data);
+    }
+
+    public function getTravel_sheet(Request $req)
+    {
+        $data = DB::table('v_jo_list')
+                    ->where('user_id', Auth::user()->id);
+
+        // return response()->json($data);
+
+        return DataTables::of($data)
+						->addColumn('action', function($data) {
+                            return "<button type='button' class='btn btn-sm bg-blue btn_show_jo'
+                                        data-jo_no='".$data->jo_no."' data-prod_code='".$data->product_code."'
+                                        data-issued_qty='".$data->issued_qty."' title='Edit J.O. Details'
+                                        data-status='".$data->status."' data-sched_qty='".$data->sched_qty."'
+                                        data-qty_per_sheet='".$data->qty_per_sheet."' data-iso_code='".$data->iso_code."'
+                                        data-sc_no='".$data->sc_no."' data-idJO='".$data->jo_summary_id."'
+                                        data-id='".$data->travel_sheet_id."' data-status='".$data->status."'
+                                    >
+                                        <i class='fa fa-edit'></i>
+                                    </button>
+                                    <button type='button' class='btn btn-sm bg-red btn_cancel_jo'
+                                        data-jo_no='".$data->jo_no."' data-prod_code='".$data->product_code."'
+                                        data-issued_qty='".$data->issued_qty."' title='Cancel J.O. Details'
+                                        data-status='".$data->status."' data-sched_qty='".$data->sched_qty."'
+                                        data-qty_per_sheet='".$data->qty_per_sheet."' data-iso_code='".$data->iso_code."'
+                                        data-sc_no='".$data->sc_no."' data-idJO='".$data->jo_summary_id."'
+                                        data-id='".$data->travel_sheet_id."' data-status='".$data->status."'
+                                    >
+                                        <i class='fa fa-times'></i>
+                                    </button>";
+                        })
+                        ->editColumn('status', function($data) {
+                            switch ($data->status) {
+                                case 0:
+                                    return 'No quantity issued';
+                                    break;
+                                case 1:
+                                    return 'Ready to Issue';
+                                    break;
+                                case 2:
+                                    return 'On Production';
+                                    break;
+                                case 3:
+                                    return 'Cancelled';
+                                    break;
+                                case 5:
+                                    return 'CLOSED';
+                                    break;
+                            }
+                        })
+						->make(true);
+    }
+
+    public function CancelTravelSheet(Request $req)
+    {
+        // 3 = Cancel
+        //PpcJoTravelSheet::where('id', $req->jo_summary_id)->update(['status' => 3]);
+        $data = [
+            'msg'=> 'Cancelling J.O. has failed.',
+            'status' => "failed"
+        ];
+
+        $detailsDecrement = DB::table('ppc_jo_details')
+                                ->select('sc_no', 'product_code', 'sched_qty', 'material_heat_no', 'prod_sched_id', 'rmw_id')
+                                ->where('jo_summary_id', $req->jo_summary_id)
+                                ->get();
+
+        foreach ($detailsDecrement as $key => $dt) {
+            $check_prod_sched = PpcProductionSummary::where('id', $dt->prod_sched_id)->select('sched_qty')->first();
+
+            if (($check_prod_sched->sched_qty > 0) && ($check_prod_sched->sched_qty !== $dt->sched_qty)) {
+                PpcProductionSummary::where('id', $dt->prod_sched_id)->decrement('sched_qty', (float) $dt->sched_qty);
+            }
+
+            PpcRawMaterialWithdrawalDetails::where('id', $dt->rmw_id)
+                // ->where('create_user', Auth::user()->id)
+                ->update(['sc_no' => DB::raw("REPLACE(sc_no, '" . $dt->sc_no . ", ', '')")]);
+
+            PpcRawMaterialWithdrawalDetails::where('id', $dt->rmw_id)
+                // ->where('create_user', Auth::user()->id)
+                ->update(['sc_no' => DB::raw("REPLACE(sc_no, '" . $dt->sc_no . "', '')")]);
+        }
+
+        PpcJoDetailsSummary::where('id',$req->jo_summary_id)->update([
+            'cancelled' => 1,
+            'status' => 3,
+            'updated_at' => date('Y-m-d H:i:s'),
+            'update_user' => Auth::user()->id
+        ]);
+
+        PpcJoDetails::where('jo_summary_id', $req->jo_summary_id)->update([
+            'cancelled' => 1,
+            'updated_at' => date('Y-m-d H:i:s'),
+            'update_user' => Auth::user()->id
+        ]);
+
+        PpcPreTravelSheet::where('id', $req->id)->update(['status' => 3]);
+
+        ProdTravelSheet::where('pre_travel_sheet_id', $req->id)->update(['status' => 3]);
+
+        if (isset($pts)) {
+            foreach ($pts as $k => $v) {
+                ProdTravelSheetProcess::where('travel_sheet_id', $v->id)->update(['status' => 3]);
+            }
+        }
+        $data = [
+            'msg'=> 'J.O. # '.$req->jo_no.' has successfully cancelled.',
+            'status' => "success"
+        ];
+
+        return response()->json($data);
+    }
+
+    public function excelFilteredData(Request $req)
+    {
+        $data = $this->getFilteredOrders($req);
+        $date = date('Ymd');
+
+        Excel::create('UploadedOrders_'.$date, function($excel) use($data)
+        {
+            $excel->sheet('Summary', function($sheet) use($data)
+            {
+                $sheet->setHeight(4, 20);
+                $sheet->mergeCells('A2:F2');
+                $sheet->cells('A2:F2', function($cells) {
+                    $cells->setAlignment('center');
+                    $cells->setFont([
+                        'family'     => 'Calibri',
+                        'size'       => '14',
+                        'bold'       =>  true,
+                        'underline'  =>  true
+                    ]);
+                });
+                $sheet->cell('A2',"Uploaded Orders Summary");
+
+                $sheet->setHeight(6, 15);
+                $sheet->cells('A4:F4', function($cells) {
+                    $cells->setFont([
+                        'family'     => 'Calibri',
+                        'size'       => '11',
+                        'bold'       =>  true,
+                    ]);
+                    // Set all borders (top, right, bottom, left)
+                    $cells->setBorder('solid', 'solid', 'solid', 'solid');
+                });
+
+                $sheet->cell('A4', function($cell) {
+                    $cell->setValue("SC No.");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+            
+                $sheet->cell('B4', function($cell) {
+                    $cell->setValue("Product Code");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+
+                $sheet->cell('C4', function($cell) {
+                    $cell->setValue("Description");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+
+                $sheet->cell('D4', function($cell) {
+                    $cell->setValue("Quantity");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+
+                $sheet->cell('E4', function($cell) {
+                    $cell->setValue("P.O.");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+
+                $sheet->cell('F4', function($cell) {
+                    $cell->setValue("Date Uploaded");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+
+                $sheet->cells('A4:F4', function($cells) {
+                    $cells->setBorder('thick', 'thick', 'thick', 'thick');
+                });
+
+                $row = 5;
+
+                foreach ($data as $key => $dt) {
+                    $sheet->setHeight($row, 15);
+
+                    $sheet->cell('A'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->sc_no);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('B'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->prod_code);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('C'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->description);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('D'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->quantity);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('E'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->po);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    $sheet->cell('F'.$row, function($cell) use($dt) {
+                        $cell->setValue($dt->date_upload);
+                        $cell->setBorder('thin','thin','thin','thin');
+                    });
+                    
+                    $row++;
+                }
+                
+                $sheet->cells('A4:F'.$row, function($cells) {
+                    $cells->setBorder('thick', 'thick', 'thick', 'thick');
+                });
+            });
+        })->download('xlsx');
+    }
+
+
+
+
+    public function SaveJODetails1(Request $req)
     {
         $jo_no_count = [];
         $qty = [];
@@ -1080,217 +1661,6 @@ class ProductionScheduleController extends Controller
         }      
 
         return $data;
-    }
-
-    public function getTravel_sheet(Request $req)
-    {
-        $data = DB::table('v_jo_list')
-                    ->where('user_id', Auth::user()->id);
-
-        // return response()->json($data);
-
-        return DataTables::of($data)
-						->addColumn('action', function($data) {
-                            return "<button type='button' class='btn btn-sm bg-blue btn_show_jo'
-                                        data-jo_no='".$data->jo_no."' data-prod_code='".$data->product_code."'
-                                        data-issued_qty='".$data->issued_qty."' title='Edit J.O. Details'
-                                        data-status='".$data->status."' data-sched_qty='".$data->sched_qty."'
-                                        data-qty_per_sheet='".$data->qty_per_sheet."' data-iso_code='".$data->iso_code."'
-                                        data-sc_no='".$data->sc_no."' data-idJO='".$data->jo_summary_id."'
-                                        data-id='".$data->travel_sheet_id."' data-status='".$data->status."'
-                                    >
-                                        <i class='fa fa-edit'></i>
-                                    </button>
-                                    <button type='button' class='btn btn-sm bg-red btn_cancel_jo'
-                                        data-jo_no='".$data->jo_no."' data-prod_code='".$data->product_code."'
-                                        data-issued_qty='".$data->issued_qty."' title='Cancel J.O. Details'
-                                        data-status='".$data->status."' data-sched_qty='".$data->sched_qty."'
-                                        data-qty_per_sheet='".$data->qty_per_sheet."' data-iso_code='".$data->iso_code."'
-                                        data-sc_no='".$data->sc_no."' data-idJO='".$data->jo_summary_id."'
-                                        data-id='".$data->travel_sheet_id."' data-status='".$data->status."'
-                                    >
-                                        <i class='fa fa-times'></i>
-                                    </button>";
-                        })
-                        ->editColumn('status', function($data) {
-                            switch ($data->status) {
-                                case 0:
-                                    return 'No quantity issued';
-                                    break;
-                                case 1:
-                                    return 'Ready to Issue';
-                                    break;
-                                case 2:
-                                    return 'On Production';
-                                    break;
-                                case 3:
-                                    return 'Cancelled';
-                                    break;
-                                case 5:
-                                    return 'CLOSED';
-                                    break;
-                            }
-                        })
-						->make(true);
-    }
-
-    public function cancel_TravelSheet(Request $req)
-    {
-        // 3 = Cancel
-        PpcJoTravelSheet::where('id', $req->idJTS)->update(['status' => 3]);
-
-        $detailsDecrement = DB::table('ppc_jo_details')
-                                ->select('sc_no', 'product_code', 'sched_qty', 'material_heat_no', 'prod_sched_id', 'rmw_id')
-                                ->where('jo_summary_id', $req->idJTS)
-                                ->get();
-
-        foreach ($detailsDecrement as $key => $dt) {
-            $check_prod_sched = PpcProductionSummary::where('id', $dt->prod_sched_id)->select('sched_qty')->first();
-
-            if (($check_prod_sched->sched_qty > 0) && ($check_prod_sched->sched_qty !== $dt->sched_qty)) {
-                PpcProductionSummary::where('id', $dt->prod_sched_id)->decrement('sched_qty', (float) $dt->sched_qty);
-            }
-
-            PpcRawMaterialWithdrawalDetails::where('id', $dt->rmw_id)
-                // ->where('create_user', Auth::user()->id)
-                ->update(['sc_no' => DB::raw("REPLACE(sc_no, '" . $dt->sc_no . ", ', '')")]);
-
-            PpcRawMaterialWithdrawalDetails::where('id', $dt->rmw_id)
-                // ->where('create_user', Auth::user()->id)
-                ->update(['sc_no' => DB::raw("REPLACE(sc_no, '" . $dt->sc_no . "', '')")]);
-        }
-
-        PpcJoDetailsSummary::where('id',$req->idJTS)->update([
-            'cancelled' => 1,
-            'updated_at' => date('Y-m-d H:i:s'),
-            'update_user' => Auth::user()->id
-        ]);
-
-        PpcJoDetails::where('jo_summary_id', $req->idJTS)->update([
-            'cancelled' => 1,
-            'updated_at' => date('Y-m-d H:i:s'),
-            'update_user' => Auth::user()->id
-        ]);
-
-        PpcPreTravelSheet::where('id', $req->id)->update(['status' => 3]);
-
-        ProdTravelSheet::where('pre_travel_sheet_id', $req->id)->update(['status' => 3]);
-
-        if (isset($pts)) {
-            foreach ($pts as $k => $v) {
-                ProdTravelSheetProcess::where('travel_sheet_id', $v->id)->update(['status' => 3]);
-            }
-        }
-        $data = ['status' => "success"];
-
-        return response()->json($data);
-    }
-
-    public function excelFilteredData(Request $req)
-    {
-        $data = $this->getFilteredOrders($req);
-        $date = date('Ymd');
-
-        Excel::create('UploadedOrders_'.$date, function($excel) use($data)
-        {
-            $excel->sheet('Summary', function($sheet) use($data)
-            {
-                $sheet->setHeight(4, 20);
-                $sheet->mergeCells('A2:F2');
-                $sheet->cells('A2:F2', function($cells) {
-                    $cells->setAlignment('center');
-                    $cells->setFont([
-                        'family'     => 'Calibri',
-                        'size'       => '14',
-                        'bold'       =>  true,
-                        'underline'  =>  true
-                    ]);
-                });
-                $sheet->cell('A2',"Uploaded Orders Summary");
-
-                $sheet->setHeight(6, 15);
-                $sheet->cells('A4:F4', function($cells) {
-                    $cells->setFont([
-                        'family'     => 'Calibri',
-                        'size'       => '11',
-                        'bold'       =>  true,
-                    ]);
-                    // Set all borders (top, right, bottom, left)
-                    $cells->setBorder('solid', 'solid', 'solid', 'solid');
-                });
-
-                $sheet->cell('A4', function($cell) {
-                    $cell->setValue("SC No.");
-                    $cell->setBorder('thick','thick','thick','thick');
-                });
-            
-                $sheet->cell('B4', function($cell) {
-                    $cell->setValue("Product Code");
-                    $cell->setBorder('thick','thick','thick','thick');
-                });
-
-                $sheet->cell('C4', function($cell) {
-                    $cell->setValue("Description");
-                    $cell->setBorder('thick','thick','thick','thick');
-                });
-
-                $sheet->cell('D4', function($cell) {
-                    $cell->setValue("Quantity");
-                    $cell->setBorder('thick','thick','thick','thick');
-                });
-
-                $sheet->cell('E4', function($cell) {
-                    $cell->setValue("P.O.");
-                    $cell->setBorder('thick','thick','thick','thick');
-                });
-
-                $sheet->cell('F4', function($cell) {
-                    $cell->setValue("Date Uploaded");
-                    $cell->setBorder('thick','thick','thick','thick');
-                });
-
-                $sheet->cells('A4:F4', function($cells) {
-                    $cells->setBorder('thick', 'thick', 'thick', 'thick');
-                });
-
-                $row = 5;
-
-                foreach ($data as $key => $dt) {
-                    $sheet->setHeight($row, 15);
-
-                    $sheet->cell('A'.$row, function($cell) use($dt) {
-                        $cell->setValue($dt->sc_no);
-                        $cell->setBorder('thin','thin','thin','thin');
-                    });
-                    $sheet->cell('B'.$row, function($cell) use($dt) {
-                        $cell->setValue($dt->prod_code);
-                        $cell->setBorder('thin','thin','thin','thin');
-                    });
-                    $sheet->cell('C'.$row, function($cell) use($dt) {
-                        $cell->setValue($dt->description);
-                        $cell->setBorder('thin','thin','thin','thin');
-                    });
-                    $sheet->cell('D'.$row, function($cell) use($dt) {
-                        $cell->setValue($dt->quantity);
-                        $cell->setBorder('thin','thin','thin','thin');
-                    });
-                    $sheet->cell('E'.$row, function($cell) use($dt) {
-                        $cell->setValue($dt->po);
-                        $cell->setBorder('thin','thin','thin','thin');
-                    });
-                    $sheet->cell('F'.$row, function($cell) use($dt) {
-                        $cell->setValue($dt->date_upload);
-                        $cell->setBorder('thin','thin','thin','thin');
-                    });
-                    
-                    $row++;
-                }
-                
-                $sheet->cells('A4:F'.$row, function($cells) {
-                    $cells->setBorder('thick', 'thick', 'thick', 'thick');
-                });
-            });
-        })->download('xlsx');
     }
 
     public function SaveMaterials(Request $req)

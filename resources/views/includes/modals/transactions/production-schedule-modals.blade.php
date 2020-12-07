@@ -79,6 +79,103 @@
     </div>
 </div>
 
+<div id="modal_items" class="modal fade " data-backdrop="static">
+    <div class="modal-dialog modal-full-xxl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Items</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="loadingOverlay-modal"></div>
+                <input type="hidden" name="item_code" id="item_code" class="clear_hidden_materials_item_modal" />
+                <input type="hidden" name="description" id="description" class="clear_hidden_materials_item_modal" />
+                <input type="hidden" name="heat_no" id="heat_no" class="clear_hidden_materials_item_modal" />
+                <input type="hidden" name="rmw_qty" id="rmw_qty" class="clear_hidden_materials_item_modal" />
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <table class="table table-sm table-bordered table-striped nowrap" style="width:100%" id="tbl_mateials_item">
+                            <thead class="thead-dark">
+                                <th>Material Code</th>
+                                <th>Description</th>
+                                <th>Heat #</th>
+                                <th>Withdrawal Qty.(PCS)</th>
+                            </thead>
+                            <tbody id="tbl_mateials_item_body"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="col-md-8">
+                        <table class="table table-sm table-bordered table-striped nowrap" style="width:100%" id="tbl_products_item">
+                            <thead class="thead-dark">
+                                <th width="3%"></th>
+                                <th>SC No.</th>
+                                <th>Product Code</th>
+                                <th>Description</th>
+                                <th>Order Qty</th>
+                                <th>Sched Qty</th>
+                                <th>P.O. No.</th>
+                                <th>Status</th>
+                                <th>Upload Date</th>
+                            </thead>
+                            <tbody id="tbl_products_item_body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <span id="note" class='text-red'></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        {{-- <div class="table-responsive"> --}}
+                            <table class="table table-sm table-bordered table-striped nowrap" style="width:100%" id="tbl_bom">
+                                <thead class="thead-dark">
+                                    <th>Product Code</th>
+                                    <th>Description</th>
+                                    <th>SC #</th>
+                                    <th>Order Qty</th>
+                                    <th>Cut Weight</th>
+                                    <th>Cut Length</th>
+                                    <th>Cut Width</th>
+                                    
+                                    <th>Sched Qty</th>
+                                    <th>Blade Consumption</th>
+                                    <th>Qty. Per Piece</th>
+                                    <th>Assign Qty</th>
+                                    <th>Remaining Qty</th>
+                                    <th>Lot No.</th>
+                                    <th>Ship Date</th>
+                                    <th>Material Used</th>
+                                    <th>Mat. Length</th>
+                                    <th>Mat. Std. Weight</th>
+                                    <th>Mat. width</th>
+                                    <th>Size</th>
+                                </thead>
+                                <tbody id="tbl_bom_body"></tbody>
+                            </table>
+                        {{-- </div> --}}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn bg-red" data-dismiss="modal">Close</button>
+                <button type="button" id="btn_save_bom" class="btn bg-blue float-right permission-button">
+                    <i class="fa fa-floppy-o"></i> Save
+                </button>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
 <div id="modal_jo_details" class="modal fade " data-backdrop="static">
     <div class="modal-dialog modal-full-xxl" role="document">
         <div class="modal-content">

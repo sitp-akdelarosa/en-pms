@@ -292,36 +292,22 @@ Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', '
 		Route::group(['prefix' => 'production-schedule'], function () {
 			Route::get('/', 'PPC\Transaction\ProductionScheduleController@index')
 				->name('transaction.production-schedule');
-			Route::get('/get-production-list', 'PPC\Transaction\ProductionScheduleController@GetProductionList')
-				->name('transaction.production-schedule.get-production-list');
-			Route::get('/get-material-used', 'PPC\Transaction\ProductionScheduleController@getMaterialUsed')
-				->name('transaction.production-schedule.get-material-used');
-			Route::get('/get-standard-material-used', 'PPC\Transaction\ProductionScheduleController@getStandardMaterialUsed')
-				->name('transaction.production-schedule.get-standard-material-used');
-			Route::get('/get-material-heat-no', 'PPC\Transaction\ProductionScheduleController@getMaterialHeatNo')
-				->name('transaction.production-schedule.get-material-heat-no');
-			Route::post('/SaveJODetails', 'PPC\Transaction\ProductionScheduleController@SaveJODetails')
-				->name('transaction.production-schedule.SaveJODetails');
-			Route::get('/JOsuggest', 'PPC\Transaction\ProductionScheduleController@JOsuggest')
-				->name('transaction.production-schedule.JOsuggest');
-			Route::get('/getjotables', 'PPC\Transaction\ProductionScheduleController@getJOviaJOno')
-				->name('transaction.production-schedule.getjotables');
-			Route::get('/getjoALL', 'PPC\Transaction\ProductionScheduleController@getJOALL')
-				->name('transaction.production-schedule.getjoall');
-			Route::get('/getTravelSheet', 'PPC\Transaction\ProductionScheduleController@getTravel_sheet')
-				->name('transaction.production-schedule.getTravelSheet');
-			Route::post('/cancelTravelSheet', 'PPC\Transaction\ProductionScheduleController@cancel_TravelSheet')
-				->name('transaction.production-schedule.cancelTravelSheet');
-			Route::get('/over-issuance', 'PPC\Transaction\ProductionScheduleController@calculateOverIssuance')
-				->name('transaction.production-schedule.over-issuance');
-			Route::get('/excel-filter-orders', 'PPC\Transaction\ProductionScheduleController@filterOrders')
-				->name('transaction.production-schedule.excel-filter-orders');
+			Route::get('/get-orders', 'PPC\Transaction\ProductionScheduleController@getOrders')
+				->name('transaction.production-schedule.get-orders');
 			Route::get('/search-filter-orders', 'PPC\Transaction\ProductionScheduleController@filterOrders')
 				->name('transaction.production-schedule.search-filter-orders');
-			Route::post('/save-materials', 'PPC\Transaction\ProductionScheduleController@SaveMaterials')
-				->name('transaction.production-schedule.save-materials');
-			Route::get('/get-materials', 'PPC\Transaction\ProductionScheduleController@Materials')
+			Route::get('/get-materials', 'PPC\Transaction\ProductionScheduleController@getMaterials')
 				->name('transaction.production-schedule.get-materials');
+			Route::get('/get-products', 'PPC\Transaction\ProductionScheduleController@getProducts')
+				->name('transaction.production-schedule.get-products');
+			Route::post('/save-item-materials', 'PPC\Transaction\ProductionScheduleController@SaveItemMaterials')
+				->name('transaction.production-schedule.save-item-materials');
+			Route::get('/get-item-materials', 'PPC\Transaction\ProductionScheduleController@getItemMaterials')
+				->name('transaction.production-schedule.get-item-materials');
+			Route::post('/save-jo-details', 'PPC\Transaction\ProductionScheduleController@SaveJODetails')
+				->name('transaction.production-schedule.save-jo-details');
+			Route::get('/get-travel-sheet', 'PPC\Transaction\ProductionScheduleController@getTravel_sheet')
+				->name('transaction.production-schedule.get-travel-sheet');
 			Route::get('/get-jo-details', 'PPC\Transaction\ProductionScheduleController@getJODetails')
 				->name('transaction.production-schedule.get-jo-details');
 			Route::get('/search-filter-jo', 'PPC\Transaction\ProductionScheduleController@filterJO')
@@ -330,6 +316,35 @@ Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', '
 				->name('transaction.production-schedule.delete-jo-detail-item');
 			Route::post('/edit-jo-detail-item', 'PPC\Transaction\ProductionScheduleController@editJoDetailItem')
 				->name('transaction.production-schedule.edit-jo-detail-item');
+			Route::post('/cancel-travel-sheet', 'PPC\Transaction\ProductionScheduleController@CancelTravelSheet')
+				->name('transaction.production-schedule.cancel-travel-sheet');
+
+			// Route::get('/get-material-used', 'PPC\Transaction\ProductionScheduleController@getMaterialUsed')
+			// 	->name('transaction.production-schedule.get-material-used');
+			// Route::get('/get-standard-material-used', 'PPC\Transaction\ProductionScheduleController@getStandardMaterialUsed')
+			// 	->name('transaction.production-schedule.get-standard-material-used');
+			// Route::get('/get-material-heat-no', 'PPC\Transaction\ProductionScheduleController@getMaterialHeatNo')
+			// 	->name('transaction.production-schedule.get-material-heat-no');
+			// Route::post('/SaveJODetails', 'PPC\Transaction\ProductionScheduleController@SaveJODetails')
+			// 	->name('transaction.production-schedule.SaveJODetails');
+			// Route::get('/JOsuggest', 'PPC\Transaction\ProductionScheduleController@JOsuggest')
+			// 	->name('transaction.production-schedule.JOsuggest');
+			// Route::get('/getjotables', 'PPC\Transaction\ProductionScheduleController@getJOviaJOno')
+			// 	->name('transaction.production-schedule.getjotables');
+			// Route::get('/getjoALL', 'PPC\Transaction\ProductionScheduleController@getJOALL')
+			// 	->name('transaction.production-schedule.getjoall');
+			// Route::get('/getTravelSheet', 'PPC\Transaction\ProductionScheduleController@getTravel_sheet')
+			// 	->name('transaction.production-schedule.getTravelSheet');
+			// Route::post('/cancelTravelSheet', 'PPC\Transaction\ProductionScheduleController@cancel_TravelSheet')
+			// 	->name('transaction.production-schedule.cancelTravelSheet');
+			// Route::get('/over-issuance', 'PPC\Transaction\ProductionScheduleController@calculateOverIssuance')
+			// 	->name('transaction.production-schedule.over-issuance');
+			
+			// Route::post('/save-materials', 'PPC\Transaction\ProductionScheduleController@SaveMaterials')
+			// 	->name('transaction.production-schedule.save-materials');
+			// Route::get('/get-materials', 'PPC\Transaction\ProductionScheduleController@Materials')
+			// 	->name('transaction.production-schedule.get-materials');
+			
 		});
 
 		Route::group(['prefix' => 'raw-material-withdrawal'], function () {
