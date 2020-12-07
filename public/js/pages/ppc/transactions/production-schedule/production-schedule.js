@@ -1236,7 +1236,7 @@ function TravelSheetDataTable(ajax_url, object_data) {
       width: '7.14%'
     }, {
       data: 'product_code',
-      name: 'prod_code',
+      name: 'product_code',
       width: '7.14%'
     }, {
       data: 'description',
@@ -1244,7 +1244,7 @@ function TravelSheetDataTable(ajax_url, object_data) {
       width: '11.14%'
     }, {
       data: 'back_order_qty',
-      name: 'order_qty',
+      name: 'back_order_qty',
       width: '7.14%'
     }, {
       data: 'sched_qty',
