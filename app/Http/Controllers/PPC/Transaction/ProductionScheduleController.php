@@ -185,8 +185,7 @@ class ProductionScheduleController extends Controller
                                         data-rmw_qty='".$data->rmw_qty."'
                                         >
                                         <i class='fa fa-edit'></i>
-                                    </button>
-                                    ";
+                                    </button>";
                         })->make(true);
     }
 
@@ -588,8 +587,8 @@ class ProductionScheduleController extends Controller
         foreach ($detailsDecrement as $key => $dt) {
             $check_prod_sched = PpcProductionSummary::where('id', $dt->prod_sched_id)->select('sched_qty')->first();
 
-            if (($check_prod_sched->sched_qty > 0) && ($check_prod_sched->sched_qty !== $dt->sched_qty)) {
-                PpcProductionSummary::where('id', $dt->prod_sched_id)->decrement('sched_qty', (float) $dt->sched_qty);
+            if ($check_prod_sched->sched_qty > 0) {
+                PpcProductionSummary::where('id', $dt->prod_sched_id)->decrement('sched_qty', (float)$dt->sched_qty);
             }
 
             PpcRawMaterialWithdrawalDetails::where('id', $dt->rmw_id)
@@ -601,26 +600,28 @@ class ProductionScheduleController extends Controller
                 ->update(['sc_no' => DB::raw("REPLACE(sc_no, '" . $dt->sc_no . "', '')")]);
         }
 
-        PpcJoDetailsSummary::where('id',$req->jo_summary_id)->update([
+        $summary_update = PpcJoDetailsSummary::where('id',$req->jo_summary_id)->update([
             'cancelled' => 1,
             'status' => 3,
             'updated_at' => date('Y-m-d H:i:s'),
             'update_user' => Auth::user()->id
         ]);
 
-        PpcJoDetails::where('jo_summary_id', $req->jo_summary_id)->update([
-            'cancelled' => 1,
-            'updated_at' => date('Y-m-d H:i:s'),
-            'update_user' => Auth::user()->id
-        ]);
+        if ($summary_update) {
+            PpcJoDetails::where('jo_summary_id', $req->jo_summary_id)->update([
+                'cancelled' => 1,
+                'updated_at' => date('Y-m-d H:i:s'),
+                'update_user' => Auth::user()->id
+            ]);
+        }
 
-        PpcPreTravelSheet::where('id', $req->id)->update(['status' => 3]);
+        PpcPreTravelSheet::where('id', $req->travel_sheet_id)->update(['status' => 3]);
 
-        ProdTravelSheet::where('pre_travel_sheet_id', $req->id)->update(['status' => 3]);
+        ProdTravelSheet::where('pre_travel_sheet_id', $req->travel_sheet_id)->update(['status' => 3]);
 
         if (isset($pts)) {
             foreach ($pts as $k => $v) {
-                ProdTravelSheetProcess::where('travel_sheet_id', $v->id)->update(['status' => 3]);
+                ProdTravelSheetProcess::where('travel_sheet_id', $v->travel_sheet_id)->update(['status' => 3]);
             }
         }
         $data = [

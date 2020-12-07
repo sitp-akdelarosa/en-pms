@@ -826,7 +826,7 @@ function makeJODetailsTable(arr) {
         columns: [ 
             { data: function(data) {
 				return '<input type="checkbox" value="'+data.jo_no+'"  data-status="'+data.status+'" class="table-checkbox jo_check">';
-			}, name: 'id', orderable: false, searchable: false, width: '8.33%'},
+			}, name: 'id', orderable: false, searchable: false, width: '3.33%'},
 			{ data: function(data) {
 				 return '<button type="button" class="btn btn-sm bg-green open_travel_sheet_modal"'+
 				 		' data-jo_no="'+data.jo_no+'" data-prod_code="'+data.product_code+'" '+
@@ -836,14 +836,14 @@ function makeJODetailsTable(arr) {
 					 	' data-ship_date="' + data.ship_date + '"  data-remarks="' + data.remarks + '"' +
 				 		' data-sc_no="'+data.sc_no+'" data-idJO="'+data.idJO+'"'+
 				 		' title="Travel Sheet"><i class="fa fa-file-text-o"></i> </button>';
-			}, name: 'action', orderable: false, searchable: false, width: '8.33%' },
-			{ data: 'jo_no', name: 'jt.jo_no', width: '8.33%' },
-			{ data: 'product_code', name: 'jt.prod_code', width: '8.33%' },
-			{ data: 'description', name: 'jt.description', width: '8.33%' },
-			{ data: 'back_order_qty', name: 'jt.order_qty', width: '8.33%' },
-			{ data: 'sched_qty', name: 'jt.sched_qty', width: '8.33%' },
-			{ data: 'issued_qty', name: 'ts.issued_qty', width: '8.33%' },
-			{ data: 'material_used', name: 'jt.material_used', width: '8.33%' },
+			}, name: 'action', orderable: false, searchable: false, width: '3.33%' },
+			{ data: 'jo_no', name: 'jt.jo_no', width: '10.33%' },
+			{ data: 'product_code', name: 'jt.prod_code', width: '10.33%' },
+			{ data: 'description', name: 'jt.description', width: '14.33%' },
+			{ data: 'back_order_qty', name: 'jt.order_qty', width: '6.33%' },
+			{ data: 'sched_qty', name: 'jt.sched_qty', width: '6.33%' },
+			{ data: 'issued_qty', name: 'ts.issued_qty', width: '6.33%' },
+			{ data: 'material_used', name: 'jt.material_used', width: '14.33%' },
 			{ data: 'material_heat_no', name: 'jt.material_heat_no', width: '8.33%' },
 			{ data: 'created_at', name: 'jt.created_at', width: '8.33%' },
 		    { data: function(data) {
@@ -872,6 +872,32 @@ function makeJODetailsTable(arr) {
 				}
 			}, name: 'ts.status', width: '8.33%' }
 		],
+		createdRow: function(row, data, dataIndex) {
+			var dataRow = $(row);
+			var checkbox = $(dataRow[0].cells[0].firstChild);
+			var details_button = $(dataRow[0].cells[1].firstChild);
+			
+            if (data.status == 6) {
+                $(row).css('background-color', 'rgb(121 204 241)'); // BLUE
+				$(row).css('color', '#000000');
+				checkbox.prop('disabled', false);
+				details_button.prop('disabled', false);
+            }
+
+            if (data.status == 3) {
+                $(row).css('background-color', '#ff6266'); // RED
+				$(row).css('color', '#fff');
+				checkbox.prop('disabled', true);
+				details_button.prop('disabled', true);
+            }
+
+            if (data.status == 5) {
+                $(row).css('background-color', 'rgb(139 241 191)'); // GREEN
+				$(row).css('color', '#000000');
+				checkbox.prop('disabled', false);
+				details_button.prop('disabled', false);
+            }
+        },
 		initComplete: function() {
 			$($.fn.dataTable.tables(true)).DataTable().columns.adjust();
 			$('.loadingOverlay').hide();

@@ -63,7 +63,7 @@ foreach ($user_accesses as $user_access){
                             <option value="null">All</option>
                             <option value="1">No quantity issued</option>
                             <option value="2">Ready for printing</option>
-                            <option value="3">On-going Process</option>
+                            <option value="3">Cancelled</option>
                             <option value="5">Closed</option>
                             <option value="6">In Production</option>
                         </select>
@@ -87,18 +87,18 @@ foreach ($user_accesses as $user_access){
             			<table class="table table-sm table-hover table-striped table-bordered nowrap" style="width: 100%" id="tbl_jo_details">
             				<thead class="thead-dark">
                                 <tr>
-                                    <th style="width:8.33%"></th>
-                                    <th style="width:8.33%"></th>
-                                    <th style="width:8.33%">Job Order No.</th>
-                                    <th style="width:8.33%">Product Code</th>
-                                    <th style="width:8.33%">Description</th>
-                                    <th style="width:8.33%">Order Qty.</th>
-                                    <th style="width:8.33%">Sched Qty.</th>
-                                    <th style="width:8.33%">Issued Qty.</th>
-                                    <th style="width:8.33%">Material Used</th>
-                                    <th style="width:8.33%">Material Heat No.</th>
-                                    <th style="width:8.33%">Date</th>
-                                    <th style="width:8.33%">Status</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th>Job Order No.</th>
+                                    <th>Product Code</th>
+                                    <th>Description</th>
+                                    <th>Order Qty.</th>
+                                    <th>Sched Qty.</th>
+                                    <th>Issued Qty.</th>
+                                    <th>Material Used</th>
+                                    <th>Material Heat No.</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody id="tbl_jo_details_body"></tbody>

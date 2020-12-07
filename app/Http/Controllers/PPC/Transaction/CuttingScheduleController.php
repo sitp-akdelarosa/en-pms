@@ -50,6 +50,14 @@ class CuttingScheduleController extends Controller
 
 		if (count((array) $jo) > 0) {
 
+			if ($jo->cancelled == 1) {
+				$data = [
+					'msg' => 'J.O. # is Cancelled.',
+					'status' => 'failed'
+				];
+				return response()->json($data);
+			}
+
 			$data = DB::select(" SELECT * FROM vcuttingsched where jo_summary_id = " . $jo->id);
 
 			if (count((array) $data) > 0) {
