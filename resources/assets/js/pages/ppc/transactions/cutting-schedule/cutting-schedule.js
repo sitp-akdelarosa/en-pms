@@ -253,7 +253,21 @@ function CuttSchedListDataTable(ajax_url, object_data) {
         order: [[7,'desc']],
         columns: [
 			{ data: 'action', name: 'action', orderable: false, searchable: false, width: '5.5%' },
-			{ data: 'jo_no', name: 'jo_no', orderable: false, searchable: false, width: '14.5%' },
+			{ data: function (x) {
+				if (x.jo_no !== null) {
+					var jono = (x.jo_no).split(",");
+					var jo="";
+
+					jono.sort();
+
+					$.each(jono, function (i, x) {
+						jo += x+"<br>";
+					});
+					return jo;
+				}
+				
+				return x.jo_no;
+			}, name: 'jo_no', orderable: false, searchable: false, width: '14.5%' },
 			{ data: 'withdrawal_slip_no', name: 'withdrawal_slip_no', orderable: false, searchable: false, width: '15.5%' },
 			{ data: 'iso_control_no', name: 'iso_control_no', orderable: false, searchable: false, width: '14.5%' },
 			{ data: 'date_issued', name: 'date_issued', orderable: false, searchable: false, width: '12.5%' },

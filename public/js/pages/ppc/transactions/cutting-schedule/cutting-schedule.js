@@ -438,7 +438,19 @@ function CuttSchedListDataTable(ajax_url, object_data) {
       searchable: false,
       width: '5.5%'
     }, {
-      data: 'jo_no',
+      data: function data(x) {
+        if (x.jo_no !== null) {
+          var jono = x.jo_no.split(",");
+          var jo = "";
+          jono.sort();
+          $.each(jono, function (i, x) {
+            jo += x + "<br>";
+          });
+          return jo;
+        }
+
+        return x.jo_no;
+      },
       name: 'jo_no',
       orderable: false,
       searchable: false,

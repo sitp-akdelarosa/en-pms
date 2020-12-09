@@ -114,7 +114,7 @@ class PDFController extends Controller
 
 		$data = [
 			'date_issued' => $this->_helper->convertDate($req->date_issued, 'F d, Y'),
-			'cut_data' => (array)$cut_data,
+			'cut_data' => $cut_data,
 			'machine_no' => $req->machine_no,
 			'prepared_by' => $req->prepared_by,
 			'leader' => $leader->fullname,
@@ -156,13 +156,13 @@ class PDFController extends Controller
 
 		$cut_data = DB::table('ppc_cutting_schedule_details')
 						->where('cutt_id', $req->id)
-						->get();
+						->get()->toArray();
 
 		$iso = AdminSettingIso::where('iso_code', $info->iso_control_no)->first();
 
 		$data = [
 			'date_issued' => $info->date_issued,
-			'cut_data' => (array)$cut_data,
+			'cut_data' => $cut_data,
 			'machine_no' => $info->machine_no,
 			'prepared_by' => $info->prepared_by,
 			'leader' => $info->leader,

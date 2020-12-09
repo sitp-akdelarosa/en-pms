@@ -82,25 +82,23 @@ for ($x = 1; $x <= $page; $x++) {
 
 
                     <?php $__currentLoopData = array_slice($cut_data,$countrows); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $rm): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <?php $__currentLoopData = $rm; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <tr>
-                                <td height="50px"><?php echo e($item->jo_no); ?></td>
-                                <td><?php echo e($item->alloy); ?></td>
-                                <td><?php echo e($item->size); ?></td>
-                                <td><?php echo e($item->item); ?></td>
-                                <td><?php echo e($item->class); ?></td>
-                                <td><?php echo e($item->lot_no); ?></td>
-                                <td><?php echo e($item->sc_no); ?></td>
-                                <td><?php echo e($item->jo_qty); ?></td>
-                                <td><?php echo e($item->cut_weight); ?></td>
-                                <td><?php echo e($item->cut_length); ?></td>
-                                <td><?php echo e($item->cut_width); ?></td>
-                                <td><?php echo e($item->material_used); ?></td>
-                                <td><?php echo e($item->material_heat_no); ?></td>
-                                <td><?php echo e($item->supplier_heat_no); ?></td>
-                                <td><?php echo e($item->qty_needed); ?></td>
-                            </tr>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <tr>
+                            <td height="50px"><?php echo e($rm->jo_no); ?></td>
+                            <td><?php echo e($rm->alloy); ?></td>
+                            <td><?php echo e($rm->size); ?></td>
+                            <td><?php echo e($rm->item); ?></td>
+                            <td><?php echo e($rm->class); ?></td>
+                            <td><?php echo e($rm->lot_no); ?></td>
+                            <td><?php echo e($rm->sc_no); ?></td>
+                            <td><?php echo e($rm->jo_qty); ?></td>
+                            <td><?php echo e($rm->cut_weight); ?></td>
+                            <td><?php echo e($rm->cut_length); ?></td>
+                            <td><?php echo e($rm->cut_width); ?></td>
+                            <td><?php echo e($rm->material_used); ?></td>
+                            <td><?php echo e($rm->material_heat_no); ?></td>
+                            <td><?php echo e($rm->supplier_heat_no); ?></td>
+                            <td><?php echo e($rm->qty_needed); ?></td>
+                        </tr>
                             
                     <?php
                         $cnt++;
@@ -166,6 +164,8 @@ for ($x = 1; $x <= $page; $x++) {
 <?php if($x%2 == 0): ?>
 <br />
 <?php else: ?>
+<br />
+<hr />
 <br />
 <?php endif; ?>
 <?php } ?>

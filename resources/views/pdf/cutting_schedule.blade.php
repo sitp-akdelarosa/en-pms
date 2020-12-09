@@ -84,25 +84,23 @@ for ($x = 1; $x <= $page; $x++) {
 
 
                     @foreach (array_slice($cut_data,$countrows) as $key => $rm)
-                        @foreach ($rm as $item)
-                            <tr>
-                                <td height="50px">{{ $item->jo_no }}</td>
-                                <td>{{ $item->alloy }}</td>
-                                <td>{{ $item->size }}</td>
-                                <td>{{ $item->item }}</td>
-                                <td>{{ $item->class }}</td>
-                                <td>{{ $item->lot_no }}</td>
-                                <td>{{ $item->sc_no }}</td>
-                                <td>{{ $item->jo_qty }}</td>
-                                <td>{{ $item->cut_weight }}</td>
-                                <td>{{ $item->cut_length }}</td>
-                                <td>{{ $item->cut_width }}</td>
-                                <td>{{ $item->material_used }}</td>
-                                <td>{{ $item->material_heat_no }}</td>
-                                <td>{{ $item->supplier_heat_no }}</td>
-                                <td>{{ $item->qty_needed }}</td>
-                            </tr>
-                        @endforeach
+                        <tr>
+                            <td height="50px">{{ $rm->jo_no }}</td>
+                            <td>{{ $rm->alloy }}</td>
+                            <td>{{ $rm->size }}</td>
+                            <td>{{ $rm->item }}</td>
+                            <td>{{ $rm->class }}</td>
+                            <td>{{ $rm->lot_no }}</td>
+                            <td>{{ $rm->sc_no }}</td>
+                            <td>{{ $rm->jo_qty }}</td>
+                            <td>{{ $rm->cut_weight }}</td>
+                            <td>{{ $rm->cut_length }}</td>
+                            <td>{{ $rm->cut_width }}</td>
+                            <td>{{ $rm->material_used }}</td>
+                            <td>{{ $rm->material_heat_no }}</td>
+                            <td>{{ $rm->supplier_heat_no }}</td>
+                            <td>{{ $rm->qty_needed }}</td>
+                        </tr>
                             
                     <?php
                         $cnt++;
@@ -167,6 +165,8 @@ for ($x = 1; $x <= $page; $x++) {
 @if($x%2 == 0)
 <br />
 @else
+<br />
+<hr />
 <br />
 @endif
 <?php } ?>
