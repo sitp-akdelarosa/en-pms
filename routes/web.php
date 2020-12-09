@@ -412,6 +412,8 @@ Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', '
 				->name('transaction.travel-sheet.get-Sc_no');
 			Route::get('/get-process-div', 'PPC\Transaction\TravelSheetController@getProcessDiv')
 				->name('transaction.travel-sheet.get-process-div');
+			Route::post('/proceed-to-production', 'PPC\Transaction\TravelSheetController@proceedToProduction')
+				->name('transaction.travel-sheet.proceed-to-production');
 		});
 
 		Route::group(['prefix' => 'cutting-schedule'], function () {

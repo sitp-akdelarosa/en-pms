@@ -4514,24 +4514,46 @@ $( function() {
 	});
 	
 	$('#btn_proceed').on('click', function() {
-		swal({
-			title: "Proceed to Production",
-			text: "Ready to proceed this Travel sheet to Production?",
-			type: "warning",
-			showCancelButton: true,
-			confirmButtonColor: "#f95454",
-			confirmButtonText: "Yes",
-			cancelButtonText: "No",
-			closeOnConfirm: true,
-			closeOnCancel: false
-		}, function (isConfirm) {
-			if (isConfirm) {
-				swal.close();
-				// ajax to update travel sheet status
-			} else {
-				swal.close();
+		var id = [];
+		var jo = [];
+		var table = $('#tbl_jo_details').DataTable();
+
+		for (var x = 0; x < table.context[0].aoData.length; x++) {
+			var DataRow = table.context[0].aoData[x];
+			if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
+				var checkbox = table.context[0].aoData[x].anCells[0].firstChild;
+				id.push($(checkbox).attr('data-id'))
+				jo.push($(checkbox).attr('data-jo'))
 			}
-		});
+		}
+
+		if (id.length > 0) {
+			swal({
+				title: "Proceed to Production",
+				text: "Ready to proceed this Travel sheet to Production?",
+				type: "warning",
+				showCancelButton: true,
+				confirmButtonColor: "#f95454",
+				confirmButtonText: "Yes",
+				cancelButtonText: "No",
+				closeOnConfirm: true,
+				closeOnCancel: false
+			}, function (isConfirm) {
+				if (isConfirm) {
+					var param = {
+						_token: token,
+						id: id,
+						jo: jo
+					}
+					ProceedToProduction(param);
+				} else {
+					swal.close();
+				}
+			});
+		} else {
+			msg("Select at least 1 J.O. number to proceed to Production.", 'failed');
+		}
+		
 	});
 
 	$('#btn_add_process').on('click', function () {
@@ -5054,7 +5076,7 @@ function makeJODetailsTable(arr) {
 		// scrollX: true,
         columns: [ 
             { data: function(data) {
-				return '<input type="checkbox" value="'+data.jo_no+'"  data-status="'+data.status+'" class="table-checkbox jo_check">';
+				return '<input type="checkbox" value="'+data.jo_no+'" data-jo="'+data.jo_no+'" data-id="'+data.id+'" data-status="'+data.status+'" class="table-checkbox jo_check">';
 			}, name: 'id', orderable: false, searchable: false, width: '3.33%'},
 			{ data: function(data) {
 				 return '<button type="button" class="btn btn-sm bg-green open_travel_sheet_modal"'+
@@ -5125,6 +5147,13 @@ function makeJODetailsTable(arr) {
 				$(row).css('color', '#000000');
 				checkbox.prop('disabled', false);
 				details_button.prop('disabled', false);
+			}
+			
+			if (data.status == 6) {
+                $(row).css('background-color', '#39cccc'); // GREEN
+				$(row).css('color', '#000000');
+				checkbox.prop('disabled', false);
+				details_button.prop('disabled', false);
             }
         },
 		initComplete: function() {
@@ -5175,7 +5204,7 @@ function getPreTravelSheetData(id,jo) {
 		$('#set').val(data.sets);
 		showProcessList(data.sets,data.prod_code,data.process,jo)
 	}).fail(function(xhr, textStatus, errorThrown) {
-		msg(errorThrown,textStatus);
+		ErrorMsg(xhr);
 	}).always(function () {
 		//$('.loadingOverlay-modal').hide();
 	});
@@ -5273,6 +5302,23 @@ function getSC(idJO) {
 		sched_qty_arr = data.back_order_qty;
 		makeProdTable(prod_arr,scno_arr);
 	}).fail(function(xhr, textStatus, errorThrown) {
-		msg(errorThrown,textStatus);
+		ErrorMsg(xhr);
+	});
+}
+
+function ProceedToProduction(param) {
+	$('.loadingOverlay').show();
+	$.ajax({
+		url: ProceedToProductionURL,
+		type: 'POST',
+		dataType: 'JSON',
+		data: param,
+	}).done(function(data, textStatus, xhr) {
+		joDetailsList();
+		msg(data.msg,data.status);
+	}).fail(function(xhr, textStatus, errorThrown) {
+		ErrorMsg(xhr);
+	}).always( function() {
+		$('.loadingOverlay').hide();
 	});
 }

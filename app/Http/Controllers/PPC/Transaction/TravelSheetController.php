@@ -612,6 +612,50 @@ class TravelSheetController extends Controller
 
     public function proceedToProduction(Request $req)
     {
-        # code...
+        $data = [
+            'msg' => 'Confirmation has failed.',
+            'status' => 'failed'
+        ];
+
+        $updated_id = 0;
+        $jo_no = '';
+
+        if (count($req->id) > 0) {
+            $com = '';
+            foreach ($req->id as $key => $id) {
+                $update = PpcPreTravelSheet::where('id',$id)
+                                            ->update([
+                                                'status' => 6,
+                                                'update_user' => Auth::user()->id,
+                                                'updated_at' => date('Y-m-d H:i:s')
+                                            ]);
+
+                if ($update) {
+                    $jo = DB::table('v_jo_list')->where('travel_sheet_id', $id)->first();
+
+                    PpcJoDetailsSummary::where('id', $jo->jo_summary_id)
+                                        ->update([
+                                            'status' => 6,
+                                            'update_user' => Auth::user()->id,
+                                            'updated_at' => date('Y-m-d H:i:s')
+                                        ]);
+
+                    if ($jo_no !== '') {
+                        $com = ',';
+                    }
+                    $jo_no .= $com.$jo_no;
+                    $updated_id++;
+                }
+            }
+
+            if ($updated_id > 0) {
+                $data = [
+                    'msg' => 'J.o. # '.$jo_no.' has successfully confirmed to proceed to Production.',
+                    'status' => 'success'
+                ];
+            }
+        }
+
+        return response()->json($data);
     }
 }

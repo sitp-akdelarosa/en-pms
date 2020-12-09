@@ -144,6 +144,8 @@ foreach ($user_accesses as $user_access){
         var pdfTravelSheetURL = "<?php echo e(url('/pdf/travel-sheet')); ?>";
         var getPreTravelSheetDataURL = "<?php echo e(url('/transaction/travel-sheet/pre-travel-sheet-data')); ?>";
 
+        var ProceedToProductionURL = "<?php echo e(url('/transaction/travel-sheet/proceed-to-production')); ?>";
+
         var getProcessDivURL = "<?php echo e(url('/transaction/travel-sheet/get-process-div')); ?>";
         var code_permission = 'T0006';
         

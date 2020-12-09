@@ -146,6 +146,8 @@ foreach ($user_accesses as $user_access){
         var pdfTravelSheetURL = "{{ url('/pdf/travel-sheet') }}";
         var getPreTravelSheetDataURL = "{{ url('/transaction/travel-sheet/pre-travel-sheet-data') }}";
 
+        var ProceedToProductionURL = "{{ url('/transaction/travel-sheet/proceed-to-production') }}";
+
         var getProcessDivURL = "{{ url('/transaction/travel-sheet/get-process-div') }}";
         var code_permission = 'T0006';
         
