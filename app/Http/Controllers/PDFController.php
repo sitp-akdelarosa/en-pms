@@ -155,7 +155,37 @@ class PDFController extends Controller
 		$cut_data = [];
 
 		$cut_data = DB::table('ppc_cutting_schedule_details')
+						->select(
+							DB::raw("jo_no as jo_no"),
+							DB::raw("alloy as alloy"),
+							DB::raw("size as size"),
+							DB::raw("item as item"),
+							DB::raw("class as class"),
+							DB::raw("cut_weight as cut_weight"),
+							DB::raw("cut_length as cut_length"),
+							DB::raw("cut_width as cut_width"),
+							DB::raw("sc_no as sc_no"),
+							DB::raw("SUM(jo_qty) as jo_qty"),
+							DB::raw("material_used as material_used"),
+							DB::raw("SUM(qty_needed) as qty_needed"),
+							DB::raw("material_heat_no as material_heat_no"),
+							DB::raw("lot_no as lot_no"),
+							DB::raw("supplier_heat_no as supplier_heat_no")
+						)
 						->where('cutt_id', $req->id)
+						->groupBy('jo_no',
+							'alloy',
+							'size',
+							'item',
+							'class',
+							'cut_weight',
+							'cut_length',
+							'cut_width',
+							'sc_no',
+							'material_used',
+							'material_heat_no',
+							'lot_no',
+							'supplier_heat_no')
 						->get()->toArray();
 
 		$iso = AdminSettingIso::where('iso_code', $info->iso_control_no)->first();
