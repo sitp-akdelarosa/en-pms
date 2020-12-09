@@ -77,7 +77,7 @@ class PDFController extends Controller
 						->where('rmw_no', $req->withdrawal_slip)
 						->whereIn('jo_no',$jo_no_arr)
 						->where('status','<>','3')
-						->get();
+						->get()->toArray();
 		
 
 		// foreach ($req->no as $key => $no) {
