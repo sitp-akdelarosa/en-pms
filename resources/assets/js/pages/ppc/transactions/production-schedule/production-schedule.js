@@ -935,7 +935,6 @@ function TravelSheetDataTable(ajax_url, object_data) {
                 ErrorMsg(xhr);
             }
         },
-        serverSide: true,
         processing: true,
         order: [[13,'desc']],
         columns: [
@@ -951,22 +950,54 @@ function TravelSheetDataTable(ajax_url, object_data) {
             { data: 'material_used', name: 'material_used', width: '7.14%' },
             { data: 'material_heat_no', name: 'material_heat_no', width: '7.14%' },
             { data: 'lot_no', name: 'lot_no', width: '7.14%' },
-            { data: 'status', name: 'status', width: '7.14%' },
+            { data: function(data) {
+				switch (data.status) {
+					case 0:
+						return 'No quantity issued';
+						break;
+                    case '1':
+						return 'Ready to Issue';
+						break;
+					case '2':
+						return 'On-going Process';
+						break;
+					case '3':
+						return 'Cancelled';
+						break;
+					case '4':
+						return 'Proceeded to Production';
+						break;
+					case '5':
+						return 'Closed';
+						break;
+					case '6':
+						return 'In Production';
+						break;
+					default:
+						return data.status;
+						break;
+				}
+			}, name: 'status', width: '7.14%' },
             { data: 'updated_at', name: 'updated_at', width: '7.14%' },
         ],
         createdRow: function(row, data, dataIndex) {
-            if (data.status == 'In Production') {
-                $(row).css('background-color', 'rgb(121 204 241)'); // BLUE
-				$(row).css('color', '#000000');
-            }
-
-            if (data.status == 'Cancelled') {
+            if (data.status == 3) {
                 $(row).css('background-color', '#ff6266'); // RED
                 $(row).css('color', '#fff');
             }
 
-            if (data.status == 'CLOSED') {
+            if (data.status == 4) {
+                $(row).css('background-color', '#7460ee'); // PURPLE
+				$(row).css('color', '#fff');
+            }
+
+            if (data.status == 5) {
                 $(row).css('background-color', 'rgb(139 241 191)'); // GREEN
+				$(row).css('color', '#000000');
+            }
+
+            if (data.status == 6) {
+                $(row).css('background-color', 'rgb(121 204 241)'); // BLUE
 				$(row).css('color', '#000000');
             }
         },

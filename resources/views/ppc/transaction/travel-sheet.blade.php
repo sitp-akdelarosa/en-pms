@@ -62,10 +62,12 @@ foreach ($user_accesses as $user_access){
                             <span class="input-group-text">Status</span>
                         </div>
                         <select class="form-control" name="status" id="status">
-                            <option value="null">All</option>
-                            <option value="1">No quantity issued</option>
-                            <option value="2">Ready for printing</option>
+                            <option value="">All</option>
+                            <option value="0">No quantity issued</option>
+                            <option value="1">Ready to Issue</option>
+                            <option value="2">On-going Process</option>
                             <option value="3">Cancelled</option>
+                            <option value="4">Proceeded to Production</option>
                             <option value="5">Closed</option>
                             <option value="6">In Production</option>
                         </select>

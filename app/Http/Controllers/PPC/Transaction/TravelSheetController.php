@@ -48,27 +48,10 @@ class TravelSheetController extends Controller
 
     public function getJoDetails(Request $req)
     {
-        $status = '';
-        $TO = '';
-        $FROM = '';
-        $jo_details = [];
-        switch ($req->status) {
-            case 1:
-                $status = 'AND `status` IS NULL';
-                break;
-            case 2:
-                $status = 'AND `status` = 1'; // 
-                break;
-            case 3:
-                $status = 'AND `status` = 2';
-                break;  
-            case 5:
-                $status = 'AND `status` = 5';
-                break;   
-            default:
-                $status = '';
-                break;
-        }
+        $TO = 0;
+        $FROM = 0;
+        $data = [];
+
         if (isset($req->fromvalue)) {
             $from = PpcJoDetailsSummary::select('id')
                         ->where('jo_no', 'like', '%'.$req->fromvalue.'%')
@@ -86,61 +69,35 @@ class TravelSheetController extends Controller
                 }
             }
             
-            $data = DB::table('v_jo_list')
-                        ->where('user_id', Auth::user()->id)
-                        ->whereBetween('jo_summary_id', [$FROM, $TO])
-                        ->whereRaw("1=1 ".$status)
-                        ->get();
+            $data = DB::select(
+                        DB::raw("CALL GET_JO_list(".Auth::user()->id.",".$FROM.",".$TO.",".(int)$req->status.")")
+                    );
+        } else {
 
-            foreach ($data as $key => $dt) {
-                array_push($jo_details, [
-                    'qty_per_sheet' => $dt->qty_per_sheet,
-                    'iso_code' => $dt->iso_code,
-                    'id' => $dt->travel_sheet_id,
-                    'idJO' => $dt->jo_summary_id,
-                    'jo_no' => $dt->jo_no,
-                    'sc_no' => $dt->sc_no,
-                    'product_code' => $dt->product_code,
-                    'description' => $dt->description,
-                    'back_order_qty' => $dt->back_order_qty,
-                    'sched_qty' => $dt->sched_qty,
-                    'issued_qty' => $dt->issued_qty,
-                    'ship_date' => $dt->ship_date,
-                    'remarks' => (is_null($dt->remarks))? '' : $dt->remarks,
-                    'material_used' => $dt->material_used,
-                    'material_heat_no' => $dt->material_heat_no,
-                    'created_at' => $dt->updated_at,
-                    'status' => $dt->status
-                ]);
+            if (is_null($req->status)) {
+                $data = DB::select(
+                            DB::raw("CALL GET_JO_list(".Auth::user()->id.",NULL,NULL,NULL)")
+                        );
+            } else {
+                $data = DB::select(
+                            DB::raw("CALL GET_JO_list(".Auth::user()->id.",NULL,NULL,".(int)$req->status.")")
+                        );
             }
-        }else{
-
-            $data = DB::table('v_jo_list')
-                    ->where('user_id', Auth::user()->id)->get();
-
-            foreach ($data as $key => $dt) {
-                array_push($jo_details, [
-                    'qty_per_sheet' => $dt->qty_per_sheet,
-                    'iso_code' => $dt->iso_code,
-                    'id' => $dt->travel_sheet_id,
-                    'idJO' => $dt->jo_summary_id,
-                    'jo_no' => $dt->jo_no,
-                    'sc_no' => $dt->sc_no,
-                    'product_code' => $dt->product_code,
-                    'description' => $dt->description,
-                    'back_order_qty' => $dt->back_order_qty,
-                    'sched_qty' => $dt->sched_qty,
-                    'issued_qty' => $dt->issued_qty,
-                    'ship_date' => $dt->ship_date,
-                    'remarks' => (is_null($dt->remarks))? '' : $dt->remarks,
-                    'material_used' => $dt->material_used,
-                    'material_heat_no' => $dt->material_heat_no,
-                    'created_at' => $dt->updated_at,
-                    'status' => $dt->status
-                ]);
-            }
+           
         }
-        return response()->json($jo_details);
+
+        return DataTables::of($data)
+						->addColumn('action', function($data) {
+                            return "<button type='button' class='btn btn-sm bg-green open_travel_sheet_modal' 
+                                        data-jo_no='".$data->jo_no."' data-prod_code='".$data->product_code."' 
+                                        data-issued_qty='".$data->issued_qty."' data-id='".$data->travel_sheet_id."' 
+                                        data-status='".$data->status."'  data-sched_qty='".$data->sched_qty."' 
+                                        data-qty_per_sheet='".$data->qty_per_sheet."'  data-iso_code='".$data->iso_code."' 
+                                        data-ship_date='".$data->ship_date."'  data-remarks='".$data->remarks."' 
+                                        data-sc_no='".$data->sc_no."' data-idJO='".$data->jo_summary_id."' 
+                                        title='Prepare Travel Sheet'><i class='fa fa-file-text-o'></i> </button>";
+                        })
+						->make(true);
     }
 
     public function getProcess(Request $req)
@@ -625,7 +582,7 @@ class TravelSheetController extends Controller
             foreach ($req->id as $key => $id) {
                 $update = PpcPreTravelSheet::where('id',$id)
                                             ->update([
-                                                'status' => 6,
+                                                'status' => 4,
                                                 'update_user' => Auth::user()->id,
                                                 'updated_at' => date('Y-m-d H:i:s')
                                             ]);
@@ -635,7 +592,7 @@ class TravelSheetController extends Controller
 
                     PpcJoDetailsSummary::where('id', $jo->jo_summary_id)
                                         ->update([
-                                            'status' => 6,
+                                            'status' => 4,
                                             'update_user' => Auth::user()->id,
                                             'updated_at' => date('Y-m-d H:i:s')
                                         ]);

@@ -4405,9 +4405,14 @@ $( function() {
 	});
 
 	$('#status').on('change', function() {
-		$('#from').val("");
-		$('#to').val("");
-		joDetailsList($(this).val(),'','');
+		var param = {
+			_token: token,
+			status: $(this).val(),
+			fromvalue: null,
+			tovalue: null
+		};
+
+		TravelSheetDataTable(joDetailsListURL, param);
 	});
 
 	$('#frm_travel_sheet').on('submit', function(e) {
@@ -4478,12 +4483,27 @@ $( function() {
 	});
 
 	$('#searchPS').on('click',function() {
-        if($('#from').val() != "" && $('#to').val() != ""){
-        	joDetailsList($('#status').val(),$('#from').val(),$('#to').val());
+        if ($('#from').val() != "" && $('#to').val() != "") {
+			var param = {
+				_token: token,
+				status: $('#status').val(),
+				fromvalue: $('#from').val(),
+				tovalue: $('#to').val()
+			};
+
+			TravelSheetDataTable(joDetailsListURL, param);
 	   } 
 
-	    else if($('#from').val() != ""){
-	    	joDetailsList($('#status').val(),$('#from').val(),'');
+	    else if ($('#from').val() != "") {
+
+			var param = {
+				_token: token,
+				status: $('#status').val(),
+				fromvalue: $('#from').val(),
+				tovalue: ''
+			};
+
+			TravelSheetDataTable(joDetailsListURL, param);
 	    }
 	    else{
 	        msg("From Input is required","warning");
@@ -4690,19 +4710,27 @@ function init() {
 	$('.loadingOverlay').show();
 	check_permission(code_permission, function(output) {
 		if (output == 1) {}
-		joDetailsList();
+	});
 
-		get_set();
-		getISO('#iso_no');
+	var param = {
+		_token: token,
+		status: $('#status').val(),
+		fromvalue: $('#from').val(),
+		tovalue: $('#to').val()
+	};
 
-		get_dropdown_items_by_id(1, '#process');
+	TravelSheetDataTable(joDetailsListURL, param);
 
-		$('#sortable_process').sortable({
-			multiDrag: true,
-			selectedClass: 'selected',
-			fallbackTolerance: 3, // So that we can select items on mobile
-			animation: 150
-		});
+	get_set();
+	getISO('#iso_no');
+
+	get_dropdown_items_by_id(1, '#process');
+
+	$('#sortable_process').sortable({
+		multiDrag: true,
+		selectedClass: 'selected',
+		fallbackTolerance: 3, // So that we can select items on mobile
+		animation: 150
 	});
 }
 
@@ -4751,7 +4779,16 @@ function SaveTravelSheet(){
 		if (data.status == "success") {
 			msg(data.msg,data.status);
 			$('#travel_sheet_id').val(data.travel_sheet_id);
-			joDetailsList($('#status').val(),'','');
+
+			var param = {
+				_token: token,
+				status: $('#status').val(),
+				fromvalue: '',
+				tovalue: ''
+			};
+
+			TravelSheetDataTable(joDetailsListURL, param);
+
 			$('#btn_travel_sheet_preview').prop('disabled',false);
 		}else if (data.status == "warning"){
 			msg(data.msg,data.status);
@@ -5043,78 +5080,58 @@ function getProcessDiv(process, handleData) {
 
 }
 
-function joDetailsList(status,from,to) {
-	jo_details = [];
+function TravelSheetDataTable(ajax_url, object_data) {
+    var tbl_jo_details = $('#tbl_jo_details').DataTable();
 
-	$('.loadingOverlay').show();
-
-	$.ajax({
-		url: joDetailsListURL,
-		type: 'GET',
-		dataType: 'JSON',
-		data: {
-			_token: token,
-			status: status,
-			fromvalue: from,
-			tovalue: to
-		},
-	}).done(function(data, textStatus, xhr) {
-		jo_details = data;
-		makeJODetailsTable(jo_details);
-	}).fail(function(xhr, textStatus, errorThrown) {
-		$('.loadingOverlay').hide();
-		ErrorMsg(xhr);
-	});
-}
-
-function makeJODetailsTable(arr) {
-    $('#tbl_jo_details').dataTable().fnClearTable();
-    $('#tbl_jo_details').dataTable().fnDestroy();
-    $('#tbl_jo_details').dataTable({
-        data: arr,
-		order: [[10,'desc']],
-		// scrollX: true,
+    tbl_jo_details.clear();
+    tbl_jo_details.destroy();
+    tbl_jo_details = $('#tbl_jo_details').DataTable({
+        ajax: {
+            url: ajax_url,
+            data: object_data,
+            error: function(xhr,textStatus, errorThrown) {
+                ErrorMsg(xhr);
+            }
+        },
+        serverSide: true,
+        processing: true,
+        order: [[10,'desc']],
         columns: [ 
             { data: function(data) {
-				return '<input type="checkbox" value="'+data.jo_no+'" data-jo="'+data.jo_no+'" data-id="'+data.id+'" data-status="'+data.status+'" class="table-checkbox jo_check">';
+				return "<input type='checkbox' value='"+data.jo_no+"' data-jo='"+data.jo_no+"' "+
+					"data-id='"+data.travel_sheet_id+"' data-status='"+data.status+"' class='table-checkbox jo_check'>";
 			}, name: 'id', orderable: false, searchable: false, width: '3.33%'},
-			{ data: function(data) {
-				 return '<button type="button" class="btn btn-sm bg-green open_travel_sheet_modal"'+
-				 		' data-jo_no="'+data.jo_no+'" data-prod_code="'+data.product_code+'" '+
-				 		' data-issued_qty="'+data.issued_qty+'"data-id="'+data.id+'" '+
-				 		' data-status="'+data.status+'"  data-sched_qty="'+data.sched_qty+'" '+
-						' data-qty_per_sheet="'+data.qty_per_sheet+'"  data-iso_code="'+data.iso_code+'"'+
-					 	' data-ship_date="' + data.ship_date + '"  data-remarks="' + data.remarks + '"' +
-				 		' data-sc_no="'+data.sc_no+'" data-idJO="'+data.idJO+'"'+
-				 		' title="Travel Sheet"><i class="fa fa-file-text-o"></i> </button>';
-			}, name: 'action', orderable: false, searchable: false, width: '3.33%' },
-			{ data: 'jo_no', name: 'jt.jo_no', width: '10.33%' },
-			{ data: 'product_code', name: 'jt.prod_code', width: '10.33%' },
-			{ data: 'description', name: 'jt.description', width: '14.33%' },
-			{ data: 'back_order_qty', name: 'jt.order_qty', width: '6.33%' },
-			{ data: 'sched_qty', name: 'jt.sched_qty', width: '6.33%' },
+			{ data: 'action', name: 'action', orderable: false, searchable: false, width: '3.33%' },
+			{ data: 'jo_no', name: 'jo_no', width: '10.33%' },
+			{ data: 'product_code', name: 'prod_code', width: '10.33%' },
+			{ data: 'description', name: 'description', width: '14.33%' },
+			{ data: 'back_order_qty', name: 'order_qty', width: '6.33%' },
+			{ data: 'sched_qty', name: 'sched_qty', width: '6.33%' },
 			{ data: 'issued_qty', name: 'ts.issued_qty', width: '6.33%' },
-			{ data: 'material_used', name: 'jt.material_used', width: '14.33%' },
-			{ data: 'material_heat_no', name: 'jt.material_heat_no', width: '8.33%' },
-			{ data: 'created_at', name: 'jt.created_at', width: '8.33%' },
+			{ data: 'material_used', name: 'material_used', width: '14.33%' },
+			{ data: 'material_heat_no', name: 'material_heat_no', width: '8.33%' },
+			{ data: 'updated_at', name: 'updated_at', width: '8.33%' },
 		    { data: function(data) {
 				switch (data.status) {
 					case 0:
 						return 'No quantity issued'; //No quantity issued
 						break;
-					case 1:
+					case '1':
 						return 'Ready to Issue';
 						break;
-					case 2:
+					case '2':
 						return 'On-going Process';
 						break;
-					case 3:
-						return 'CANCELLED';
+					case '3':
+						return 'Cancelled';
 						break;
-					case 5:
-						return 'CLOSED';
+					case '4':
+						return 'Proceeded to Production';
 						break;
-					case 6:
+					case '5':
+						return 'Closed';
+						break;
+					case '6':
 						return 'In Production';
 						break;
 					default:
@@ -5123,23 +5140,23 @@ function makeJODetailsTable(arr) {
 				}
 			}, name: 'ts.status', width: '8.33%' }
 		],
-		createdRow: function(row, data, dataIndex) {
+        createdRow: function(row, data, dataIndex) {
 			var dataRow = $(row);
 			var checkbox = $(dataRow[0].cells[0].firstChild);
 			var details_button = $(dataRow[0].cells[1].firstChild);
-			
-            if (data.status == 6) {
-                $(row).css('background-color', 'rgb(121 204 241)'); // BLUE
-				$(row).css('color', '#000000');
-				checkbox.prop('disabled', false);
-				details_button.prop('disabled', false);
-            }
 
             if (data.status == 3) {
                 $(row).css('background-color', '#ff6266'); // RED
 				$(row).css('color', '#fff');
 				checkbox.prop('disabled', true);
 				details_button.prop('disabled', true);
+			}
+			
+			if (data.status == 4) {
+                $(row).css('background-color', '#7460ee'); // PURPLE
+				$(row).css('color', '#fff');
+				checkbox.prop('disabled', false);
+				details_button.prop('disabled', false);
             }
 
             if (data.status == 5) {
@@ -5150,17 +5167,19 @@ function makeJODetailsTable(arr) {
 			}
 			
 			if (data.status == 6) {
-                $(row).css('background-color', '#39cccc'); // GREEN
+                $(row).css('background-color', 'rgb(121 204 241)'); // BLUE
 				$(row).css('color', '#000000');
 				checkbox.prop('disabled', false);
 				details_button.prop('disabled', false);
             }
         },
-		initComplete: function() {
-			$($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+        fnDrawCallback: function() {
+            $("#tbl_jo_details").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
+        },
+        initComplete: function() {
+            $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
 			$('.loadingOverlay').hide();
-		}
-
+        }
     });
 }
 
@@ -5314,7 +5333,14 @@ function ProceedToProduction(param) {
 		dataType: 'JSON',
 		data: param,
 	}).done(function(data, textStatus, xhr) {
-		joDetailsList();
+		var param = {
+			_token: token,
+			status: $('#status').val(),
+			fromvalue: $('#from').val(),
+			tovalue: $('#to').val()
+		};
+
+		TravelSheetDataTable(joDetailsListURL, param);
 		msg(data.msg,data.status);
 	}).fail(function(xhr, textStatus, errorThrown) {
 		ErrorMsg(xhr);
