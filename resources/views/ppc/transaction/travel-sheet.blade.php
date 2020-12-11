@@ -43,7 +43,7 @@ foreach ($user_accesses as $user_access){
                         <div class="input-group-prepend">
                             <span class="input-group-text">From</span>
                         </div>
-                        <input type="text" class="form-control" name="from" id="from">
+                        <input type="text" class="form-control" name="from" id="from" placeholder="J.O. Number">
                     </div>
                 </div>
 
@@ -52,7 +52,7 @@ foreach ($user_accesses as $user_access){
                         <div class="input-group-prepend">
                             <span class="input-group-text">To</span>
                         </div>
-                        <input type="text" class="form-control" name="to" id="to">
+                        <input type="text" class="form-control" name="to" id="to" placeholder="J.O. Number">
                     </div>
                 </div>
 

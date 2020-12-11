@@ -226,6 +226,7 @@ $( function() {
 	$('#tbl_jo_details_body').on('change', '.jo_check', function(e) {
     	var status = $(this).attr('data-status');
     	 if ($(this).is(":checked") ) {
+			 
     	 	if(status == 0 ){
 				msg("No Preparation for Travel Sheet .",'failed');
 				$(this).prop('checked',false);
@@ -307,40 +308,53 @@ $( function() {
 	$('#btn_proceed').on('click', function() {
 		var id = [];
 		var jo = [];
+		var status = [];
+		var error = 0;
 		var table = $('#tbl_jo_details').DataTable();
 
 		for (var x = 0; x < table.context[0].aoData.length; x++) {
 			var DataRow = table.context[0].aoData[x];
 			if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
 				var checkbox = table.context[0].aoData[x].anCells[0].firstChild;
-				id.push($(checkbox).attr('data-id'))
-				jo.push($(checkbox).attr('data-jo'))
+				id.push($(checkbox).attr('data-id'));
+				jo.push($(checkbox).attr('data-jo'));
+				status.push($(checkbox).attr('data-status'));
 			}
 		}
 
 		if (id.length > 0) {
-			swal({
-				title: "Proceed to Production",
-				text: "Ready to proceed this Travel sheet to Production?",
-				type: "warning",
-				showCancelButton: true,
-				confirmButtonColor: "#f95454",
-				confirmButtonText: "Yes",
-				cancelButtonText: "No",
-				closeOnConfirm: true,
-				closeOnCancel: false
-			}, function (isConfirm) {
-				if (isConfirm) {
-					var param = {
-						_token: token,
-						id: id,
-						jo: jo
-					}
-					ProceedToProduction(param);
-				} else {
-					swal.close();
+			for (let i = 0; i < jo.length; i++) {
+				if (status[i] == '2' || status[i] == '4' || status[i] == '5' || status[i] == '6') {
+					error++;
 				}
-			});
+			}
+
+			if (error > 0) {
+				msg("Please select only J.O. # with status of 'Ready to Issue'.", 'failed');
+			} else {
+				swal({
+					title: "Proceed to Production",
+					text: "Ready to proceed this Travel sheet to Production?",
+					type: "warning",
+					showCancelButton: true,
+					confirmButtonColor: "#f95454",
+					confirmButtonText: "Yes",
+					cancelButtonText: "No",
+					closeOnConfirm: true,
+					closeOnCancel: false
+				}, function (isConfirm) {
+					if (isConfirm) {
+						var param = {
+							_token: token,
+							id: id,
+							jo: jo
+						}
+						ProceedToProduction(param);
+					} else {
+						swal.close();
+					}
+				});
+			}
 		} else {
 			msg("Select at least 1 J.O. number to proceed to Production.", 'failed');
 		}
@@ -827,6 +841,11 @@ function makeProcessList(arr, old_data) {
 			row++;
 			i++;
 		},
+		fnDrawCallback: function (oSettings) {
+            $('.dataTables_scrollBody').slimScroll({
+                height: '400px'
+            });
+        },
 		initComplete: function() {
 			$('.loadingOverlay-modal').hide();
 		}
@@ -915,6 +934,13 @@ function TravelSheetDataTable(ajax_url, object_data) {
 			var dataRow = $(row);
 			var checkbox = $(dataRow[0].cells[0].firstChild);
 			var details_button = $(dataRow[0].cells[1].firstChild);
+
+			if (data.status == 2) {
+                $(row).css('background-color', '#001F3F'); // NAVY
+				$(row).css('color', '#fff');
+				checkbox.prop('disabled', false);
+				details_button.prop('disabled', false);
+            }
 
             if (data.status == 3) {
                 $(row).css('background-color', '#ff6266'); // RED
@@ -1066,8 +1092,12 @@ function makeProdTable(arr,all_sc) {
 
 		],
 		initComplete: function() {
-			//$('.loadingOverlay-modal').hide();
 		},
+		fnDrawCallback: function (oSettings) {
+            $('.dataTables_scrollBody').slimScroll({
+                height: '250px'
+            });
+        },
 		createdRow: function (nRow, aData, iDataIndex) {
 			$(nRow).attr('id', index);
 			index++;

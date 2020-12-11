@@ -1313,6 +1313,12 @@ function TravelSheetDataTable(ajax_url, object_data) {
       width: '7.14%'
     }],
     createdRow: function createdRow(row, data, dataIndex) {
+      if (data.status == 2) {
+        $(row).css('background-color', '#001F3F'); // NAVY
+
+        $(row).css('color', '#fff');
+      }
+
       if (data.status == 3) {
         $(row).css('background-color', '#ff6266'); // RED
 

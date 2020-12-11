@@ -318,7 +318,7 @@
                     	</div>
 
                     	<div class="col-md-9">
-                    		<table class="table table-sm table-striped" cellspacing="0" width="100%"  id="tbl_production_ouput">
+                    		<table class="table table-sm table-striped table-bordered" cellspacing="0" width="100%"  id="tbl_production_ouput">
 		                        <thead class="thead-dark">
 		                    		<th width="5%">
                                         <input type="checkbox" class="table-checkbox check_all">
@@ -331,7 +331,7 @@
 	                                <th width="20%">Alloy Mix</th>
 	                                <th width="30%">Non Conformance</th>
 	                                <th width="10%">Total</th>
-	                                <th width="20%">Created_at</th>
+	                                <th width="20%">Input Date</th>
 		                        </thead>
 		                        <tbody id="tbl_production_ouput_body"></tbody>
 		                    </table>

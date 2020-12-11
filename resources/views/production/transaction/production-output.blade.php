@@ -70,7 +70,7 @@ foreach ($user_accesses as $user_access){
 
     <div class="row justify-content-center">
         <div class="col-md-10">
-            <table class="table table-striped table-sm dt-responsive" id="tbl_searched_jo" width="100%">
+            <table class="table table-striped table-bordered table-sm dt-responsive" id="tbl_searched_jo" width="100%">
                 <thead class="thead-dark">
                     <tr>
                         <th width="5%"></th>

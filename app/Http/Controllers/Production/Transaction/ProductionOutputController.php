@@ -15,6 +15,7 @@ use App\PpcPreTravelSheet;
 use App\PpcOperator;
 use App\RptFgSummary;
 use App\PpcJoTravelSheet;
+use App\PpcJoDetailsSummary;
 use Event;
 use App\Events\TravelSheet;
 use DB;
@@ -72,7 +73,7 @@ class ProductionOutputController extends Controller
         $pre_id = ProdTravelSheet::where('id',$req->travel_sheet_id)
                             ->select('pre_travel_sheet_id')->first();
         PpcPreTravelSheet::where('id',$pre_id->pre_travel_sheet_id)->update(['status' => 2]);
-        PpcJoTravelSheet::where('jo_no' , $req->jo_no)->update(['status' => 2 ]);
+        PpcJoDetailsSummary::where('jo_no' , $req->jo_no)->update(['status' => 2 ]);
         ProdTravelSheet::where('id',$req->travel_sheet_id)->update(['status' => 2 ]);
 
         $prod_output = new ProdProductionOutput();
@@ -120,13 +121,14 @@ class ProductionOutputController extends Controller
 
             $next_sequence = $req->sequence + 1;
 
+            // check if has next process
             $lastsequnce = ProdTravelSheetProcess::where([
                                         ['travel_sheet_id',$req->travel_sheet_id],
                                         ['sequence',$next_sequence]
-                                    ])->where('status' , 0)
-                                    ->update([
-                                        'unprocessed' => DB::raw("`unprocessed` + ".$prod_output->good)
-                                    ]);
+                                    ])->where('status' , 0)->count();
+                                    // ->update([
+                                    //     'unprocessed' => DB::raw("`unprocessed` + ".$prod_output->good)
+                                    // ]);
             if($lastsequnce == 0){
                 $this->saveFGSummary($req->travel_sheet_process_id,$req->travel_sheet_id,$req->jo_no,
                                 $req->prod_order,$req->prod_code,$req->description,$prod_output->good);
@@ -451,45 +453,31 @@ class ProductionOutputController extends Controller
 
     private function getTravelSheetData($jo_sequence)
     {
-        $div_codes = $this->getDivCode();
+        $data = [];
 
-        $travel_sheet = DB::table('prod_travel_sheets as ts')
-                            ->join('prod_travel_sheet_processes as p','ts.id','=','p.travel_sheet_id')
-                            ->leftJoin('ppc_product_codes as pc','pc.product_code','=','ts.prod_code')
-                            ->where('ts.jo_sequence','=',$jo_sequence)
-                            // ->where('ts.jo_sequence','like',$jo_sequence.'%')
-                            //->where('ts.status','!=', 3)
-                            // ->whereIn('p.div_code',$div_codes)
-                            ->select(
-                                DB::raw("p.travel_sheet_id as travel_sheet_id"),
-                                DB::raw("ts.jo_no as jo_no"),
-                                DB::raw("ts.status as pts_status"),
-                                DB::raw("ts.prod_code as prod_code"),
-                                DB::raw("ts.prod_order_no as prod_order_no"),
-                                DB::raw("ifnull(pc.code_description,ts.description) as description"),
-                                DB::raw("ts.material_used as material_used"),
-                                DB::raw("ts.material_heat_no as material_heat_no"),
-                                DB::raw("ts.lot_no as lot_no"),
-                                DB::raw("ts.type as type"),
-                                DB::raw("ts.order_qty as order_qty"),
-                                DB::raw("ts.issued_qty as issued_qty"),
-                                DB::raw("ts.total_issued_qty as total_issued_qty"),
-                                DB::raw("ts.jo_sequence as jo_sequence"),
-                                DB::raw("p.id as id"),
-                                DB::raw("p.process as process"),
-                                DB::raw("p.previous_process as previous_process"),
-                                DB::raw("p.unprocessed as unprocessed"),
-                                DB::raw("p.good as good"),
-                                DB::raw("p.rework as rework"),
-                                DB::raw("p.scrap as scrap"), 
-                                DB::raw("p.sequence as sequence"),
-                                DB::raw("p.div_code as div_code"),
-                                DB::raw("p.status as status"),
-                                DB::raw("ts.pre_travel_sheet_id as pre_travel_sheet_id")             
-                            )
-                            ->orderBy('sequence' , 'ASC')
-                            ->get();
+        $travel_sheet_count = DB::table('v_travel_sheet_production_output')->where('jo_sequence','=',$jo_sequence)->count();
 
-        return $travel_sheet;
+        if ($travel_sheet_count) {
+            $data = DB::table('v_travel_sheet_production_output')
+                            ->where('jo_sequence','=',$jo_sequence)->get();
+            
+            $jo = DB::table('v_jo_list')->where('travel_sheet_id', $data[0]->pre_travel_sheet_id)->first();
+
+            if ($jo->status == 4) {
+                PpcPreTravelSheet::where('id',$data[0]->pre_travel_sheet_id)
+                                    ->update([
+                                        'status' => 6,
+                                        'updated_at' => date('Y-m-d H:i:s')
+                                    ]);
+
+                PpcJoDetailsSummary::where('id', $jo->jo_summary_id)
+                                    ->update([
+                                        'status' => 6,
+                                        'updated_at' => date('Y-m-d H:i:s')
+                                    ]);
+            }
+        }        
+
+        return $data;
     }
 }

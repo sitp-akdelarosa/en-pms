@@ -34,4 +34,11 @@ class Notify implements ShouldBroadcast
     {
         return new Channel('notification');
     }
+
+    public function broadcastWith()
+    {
+        $extra = [];
+
+        return array_merge($this->notification->toArray(), $extra);
+    }
 }

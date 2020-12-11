@@ -42,7 +42,7 @@ foreach ($user_accesses as $user_access){
 					</div>
 				</div>
 
-				<table class="table table-sm table-hover table-striped dt-responsive nowrap" id="tbl_transfer_entry" style="width: 100%">
+				<table class="table table-sm table-bordered table-hover table-striped dt-responsive nowrap" id="tbl_transfer_entry" style="width: 100%">
 					<thead class="thead-dark">
 						<tr>
 							<th width="5%">
@@ -68,7 +68,7 @@ foreach ($user_accesses as $user_access){
 
 
 			<div class="tab-pane" id="received_items">
-				<table class="table table-sm table-hover table-striped dt-responsive nowrap" id="tbl_received_items" style="width: 100%">
+				<table class="table table-bordered table-sm table-hover table-striped dt-responsive nowrap" id="tbl_received_items" style="width: 100%">
 					<thead class="thead-dark">
 						<tr>
 							 <th width="5%">

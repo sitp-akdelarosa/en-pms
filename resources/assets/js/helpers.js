@@ -27,9 +27,10 @@ Echo.channel('travel-sheet')
 Echo.channel('notification')
 	.listen('Notify', function(e) {
 		var noti = e.notification;
-		msg('You have Notification.','success');
 		$.each(noti, function(i, x) {
-			if (x.to == $('meta[name=user_id]').attr('content')) {
+			var user_id = $('meta[name=user_id]').attr('content');
+			
+			if (x.to == user_id) {
 				getUnreadNotification();
 				msg(x.content,'notification');
 			}
@@ -101,9 +102,10 @@ $( function() {
 		trigger: 'hover'
 	});
 
-	// $('.modal').draggable({
-	// 	handle: ".modal-header"
-	// }); 
+	// notification controls
+	$('.view_notification').on('hover', function() {
+		$('#notification_bell').html('<i class="fa fa-bell"></i>');
+	});
 });
 
 jQuery.fn.extend({

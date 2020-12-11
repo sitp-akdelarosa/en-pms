@@ -97,7 +97,7 @@
                 <input type="hidden" name="rmw_qty" id="rmw_qty" class="clear_hidden_materials_item_modal" />
 
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-5">
                         <table class="table table-sm table-bordered table-striped nowrap" style="width:100%" id="tbl_mateials_item">
                             <thead class="thead-dark">
                                 <th>Material Code</th>
@@ -109,7 +109,7 @@
                         </table>
                     </div>
 
-                    <div class="col-md-8">
+                    <div class="col-md-7">
                         <table class="table table-sm table-bordered table-striped nowrap" style="width:100%" id="tbl_products_item">
                             <thead class="thead-dark">
                                 <th width="3%"></th>
