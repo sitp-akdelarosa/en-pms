@@ -247,7 +247,8 @@ class TravelSheetController extends Controller
                         $msgIssuedQty = 1;
                      }
                     if ($page_count > 1) {
-                        $jo_sequence = $key + 1;
+                        $seq = $key + 1;
+                        $jo_sequence = sprintf("%02d", $seq);
                     } else {
                         $jo_sequence = '';
                     }
