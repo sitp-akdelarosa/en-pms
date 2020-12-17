@@ -404,7 +404,7 @@ class TransferItemController extends Controller
         $current_processes = DB::table('prod_travel_sheet_processes')
                         ->whereIn('div_code',$div_codes)
                         ->where('travel_sheet_id',$id)
-                        ->where('unprocessed','<>',0)
+                        // ->where('unprocessed','<>',0)
                         ->select('id','process')
                         ->groupBy('id','process')
                         ->orderBy('id','asc')
@@ -421,8 +421,12 @@ class TransferItemController extends Controller
     {
         $UnprocessTravel =DB::table('prod_travel_sheet_processes')
                             ->where('id',$req->current_process)
-                            ->select('unprocessed', 'div_code', 'leader')
-                            ->get();
+                            ->select(
+                                DB::raw("(good+rework+scrap) as total_qty"), 
+                                'div_code', 
+                                'leader'
+                            )
+                            ->first();
 
         $UnprocessTransfer = DB::table('prod_transfer_items as i')
                         ->join('prod_travel_sheet_processes as tsp', 'tsp.id', '=', 'i.current_process')

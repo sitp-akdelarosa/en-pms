@@ -312,28 +312,28 @@ function makeSearchTable(arr) {
                             ""+disabled+">"+
                             "<i class='fa fa-edit'></i>"+
                         "</button>";
-            }, searchable: false, orderable: false },
-            {data:'jo_no'},
-            {data:'jo_sequence'},
-            {data:'prod_code'},
-            {data:'div_code'},
-            {data:'issued_qty'},
-            {data:'process'},
-            {data:'unprocessed'},
-            {data:'good'},
-            {data:'rework'},
-            {data:'scrap'},
-            {data: function(x) {
+            }, searchable: false, orderable: false, width: '3.33%' },
+            { data:'jo_no', width: '8.33%'},
+            { data:'jo_sequence', width: '10.33%'},
+            { data:'prod_code', width: '11.33%'},
+            { data:'div_code', width: '8.33%'},
+            { data:'issued_qty', width: '8.33%'},
+            { data:'process', width: '8.33%'},
+            { data:'unprocessed', width: '8.33%'},
+            { data:'good', width: '8.33%'},
+            { data:'rework', width: '8.33%'},
+            { data:'scrap', width: '8.33%'},
+            { data: function(x) {
                 var status = 'ON PROCESS';
                 if (x.status == 1) {
-                    status = 'READY FOR FG';
+                    status = 'DONE'; //READY FOR FG
                 }else if(x.status == 5){
                     status = 'FINISHED';
                 }else if(x.status == 3){
                     status = 'TRANSFER ITEM';
                 }
                 return status;
-            }},
+            }, width: '8.33%'},
         ],
         // fnInitComplete: function() {
         //     $('.dataTables_scrollBody').slimscroll();

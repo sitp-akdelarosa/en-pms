@@ -125,7 +125,11 @@ $(function () {
     var unprocessed = parseInt($('#unprocessed').val());
 
     if (qty > unprocessed) {
-      msg('Qty must be less than in # of item to transfer', 'warning');
+      var curr_process = $("#curr_process").find("option:selected").text();
+
+      if (curr_process !== 'CUTTING') {
+        msg('Qty must be less than in # of item to transfer', 'warning');
+      }
     }
   });
   $('#btn_add').on('click', function () {
@@ -141,29 +145,36 @@ $(function () {
 
     if ($('#process').val() == $("#curr_process").find("option:selected").text() && $('#userDivCode').val() == $("#div_code").find("option:selected").text()) {
       msg("You cannot transfer to your division with the same process", "warning");
-    } else if (parseInt($('#qty').val()) > parseInt($('#unprocessed').val())) {
-      msg('Qty must be less than in # of item to transfer', 'warning');
     } else if (parseInt($('#unprocessed').val()) < parseInt($('#UnprocessTransfer').val())) {
       totalqty -= parseInt($('#unprocessed').val());
       msg('The total of pending qty is greather than ' + totalqty + ' to # of item to transfer', 'warning');
     } else if ($('#qty').val() < 0) {
       msg("Please Input valit number", "warning");
     } else {
-      $.ajax({
-        dataType: 'json',
-        type: 'POST',
-        url: $(this).attr("action"),
-        data: $(this).serialize()
-      }).done(function (data, textStatus, xhr) {
-        msg(data.msg, data.status);
-        transfer_item_arr = data.transfer_item;
-        makeTransferItemTable(transfer_item_arr);
-        getReceiveItems();
-        $('#modal_transfer_entry').modal('hide');
-      }).fail(function (xhr, textStatus, errorThrown) {
-        var errors = xhr.responseJSON.errors;
-        showErrors(errors);
-      });
+      var curr_process = $("#curr_process").find("option:selected").text();
+
+      if (curr_process !== 'CUTTING' && parseInt($('#qty').val()) > parseInt($('#unprocessed').val())) {
+        msg('Qty must be less than in # of item to transfer', 'warning');
+      } else {
+        $('.loadingOverlay-modal').show();
+        $.ajax({
+          dataType: 'json',
+          type: 'POST',
+          url: $(this).attr("action"),
+          data: $(this).serialize()
+        }).done(function (data, textStatus, xhr) {
+          msg(data.msg, data.status);
+          transfer_item_arr = data.transfer_item;
+          makeTransferItemTable(transfer_item_arr);
+          getReceiveItems();
+          $('#modal_transfer_entry').modal('hide');
+        }).fail(function (xhr, textStatus, errorThrown) {
+          var errors = xhr.responseJSON.errors;
+          ErrorMsg(errors);
+        }).always(function () {
+          $('.loadingOverlay-modal').hide();
+        });
+      }
     }
   });
   $('#tbl_transfer_entry_body').on('click', '.btn_edit', function (e) {
@@ -548,10 +559,10 @@ function getUnprocessed(process, jo_no, current_process) {
       current_process: current_process
     }
   }).done(function (data, textStatus, xhr) {
-    $.each(data.UnprocessTravel, function (i, x) {
-      $('#unprocessed').val(x.unprocessed);
-      $('#userDivCode').val(x.div_code);
-    });
+    //$.each(data.UnprocessTravel, function(i, x) {
+    $('#unprocessed').val(data.UnprocessTravel['total_qty']);
+    $('#userDivCode').val(data.UnprocessTravel['div_code']); //});
+
     $('#UnprocessTransfer').val(data.UnprocessTransfer);
   }).fail(function (xhr, textStatus, errorThrown) {
     console.log(errorThrown);

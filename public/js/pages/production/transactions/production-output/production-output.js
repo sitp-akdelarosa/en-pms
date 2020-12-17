@@ -394,33 +394,44 @@ function makeSearchTable(arr) {
         return "<button class='btn btn-sm bg-blue btn_edit_travel_sheet' " + "data-travel_sheet_id='" + x.travel_sheet_id + "' " + "data-id='" + x.id + "' " + "data-jo_no='" + x.jo_no + "' " + "data-jo_sequence='" + x.jo_sequence + "' " + "data-prod_order_no='" + x.prod_order_no + "' " + "data-material_used='" + x.material_used + "' " + "data-material_heat_no='" + x.material_heat_no + "' " + "data-lot_no='" + x.lot_no + "' " + "data-type='" + x.type + "' " + "data-order_qty='" + x.order_qty + "' " + "data-previous_process='" + x.previous_process + "' " + "data-process='" + x.process + "' " + "data-sequence='" + x.sequence + "' " + "data-unprocessed='" + x.unprocessed + "' " + "data-prod_code='" + x.prod_code + "' " + "data-description='" + x.description + "' " + "data-total_issued_qty='" + x.total_issued_qty + "' " + "data-issued_qty='" + x.issued_qty + "' " + "data-sc_no='" + x.sc_no + "' " + "" + disabled + ">" + "<i class='fa fa-edit'></i>" + "</button>";
       },
       searchable: false,
-      orderable: false
+      orderable: false,
+      width: '3.33%'
     }, {
-      data: 'jo_no'
+      data: 'jo_no',
+      width: '8.33%'
     }, {
-      data: 'jo_sequence'
+      data: 'jo_sequence',
+      width: '10.33%'
     }, {
-      data: 'prod_code'
+      data: 'prod_code',
+      width: '11.33%'
     }, {
-      data: 'div_code'
+      data: 'div_code',
+      width: '8.33%'
     }, {
-      data: 'issued_qty'
+      data: 'issued_qty',
+      width: '8.33%'
     }, {
-      data: 'process'
+      data: 'process',
+      width: '8.33%'
     }, {
-      data: 'unprocessed'
+      data: 'unprocessed',
+      width: '8.33%'
     }, {
-      data: 'good'
+      data: 'good',
+      width: '8.33%'
     }, {
-      data: 'rework'
+      data: 'rework',
+      width: '8.33%'
     }, {
-      data: 'scrap'
+      data: 'scrap',
+      width: '8.33%'
     }, {
       data: function data(x) {
         var status = 'ON PROCESS';
 
         if (x.status == 1) {
-          status = 'READY FOR FG';
+          status = 'DONE'; //READY FOR FG
         } else if (x.status == 5) {
           status = 'FINISHED';
         } else if (x.status == 3) {
@@ -428,7 +439,8 @@ function makeSearchTable(arr) {
         }
 
         return status;
-      }
+      },
+      width: '8.33%'
     }] // fnInitComplete: function() {
     //     $('.dataTables_scrollBody').slimscroll();
     // },

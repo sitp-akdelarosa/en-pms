@@ -10,7 +10,7 @@
                 </div>
 
                 <div class="modal-body table-responsive">
-                    <div class="loadingOverlay"></div>
+                    <div class="loadingOverlay-modal"></div>
 
                     <h5>FROM</h5>
                     <hr/>
@@ -243,7 +243,7 @@
                     </button>
                 </div>
                 <div class="modal-body table-responsive">
-                    <div class="loadingOverlay"></div>
+                    <div class="loadingOverlay-modal"></div>
 
                     <div class="row mb-10">
                         <div class="col-md-12">

@@ -119,6 +119,18 @@ class ProductionOutputController extends Controller
                                         'update_user' => Auth::user()->id
                                     ]);
 
+            $processes = DB::table('prod_travel_sheet_processes')
+                            ->where('id',$req->travel_sheet_process_id)
+                            ->first();
+
+            if ($processes->unprocessed == 0) {
+                DB::table('prod_travel_sheet_processes')
+                            ->where('id',$req->travel_sheet_process_id)
+                            ->update([
+                                'status' => 1
+                            ]);
+            }
+
             $next_sequence = $req->sequence + 1;
 
             // check if has next process
