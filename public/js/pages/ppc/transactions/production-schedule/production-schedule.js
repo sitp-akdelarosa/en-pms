@@ -622,6 +622,11 @@ function MaterialsDataTable(ajax_url, object_data) {
     ajax: {
       url: ajax_url,
       data: object_data,
+      dataSrc: function dataSrc(returnedData, textStatus, xhr) {
+        if (returnedData.data['status']) {}
+
+        return returnedData.data;
+      },
       error: function error(xhr, textStatus, errorThrown) {
         ErrorMsg(xhr);
       }
@@ -1146,7 +1151,8 @@ function saveBOM() {
     count: $('input[name="count[]"]').map(function () {
       return $(this).val();
     }).get(),
-    rmw_no: $('#rmw_no').val()
+    rmw_no: $('#rmw_no').val(),
+    _token: token
   };
   $.ajax({
     url: saveItemMaterialsURL,

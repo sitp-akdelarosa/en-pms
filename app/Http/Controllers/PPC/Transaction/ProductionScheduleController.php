@@ -236,17 +236,16 @@ class ProductionScheduleController extends Controller
         ];
 
         $prods = '';
-        $ref_id = 0;
 
         $params = [];
 
         DB::table('temp_item_materials')
-            ->whereIn('prod_sum_id', $req->prod_sum_id)
+            ->where('prod_sum_id', $req->prod_sum_id)
+            ->where('inv_id', $req->inv_id)
             ->where('create_user', Auth::user()->id)
             ->delete();
 
         if (isset($req->count)) {
-            $ref_id = rand(); // randomize ref_id for this save session;
             $comma = '';
             foreach ($req->count as $key => $count) {
                 array_push($params, [
@@ -282,7 +281,7 @@ class ProductionScheduleController extends Controller
                     'create_user' => Auth::user()->id,
                     'created_at' => date('Y-m-d H:i:s'),
                     'updated_at' => date('Y-m-d H:i:s'),
-                    'ref_id' => $ref_id
+                    'token' => $req->_token
                 ]);
 
                 if ($prods !== '') {
@@ -303,7 +302,7 @@ class ProductionScheduleController extends Controller
                 $data = [
                     'msg' => 'Materials were successfully saved.',
                     'status' => 'success',
-                    'ref_id' => $ref_id
+                    'token' => $req->_token
                 ];
 
                 $this->_audit->insert([
@@ -358,15 +357,15 @@ class ProductionScheduleController extends Controller
         $arr_jo = [];
         $jo_no = '';
 
-        if (isset($req->ref_id)) {
+        if (isset($req->_token)) {
             // get potential J.O. designation
             $bom_count = DB::table('temp_item_materials')
                             ->select(
-                                'ref_id','prod_code','heat_no','lot_no', DB::raw("sum(sched_qty) as sched_qty"),'rmw_no'
+                                'token','prod_code','heat_no','lot_no', DB::raw("sum(sched_qty) as sched_qty"),'rmw_no'
                             )
-                            ->whereIn('ref_id',$req->ref_id)
+                            ->where('token',$req->_token)
                             ->where('create_user', Auth::user()->id)
-                            ->groupBy('ref_id','prod_code','heat_no','lot_no','rmw_no')
+                            ->groupBy('token','prod_code','heat_no','lot_no','rmw_no')
                             ->count();
 
             if ($bom_count < 1) {
@@ -379,11 +378,11 @@ class ProductionScheduleController extends Controller
 
                 $boms = DB::table('temp_item_materials')
                             ->select(
-                                'ref_id','prod_code','heat_no','lot_no', DB::raw("sum(sched_qty) as sched_qty"),'rmw_no'
+                                'token','prod_code','heat_no','lot_no', DB::raw("sum(sched_qty) as sched_qty"),'rmw_no'
                             )
-                            ->whereIn('ref_id',$req->ref_id)
+                            ->where('token',$req->_token)
                             ->where('create_user', Auth::user()->id)
-                            ->groupBy('ref_id','prod_code','heat_no','lot_no','rmw_no')
+                            ->groupBy('token','prod_code','heat_no','lot_no','rmw_no')
                             ->get();
 
                 foreach ($boms as $key => $bom) {
@@ -404,7 +403,7 @@ class ProductionScheduleController extends Controller
                     array_push($arr_jo, [
                         'jo_id' => $jo_sum->id,
                         'jo_no' => $jo_sum->jo_no,
-                        'ref_id' => $bom->ref_id,
+                        'token' => $bom->token,
                         'prod_code' => $bom->prod_code,
                         'heat_no' => $bom->heat_no,
                         'lot_no' => $bom->lot_no,
@@ -421,7 +420,7 @@ class ProductionScheduleController extends Controller
 
                 foreach ($arr_jo as $key => $jo) {
                     $details = DB::table('temp_item_materials')->where([
-                                    ['ref_id', '=', $jo['ref_id']], 
+                                    ['token', '=', $jo['token']], 
                                     ['prod_code', '=', $jo['prod_code']], 
                                     ['heat_no', '=', $jo['heat_no']], 
                                     ['lot_no', '=', $jo['lot_no']], 
@@ -493,7 +492,7 @@ class ProductionScheduleController extends Controller
                 }
 
                 DB::table('temp_item_materials')
-                        ->whereIn('ref_id',$req->ref_id)
+                        ->where('token',$req->_token)
                         ->where('create_user', Auth::user()->id)
                         ->delete();
 
