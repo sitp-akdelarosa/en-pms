@@ -706,25 +706,6 @@ class ProductionScheduleController extends Controller
                                         <i class='fa fa-times'></i>
                                     </button>";
                         })
-                        ->editColumn('status', function($data) {
-                            switch ($data->status) {
-                                case 0:
-                                    return 'No quantity issued';
-                                    break;
-                                case 1:
-                                    return 'Ready to Issue';
-                                    break;
-                                case 2:
-                                    return 'On Production';
-                                    break;
-                                case 3:
-                                    return 'Cancelled';
-                                    break;
-                                case 5:
-                                    return 'CLOSED';
-                                    break;
-                            }
-                        })
 						->make(true);
     }
 

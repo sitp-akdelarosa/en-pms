@@ -1307,7 +1307,7 @@ function TravelSheetDataTable(ajax_url, object_data) {
             break;
 
           default:
-            return _data.status;
+            return 'wala';
             break;
         }
       },
@@ -1319,31 +1319,31 @@ function TravelSheetDataTable(ajax_url, object_data) {
       width: '7.14%'
     }],
     createdRow: function createdRow(row, data, dataIndex) {
-      if (data.status == 2) {
+      if (data.status == 2 || data.status == '2') {
         $(row).css('background-color', '#001F3F'); // NAVY
 
         $(row).css('color', '#fff');
       }
 
-      if (data.status == 3) {
+      if (data.status == 3 || data.status == '3') {
         $(row).css('background-color', '#ff6266'); // RED
 
         $(row).css('color', '#fff');
       }
 
-      if (data.status == 4) {
+      if (data.status == 4 || data.status == '4') {
         $(row).css('background-color', '#7460ee'); // PURPLE
 
         $(row).css('color', '#fff');
       }
 
-      if (data.status == 5) {
+      if (data.status == 5 || data.status == '5') {
         $(row).css('background-color', 'rgb(139 241 191)'); // GREEN
 
         $(row).css('color', '#000000');
       }
 
-      if (data.status == 6) {
+      if (data.status == 6 || data.status == '6') {
         $(row).css('background-color', 'rgb(121 204 241)'); // BLUE
 
         $(row).css('color', '#000000');
