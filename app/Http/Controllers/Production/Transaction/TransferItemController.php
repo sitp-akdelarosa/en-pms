@@ -247,7 +247,7 @@ class TransferItemController extends Controller
         $receive = DB::table('prod_transfer_items as i')
                     ->join('ppc_divisions as d','d.id','=','i.div_code')
                     ->orderBy('i.id','desc')
-                    ->where('i.item_status',0)
+                    // ->where('i.item_status',0)
                     ->where('d.user_id',Auth::user()->id)
                     ->select(
                         'i.id as id',
@@ -272,7 +272,9 @@ class TransferItemController extends Controller
                         'i.update_user as update_user',
                         DB::raw("DATE_FORMAT(i.updated_at, '%Y-%m-%d') as updated_at"),
                         'i.receive_qty as receive_qty',
-                        DB::raw("(i.qty - i.receive_qty) as remaining_qty")
+                        DB::raw("(i.qty - i.receive_qty) as remaining_qty"),
+                        'i.item_status',
+                        'i.receive_remarks as receive_remarks'
                     )->get();
         if (count((array)$receive) > 0) {
             return $receive;

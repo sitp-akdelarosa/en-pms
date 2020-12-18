@@ -278,7 +278,12 @@ function makeReceiveItemsTable(arr) {
                 return "<input type='checkbox' class='table-checkbox check_receive_item' value='"+x.id+"'>";
             }, searchable: false, orderable: false },
             { data: function(x) {
-                return "<button class='btn btn-sm btn-primary btn_receive'"+
+                var disabled = '';
+
+                if (x.item_status == 1) {
+                    disabled = 'disabled';
+                }
+                return "<button class='btn btn-sm btn-primary btn_receive' "+
                             "data-id='"+x.id+"'"+
                             "data-jo_no='"+x.jo_no+"'"+
                             "data-current_process_name='"+x.current_process_name+"'"+
@@ -297,8 +302,9 @@ function makeReceiveItemsTable(arr) {
                             "data-remarks='"+x.remarks+"'"+
                             "data-create_user='"+x.create_user+"'"+
                             "data-created_at='"+x.created_at+"'"+
-                            "data-update_user='"+x.update_user+"'"+
-                            "data-updated_at='"+x.updated_at+"'>"+
+                            "data-item_status='"+x.item_status+"' "+
+                            "data-update_user='"+x.update_user+"' " +
+                            "data-updated_at='"+x.updated_at+"' "+disabled+">"+
                             '<i class="fa fa-edit"></i> Receive'+
                         '</button>';
             }, searchable: false, orderable: false },
@@ -311,8 +317,17 @@ function makeReceiveItemsTable(arr) {
             { data: 'qty' },
             { data: 'status' },
             { data: 'remarks' },
-            { data: 'created_at' }
+            { data: 'created_at' },
+            { data: 'receive_qty' },
+            { data: 'remaining_qty' },
+            { data: 'receive_remarks' },
         ],
+        createdRow: function(row, data, dataIndex) {
+            if (data.item_status == 0 || data.item_status == '0') {
+                $(row).css('background-color', '#ff6266'); // RED
+                $(row).css('color', '#fff');
+            }
+        },
         fnInitComplete: function() {
             $('.dataTables_scrollBody').slimscroll();
         },

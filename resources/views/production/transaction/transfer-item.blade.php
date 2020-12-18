@@ -85,9 +85,11 @@ foreach ($user_accesses as $user_access){
 							<th>To Process</th>
 							<th>Qty.</th>
 							<th>Status</th>
-							<th>Remarks</th>
-							<th>Date</th>
-							
+							<th>Transfer Note</th>
+							<th>Date Transferred</th>
+							<th>Received Qty</th>
+							<th>Remaining Qty</th>
+							<th>Receive Remarks</th>
 						</tr>
 					</thead>
 					<tbody id="tbl_received_items_body"></tbody>
