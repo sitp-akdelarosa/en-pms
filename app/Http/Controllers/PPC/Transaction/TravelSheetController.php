@@ -323,7 +323,8 @@ class TravelSheetController extends Controller
                 $page_count = count($req->issued_qty_per_sheet);
                 foreach ($req->issued_qty_per_sheet as $key => $issued_qty_per_sheet) {
                     if ($page_count > 1) {
-                        $jo_sequence = $key + 1;
+                        $seq = $key + 1;
+                        $jo_sequence = sprintf("%02d", $seq);
                     } else {
                         $jo_sequence = '';
                     }
