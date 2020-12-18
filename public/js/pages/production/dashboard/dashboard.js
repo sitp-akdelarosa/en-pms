@@ -104,10 +104,10 @@ function getDashboard() {
     type: 'GET',
     dataType: 'JSON'
   }).done(function (data, textStatus, xhr) {
-    dashboard_arr = data;
-    makeDashTable(dashboard_arr);
-  }).fail(function () {
-    console.log("error");
+    //dashboard_arr = data;
+    makeDashTable(data);
+  }).fail(function (xhr, textStatus, errorThrown) {
+    ErrorMsg(xhr);
   });
 }
 
@@ -158,7 +158,7 @@ function makeDashTable(arr) {
         var status = 'ON PROCESS';
 
         if (x.status == 1) {
-          status = 'READY FOR FG';
+          status = 'DONE'; //READY FOR FG
         } else if (x.status == 2) {
           status = 'FINISHED';
         } else if (x.status == 3) {

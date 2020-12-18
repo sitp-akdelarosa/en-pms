@@ -256,7 +256,53 @@
                             <input type="hidden" id="div_code_code_r" name="div_code_code" class="clear">
                             <input type="hidden" id="current_div_code_r" name="current_div_code" class="clear">
                             <input type="hidden" id="current_process_name_r" name="current_process_name" class="clear">
-                            <input type="hidden" id="status_r" name="status" class="clear">
+							<input type="hidden" id="status_r" name="status" class="clear">
+							
+							<div class="form-group row">
+								<div class="col-sm-1">NOTE:</div>
+								<div class="col-sm-12">
+									<textarea class="form-control clear input" id="note" style="resize: none" placeholder="Note" disabled></textarea>
+								</div>
+							</div>
+
+							<div class="form-group row">
+			                    <div class="col-sm-10">
+			                        <div class="input-group input-group-sm">
+			                            <div class="input-group-prepend">
+			                                <span class="input-group-text">Transaferred Qty:</span>
+			                            </div>
+			                            <input type="number" step='1' class="form-control validate clear" name="transferred_qty_r" id="transferred_qty_r" readonly>
+			                            <span id="transferred_qty_r_feedback"></span>
+			                        </div>
+			                    </div>
+			                </div>
+
+							<div class="form-group row">
+			                    <div class="col-sm-10">
+			                        <div class="input-group input-group-sm">
+			                            <div class="input-group-prepend">
+			                                <span class="input-group-text">Received Qty:</span>
+			                            </div>
+			                            <input type="number" step='1' class="form-control validate clear" name="receive_qty" id="receive_qty" readonly>
+			                            <span id="receive_qty_feedback"></span>
+			                        </div>
+			                    </div>
+							</div>
+							
+							<div class="form-group row">
+			                    <div class="col-sm-10">
+			                        <div class="input-group input-group-sm">
+			                            <div class="input-group-prepend">
+			                                <span class="input-group-text">Remaining Qty:</span>
+			                            </div>
+			                            <input type="number" step='1' class="form-control validate clear" name="remaining_qty" id="remaining_qty" readonly>
+			                            <span id="remaining_qty_feedback"></span>
+			                        </div>
+			                    </div>
+							</div>
+							
+							
+							
 				            <div class="form-group row">
 			                    <div class="col-sm-6">
 			                        <div class="input-group input-group-sm">

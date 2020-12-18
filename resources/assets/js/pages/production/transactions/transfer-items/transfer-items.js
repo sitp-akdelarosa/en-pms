@@ -79,8 +79,7 @@ $( function() {
                     getReceiveItems();
                     $('#modal_transfer_entry').modal('hide');
                 }).fail( function(xhr, textStatus, errorThrown) {
-                    var errors = xhr.responseJSON.errors;
-                    ErrorMsg(errors);
+                    ErrorMsg(xhr);
                 }).always( function() {
                     $('.loadingOverlay-modal').hide();
                 });
@@ -123,23 +122,28 @@ $( function() {
         $('#jo_no_r').val($(this).attr('data-jo_no'));
         $('#prod_code_r').val($(this).attr('data-prod_code'));
         $('#process_r').val($(this).attr('data-process'));
-        $('#qty_r').val($(this).attr('data-qty'));
+        $('#qty_r').val($(this).attr('data-remaining_qty'));
+        $('#transferred_qty_r').val($(this).attr('data-qty'));
         $('#qty').val($(this).attr('data-qty'));
+        $('#receive_qty').val($(this).attr('data-receive_qty'));
+        $('#remaining_qty').val($(this).attr('data-remaining_qty'));
         $('#current_process_r').val($(this).attr('data-current_process'));
         $('#div_code_code_r').val($(this).attr('data-div_code_code'));
         $('#current_div_code_r').val($(this).attr('data-current_div_code'));
         $('#current_process_name_r').val($(this).attr('data-current_process_name'));
         $('#current_process_name_r').val($(this).attr('data-current_process_name'));
         $('#status_r').val($(this).attr('data-status'));
+        $('#note').val($(this).attr('data-remarks'));
         $('#modal_receive_item').modal('show');
     });
 
-    $("#frm_receive_item").on('submit',function(e){ e.preventDefault();
-        if(parseInt($('#qty').val()) < parseInt($('#qty_r').val())){
-             msg('Input qty is greather than transfer qty','warning')
-        }else if($('#qty_r').val() < 0){
+    $("#frm_receive_item").on('submit',function(e){
+        e.preventDefault();
+        if (parseInt($('#transferred_qty_r').val()) < parseInt($('#qty_r').val())){
+            msg('Input qty is greather than transfer qty','warning')
+        } else if ($('#qty_r').val() < 0){
             msg("Please Input valit number","warning");
-        }else{
+        } else {
             $.ajax({
                 dataType: 'json',
                 type:'POST',
@@ -177,7 +181,7 @@ function getTransferEntry() {
         transfer_item_arr = data;
         makeTransferItemTable(transfer_item_arr);
     }).fail(function(xhr, textStatus, errorThrown) {
-        console.log("error");
+        ErrorMsg(xhr);
     });
 }
 
@@ -253,9 +257,10 @@ function getReceiveItems() {
         },
     }).done(function(data, textStatus, xhr) {
         received_items_arr = data;
+        console.log(received_items_arr);
         makeReceiveItemsTable(received_items_arr);
     }).fail(function(xhr, textStatus, errorThrown) {
-        console.log("error");
+        ErrorMsg(xhr);
     });
 }
 
@@ -280,6 +285,8 @@ function makeReceiveItemsTable(arr) {
                             "data-div_code_code='"+x.div_code_code+"'"+
                             "data-current_process='"+x.current_process+"'"+
                             "data-qty='"+x.qty+"'"+
+                            "data-receive_qty='"+x.receive_qty+"'"+
+                            "data-remaining_qty='"+x.remaining_qty+"'"+
                             "data-process='"+x.process+"'"+
                             "data-current_div_code='"+x.current_div_code+"'"+
                             "data-prod_order_no='"+x.prod_order_no+"'"+
@@ -409,7 +416,7 @@ function getJOdetails(jo_no,edit) {
         }
             
     }).fail(function(xhr, textStatus, errorThrown) {
-        console.log("error");
+        ErrorMsg(xhr);
     });
 }
 
@@ -432,7 +439,7 @@ function getDivCodeProcess(jo_no,process) {
         });
         $('#process').trigger('change');
     }).fail(function(xhr, textStatus, errorThrown) {
-        console.log("error");
+        ErrorMsg(xhr);
     });
 }
 

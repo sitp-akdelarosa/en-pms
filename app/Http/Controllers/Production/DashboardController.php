@@ -31,7 +31,6 @@ class DashboardController extends Controller
     {
 
         $user_accesses = $this->_helper->UserAccess();
-        $details = ProdTravelSheet::all();
 
         // $division_id = Auth::user()->div_code;
         // $ppc_divisions = DB::table('ppc_divisions')->where('id',  $division_id)->first();
@@ -82,6 +81,7 @@ class DashboardController extends Controller
                             ->join('prod_travel_sheet_processes as p','ts.id','=','p.travel_sheet_id')
                             ->leftjoin('ppc_divisions as d','d.div_code','=','p.div_code')
                             ->leftjoin('ppc_update_inventories as i','i.heat_no','=','ts.material_heat_no')
+                            ->leftjoin('ppc_pre_travel_sheet_products as pts','pts.pre_travel_sheet_id','=','ts.pre_travel_sheet_id')
                             ->whereIn('p.div_code',$div_codes)
                             ->whereIn('ts.status',array(0,1,2))
                             ->select(
@@ -97,7 +97,7 @@ class DashboardController extends Controller
                                 DB::raw("ts.order_qty as order_qty"),
                                 DB::raw("ts.total_issued_qty as total_issued_qty"),
                                 DB::raw("ts.issued_qty as issued_qty"),
-                                DB::raw("ts.sc_no as sc_no"),
+                                DB::raw("pts.sc_no as sc_no"),
                                 DB::raw("p.unprocessed as unprocessed"),
                                 DB::raw("p.good as good"),
                                 DB::raw("p.rework as rework"),
@@ -106,6 +106,7 @@ class DashboardController extends Controller
                             )
                             ->orderBy('ts.id', 'DESC')
                             ->orderBy('p.sequence' , 'ASC')
+                            ->distinct()
                             ->get();
 
         return $travel_sheet;

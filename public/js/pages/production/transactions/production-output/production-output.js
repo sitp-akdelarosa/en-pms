@@ -441,10 +441,14 @@ function makeSearchTable(arr) {
         return status;
       },
       width: '8.33%'
-    }] // fnInitComplete: function() {
-    //     $('.dataTables_scrollBody').slimscroll();
-    // },
+    }],
+    createdRow: function createdRow(row, data, dataIndex) {
+      if (data.status == 1 || data.status == '1') {
+        $(row).css('background-color', 'rgb(139 241 191)'); // GREEN
 
+        $(row).css('color', '#000000');
+      }
+    }
   });
 }
 

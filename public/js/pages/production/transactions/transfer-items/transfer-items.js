@@ -169,8 +169,7 @@ $(function () {
           getReceiveItems();
           $('#modal_transfer_entry').modal('hide');
         }).fail(function (xhr, textStatus, errorThrown) {
-          var errors = xhr.responseJSON.errors;
-          ErrorMsg(errors);
+          ErrorMsg(xhr);
         }).always(function () {
           $('.loadingOverlay-modal').hide();
         });
@@ -208,20 +207,24 @@ $(function () {
     $('#jo_no_r').val($(this).attr('data-jo_no'));
     $('#prod_code_r').val($(this).attr('data-prod_code'));
     $('#process_r').val($(this).attr('data-process'));
-    $('#qty_r').val($(this).attr('data-qty'));
+    $('#qty_r').val($(this).attr('data-remaining_qty'));
+    $('#transferred_qty_r').val($(this).attr('data-qty'));
     $('#qty').val($(this).attr('data-qty'));
+    $('#receive_qty').val($(this).attr('data-receive_qty'));
+    $('#remaining_qty').val($(this).attr('data-remaining_qty'));
     $('#current_process_r').val($(this).attr('data-current_process'));
     $('#div_code_code_r').val($(this).attr('data-div_code_code'));
     $('#current_div_code_r').val($(this).attr('data-current_div_code'));
     $('#current_process_name_r').val($(this).attr('data-current_process_name'));
     $('#current_process_name_r').val($(this).attr('data-current_process_name'));
     $('#status_r').val($(this).attr('data-status'));
+    $('#note').val($(this).attr('data-remarks'));
     $('#modal_receive_item').modal('show');
   });
   $("#frm_receive_item").on('submit', function (e) {
     e.preventDefault();
 
-    if (parseInt($('#qty').val()) < parseInt($('#qty_r').val())) {
+    if (parseInt($('#transferred_qty_r').val()) < parseInt($('#qty_r').val())) {
       msg('Input qty is greather than transfer qty', 'warning');
     } else if ($('#qty_r').val() < 0) {
       msg("Please Input valit number", "warning");
@@ -263,7 +266,7 @@ function getTransferEntry() {
     transfer_item_arr = data;
     makeTransferItemTable(transfer_item_arr);
   }).fail(function (xhr, textStatus, errorThrown) {
-    console.log("error");
+    ErrorMsg(xhr);
   });
 }
 
@@ -338,9 +341,10 @@ function getReceiveItems() {
     }
   }).done(function (data, textStatus, xhr) {
     received_items_arr = data;
+    console.log(received_items_arr);
     makeReceiveItemsTable(received_items_arr);
   }).fail(function (xhr, textStatus, errorThrown) {
-    console.log("error");
+    ErrorMsg(xhr);
   });
 }
 
@@ -361,7 +365,7 @@ function makeReceiveItemsTable(arr) {
       orderable: false
     }, {
       data: function data(x) {
-        return "<button class='btn btn-sm btn-primary btn_receive'" + "data-id='" + x.id + "'" + "data-jo_no='" + x.jo_no + "'" + "data-current_process_name='" + x.current_process_name + "'" + "data-div_code_code='" + x.div_code_code + "'" + "data-current_process='" + x.current_process + "'" + "data-qty='" + x.qty + "'" + "data-process='" + x.process + "'" + "data-current_div_code='" + x.current_div_code + "'" + "data-prod_order_no='" + x.prod_order_no + "'" + "data-prod_code='" + x.prod_code + "'" + "data-description='" + x.description + "'" + "data-div_code='" + x.div_code + "'" + "data-status='" + x.status + "'" + "data-remarks='" + x.remarks + "'" + "data-create_user='" + x.create_user + "'" + "data-created_at='" + x.created_at + "'" + "data-update_user='" + x.update_user + "'" + "data-updated_at='" + x.updated_at + "'>" + '<i class="fa fa-edit"></i> Receive' + '</button>';
+        return "<button class='btn btn-sm btn-primary btn_receive'" + "data-id='" + x.id + "'" + "data-jo_no='" + x.jo_no + "'" + "data-current_process_name='" + x.current_process_name + "'" + "data-div_code_code='" + x.div_code_code + "'" + "data-current_process='" + x.current_process + "'" + "data-qty='" + x.qty + "'" + "data-receive_qty='" + x.receive_qty + "'" + "data-remaining_qty='" + x.remaining_qty + "'" + "data-process='" + x.process + "'" + "data-current_div_code='" + x.current_div_code + "'" + "data-prod_order_no='" + x.prod_order_no + "'" + "data-prod_code='" + x.prod_code + "'" + "data-description='" + x.description + "'" + "data-div_code='" + x.div_code + "'" + "data-status='" + x.status + "'" + "data-remarks='" + x.remarks + "'" + "data-create_user='" + x.create_user + "'" + "data-created_at='" + x.created_at + "'" + "data-update_user='" + x.update_user + "'" + "data-updated_at='" + x.updated_at + "'>" + '<i class="fa fa-edit"></i> Receive' + '</button>';
       },
       searchable: false,
       orderable: false
@@ -489,7 +493,7 @@ function getJOdetails(jo_no, edit) {
       }
     }
   }).fail(function (xhr, textStatus, errorThrown) {
-    console.log("error");
+    ErrorMsg(xhr);
   });
 }
 
@@ -515,7 +519,7 @@ function getDivCodeProcess(jo_no, process) {
     });
     $('#process').trigger('change');
   }).fail(function (xhr, textStatus, errorThrown) {
-    console.log("error");
+    ErrorMsg(xhr);
   });
 }
 

@@ -270,7 +270,9 @@ class TransferItemController extends Controller
                         'i.create_user as create_user',
                         DB::raw("DATE_FORMAT(i.created_at, '%Y-%m-%d') as created_at"),
                         'i.update_user as update_user',
-                        DB::raw("DATE_FORMAT(i.updated_at, '%Y-%m-%d') as updated_at")
+                        DB::raw("DATE_FORMAT(i.updated_at, '%Y-%m-%d') as updated_at"),
+                        'i.receive_qty as receive_qty',
+                        DB::raw("(i.qty - i.receive_qty) as remaining_qty")
                     )->get();
         if (count((array)$receive) > 0) {
             return $receive;
@@ -461,8 +463,10 @@ class TransferItemController extends Controller
         $data = ProdTravelSheetProcess::where('travel_sheet_id' , $jo_no->id)
                 ->where('div_code',$req->div_code_code)
                 ->where('process',$req->process)
-                ->update(['unprocessed' => DB::raw("`unprocessed` + ".$qty),
-                        strtolower($req->status) => DB::raw( strtolower($req->status)."+".$qtyprocess)]);
+                ->update([
+                    'unprocessed' => DB::raw("`unprocessed` + ".$qty),
+                    strtolower($req->status) => DB::raw( strtolower($req->status)."+".$qtyprocess)
+                ]);
         
         //Inserting new process if different Div Code and the process not yet existing in that div code
         if($data == 0){
@@ -483,13 +487,19 @@ class TransferItemController extends Controller
         }
 
         //Update qty of the unprocessed in production output
-        ProdTravelSheetProcess::where('id' , $req->current_process)
-                                ->update(['unprocessed' => DB::raw("`unprocessed` - ".$req->qty)]);
+        // ProdTravelSheetProcess::where('id' , $req->current_process)
+        //                         ->update(['unprocessed' => DB::raw("`unprocessed` - ".$req->qty)]);
         //Update Status 
         $item = ProdTransferItem::find($req->id);
-        $item->item_status = 1;
+
+        $received_qty =  (double)$item->receive_qty + $req->qty;
+
+        if ($item->qty == $received_qty) {
+            $item->item_status = 1;
+        }
+        
         $item->receive_remarks = $req->remarks;
-        $item->receive_qty = $req->qty;
+        $item->receive_qty = $item->receive_qty + $req->qty;
         $item->update_user = Auth::user()->id;
         $item->update();
 
