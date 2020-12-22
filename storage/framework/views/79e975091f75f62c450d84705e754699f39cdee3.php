@@ -3,16 +3,24 @@
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('content'); ?>
- <?php
- $exist = 0;
-foreach ($user_accesses as $user_access){
-		if($user_access->code == "T0008" ){
-			$exist++;
-		}
-}
+<?php
+	$exist = 0;
+	$transfer_active = 'active';
+	$receive_active = '';
+	foreach ($user_accesses as $user_access){
+			if($user_access->code == "T0008" ){
+				$exist++;
+			}
+	}
+
 	if($exist == 0){
 		echo  '<script>window.history.back()</script>';
 		exit;
+	}
+
+	if (app('request')->input('receive_items')) {
+		$transfer_active = '';
+		$receive_active = 'active';
 	}
 ?>
 <section class="content-header">
@@ -22,12 +30,12 @@ foreach ($user_accesses as $user_access){
 <section class="content">
 	<div class="nav-tabs-custom">
 		<ul class="nav nav-tabs">
-			<li><a class="active" href="#transfer_entry" data-toggle="tab">Transfer Entry</a></li>
-			<li><a href="#received_items" data-toggle="tab">Receive Items</a></li>
+			<li><a class="<?php echo e($transfer_active); ?>" href="#transfer_entry" data-toggle="tab">Transfer Entry</a></li>
+			<li><a class="<?php echo e($receive_active); ?>" href="#received_items" data-toggle="tab">Receive Items</a></li>
 		</ul>
 		<div class="tab-content">
 
-			<div class="tab-pane active" id="transfer_entry">
+			<div class="tab-pane <?php echo e($transfer_active); ?>" id="transfer_entry">
 
 				<div class="row justify-content-center mb-10">
 					<div class="col-md-2">
@@ -67,7 +75,7 @@ foreach ($user_accesses as $user_access){
 			</div>
 
 
-			<div class="tab-pane" id="received_items">
+			<div class="tab-pane <?php echo e($receive_active); ?>" id="received_items">
 				<table class="table table-bordered table-sm table-hover table-striped dt-responsive nowrap" id="tbl_received_items" style="width: 100%">
 					<thead class="thead-dark">
 						<tr>

@@ -50,16 +50,17 @@ $( function() {
 
     $("#frm_transfer_items").on('submit',function(e){
         e.preventDefault();
+
         transfer_item_arr = [];
         var totalqty = parseInt($('#UnprocessTransfer').val()) + parseInt($('#qty').val());
 
         if ($('#process').val() == $("#curr_process").find("option:selected").text() && $('#userDivCode').val() == $("#div_code").find("option:selected").text()) {
             msg("You cannot transfer to your division with the same process","warning");
-        } else if(parseInt($('#unprocessed').val()) < parseInt($('#UnprocessTransfer').val())){
+        } else if(parseInt($('#unprocessed').val()) < parseInt($('#UnprocessTransfer').val())) {
             totalqty -= parseInt($('#unprocessed').val());
             msg('The total of pending qty is greather than '+totalqty+' to # of item to transfer','warning')
-        } else if($('#qty').val() < 0){
-            msg("Please Input valit number","warning");
+        } else if($('#qty').val() < 0) {
+            msg("Please Input valid number","warning");
         } else {
             var curr_process = $("#curr_process").find("option:selected").text();
 
@@ -382,6 +383,8 @@ function delete_set(checkboxClass,deleteTransferItem) {
 function getJOdetails(jo_no,edit) {
     var curr_process = '<option value=""></option>';
     $('#curr_process').html(curr_process);
+    $('.loadingOverlay-modal').show();
+
     $.ajax({
         url: getJOdetailsURL,
         type: 'GET',
@@ -432,6 +435,8 @@ function getJOdetails(jo_no,edit) {
             
     }).fail(function(xhr, textStatus, errorThrown) {
         ErrorMsg(xhr);
+    }).always( function() {
+        $('.loadingOverlay-modal').hide();
     });
 }
 

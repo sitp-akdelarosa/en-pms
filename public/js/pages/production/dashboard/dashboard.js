@@ -99,26 +99,21 @@ $(function () {
 });
 
 function getDashboard() {
-  $.ajax({
-    url: getDashBoardURL,
-    type: 'GET',
-    dataType: 'JSON'
-  }).done(function (data, textStatus, xhr) {
-    //dashboard_arr = data;
-    makeDashTable(data);
-  }).fail(function (xhr, textStatus, errorThrown) {
-    ErrorMsg(xhr);
-  });
-}
-
-function makeDashTable(arr) {
-  $('#tbl_prod_dashboard').dataTable().fnClearTable();
-  $('#tbl_prod_dashboard').dataTable().fnDestroy();
-  $('#tbl_prod_dashboard').dataTable({
-    data: arr,
-    bLengthChange: false,
-    paging: true,
-    searching: true,
+  var tbl_prod_dashboard = $('#tbl_prod_dashboard').DataTable();
+  tbl_prod_dashboard.clear();
+  tbl_prod_dashboard.destroy();
+  tbl_prod_dashboard = $('#tbl_prod_dashboard').DataTable({
+    ajax: {
+      url: getDashBoardURL,
+      data: {
+        _token: token
+      },
+      error: function error(xhr, textStatus, errorThrown) {
+        ErrorMsg(xhr);
+      }
+    },
+    processing: true,
+    order: [[0, 'desc']],
     columns: [{
       data: 'jo_sequence',
       name: 'ts.jo_sequence'
@@ -149,11 +144,7 @@ function makeDashTable(arr) {
     }, {
       data: 'scrap',
       name: 'p.scrap'
-    }, // {data: 'div_code', name: 'p.div_code'},
-    // {data: 'plant', name: 'd.plant'},
-    // {data: 'material_used', name: 'ts.material_used'},
-    // {data: 'material_heat_no', name: 'ts.material_heat_no'},
-    {
+    }, {
       data: function data(x) {
         var status = 'ON PROCESS';
 
@@ -169,7 +160,13 @@ function makeDashTable(arr) {
 
         return status;
       }
-    }]
+    }],
+    fnDrawCallback: function fnDrawCallback() {
+      $("#tbl_prod_dashboard").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
+    },
+    initComplete: function initComplete() {
+      $('.loadingOverlay').hide();
+    }
   });
 }
 

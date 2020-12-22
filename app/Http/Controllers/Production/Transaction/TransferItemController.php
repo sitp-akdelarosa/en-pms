@@ -408,7 +408,7 @@ class TransferItemController extends Controller
         $current_processes = DB::table('prod_travel_sheet_processes')
                         ->whereIn('div_code',$div_codes)
                         ->where('travel_sheet_id',$id)
-                        // ->where('unprocessed','<>',0)
+                        ->where('is_current','<>',0)
                         ->select('id','process')
                         ->groupBy('id','process')
                         ->orderBy('id','asc')
@@ -456,9 +456,10 @@ class TransferItemController extends Controller
         //Update the qty of the process that will transfer to other div code
         $qty = $req->qty;
         $qtyprocess = $req->qty;
-        if($req->status == 'SCRAP' || $req->status == 'CONVERT'){
+
+        if ($req->status == 'SCRAP' || $req->status == 'CONVERT'){
             $qty = 0;
-        }else if($req->status == 'GOOD'){
+        } else if($req->status == 'GOOD'){
             $qtyprocess = 0;
         }
 
@@ -466,8 +467,8 @@ class TransferItemController extends Controller
                 ->where('div_code',$req->div_code_code)
                 ->where('process',$req->process)
                 ->update([
-                    'unprocessed' => DB::raw("`unprocessed` + ".$qty),
-                    strtolower($req->status) => DB::raw( strtolower($req->status)."+".$qtyprocess)
+                    'unprocessed' => DB::raw("`unprocessed` + ".$qty)
+                    // strtolower($req->status) => DB::raw( strtolower($req->status)."+".$qtyprocess)
                 ]);
         
         //Inserting new process if different Div Code and the process not yet existing in that div code
@@ -482,7 +483,7 @@ class TransferItemController extends Controller
                     'div_code' => $req->div_code_code,
                     'sequence' => $tsp->sequence,
                     'status' => 4,
-                    strtolower($req->status) => $qtyprocess,
+                    // strtolower($req->status) => $qtyprocess,
                     'create_user' => Auth::user()->id,
                     'update_user' => Auth::user()->id,
                 ]);

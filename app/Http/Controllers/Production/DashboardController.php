@@ -106,10 +106,10 @@ class DashboardController extends Controller
                             )
                             ->orderBy('ts.id', 'DESC')
                             ->orderBy('p.sequence' , 'ASC')
-                            ->distinct()
-                            ->get();
-
-        return $travel_sheet;
+                            ->distinct();
+         
+         
+        return DataTables::of($travel_sheet)->make(true);
     }
 
     // public function getDashBoardURL()

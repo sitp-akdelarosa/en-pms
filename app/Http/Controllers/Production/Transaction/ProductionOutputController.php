@@ -127,7 +127,8 @@ class ProductionOutputController extends Controller
                 DB::table('prod_travel_sheet_processes')
                             ->where('id',$req->travel_sheet_process_id)
                             ->update([
-                                'status' => 1
+                                'status' => 1,
+                                'is_current' => 1
                             ]);
             }
 
@@ -138,9 +139,7 @@ class ProductionOutputController extends Controller
                                         ['travel_sheet_id',$req->travel_sheet_id],
                                         ['sequence',$next_sequence]
                                     ])->where('status' , 0)->count();
-                                    // ->update([
-                                    //     'unprocessed' => DB::raw("`unprocessed` + ".$prod_output->good)
-                                    // ]);
+                                    
             if($lastsequnce == 0){
                 $this->saveFGSummary($req->travel_sheet_process_id,$req->travel_sheet_id,$req->jo_no,
                                 $req->prod_order,$req->prod_code,$req->description,$prod_output->good);
@@ -476,6 +475,18 @@ class ProductionOutputController extends Controller
             $jo = DB::table('v_jo_list')->where('travel_sheet_id', $data[0]->pre_travel_sheet_id)->first();
 
             if ($jo->status == 4) {
+                $travel_sheet = DB::table('prod_travel_sheets')
+                                        ->where('pre_travel_sheet_id', $data[0]->pre_travel_sheet_id)
+                                        ->select('id')
+                                        ->first();
+
+                $current_process_upd = DB::table('prod_travel_sheet_processes')
+                                        ->where('travel_sheet_id', $travel_sheet->id)
+                                        ->where('sequence', 1)
+                                        ->update([
+                                            'is_current' => 1
+                                        ]);
+
                 PpcPreTravelSheet::where('id',$data[0]->pre_travel_sheet_id)
                                     ->update([
                                         'status' => 6,

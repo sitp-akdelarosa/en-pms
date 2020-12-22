@@ -4,55 +4,51 @@ $( function() {
     getDashboard();
 });
 
-function getDashboard(){
-     $.ajax({
-        url: getDashBoardURL,
-        type: 'GET',
-        dataType: 'JSON',
-    }).done(function(data, textStatus, xhr) {
-        //dashboard_arr = data;
-        makeDashTable(data)
-    }).fail(function(xhr, textStatus, errorThrown) {
-        ErrorMsg(xhr);
-    });
-}
+function getDashboard() {
+    var tbl_prod_dashboard = $('#tbl_prod_dashboard').DataTable();
 
-function makeDashTable(arr) {
-    $('#tbl_prod_dashboard').dataTable().fnClearTable();
-    $('#tbl_prod_dashboard').dataTable().fnDestroy();
-    $('#tbl_prod_dashboard').dataTable({
-        data: arr,
-        bLengthChange : false,
-        paging: true,
-        searching: true,
+    tbl_prod_dashboard.clear();
+    tbl_prod_dashboard.destroy();
+    tbl_prod_dashboard = $('#tbl_prod_dashboard').DataTable({
+        ajax: {
+            url: getDashBoardURL,
+            data: { _token: token },
+            error: function(xhr,textStatus, errorThrown) {
+                ErrorMsg(xhr);
+            }
+        },
+        processing: true,
+        order: [[0,'desc']],
         columns: [
-            {data: 'jo_sequence', name: 'ts.jo_sequence'},
-            {data: 'prod_code', name: 'ts.prod_code'},
-            {data: 'description', name: 'ts.description'},
+            { data: 'jo_sequence', name: 'ts.jo_sequence' },
+            { data: 'prod_code', name: 'ts.prod_code' },
+            { data: 'description', name: 'ts.description' },
             { data: 'lot_no', name: 'ts.lot_no' },
             { data: 'issued_qty', name: 'ts.issued_qty' },
-            {data: 'process', name: 'p.process'},
+            { data: 'process', name: 'p.process' },
             { data: 'unprocessed', name: 'p.unprocessed' },
             { data: 'good', name: 'p.good' },
             { data: 'rework', name: 'p.rework' },
-            { data: 'scrap', name: 'p.scrap'},
-            // {data: 'div_code', name: 'p.div_code'},
-            // {data: 'plant', name: 'd.plant'},
-            // {data: 'material_used', name: 'ts.material_used'},
-            // {data: 'material_heat_no', name: 'ts.material_heat_no'},
-            {data: function(x) {
+            { data: 'scrap', name: 'p.scrap' },
+            { data: function(x) {
                 var status = 'ON PROCESS';
                 if (x.status == 1) {
                     status = 'DONE'; //READY FOR FG
-                }else if(x.status == 2){
+                } else if (x.status == 2){
                     status = 'FINISHED';
-                }else if(x.status == 3){
+                } else if (x.status == 3){
                     status = 'CANCELLED';
-                }else if(x.status == 4){
+                } else if (x.status == 4){
                     status = 'TRANSFER ITEM';
                 }
                 return status;
-            }},
-        ]
+            } }
+        ],
+        fnDrawCallback: function() {
+            $("#tbl_prod_dashboard").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
+        },
+        initComplete: function() {
+            $('.loadingOverlay').hide();
+        }
     });
 }

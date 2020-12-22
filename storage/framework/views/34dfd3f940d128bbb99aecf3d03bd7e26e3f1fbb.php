@@ -9,7 +9,7 @@
 <section class="content" >
 	<div class="box">
         <div class="box-body">
-			<table class="table table-sm table-hover table-striped dt-responsive nowrap" id="tbl_prod_dashboard" style="width: 100%">
+			<table class="table table-sm table-hover table-striped table-bordered nowrap" id="tbl_prod_dashboard" style="width: 100%">
 				<thead class="thead-dark">
                     <tr>
                         <th>JO No.</th>
@@ -22,11 +22,6 @@
                         <th>Good</th>
                         <th>Rework</th>
                         <th>Scrap</th>
-                        
-                        
-                        
-                        
-                        
                         <th>Status</th>
                     </tr>
                 </thead>
