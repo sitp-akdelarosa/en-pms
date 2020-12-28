@@ -143,7 +143,7 @@ $(function () {
           msg('The quantity already done or ongoing to other processes', 'failed');
         }
       }).fail(function (xhr, textStatus, errorThrown) {
-        msg(errorThrown, textStatus);
+        ErrorMsg(xhr);
       });
     } else {
       msg('Please select at least 1 item', 'warning');
@@ -168,7 +168,7 @@ $(function () {
       }
     }).fail(function (xhr, textStatus, errorThrown) {
       makeSearchTable([]);
-      msg(errorThrown, textStatus);
+      ErrorMsg(xhr);
     }).always(function (xhr, textStatus) {
       $('.loadingOverlay').hide();
     });
@@ -216,8 +216,7 @@ $(function () {
           $('#unprocessed').val(data.unprocessed);
         }
       }).fail(function (xhr, textStatus, errorThrown) {
-        var errors = xhr.responseJSON.errors;
-        showErrors(errors);
+        ErrorMsg(xhr);
       }).always(function (xhr, textStatus) {
         $('.loadingOverlay').hide();
       });
@@ -292,7 +291,7 @@ function getOutputs(id) {
     prod_output_arr = data;
     makeProdOutputTable(prod_output_arr);
   }).fail(function (xhr, textStatus, errorThrown) {
-    msg(errorThrown, textStatus);
+    ErrorMsg(xhr);
   });
 }
 
@@ -366,7 +365,7 @@ function delete_set() {
       makeSearchTable(searched_jo_arr);
       clear();
     }).fail(function (xhr, textStatus, errorThrown) {
-      msg(errorThrown, textStatus);
+      ErrorMsg(xhr);
     });
   }
 
@@ -464,8 +463,7 @@ function getOperator() {
   }).done(function (data, textStatus, xhr) {
     console.log('success');
   }).fail(function (xhr, textStatus, errorThrown) {
-    var errors = xhr.responseJSON.errors;
-    showErrors(errors);
+    ErrorMsg(xhr);
   });
 }
 
@@ -481,8 +479,7 @@ function getTransferQty(id) {
   }).done(function (data, textStatus, xhr) {
     $('#total_qty_transfer').val(data);
   }).fail(function (xhr, textStatus, errorThrown) {
-    var errors = xhr.responseJSON.errors;
-    showErrors(errors);
+    ErrorMsg(xhr);
   });
 }
 

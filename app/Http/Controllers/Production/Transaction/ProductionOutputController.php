@@ -466,7 +466,7 @@ class ProductionOutputController extends Controller
     {
         $data = [];
 
-        $travel_sheet_count = DB::table('v_travel_sheet_production_output')->where('jo_sequence','=',$jo_sequence)->count();
+        $travel_sheet_count = DB::table('v_travel_sheet_production_output')->where('travel_sheet_status', '<>', 3)->where('jo_sequence','=',$jo_sequence)->count();
 
         if ($travel_sheet_count) {
             $data = DB::table('v_travel_sheet_production_output')
