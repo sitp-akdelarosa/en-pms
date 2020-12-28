@@ -239,11 +239,11 @@ class ProductionScheduleController extends Controller
 
         $params = [];
 
-        DB::table('temp_item_materials')
-            ->where('prod_sum_id', $req->prod_sum_id)
-            ->where('inv_id', $req->inv_id)
-            ->where('create_user', Auth::user()->id)
-            ->delete();
+        $deleted = DB::table('temp_item_materials')
+                    ->where('token', $req->_token)
+                    ->whereIn('inv_id', $req->inv_id)
+                    ->where('create_user', Auth::user()->id)
+                    ->delete();
 
         if (isset($req->count)) {
             $comma = '';

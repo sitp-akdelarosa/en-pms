@@ -103,7 +103,8 @@ foreach ($user_accesses as $user_access){
                         </div>
                     </div>
 
-                    
+                    <input type="hidden" id="total_withdrawal">
+                    <input type="hidden" id="total_assign">
                 </div>
 
                 <form id="formbaba">

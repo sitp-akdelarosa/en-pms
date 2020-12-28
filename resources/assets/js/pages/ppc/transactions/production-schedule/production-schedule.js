@@ -212,7 +212,10 @@ $(function () {
     $('#btn_save_bom').on('click', function() {
         var error = 0;
         var over_assign_error = 0;
+        var less_assign_error = 0;
         var over_issuance_error = 0;
+        var total_withdrawal = ($('#total_withdrawal').val() == '' || isNaN($('#total_withdrawal').val()) || $('#total_withdrawal').val() == 'NaN')? 0 : parseFloat($('#total_withdrawal').val());
+        var total_assign = ($('#total_assign').val() == '' || isNaN($('#total_assign').val()) || $('#total_assign').val() == 'NaN')? 0 : parseFloat($('#total_assign').val());
 
         $('.validate_bom').each(function() {
             if ($(this).val() == '') {
@@ -229,6 +232,10 @@ $(function () {
         if (assign_qty > rmw_issued_qty) {
             over_assign_error++;
         }
+        
+        if (assign_qty < rmw_issued_qty) {
+            less_assign_error++;
+        }
 
         var count_over = 0;
         var row_over = '';
@@ -244,10 +251,18 @@ $(function () {
             count_over++;
         });
 
+        total_assign += assign_qty;
+
+        if (total_assign < total_withdrawal) {
+            $('#total_assign').val(total_assign);
+        }
+
         if (error > 0) {
             msg('Please fill out all input field in the table.', 'warning');
         } else if (over_assign_error > 0) {
             msg('Assign qty is greater than Scheduled qty.', 'warning');
+        } else if (less_assign_error > 0) {
+            msg('Assign qty is less than Scheduled qty. Please assign all withdrawal Qty.', 'warning');
         } else if ($('#rmw_no').val() == "" && $('#rmw_no').val() == null) {
             msg('Please fill out Withdrawal Slip input field.', 'warning');
         } else if (over_issuance_error > 0) {
@@ -274,30 +289,37 @@ $(function () {
     });
 
     $('#btn_save').on('click', function() {
-        $('.loadingOverlay').show();
-        $.ajax({
-            url: saveJODetailsURL,
-            type: 'POST',
-            dataType: 'JSON',
-            data: {
-                _token: token,
-                ref_id: ref_id
-            }
-        }).done(function(data, textStatus, xhr) {
-            $('#rmw_no').val('');
-            OrdersDataTable(ordersURL,{ _token: token });
-            MaterialsDataTable(getMaterialsURL,{ _token: token, rmw_no: $('#rmw_no').val() });
-            TravelSheetDataTable(getTravelSheetURL, { _token: token });
+        var total_withdrawal = ($('#total_withdrawal').val() == '' || isNaN($('#total_withdrawal').val()) || $('#total_withdrawal').val() == 'NaN')? 0 : parseFloat($('#total_withdrawal').val());
+        var total_assign = ($('#total_assign').val() == '' || isNaN($('#total_assign').val()) || $('#total_assign').val() == 'NaN')? 0 : parseFloat($('#total_assign').val());
 
-            selected_products = [];
-            selected_material = [];
+        if (total_assign !== total_withdrawal) {
+            msg('Assign all withdrawal quantity before saving.', 'failed');
+        } else {
+            $('.loadingOverlay').show();
+            $.ajax({
+                url: saveJODetailsURL,
+                type: 'POST',
+                dataType: 'JSON',
+                data: {
+                    _token: token,
+                    ref_id: ref_id
+                }
+            }).done(function(data, textStatus, xhr) {
+                $('#rmw_no').val('');
+                OrdersDataTable(ordersURL,{ _token: token });
+                MaterialsDataTable(getMaterialsURL,{ _token: token, rmw_no: $('#rmw_no').val() });
+                TravelSheetDataTable(getTravelSheetURL, { _token: token });
 
-            msg(data.msg,data.status);
-        }).fail(function(xhr, textStatus, errorThrown) {
-            ErrorMsg(xhr);
-        }).always(function(xhr, textStatus) {
-            $('.loadingOverlay').hide();
-        });
+                selected_products = [];
+                selected_material = [];
+
+                msg(data.msg,data.status);
+            }).fail(function(xhr, textStatus, errorThrown) {
+                ErrorMsg(xhr);
+            }).always(function(xhr, textStatus) {
+                $('.loadingOverlay').hide();
+            });
+        }
     });
 
     $('#tbl_travel_sheet tbody').on('click', ' .btn_show_jo',function() {
@@ -514,6 +536,7 @@ function OrdersDataTable(ajax_url, object_data) {
 
 function MaterialsDataTable(ajax_url, object_data) {
     $('.loadingOverlay').show();
+    var total_withdrawal = 0;
 
     var materials_datatable = $('#tbl_materials').DataTable();
 
@@ -571,12 +594,27 @@ function MaterialsDataTable(ajax_url, object_data) {
             { data: 'material_type', name: 'material_type', orderable: false, searchable: false, width: '10%' },
         ],
         createdRow: function(row, data, dataIndex) {
-
+            //total_withdrawal += parseFloat(data.rmw_qty);
         },
         initComplete: function() {
+            
             $('.loadingOverlay').hide();
             $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
-        }
+        },
+        fnDrawCallback: function() {
+            var api = this.api();
+            // Output the data for the visible rows to the browser's console
+            var data = api.rows( {page:'current'} ).data();
+
+            total_withdrawal = 0;
+            $.each(data, function(i,x) {
+                total_withdrawal += parseFloat(x.rmw_qty);
+            });
+
+            $('#total_withdrawal').val(total_withdrawal);
+
+            $("#tbl_materials").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
+        },
     });
 }
 

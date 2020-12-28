@@ -105,24 +105,8 @@ foreach ($user_accesses as $user_access){
                         </div>
                     </div>
 
-                    {{-- <div class="col-md-5">
-                        
-                        <div class="table-reponsive">
-                            <table class="table table-sm table-bordered table-striped nowrap" style="width:100%" id="tbl_items">
-                                <thead class="thead-dark">
-                                    <tr>
-                                        <th></th>
-                                        <th>SC No.</th>
-                                        <th>Product Code</th>
-                                        <th>Description</th>
-                                        <th>Back Order Qty.</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tbl_items_body"></tbody>
-                            </table>
-                        </div>
-                            
-                    </div> --}}
+                    <input type="hidden" id="total_withdrawal">
+                    <input type="hidden" id="total_assign">
                 </div>
 
                 <form id="formbaba">
