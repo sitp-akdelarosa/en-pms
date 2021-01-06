@@ -28,19 +28,6 @@ $(function () {
 		JOListDataTable(JOListURL, { _token: token, withdrawal_slip: $('#withdrawal_slip_no').val() });
 	});
 
-	// $('#tbl_jo tbody').on('change', '.chk_jo', function() {
-	// 	// var tbl_jo = $('#tbl_jo').DataTable();
-	// 	// var data = tbl_jo.row( $(this).parents('tr') ).data();
-	// 	$(this).parents('tr').toggleClass('selected');
-	// });
-
-	// $('#tbl_jo thead').on('change', '.chk_all_jo', function() {
-	// 	$('.chk_jo').each( function(i,x) {
-	// 		$(this).parents('tr').toggleClass('selected');
-	// 	});
-		
-	// });
-
 	$('#btn_save').on('click', function() {
 		var jo_no = [];
 		var table = $('#tbl_jo').DataTable();

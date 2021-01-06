@@ -92,74 +92,93 @@ class CuttingScheduleController extends Controller
      */
 	public function saveCuttingSched(Request $req)
 	{
-		$data = [
-			'status' => 'failed',
-			'msg' => 'Saving Cutting Schedule details has failed.',
-		];
+		$jo_no = '';
+		$jo_arr = $req->jo_no;
 
-		$user = Auth::user()->id;
+		if (is_array($jo_arr)) {
+			sort($jo_arr);
+			$jo_no = implode(',',$jo_arr);
+		}
+		$exist = DB::table('v_cutting_sched_list')
+					->where('create_user', Auth::user()->id)
+					->where('jo_no', $jo_no)
+					->where('withdrawal_slip_no', $req->withdrawal_slip)
+					->count();
 
-		$cut_sched = new PpcCuttingSchedule;
-		$cut_sched->withdrawal_slip_no = $req->withdrawal_slip;
-		$cut_sched->date_issued = $req->date_issued;
-		$cut_sched->machine_no = 'N/A';
-		$cut_sched->prepared_by = $req->prepared_by;
-		$cut_sched->leader = $this->LeaderName($req->leader);
-		$cut_sched->leader_id = $req->leader;
-		$cut_sched->create_user = $user;
-		$cut_sched->update_user = $user;
-		$cut_sched->iso_control_no = $req->iso_control_no;
-		$cut_sched->created_at = date('Y-m-d H:i:s');
-		$cut_sched->updated_at = date('Y-m-d H:i:s');
-
-		if ($cut_sched->save()) {
-
-			$data = DB::table('v_jo_list_for_cutting_sched')
-						->where('user_id', Auth::user()->id)
-						->where('rmw_no', $req->withdrawal_slip)
-						->whereIn('jo_no',$req->jo_no)
-						->where('status','<>','3')
-						->get();
-
-			foreach ($data as $key => $dt) {
-				PpcCuttingScheduleDetail::insert([
-					'cutt_id' => $cut_sched->id,
-					'jo_no' => $dt->jo_no,
-					'alloy' => $dt->alloy,
-					'size' => $dt->size,
-					'item' => $dt->item,
-					'class' => $dt->class,
-					'cut_weight' => $dt->cut_weight,
-					'cut_length' => $dt->cut_length,
-					'cut_width' => $dt->cut_width,
-					'sc_no' => $dt->sc_no,
-					'jo_qty' => $dt->sched_qty,
-					'material_used' => $dt->material_used,
-					'qty_needed' => $dt->assign_qty,
-					'material_heat_no' => $dt->material_heat_no,
-					'lot_no' => $dt->lot_no,
-					'supplier_heat_no' => $dt->supplier_heat_no,
-					'create_user' => Auth::user()->id,
-					'update_user' => Auth::user()->id,
-					'created_at' => date('Y-m-d H:i:s'),
-					'updated_at' => date('Y-m-d H:i:s'),
-				]);
-			}
+		if ($exist > 0) {
 			$data = [
-				'status' => 'success',
-				'msg' => 'Cutting Schedule details was successfully saved.',
+				'status' => 'failed',
+				'msg' => 'Withdrawal Slip Number with corresponding J.O. number was already saved.',
+			];
+		} else {
+			$data = [
+				'status' => 'failed',
+				'msg' => 'Saving Cutting Schedule details has failed.',
 			];
 
-			$this->_audit->insert([
-				'user_type' => Auth::user()->user_type,
-				'module_id' => $this->_moduleID,
-				'module' => 'Cutting Schedule',
-				'action' => 'Added a new Cutting Schedule ID:'.$cut_sched->id,
-				'user' => Auth::user()->id,
-				'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
-			]);
-		}
+			$user = Auth::user()->id;
 
+			$cut_sched = new PpcCuttingSchedule;
+			$cut_sched->withdrawal_slip_no = $req->withdrawal_slip;
+			$cut_sched->date_issued = $req->date_issued;
+			$cut_sched->machine_no = 'N/A';
+			$cut_sched->prepared_by = $req->prepared_by;
+			$cut_sched->leader = $this->LeaderName($req->leader);
+			$cut_sched->leader_id = $req->leader;
+			$cut_sched->create_user = $user;
+			$cut_sched->update_user = $user;
+			$cut_sched->iso_control_no = $req->iso_control_no;
+			$cut_sched->created_at = date('Y-m-d H:i:s');
+			$cut_sched->updated_at = date('Y-m-d H:i:s');
+
+			if ($cut_sched->save()) {
+
+				$data = DB::table('v_jo_list_for_cutting_sched')
+							->where('user_id', Auth::user()->id)
+							->where('rmw_no', $req->withdrawal_slip)
+							->whereIn('jo_no',$req->jo_no)
+							->where('status','<>','3')
+							->get();
+
+				foreach ($data as $key => $dt) {
+					PpcCuttingScheduleDetail::insert([
+						'cutt_id' => $cut_sched->id,
+						'jo_no' => $dt->jo_no,
+						'alloy' => $dt->alloy,
+						'size' => $dt->size,
+						'item' => $dt->item,
+						'class' => $dt->class,
+						'cut_weight' => $dt->cut_weight,
+						'cut_length' => $dt->cut_length,
+						'cut_width' => $dt->cut_width,
+						'sc_no' => $dt->sc_no,
+						'jo_qty' => $dt->sched_qty,
+						'material_used' => $dt->material_used,
+						'qty_needed' => $dt->assign_qty,
+						'material_heat_no' => $dt->material_heat_no,
+						'lot_no' => $dt->lot_no,
+						'supplier_heat_no' => $dt->supplier_heat_no,
+						'create_user' => Auth::user()->id,
+						'update_user' => Auth::user()->id,
+						'created_at' => date('Y-m-d H:i:s'),
+						'updated_at' => date('Y-m-d H:i:s'),
+					]);
+				}
+				$data = [
+					'status' => 'success',
+					'msg' => 'Cutting Schedule details was successfully saved.',
+				];
+
+				$this->_audit->insert([
+					'user_type' => Auth::user()->user_type,
+					'module_id' => $this->_moduleID,
+					'module' => 'Cutting Schedule',
+					'action' => 'Added a new Cutting Schedule ID:'.$cut_sched->id,
+					'user' => Auth::user()->id,
+					'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
+				]);
+			}
+		}
 
 		return response()->json($data);
 	}
@@ -178,7 +197,6 @@ class CuttingScheduleController extends Controller
 									</button>";
                         })->make(true);
 	}
-
 
 
 
