@@ -77,37 +77,7 @@ class DashboardController extends Controller
     {
         $div_codes = $this->getDivCode();
 
-        $travel_sheet = DB::table('prod_travel_sheets as ts')
-                            ->join('prod_travel_sheet_processes as p','ts.id','=','p.travel_sheet_id')
-                            ->leftjoin('ppc_divisions as d','d.div_code','=','p.div_code')
-                            ->leftjoin('ppc_update_inventories as i','i.heat_no','=','ts.material_heat_no')
-                            ->leftjoin('ppc_pre_travel_sheet_products as pts','pts.pre_travel_sheet_id','=','ts.pre_travel_sheet_id')
-                            ->whereIn('p.div_code',$div_codes)
-                            ->whereIn('ts.status',array(0,1,2))
-                            ->select(
-                                DB::raw("ts.jo_sequence as jo_sequence"),
-                                DB::raw("ts.prod_code as prod_code"),
-                                DB::raw("ts.description as description"),
-                                DB::raw("d.plant as plant"),
-                                DB::raw("p.process as process"),
-                                DB::raw("p.div_code as div_code"),
-                                DB::raw("ts.material_used as material_used"),
-                                DB::raw("ts.material_heat_no as material_heat_no"),
-                                DB::raw("ts.lot_no as lot_no"),
-                                DB::raw("ts.order_qty as order_qty"),
-                                DB::raw("ts.total_issued_qty as total_issued_qty"),
-                                DB::raw("ts.issued_qty as issued_qty"),
-                                DB::raw("pts.sc_no as sc_no"),
-                                DB::raw("p.unprocessed as unprocessed"),
-                                DB::raw("p.good as good"),
-                                DB::raw("p.rework as rework"),
-                                DB::raw("p.scrap as scrap"),
-                                DB::raw("p.status as status")
-                            )
-                            ->orderBy('ts.id', 'DESC')
-                            ->orderBy('p.sequence' , 'ASC')
-                            ->distinct();
-         
+        $travel_sheet = DB::table('v_prod_dashboard')->whereIn('div_code',$div_codes);
          
         return DataTables::of($travel_sheet)->make(true);
     }
