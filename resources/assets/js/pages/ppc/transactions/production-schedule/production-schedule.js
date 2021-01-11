@@ -1,3 +1,5 @@
+const { forEach } = require("lodash");
+
 var selected_products = [];
 var selected_material = {};
 var saved_jo_details_arr = [];
@@ -289,8 +291,19 @@ $(function () {
     });
 
     $('#btn_save').on('click', function() {
-        var total_withdrawal = ($('#total_withdrawal').val() == '' || isNaN($('#total_withdrawal').val()) || $('#total_withdrawal').val() == 'NaN')? 0 : parseFloat($('#total_withdrawal').val());
-        var total_assign = ($('#total_assign').val() == '' || isNaN($('#total_assign').val()) || $('#total_assign').val() == 'NaN')? 0 : parseFloat($('#total_assign').val());
+        var materials_datatable = $('#tbl_materials').DataTable();
+        materials = materials_datatable.rows().data();
+
+        var total_withdrawal = 0;
+        var total_assign = 0;
+
+        $.each(materials, function(i,x) {
+            total_withdrawal += parseFloat(x.rmw_qty);
+            total_assign += parseFloat(x.assign_qty);
+        });
+
+        // var total_withdrawal = ($('#total_withdrawal').val() == '' || isNaN($('#total_withdrawal').val()) || $('#total_withdrawal').val() == 'NaN')? 0 : parseFloat($('#total_withdrawal').val());
+        // var total_assign = ($('#total_assign').val() == '' || isNaN($('#total_assign').val()) || $('#total_assign').val() == 'NaN')? 0 : parseFloat($('#total_assign').val());
 
         if (total_assign !== total_withdrawal) {
             msg('Assign all withdrawal quantity before saving.', 'failed');
@@ -586,11 +599,12 @@ function MaterialsDataTable(ajax_url, object_data) {
             { data: 'description', name: 'description', orderable: false, searchable: false, width: '15%' },
             { data: 'heat_no', name: 'heat_no', orderable: false, searchable: false, width: '10%' },
             { data: 'rmw_qty', name: 'rmw_qty', orderable: false, searchable: false, width: '10%' },
+            { data: 'assign_qty', name: 'assign_qty', orderable: false, searchable: false, width: '10%' },
 
-            { data: 'size', name: 'size', orderable: false, searchable: false, width: '10%' },
+            { data: 'size', name: 'size', orderable: false, searchable: false, width: '5%' },
             { data: 'length', name: 'length', orderable: false, searchable: false, width: '10%' },
             { data: 'weight', name: 'weight', orderable: false, searchable: false, width: '10%' },
-            { data: 'width', name: 'width', orderable: false, searchable: false, width: '10%' },
+            { data: 'width', name: 'width', orderable: false, searchable: false, width: '5%' },
             { data: 'material_type', name: 'material_type', orderable: false, searchable: false, width: '10%' },
         ],
         createdRow: function(row, data, dataIndex) {
@@ -910,6 +924,7 @@ function saveBOM() {
         data: param
     }).done(function(data, textStatus, xhr) {
         ref_id.push(data.ref_id);
+        MaterialsDataTable(getMaterialsURL,{ _token: token, rmw_no: $('#rmw_no').val() });
         // var input = $('.sched_qty');
         // var sched_qty = 0;
         // var total = 0;

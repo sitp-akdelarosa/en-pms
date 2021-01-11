@@ -83,7 +83,7 @@ foreach ($user_accesses as $user_access){
                 </div>
                 
                 <div class="row justify-content-center mb-15">
-                    <div class="col-md-10">
+                    <div class="col-md-12">
                         <div class="table-reponsive">
                             <table class="table table-sm table-bordered table-striped nowrap" style="width:100%" id="tbl_materials">
                                 <thead class="thead-dark">
@@ -92,6 +92,7 @@ foreach ($user_accesses as $user_access){
                                     <th>Description</th>
                                     <th>Heat #</th>
                                     <th>Withdrawal Qty.(PCS)</th>
+                                    <th>Assign Qty.</th>
                                     <th>Size</th>
                                     <th>Length</th>
                                     <th>Weight</th>

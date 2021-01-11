@@ -169,7 +169,7 @@ class ProductionScheduleController extends Controller
      */
     public function getMaterials(Request $req)
     {
-        $data = DB::select(DB::raw("CALL GET_withdrawals('".$req->rmw_no."',".Auth::user()->id.")"));
+        $data = DB::select(DB::raw("CALL GET_withdrawals('".$req->rmw_no."','".$req->_token."',".Auth::user()->id.")"));
         return DataTables::of($data)
                         ->editColumn('action', function($data) {
                             return "<button class='btn btn-sm bg-red btn_remove_material'>
@@ -329,6 +329,7 @@ class ProductionScheduleController extends Controller
                     ['inv_id', '=', $req->inv_id],
                     ['upd_inv_id', '=', $req->upd_inv_id],
                     ['rmwd_id', '=', $req->rmwd_id],
+                    ['token', '=', $req->_token],
                     ['create_user', '=', Auth::user()->id]
                 ])
                 ->get();
