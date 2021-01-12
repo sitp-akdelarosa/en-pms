@@ -545,8 +545,8 @@ class RawMaterialWithdrawalController extends Controller
                         $delete_user = Auth::user()->id;
                         $deleted_at = date('Y-m-d H:i:s');
 
-                        Inventory::where('id',$req->inv_ids[$key])
-                            ->increment('qty_pcs',(int)$req->issued_qty[$key]);
+                        // Inventory::where('id',$req->inv_ids[$key])
+                        //     ->increment('qty_pcs',(int)$req->issued_qty[$key]);
                     } else {
                         if ((int)$req->issued_qty[$key] !== (int)$req->old_issued_qtys[$key]) {
                             Inventory::where('id',$req->inv_ids[$key])
