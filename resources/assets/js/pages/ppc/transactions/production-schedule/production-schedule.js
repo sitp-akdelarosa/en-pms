@@ -599,7 +599,7 @@ function MaterialsDataTable(ajax_url, object_data) {
             { data: 'description', name: 'description', orderable: false, searchable: false, width: '15%' },
             { data: 'heat_no', name: 'heat_no', orderable: false, searchable: false, width: '10%' },
             { data: 'rmw_qty', name: 'rmw_qty', orderable: false, searchable: false, width: '10%' },
-            { data: 'assign_qty', name: 'assign_qty', orderable: false, searchable: false, width: '10%' },
+            { data: 'temp_assign_qty', name: 'temp_assign_qty', orderable: false, searchable: false, width: '10%' },
 
             { data: 'size', name: 'size', orderable: false, searchable: false, width: '5%' },
             { data: 'length', name: 'length', orderable: false, searchable: false, width: '10%' },

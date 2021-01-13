@@ -17900,8 +17900,8 @@ function MaterialsDataTable(ajax_url, object_data) {
       searchable: false,
       width: '10%'
     }, {
-      data: 'assign_qty',
-      name: 'assign_qty',
+      data: 'temp_assign_qty',
+      name: 'temp_assign_qty',
       orderable: false,
       searchable: false,
       width: '10%'
