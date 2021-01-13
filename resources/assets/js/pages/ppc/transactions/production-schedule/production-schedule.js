@@ -68,7 +68,7 @@ $(function () {
         var data = products_datatable.row( $(this).parents('tr') ).data();
 
         if ($(this).is(':checked')) {
-            var material_used = selected_material.description;
+            var material_used = selected_material.mat_description;
 
             selected_products.push({
                 prod_sum_id: data.id,
@@ -77,7 +77,7 @@ $(function () {
                 back_order_qty: data.quantity,
                 sc_no: data.sc_no,
                 sched_qty: '',
-                material_code: selected_material.item_code,
+                material_code: selected_material.mat_material_code,
                 heat_no: selected_material.heat_no,
                 rmw_qty: parseFloat(selected_material.rmw_qty),
                 material_used: material_used,
