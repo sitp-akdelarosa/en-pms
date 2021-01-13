@@ -422,6 +422,9 @@ function initializePage() {
 }
 
 function computeMaterial(object) {
+    $('#blade_consumption_'+object.count).show();
+    $('#qty_per_piece_'+object.count).show();
+
     var blade_consumption_input = $('#blade_consumption_'+object.count);
     var qty_per_piece_input = $('#qty_per_piece_'+object.count);
     var cut_weight_input = $('#cut_weight_'+object.count);
@@ -463,8 +466,12 @@ function computeMaterial(object) {
 
             qty_per_piece_input.val(toFixed(qty_pcs,2));
             break;
-    
+        case 'FINISHED':
+        case 'CRUDE':
+            blade_consumption_input.hide();
+            qty_per_piece_input.hide();
         default:
+            
             break;
     }
 }
@@ -481,19 +488,31 @@ function checkOverIssuance(object) {
     var qty_per_piece_whole = (qty_per_piece_input.val() == '')? 0 :parseInt(qty_per_piece_input.val());    
     var sched_qty = (sched_qty_input.val() == '')? 0 :parseFloat(sched_qty_input.val());
 
-    
+    if  (object.material_type == 'FINISHED' || object.material_type == 'CRUDE') {
+        var remaining_qty = 0;
+        remaining_qty = sched_qty - object.assign_qty;
 
-    over = sched_qty - (qty_per_piece_whole * object.assign_qty);
-    if (over > 0) {
-        sched_qty_input.addClass('is-invalid');
-        sched_qty_input.next().addClass('invalid-feedback').html("Over Issuance.");
+        if (remaining_qty < 0) {
+            sched_qty_input.addClass('is-invalid');
+            sched_qty_input.next().addClass('invalid-feedback').html("Over Issuance.");
+        } else {
+            sched_qty_input.removeClass('is-invalid');
+            sched_qty_input.next().removeClass('invalid-feedback').html('');
+        }
+        
     } else {
-        sched_qty_input.removeClass('is-invalid');
-        sched_qty_input.next().removeClass('invalid-feedback').html('');
-    }
+        over = sched_qty - (qty_per_piece_whole * object.assign_qty);
+        if (over > 0) {
+            sched_qty_input.addClass('is-invalid');
+            sched_qty_input.next().addClass('invalid-feedback').html("Over Issuance.");
+        } else {
+            sched_qty_input.removeClass('is-invalid');
+            sched_qty_input.next().removeClass('invalid-feedback').html('');
+        }
 
-    // remaining qty
-    var remaining_qty = ((object.material_length * object.assign_qty) - (sched_qty * (object.cut_length + object.blade_consumption))) / object.material_length;
+        // remaining qty
+        var remaining_qty = ((object.material_length * object.assign_qty) - (sched_qty * (object.cut_length + object.blade_consumption))) / object.material_length;
+    }
 
     console.log(remaining_qty);
 
