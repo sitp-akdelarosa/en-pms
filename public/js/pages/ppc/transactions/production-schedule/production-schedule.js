@@ -17726,8 +17726,8 @@ function computeMaterial(object) {
 
     case 'FINISHED':
     case 'CRUDE':
-      blade_consumption_input.hide();
-      qty_per_piece_input.hide();
+      blade_consumption_input.hide().removeClass('validate_bom');
+      qty_per_piece_input.hide().removeClass('validate_bom');
 
     default:
       break;
