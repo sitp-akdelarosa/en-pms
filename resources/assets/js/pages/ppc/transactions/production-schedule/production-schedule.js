@@ -299,7 +299,7 @@ $(function () {
 
         $.each(materials, function(i,x) {
             total_withdrawal += parseFloat(x.rmw_qty);
-            total_assign += parseFloat(x.assign_qty);
+            total_assign += parseFloat(x.temp_assign_qty);
         });
 
         // var total_withdrawal = ($('#total_withdrawal').val() == '' || isNaN($('#total_withdrawal').val()) || $('#total_withdrawal').val() == 'NaN')? 0 : parseFloat($('#total_withdrawal').val());

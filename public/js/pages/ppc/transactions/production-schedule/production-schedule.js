@@ -17553,7 +17553,7 @@ $(function () {
     var total_assign = 0;
     $.each(materials, function (i, x) {
       total_withdrawal += parseFloat(x.rmw_qty);
-      total_assign += parseFloat(x.assign_qty);
+      total_assign += parseFloat(x.temp_assign_qty);
     }); // var total_withdrawal = ($('#total_withdrawal').val() == '' || isNaN($('#total_withdrawal').val()) || $('#total_withdrawal').val() == 'NaN')? 0 : parseFloat($('#total_withdrawal').val());
     // var total_assign = ($('#total_assign').val() == '' || isNaN($('#total_assign').val()) || $('#total_assign').val() == 'NaN')? 0 : parseFloat($('#total_assign').val());
 
