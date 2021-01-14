@@ -88,27 +88,27 @@
 											<td class="text-center" >{{ $header->material_heat_no }}</td>
 										</tr>
 										<tr>
-											<td>Job Order Qty.</td>
+											<td class="text-center">Job Order Qty.</td>
 											<td class="text-center" colspan="2">{{ $header->sched_qty }}</td>
 											<td class="text-center">Description</td>  {{-- rowspan="2" --}}
-											<td class="text-center" colspan="4" rowspan="2">{{ $header->description }}</td>{{-- colspan="2" rowspan="2" --}}
+											<td class="text-center" colspan="4" rowspan="2"><strong style="font-size: 16px">{{ $header->description }}</strong></td>{{-- colspan="2" rowspan="2" --}}
 											{{-- <td colspan="2">{{ $header->issued_qty }}</td> --}}
 											
 											<td class="text-center" colspan="2">Supplier Heat #:</td>
 											<td class="text-center">{{ $header->supplier_heat_no }}</td>
 										</tr>
 										<tr>
-											<td>Product Line</td>
+											<td class="text-center">Product Line</td>
 											<td class="text-center" colspan="3">{{ $header->product_line }}</td>
 											<td class="text-center">Cut Wt.</td>
 											<td class="text-center">Cut Length</td>
 											<td class="text-center">Cut Width</td>
 										</tr>
 										<tr>
-											<td>S/C #</td>
+											<td class="text-center">S/C #</td>
 											<td class="text-center" colspan="2">{{ $header->sc_no }}</td>
 											<td class="text-center">Issued Qty.</td>
-											<td class="text-center">{{ $header->issued_qty }}</td>
+											<td class="text-center"><strong style="font-size: 16px">{{ $header->issued_qty }}</strong></td>
 											<td class="text-center">Lot No.</td>
 											<td class="text-center" colspan="2">{{ $header->lot_no }}</td>
 
@@ -182,7 +182,7 @@
 
 						<div class="row">
 							<div class="col-xs-1" style="width:100%;text-align:right">
-								<strong class="small">ISO Control No.: {{ $header->iso_code }}</strong>
+								<strong style="font-size: 12px">{{ $header->iso_code }}</strong>
 							</div>
 						</div>
 					</div>
