@@ -548,13 +548,13 @@ class RawMaterialWithdrawalController extends Controller
                         // Inventory::where('id',$req->inv_ids[$key])
                         //     ->increment('qty_pcs',(int)$req->issued_qty[$key]);
                     } else {
-                        if ((int)$req->issued_qty[$key] !== (int)$req->old_issued_qtys[$key]) {
-                            Inventory::where('id',$req->inv_ids[$key])
-                                    ->increment('qty_pcs',(int)$req->old_issued_qtys[$key]);
+                        // if ((int)$req->issued_qty[$key] !== (int)$req->old_issued_qtys[$key]) {
+                        //     Inventory::where('id',$req->inv_ids[$key])
+                        //             ->increment('qty_pcs',(int)$req->old_issued_qtys[$key]);
 
-                            Inventory::where('id',$req->inv_ids[$key])
-                                    ->decrement('qty_pcs',(int)$req->issued_qty[$key]);
-                        }
+                        //     Inventory::where('id',$req->inv_ids[$key])
+                        //             ->decrement('qty_pcs',(int)$req->issued_qty[$key]);
+                        // }
                     }
 
                     $sc_no = $req->sc_no[$key];
