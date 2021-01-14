@@ -844,7 +844,10 @@ class ProductWithdrawalController extends Controller
 
         if ($update) {
             $details = DB::table('ppc_product_withdrawal_details')
-                            ->where('trans_id',$req->id)
+                            ->where([
+                                ['trans_id','=',$req->id],
+                                ['deleted','=',0]
+                            ])
                             ->select('inv_id','issued_qty')
                             ->get();
             
@@ -895,7 +898,10 @@ class ProductWithdrawalController extends Controller
 
         if ($update) {
             $details = DB::table('ppc_product_withdrawal_details')
-                            ->where('trans_id',$req->id)
+                            ->where([
+                                ['trans_id','=',$req->id],
+                                ['deleted','=',0]
+                            ])
                             ->select('inv_id','issued_qty')
                             ->get();
             
