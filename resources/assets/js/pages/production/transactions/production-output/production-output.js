@@ -96,10 +96,10 @@ $( function() {
         //alert(qty);
         if(parseInt($('#unprocessed').val()) == unprocessed){
             msg('Please put some value on good , rework or scrap' , 'warning');
-        }else if(unprocessed < 0){
+        }else if(unprocessed < 0 && $('#current_process').val() !== 'CUTTING'){
             msg("Please Input less than unprocessed","warning");
-        }else if(qty < 0){
-            msg("The process have a pending Transfer Item of "+qtyTransfer,"warning");
+        }else if(qtyTransfer > 0){
+            msg("The process has a pending Transfer Item of "+qtyTransfer,"warning");
         }else if($('#good').val() < 0 || $('#scrap').val() < 0 || $('#rework').val() < 0 || $('#nc').val() < 0 || $('#alloy_mix').val() < 0 || $('#convert').val() < 0){
             msg("Please Input valit number","warning");
         }else{
@@ -175,8 +175,8 @@ function deductUnprocessed(el_name,value) {
     } else {
         var unprocessed = parseInt($('#unprocessed').val());
         unprocessed = unprocessed - (parseInt($('#rework').val()) + parseInt($('#scrap').val()) + parseInt($('#good').val()));
-        if(unprocessed < 0){
-            msg("Please Input lessthan unprocessed","warning");
+        if(unprocessed < 0 && $('#current_process').val() !== 'CUTTING'){
+            msg("Please Input less than unprocessed","warning");
         }
     }
 }

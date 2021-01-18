@@ -18051,6 +18051,7 @@ function getProducts(ajax_url, object_data) {
     deferRender: true,
     order: [[1, 'asc']],
     pageLength: 5,
+    scrollX: true,
     lengthMenu: [[5, 10, 15, 20, -1], [5, 10, 15, 20, "All"]],
     language: {
       aria: {
@@ -18111,6 +18112,7 @@ function getProducts(ajax_url, object_data) {
     initComplete: function initComplete() {
       $('.loadingOverlay').hide();
       $('.loadingOverlay-modal').hide();
+      $($.fn.DataTable.tables(true)).DataTable().columns.adjust();
     }
   });
 }
@@ -18178,28 +18180,28 @@ function SelectedItemsDataTable(arr) {
       width: '6.67%'
     }, {
       data: function data(x) {
-        return "<input type='text' class='cut_weight form-control form-control-sm validate_bom' data-count='" + count + "' id='cut_weight_" + count + "' name='cut_weight[]' value='" + x.cut_weight + "' onkeypress='return isNumberKey(event)' />";
+        return "<input type='text' style='width:60px' class='cut_weight validate_bom' data-count='" + count + "' id='cut_weight_" + count + "' name='cut_weight[]' value='" + x.cut_weight + "' onkeypress='return isNumberKey(event)' />";
       },
       orderable: false,
       searchable: false,
       width: '3.67%'
     }, {
       data: function data(x) {
-        return "<input type='text' class='cut_length form-control form-control-sm validate_bom' data-count='" + count + "' id='cut_length_" + count + "' name='cut_length[]' value='" + x.cut_length + "' onkeypress='return isNumberKey(event)' />";
+        return "<input type='text' style='width:60px' class='cut_length validate_bom' data-count='" + count + "' id='cut_length_" + count + "' name='cut_length[]' value='" + x.cut_length + "' onkeypress='return isNumberKey(event)' />";
       },
       orderable: false,
       searchable: false,
       width: '3.67%'
     }, {
       data: function data(x) {
-        return "<input type='text' class='cut_width form-control form-control-sm validate_bom' data-count='" + count + "' id='cut_width_" + count + "' name='cut_width[]' value='" + x.cut_width + "' onkeypress='return isNumberKey(event)' />";
+        return "<input type='text' style='width:60px' class='cut_width validate_bom' data-count='" + count + "' id='cut_width_" + count + "' name='cut_width[]' value='" + x.cut_width + "' onkeypress='return isNumberKey(event)' />";
       },
       orderable: false,
       searchable: false,
       width: '3.67%'
     }, {
       data: function data(x) {
-        return "<input type='text' class='sched_qty form-control form-control-sm validate_bom' data-count='" + count + "' id='sched_qty_" + count + "' name='sched_qty[]' value='" + x.sched_qty + "' onkeypress='return isNumberKey(event)' />" + "<div id='sched_qty_" + count + "_feedback' class='sched_qty_feedback'></div>";
+        return "<input type='text' style='width:60px' class='sched_qty validate_bom' data-count='" + count + "' id='sched_qty_" + count + "' name='sched_qty[]' value='" + x.sched_qty + "' onkeypress='return isNumberKey(event)' />" + "<div id='sched_qty_" + count + "_feedback' class='sched_qty_feedback'></div>";
         ;
       },
       orderable: false,
@@ -18207,49 +18209,49 @@ function SelectedItemsDataTable(arr) {
       width: '6.67%'
     }, {
       data: function data(x) {
-        return "<input type='text' class='blade_consumption form-control form-control-sm validate_bom' data-count='" + count + "' id='blade_consumption_" + count + "' name='blade_consumption[]' value='" + x.blade_consumption + "' onkeypress='return isNumberKey(event)' />";
+        return "<input type='text' style='width:100px' class='blade_consumption validate_bom' data-count='" + count + "' id='blade_consumption_" + count + "' name='blade_consumption[]' value='" + x.blade_consumption + "' onkeypress='return isNumberKey(event)' />";
       },
       orderable: false,
       searchable: false,
       width: '6.67%'
     }, {
       data: function data(x) {
-        return "<input type='text' class='qty_per_piece form-control form-control-sm' data-count='" + count + "' id='qty_per_piece_" + count + "' name='qty_per_piece[]' value='" + x.qty_per_piece + "' readonly/>";
+        return "<input type='text' style='width:80px' class='qty_per_piece' data-count='" + count + "' id='qty_per_piece_" + count + "' name='qty_per_piece[]' value='" + x.qty_per_piece + "' readonly/>";
       },
       orderable: false,
       searchable: false,
       width: '4.67%'
     }, {
       data: function data(x) {
-        return "<input type='text' class='assign_qty form-control form-control-sm validate_bom' data-count='" + count + "' id='assign_qty_" + count + "' name='assign_qty[]' value='" + x.assign_qty + "' onkeypress='return isNumberKey(event)' />";
+        return "<input type='text' style='width:80px' class='assign_qty validate_bom' data-count='" + count + "' id='assign_qty_" + count + "' name='assign_qty[]' value='" + x.assign_qty + "' onkeypress='return isNumberKey(event)' />";
       },
       orderable: false,
       searchable: false,
       width: '3.67%'
     }, {
       data: function data(x) {
-        return "<input type='text' class='remaining_qty form-control form-control-sm' data-count='" + count + "' id='remaining_qty_" + count + "' name='remaining_qty[]' value='" + x.remaining_qty + "' readonly />";
+        return "<input type='text' style='width:80px' class='remaining_qty' data-count='" + count + "' id='remaining_qty_" + count + "' name='remaining_qty[]' value='" + x.remaining_qty + "' readonly />";
       },
       orderable: false,
       searchable: false,
       width: '4.67%'
     }, {
       data: function data(x) {
-        return "<input type='text' class='lot_no form-control form-control-sm validate_bom' data-count='" + count + "' id='lot_no_" + count + "' name='lot_no[]' value='" + x.lot_no + "' />";
+        return "<input type='text' style='width:60px' class='lot_no validate_bom' data-count='" + count + "' id='lot_no_" + count + "' name='lot_no[]' value='" + x.lot_no + "' />";
       },
       orderable: false,
       searchable: false,
       width: '6.67%'
     }, {
       data: function data(x) {
-        return "<input type='date' class='ship_date form-control form-control-sm validate_bom' data-count='" + count + "' id='ship_date_" + count + "' name='ship_date[]' value='" + x.ship_date + "' />";
+        return "<input type='date' style='width:100px' class='ship_date validate_bom' data-count='" + count + "' id='ship_date_" + count + "' name='ship_date[]' value='" + x.ship_date + "' />";
       },
       orderable: false,
       searchable: false,
       width: '6.67%'
     }, {
       data: function data(x) {
-        return x.material_used + "<input type='hidden' class='material_used' data-count='" + count + "' id='material_used_" + count + "' name='material_used[]' value='" + x.material_used + "' />";
+        return x.material_used + "<input type='hidden' style='width:200px' class='material_used validate_bom' data-count='" + count + "' id='material_used_" + count + "' name='material_used[]' value='" + x.material_used + "' />";
       },
       orderable: false,
       searchable: false,
@@ -18277,7 +18279,7 @@ function SelectedItemsDataTable(arr) {
       width: '3.67%'
     }, {
       data: function data(x) {
-        return x.size + "<input type='hidden' class='size form-control form-control-sm' data-count='" + count + "' id='size_" + count + "' name='size[]' value='" + x.size + "' />";
+        return x.size + "<input type='hidden' class='size' data-count='" + count + "' id='size_" + count + "' name='size[]' value='" + x.size + "' />";
       },
       orderable: false,
       searchable: false,

@@ -96,16 +96,24 @@
 var transfer_item_arr = [];
 var received_items_arr = [];
 $(function () {
-  getTransferEntry();
+  getTransferEntry(getTransferEntryURL, {
+    _token: token
+  });
   getReceiveItems();
   checkAllCheckboxesInTable('.check_all_transfer_item', '.check_item');
   init();
   $('#jo_no').on('change', function () {
     getJOdetails($(this).val());
   });
-  $('#curr_process').on('change', function () {
-    checkIfSameDivCode();
+  $('#jo_no').on('keydown', function (e) {
+    e.preventDefault();
 
+    if (e.keyCode === 13) {
+      getJOdetails($(this).val());
+    }
+  });
+  $('#curr_process').on('change', function () {
+    //checkIfSameDivCode();
     if ($(this).val() != '') {
       getDivCodeProcess($('#jo_no').val(), $(this).find("option:selected").text());
       getUnprocessed($(this).find("option:selected").text(), $('#jo_no').val(), $(this).val());
@@ -117,8 +125,7 @@ $(function () {
     DivisionCode($(this).val(), '');
     checkIfSameDivCode();
   });
-  $('#div_code').on('change', function () {
-    checkIfSameDivCode();
+  $('#div_code').on('change', function () {//checkIfSameDivCode();
   });
   $('#qty').on('change', function () {
     var qty = parseInt($(this).val());
@@ -237,7 +244,9 @@ $(function () {
       }).done(function (data, textStatus, xhr) {
         msg('Process Received', 'success');
         getReceiveItems();
-        getTransferEntry();
+        getTransferEntry(getTransferEntryURL, {
+          _token: token
+        });
         $('#modal_receive_item').modal('hide');
         console.log(data);
       }).fail(function (xhr, textStatus, errorThrown) {
@@ -251,81 +260,99 @@ function init() {
   check_permission(code_permission, function (output) {
     if (output == 1) {}
   });
-}
+} // function getTransferEntry() {
+//     transfer_item_arr = [];
+//     $.ajax({
+//         url: getTransferEntryURL,
+//         type: 'GET',
+//         dataType: 'JSON',
+//         data: {
+//             _token: token
+//         },
+//     }).done(function(data, textStatus, xhr) {
+//         transfer_item_arr = data;
+//         makeTransferItemTable(transfer_item_arr);
+//     }).fail(function(xhr, textStatus, errorThrown) {
+//         ErrorMsg(xhr);
+//     });
+// }
 
-function getTransferEntry() {
-  transfer_item_arr = [];
-  $.ajax({
-    url: getTransferEntryURL,
-    type: 'GET',
-    dataType: 'JSON',
-    data: {
-      _token: token
-    }
-  }).done(function (data, textStatus, xhr) {
-    transfer_item_arr = data;
-    makeTransferItemTable(transfer_item_arr);
-  }).fail(function (xhr, textStatus, errorThrown) {
-    ErrorMsg(xhr);
-  });
-}
 
-function makeTransferItemTable(arr) {
-  $('#tbl_transfer_entry').dataTable().fnClearTable();
-  $('#tbl_transfer_entry').dataTable().fnDestroy();
-  $('#tbl_transfer_entry').dataTable({
-    data: arr,
+function getTransferEntry(ajax_url, object_data) {
+  var tbl_transfer_entry = $('#tbl_transfer_entry').DataTable();
+  tbl_transfer_entry.clear();
+  tbl_transfer_entry.destroy();
+  tbl_transfer_entry = $('#tbl_transfer_entry').DataTable({
+    ajax: {
+      url: ajax_url,
+      data: object_data,
+      error: function error(xhr, textStatus, errorThrown) {
+        ErrorMsg(xhr);
+      }
+    },
     bLengthChange: false,
     searching: true,
     paging: false,
-    order: [[2, 'asc']],
+    order: [[10, 'desc']],
     columns: [{
       data: function data(x) {
         return "<input type='checkbox' class='table-checkbox check_item' value='" + x.id + "'>";
       },
       searchable: false,
-      orderable: false
+      orderable: false,
+      width: '3.33%'
     }, {
-      data: function data(x) {
-        var disabled = '';
-
-        if (x.item_status != 0) {
-          disabled = 'disabled';
-        }
-
-        return "<button class='btn btn-sm btn-primary btn_edit'" + "data-id='" + x.id + "'" + "data-jo_no='" + x.jo_no + "'" + "data-prod_order_no='" + x.prod_order_no + "'" + "data-prod_code='" + x.prod_code + "'" + "data-description='" + x.description + "'" + "data-current_process='" + x.current_process + "'" + "data-div_code='" + x.div_code + "'" + "data-div_code_code='" + x.div_code_code + "'" + "data-process='" + x.process + "'" + "data-qty='" + x.qty + "'" + "data-status='" + x.status + "'" + "data-remarks='" + x.remarks + "'" + "data-create_user='" + x.create_user + "'" + "data-created_at='" + x.created_at + "'" + "data-update_user='" + x.update_user + "'" + "data-updated_at='" + x.updated_at + "'" + disabled + ">" + '<i class="fa fa-edit"></i>' + '</button>';
-      },
+      data: 'action',
+      name: 'action',
       searchable: false,
-      orderable: false
+      orderable: false,
+      width: '3.33%'
     }, {
-      data: 'jo_no'
+      data: 'jo_no',
+      name: 'jo_no',
+      width: '10.33%'
     }, {
-      data: 'prod_code'
+      data: 'prod_code',
+      name: 'prod_code',
+      width: '8.33%'
     }, {
-      data: 'current_process_name'
+      data: 'current_process_name',
+      name: 'current_process_name',
+      width: '10.33%'
     }, {
-      data: 'div_code_code'
+      data: 'div_code_code',
+      name: 'div_code_code',
+      width: '8.33%'
     }, {
-      data: 'process'
+      data: 'process',
+      name: 'process',
+      width: '10.33%'
     }, {
-      data: 'qty'
+      data: 'qty',
+      name: 'qty',
+      width: '8.33%'
     }, {
-      data: 'status'
+      data: 'status',
+      name: 'status',
+      width: '8.33%'
     }, {
-      data: 'remarks'
+      data: 'remarks',
+      name: 'remarks',
+      width: '8.33%'
     }, {
-      data: 'created_at'
+      data: 'created_at',
+      name: 'created_at',
+      width: '10.33%'
     }, {
-      data: function data(x) {
-        if (x.item_status == 1) {
-          return "RECEIVED";
-        } else {
-          return "READY FOR RECEIVE";
-        }
-      }
+      data: 'item_status',
+      name: 'item_status',
+      width: '10.33%'
     }],
-    fnInitComplete: function fnInitComplete() {
-      $('.dataTables_scrollBody').slimscroll();
+    fnDrawCallback: function fnDrawCallback() {
+      $("#tbl_transfer_entry").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
+    },
+    initComplete: function initComplete() {
+      $('.loadingOverlay').hide();
     }
   });
 }
@@ -445,7 +472,9 @@ function delete_set(checkboxClass, deleteTransferItem) {
         }).done(function (data, textStatus, xhr) {
           $('.check_all_transfer_item').prop('checked', false);
           msg(data.msg, data.status);
-          getTransferEntry();
+          getTransferEntry(getTransferEntryURL, {
+            _token: token
+          });
           getReceiveItems();
           clear();
         }).fail(function (xhr, textStatus, errorThrown) {
@@ -520,6 +549,7 @@ function getJOdetails(jo_no, edit) {
 }
 
 function getDivCodeProcess(jo_no, process) {
+  $('.lodaingOverlay-modal').show();
   var options = '<option value=""></option>';
   $('#process').html(options);
   $.ajax({
@@ -542,6 +572,8 @@ function getDivCodeProcess(jo_no, process) {
     $('#process').trigger('change');
   }).fail(function (xhr, textStatus, errorThrown) {
     ErrorMsg(xhr);
+  }).always(function () {
+    $('.lodaingOverlay-modal').hide();
   });
 }
 
@@ -574,6 +606,7 @@ function DivisionCode(process, div_code) {
 }
 
 function getUnprocessed(process, jo_no, current_process) {
+  $('.lodaingOverlay-modal').show();
   $.ajax({
     url: unprocessedItem,
     type: 'POSt',
@@ -591,7 +624,9 @@ function getUnprocessed(process, jo_no, current_process) {
 
     $('#UnprocessTransfer').val(data.UnprocessTransfer);
   }).fail(function (xhr, textStatus, errorThrown) {
-    console.log(errorThrown);
+    ErrorMsg(xhr);
+  }).always(function () {
+    $('.lodaingOverlay-modal').hide();
   });
 }
 

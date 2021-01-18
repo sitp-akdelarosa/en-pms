@@ -64,7 +64,7 @@ class ProductionOutputController extends Controller
             'alloy_mix' => 'required|numeric',
             'nc' => 'required|numeric',
             'operator' => 'required',
-            'machine_no' => 'required'
+            // 'machine_no' => 'required'
         ],
         [
             'operator.required' => 'The Operator ID is required.'
@@ -470,7 +470,10 @@ class ProductionOutputController extends Controller
 
         if ($travel_sheet_count) {
             $data = DB::table('v_travel_sheet_production_output')
-                            ->where('jo_sequence','=',$jo_sequence)->get();
+                            ->where([
+                                ['jo_sequence','=',$jo_sequence],
+                                ['user_id','=', Auth::user()->id]
+                            ])->get();
             
             $jo = DB::table('v_jo_list')->where('travel_sheet_id', $data[0]->pre_travel_sheet_id)->first();
 

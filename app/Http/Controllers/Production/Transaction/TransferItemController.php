@@ -177,70 +177,52 @@ class TransferItemController extends Controller
 
     public function getTransferEntry()
     {
-        $entry = DB::table('prod_transfer_items as t')->orderBy('t.id','desc')
-                    ->join('prod_travel_sheet_processes as tsp', 'tsp.id', '=', 't.current_process')
-                    ->join('ppc_divisions as d','d.div_code','=','tsp.div_code')
-                    ->where('d.user_id',Auth::user()->id)
-                    ->where('t.deleted','<>',0)
-                    ->select(
-                        DB::raw("t.id as id"),
-                        DB::raw("t.jo_no as jo_no"),
-                        DB::raw("t.prod_order_no as prod_order_no"),
-                        DB::raw("t.prod_code as prod_code"),
-                        DB::raw("t.description as description"),
-                        DB::raw("t.current_process as current_process"),
-                        DB::raw("t.div_code as div_code"),
-                        DB::raw("(SELECT process FROM prod_travel_sheet_processes as p
-                                    WHERE p.id = t.current_process) as current_process_name"),
-                        DB::raw("(SELECT div_code FROM ppc_divisions as d
-                                    where d.id = t.div_code) as div_code_code"),
-                        DB::raw("t.process as process"),
-                        DB::raw("t.qty as qty"),
-                        DB::raw("t.status as status"),
-                        DB::raw("t.remarks as remarks"),
-                        DB::raw("t.item_status as item_status"),
-                        DB::raw("t.create_user as create_user"),
-                        DB::raw("DATE_FORMAT(t.created_at, '%Y-%m-%d') as created_at"),
-                        DB::raw("t.update_user as update_user"),
-                        DB::raw("DATE_FORMAT(t.updated_at, '%Y-%m-%d') as updated_at")
-                    )->get();
-        if (count((array)$entry) > 0) {
-            return $entry;
-        }
+        $entry = DB::select(DB::raw("CALL GET_transfer_items(".Auth::user()->id.")"));
+        return DataTables::of($entry)
+						->editColumn('id', function($data) {
+							return $data->id;
+                        })
+                        ->editColumn('item_status', function($data) {
+							if ($data->item_status == 1) {
+                                return "RECEIVED";
+                            } else {
+                                return "TRANSFERED";
+                            }
+                        })
+                        ->addColumn('action', function($data) {
+                            $disabled ='';
+                            if ($data->item_status != 0) {
+                                $disabled = 'disabled';
+                            }
+
+                            return "<button class='btn btn-sm btn-primary btn_edit'
+                                        data-id='".$data->id."'
+                                        data-jo_no='".$data->jo_no."'
+                                        data-prod_order_no='".$data->prod_order_no."'
+                                        data-prod_code='".$data->prod_code."'
+                                        data-description='".$data->description."'
+                                        data-current_process='".$data->current_process."'
+                                        data-div_code='".$data->div_code."'
+                                        data-div_code_code='".$data->div_code_code."'
+                                        data-process='".$data->process."'
+                                        data-qty='".$data->qty."'
+                                        data-status='".$data->status."'
+                                        data-remarks='".$data->remarks."'
+                                        data-create_user='".$data->create_user."'
+                                        data-created_at='".$data->created_at."'
+                                        data-update_user='".$data->update_user."'
+                                        data-updated_at='".$data->updated_at."' ".$disabled.">
+                                        <i class='fa fa-edit'></i>
+                                    </button>";
+                        })
+                        ->make(true);
+                        
+        // if (count((array)$entry) > 0) {
+        //     return $entry;
+        // }
         
-        return '';
+        // return '';
     }
-
-    // public function get_outputs()
-    // {
-    //     $div_code_user = Auth::user()->div_code;
-    //     $data = DB::table('prod_transfer_items as i')
-    //                 ->join('users as u', 'u.user_id', '=', 'i.create_user')
-    //                 ->select(
-    //                     'i.id as id',
-    //                     'i.jo_no as jo_no',
-    //                     'i.prod_order_no as prod_order_no',
-    //                     'i.prod_code as prod_code',
-    //                     'i.description as description',
-    //                     'i.process as process',
-    //                     'i.qty as qty',
-    //                     'i.status as status',
-    //                     'i.remarks as remarks',
-    //                     'i.created_at as created_at',
-    //                     'u.div_code'
-    //                 )
-    //                 ->where('u.div_code', Auth::user()->div_code)
-    //                 ->get();
-
-    //     return DataTables::of($data)
-    //                         ->editColumn('id', function($data) {
-    //                             return $data->id;
-    //                         })
-    //                         ->addColumn('action', function($data) {
-    //                             return '
-    //                             <button class="btn btn-sm bg-blue btn_edit" data-id="'.$data->id.'"><i class="fa fa-edit"></i></button>';
-    //                         })->make(true); 
-    // }
 
     public function received_items()
     {
