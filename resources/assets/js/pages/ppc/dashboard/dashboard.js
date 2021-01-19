@@ -176,6 +176,7 @@ function dashboardDataTable(arr) {
 			{ data: 'sched_qty', name: 'sched_qty' },
 			{ data: 'unprocessed', name: 'unprocessed' },
 			{ data: 'good', name: 'good' },
+			{ data: 'rework', name: 'rework' },
 			{ data: 'scrap', name: 'scrap' },
 
 			{ data: 'total_output', name: 'total_output' },

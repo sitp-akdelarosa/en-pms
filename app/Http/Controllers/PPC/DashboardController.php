@@ -147,8 +147,7 @@ class DashboardController extends Controller
 			$travel_sheet = DB::table('v_dashboard_ppc')
 								->where('user_id' ,Auth::user()->id)
 								->whereIn('travel_sheet_status',[0,1,2,5])
-								->whereBetween('updated_at', [$req->date_from, $req->date_to])
-								->get();
+								->whereBetween('updated_at', [$req->date_from, $req->date_to]);
 									
 		}else{
 			// $travel_sheet = DB::table('prod_travel_sheets as ts')
@@ -177,8 +176,7 @@ class DashboardController extends Controller
 			// 					->orderBy('p.sequence' , 'ASC');
 			$travel_sheet = DB::table('v_dashboard_ppc')
 								->where('user_id' ,Auth::user()->id)
-								->where('travel_sheet_status',2)
-								->get();
+								->where('travel_sheet_status',2);
 		}
 		// return dd(DB::getQueryLog());
 	   return DataTables::of($travel_sheet)

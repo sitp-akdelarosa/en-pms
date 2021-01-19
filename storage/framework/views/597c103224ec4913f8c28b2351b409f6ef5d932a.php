@@ -39,6 +39,7 @@
                             <th>Sched Qty.</th> 
                             <th>Unprocess</th>
                             <th>Good</th>
+                            <th>Rework</th>
                             <th>Scrap</th>
                             <th>Total Ouput</th>
                             <th>Order Qty.</th>

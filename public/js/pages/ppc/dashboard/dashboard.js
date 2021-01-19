@@ -266,6 +266,9 @@ function dashboardDataTable(arr) {
       data: 'good',
       name: 'good'
     }, {
+      data: 'rework',
+      name: 'rework'
+    }, {
       data: 'scrap',
       name: 'scrap'
     }, {
