@@ -212,11 +212,19 @@
                                     <div id="supplier_feedback"></div>
                                 </div>
                             </div>
-                            <div class="form-group row material_div">
+                            <div class="form-group row">
                                 <label for="supplier_heat_no" class="col-sm-3 control-label mt-5">Supplier Heat No:</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control validate clear" name="supplier_heat_no" id="supplier_heat_no">
                                     <div id="supplier_heat_no_feedback"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row product_div">
+                                <label for="material_used" class="col-sm-3 control-label mt-5">Material Used (Code):</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control validate clear" name="material_used" id="material_used">
+                                    <div id="material_used_feedback"></div>
                                 </div>
                             </div>
                         </div>
@@ -500,11 +508,18 @@
                                     <div id="srch_supplier_feedback"></div>
                                 </div>
                             </div>
-                            <div class="form-group row srch_material_div">
+                            <div class="form-group row">
                                 <label for="srch_supplier_heat_no" class="col-sm-3 control-label mt-5">Supplier Heat No:</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control validate srch-clear" name="srch_supplier_heat_no" id="srch_supplier_heat_no">
                                     <div id="srch_supplier_heat_no_feedback"></div>
+                                </div>
+                            </div>
+                            <div class="form-group row srch_product_div">
+                                <label for="srch_material_used" class="col-sm-3 control-label mt-5">Material Used (Code):</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control validate clear" name="srch_material_used" id="srch_material_used">
+                                    <div id="srch_material_used_feedback"></div>
                                 </div>
                             </div>
                         </div>

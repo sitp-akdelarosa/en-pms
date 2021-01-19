@@ -97,6 +97,7 @@ foreach ($user_accesses as $user_access){
                                     <th>Received Date</th>
                                     <th>Supplier</th>
                                     <th>Supplier Heat No.</th>
+                                    <th>Material Used</th>
                                     <th>Added By</th>
                                     <th>Update Date</th>
                                 </tr>

@@ -149,13 +149,13 @@ $(function () {
 			$('#length').val($(this).attr('data-length'));
 			$('#invoice_no').val($(this).attr('data-invoice_no'));
 			$('#supplier').val($(this).attr('data-supplier'));
-			$('#supplier_heat_no').val($(this).attr('data-supplier_heat_no'));
 		} else {
 			$('#jo_no').val($(this).attr('data-receive_jo_no'));
 			$('#product_line').val($(this).attr('data-item_type_line')).trigger('change.select2');
 			getItemCode($(this).attr('data-item_code'), '', $(this).attr('data-item_class'));
 			$('#lot_no').val($(this).attr('data-lot_no'));
 			$('#finish_weight').val($(this).attr('data-finish_weight'));
+			$('#material_used').val($(this).attr('data-material_used'));
 		}
 
 		$('#warehouse').val($(this).attr('data-warehouse')).trigger('change.select2');
@@ -168,6 +168,7 @@ $(function () {
 		$('#qty_weight').val($(this).attr('data-qty_weight'));
 		$('#qty_pcs').val($(this).attr('data-qty_pcs'));
 		$('#heat_no').val($(this).attr('data-heat_no'));
+		$('#supplier_heat_no').val($(this).attr('data-supplier_heat_no'));
 		
 
 		$('#modal_material_inventory').modal('show');		
@@ -955,6 +956,7 @@ function InventoryTable(ajax_url,data_object) {
 						"data-warehouse='" + data.warehouse + "' " +
 						"data-length='" + data.length + "' " +
 						"data-supplier_heat_no='" + data.supplier_heat_no + "' " +
+						"data-material_used='" + data.material_used + "' " +
 						"data-updated_at='" + data.updated_at + "' " +
 						"data-supplier='" + data.supplier + "'>" +
 						"<i class='fa fa-edit'></i> " +
@@ -1001,6 +1003,7 @@ function InventoryTable(ajax_url,data_object) {
 			{ data: 'received_date' },
 			{ data: 'supplier' },
 			{ data: 'supplier_heat_no' },
+			{ data: 'material_used' },
 			{ data: 'nickname' },
 			{ data: 'updated_at' }
 		],

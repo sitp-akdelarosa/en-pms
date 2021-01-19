@@ -229,13 +229,13 @@ $(function () {
       $('#length').val($(this).attr('data-length'));
       $('#invoice_no').val($(this).attr('data-invoice_no'));
       $('#supplier').val($(this).attr('data-supplier'));
-      $('#supplier_heat_no').val($(this).attr('data-supplier_heat_no'));
     } else {
       $('#jo_no').val($(this).attr('data-receive_jo_no'));
       $('#product_line').val($(this).attr('data-item_type_line')).trigger('change.select2');
       getItemCode($(this).attr('data-item_code'), '', $(this).attr('data-item_class'));
       $('#lot_no').val($(this).attr('data-lot_no'));
       $('#finish_weight').val($(this).attr('data-finish_weight'));
+      $('#material_used').val($(this).attr('data-material_used'));
     }
 
     $('#warehouse').val($(this).attr('data-warehouse')).trigger('change.select2');
@@ -247,6 +247,7 @@ $(function () {
     $('#qty_weight').val($(this).attr('data-qty_weight'));
     $('#qty_pcs').val($(this).attr('data-qty_pcs'));
     $('#heat_no').val($(this).attr('data-heat_no'));
+    $('#supplier_heat_no').val($(this).attr('data-supplier_heat_no'));
     $('#modal_material_inventory').modal('show');
   });
   $('#frm_update_inventory').on('submit', function (e) {
@@ -970,7 +971,7 @@ function InventoryTable(ajax_url, data_object) {
       orderable: false
     }, {
       data: function data(_data2) {
-        return "<button type='button' name='edit-mainEdit' class='btn btn-sm btn-primary edit-mainEdit'" + "id='editinventory'" + "data-id= '" + _data2.id + "' " + "data-item_class='" + _data2.item_class + "' " + "data-receive_jo_no='" + _data2.receive_jo_no + "' " + "data-item_type_line='" + _data2.item_type_line + "' " + "data-item_code='" + _data2.item_code + "'" + "data-description='" + _data2.description + "'" + "data-item='" + _data2.item + "'" + "data-alloy='" + _data2.alloy + "'" + "data-schedule='" + _data2.schedule + "'" + "data-size='" + _data2.size + "'" + "data-std_weight='" + _data2.std_weight + "'" + "data-std_weight_received='" + _data2.std_weight_received + "'" + "data-finish_weight='" + _data2.finish_weight + "'" + "data-qty_weight='" + _data2.qty_weight + "'" + "data-qty_pcs='" + _data2.qty_pcs + "'" + "data-current_stock='" + _data2.current_stock + "'" + "data-heat_no='" + _data2.heat_no + "' " + "data-lot_no='" + _data2.lot_no + "' " + "data-invoice_no='" + _data2.invoice_no + "'" + "data-received_date='" + _data2.received_date + "'" + "data-width='" + _data2.width + "' " + "data-warehouse='" + _data2.warehouse + "' " + "data-length='" + _data2.length + "' " + "data-supplier_heat_no='" + _data2.supplier_heat_no + "' " + "data-updated_at='" + _data2.updated_at + "' " + "data-supplier='" + _data2.supplier + "'>" + "<i class='fa fa-edit'></i> " + "</button>";
+        return "<button type='button' name='edit-mainEdit' class='btn btn-sm btn-primary edit-mainEdit'" + "id='editinventory'" + "data-id= '" + _data2.id + "' " + "data-item_class='" + _data2.item_class + "' " + "data-receive_jo_no='" + _data2.receive_jo_no + "' " + "data-item_type_line='" + _data2.item_type_line + "' " + "data-item_code='" + _data2.item_code + "'" + "data-description='" + _data2.description + "'" + "data-item='" + _data2.item + "'" + "data-alloy='" + _data2.alloy + "'" + "data-schedule='" + _data2.schedule + "'" + "data-size='" + _data2.size + "'" + "data-std_weight='" + _data2.std_weight + "'" + "data-std_weight_received='" + _data2.std_weight_received + "'" + "data-finish_weight='" + _data2.finish_weight + "'" + "data-qty_weight='" + _data2.qty_weight + "'" + "data-qty_pcs='" + _data2.qty_pcs + "'" + "data-current_stock='" + _data2.current_stock + "'" + "data-heat_no='" + _data2.heat_no + "' " + "data-lot_no='" + _data2.lot_no + "' " + "data-invoice_no='" + _data2.invoice_no + "'" + "data-received_date='" + _data2.received_date + "'" + "data-width='" + _data2.width + "' " + "data-warehouse='" + _data2.warehouse + "' " + "data-length='" + _data2.length + "' " + "data-supplier_heat_no='" + _data2.supplier_heat_no + "' " + "data-material_used='" + _data2.material_used + "' " + "data-updated_at='" + _data2.updated_at + "' " + "data-supplier='" + _data2.supplier + "'>" + "<i class='fa fa-edit'></i> " + "</button>";
       },
       searchable: false,
       orderable: false
@@ -1034,6 +1035,8 @@ function InventoryTable(ajax_url, data_object) {
       data: 'supplier'
     }, {
       data: 'supplier_heat_no'
+    }, {
+      data: 'material_used'
     }, {
       data: 'nickname'
     }, {
