@@ -1297,7 +1297,7 @@ class UpdateInventoryController extends Controller
                             order by pmc.id desc");
         } else {
             $code_type = " AND LEFT(ppc.product_code,1) = 'Z'";
-            if ($req->item_class == 'CRUDE') {
+            if ($req->item_class == 'CRUDE' || $req->item_class == 'crude') {
                 $code_type = " AND LEFT(ppc.product_code,1) = 'Y'";
             }
             $code = DB::select("select ppc.product_code as id,
