@@ -387,10 +387,23 @@ class ProductionScheduleController extends Controller
                             ->get();
 
                 foreach ($boms as $key => $bom) {
-                    $f = Auth::user()->firstname;
-                    $l = Auth::user()->lastname;
+                    // $f = Auth::user()->firstname;
+                    // $l = Auth::user()->lastname;
 
-                    $jocode = $this->_helper->TransactionNo($f[0] . $l[0] . '-JO');
+                    // $jocode = $this->_helper->TransactionNo($f[0] . $l[0] . '-JO');
+                    $jocode = '';
+
+                    $check_whs = DB::table('ppc_update_inventories')->select('warehouse')->where('heat_no',$bom->heat_no)->distinct()->count();
+
+                    if ($check_whs > 0) {
+                        $whs = DB::table('ppc_update_inventories')
+                                    ->select('warehouse')
+                                    ->where('heat_no',$bom->heat_no)
+                                    ->distinct()
+                                    ->first();
+
+                        $jocode = $this->_helper->TransactionNo('JO', $whs->warehouse);
+                    }
 
                     $jo_sum = new PpcJoDetailsSummary();
                     $jo_sum->jo_no = $jocode;
@@ -1036,10 +1049,23 @@ class ProductionScheduleController extends Controller
                 ->get();
 
         foreach ($boms as $key => $bom) {
-            $f = Auth::user()->firstname;
-            $l = Auth::user()->lastname;
+            // $f = Auth::user()->firstname;
+            // $l = Auth::user()->lastname;
+            $jocode = '';
 
-            $jocode = $this->_helper->TransactionNo($f[0] . $l[0] . '-JO');
+            $check_whs = DB::table('ppc_update_inventories')->select('warehouse')->where('heat_no',$bom->material_heat_no)->distinct()->count();
+
+            if ($check_whs > 0) {
+                $whs = DB::table('ppc_update_inventories')
+                            ->select('warehouse')
+                            ->where('heat_no',$bom->material_heat_no)
+                            ->distinct()
+                            ->first();
+
+                $jocode = $this->_helper->TransactionNo('JO', $whs->warehouse);
+            }
+
+            //$jocode = $this->_helper->TransactionNo($f[0] . $l[0] . '-JO');
 
             $jo_sum = new PpcJoDetailsSummary();
             $jo_sum->jo_no = $jocode;

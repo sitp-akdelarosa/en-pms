@@ -117,7 +117,7 @@ class HelpersController extends Controller
         return response()->json($div_code);
     }
 
-    public function NextTransactionNo($code)
+    public function NextTransactionNo($id)
     {
         $result = '';
         $new_code = 'ERROR';
@@ -129,7 +129,7 @@ class HelpersController extends Controller
                                             'nextno',
                                             'month'
                                         )
-                                        ->where('code', '=', $code)
+                                        ->where('id', '=', $id)
                                         ->first();
 
             if(count((array)$result) <= 0)
@@ -139,16 +139,16 @@ class HelpersController extends Controller
             }
 
             if ($result->month == date('m')) {
-                AdminTransactionNo::where('code', '=', $code) ->update(['nextno' => $result->nextno + 1]);
+                AdminTransactionNo::where('id', '=', $id) ->update(['nextno' => $result->nextno + 1]);
             } else {
-                AdminTransactionNo::where('code', '=', $code)->update(['nextno' => 1, 'month' => date('m')]);
+                AdminTransactionNo::where('id', '=', $id)->update(['nextno' => 1, 'month' => date('m')]);
 
                 $result = AdminTransactionNo::select(
                                                 DB::raw("CONCAT(prefix, LPAD(IFNULL(nextno, 0), nextnolength, '0')) AS new_code"),
                                                 'nextno',
                                                 'month'
                                             )
-                                            ->where('code', '=', $code)
+                                            ->where('id', '=', $id)
                                             ->first();
 
                 if(count((array)$result) <= 0)
@@ -156,7 +156,7 @@ class HelpersController extends Controller
                     $result->new_code = 'ERROR';
                     $result->nextno = 0;
                 }
-                AdminTransactionNo::where('code', '=', $code)->update(['nextno' => $result->nextno + 1]);
+                AdminTransactionNo::where('id', '=', $id)->update(['nextno' => $result->nextno + 1]);
             }
 
 
@@ -171,46 +171,53 @@ class HelpersController extends Controller
         return $result->new_code;
     }
 
-    public function TransactionNo($transcode)
+    public function TransactionNo($module, $warehouse)
     {
-        $check = AdminTransactionNo::where('code',$transcode)->count();
+        $check = AdminTransactionNo::where('module',$module)->where('warehouse',$warehouse)->count();
         if ($check > 0) {
-            $code = $this->NextTransactionNo($transcode);
+            $trans = AdminTransactionNo::select('id')
+                                    ->where([
+                                        ['module','=',$module],
+                                        ['warehouse','=',$warehouse]
+                                    ])->first();
+            $code = $this->NextTransactionNo($trans->id);
             $transno = str_replace('YYMM',date("ym"),$code);
 
             return $transno;
         } else {
-            $desc = '';
-            if (strpos($transcode, 'RMW') !== false) {
-                $desc = 'Raw Material Withdrawal';
-            }
+            return 0;
+            // $desc = '';
+            // if (strpos($transcode, 'MW') !== false) {
+            //     $desc = 'Raw Material Withdrawal';
+            // }
 
-            if (strpos($transcode, 'JO') !== false) {
-                $desc = 'Job Order No.';
-            }
+            // if (strpos($transcode, 'JO') !== false) {
+            //     $desc = 'Job Order No.';
+            // }
             
-            if (strpos($transcode, 'PW') !== false) {
-                $desc = 'Product Withdrawal';
-            }
+            // if (strpos($transcode, 'PW') !== false) {
+            //     $desc = 'Product Withdrawal';
+            // }
 
-            AdminTransactionNo::create([
-                'code' => $transcode,
-                'description' => $desc,
-                'prefix' => $transcode.'-YYMM-',
-                'prefixformat' => $transcode.'-%y%m-',
-                'nextno' => 1,
-                'nextnolength' => 4,
-                'month' => date('m'),
-                'create_user' => Auth::user()->id,
-                'update_user' => Auth::user()->id,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ]);
+            // AdminTransactionNo::create([
+            //     'code' => $transcode,
+            //     'description' => $desc,
+            //     'prefix' => $transcode.'-YYMM-',
+            //     'prefixformat' => $transcode.'-%y%m-',
+            //     'nextno' => 1,
+            //     'nextnolength' => 4,
+            //     'month' => date('m'),
+            //     'warehouse' => $warehouse,
+            //     'create_user' => Auth::user()->id,
+            //     'update_user' => Auth::user()->id,
+            //     'created_at' => date('Y-m-d H:i:s'),
+            //     'updated_at' => date('Y-m-d H:i:s'),
+            // ]);
 
-            $code = $this->NextTransactionNo($transcode);
-            $transno = str_replace('YYMM',date("ym"),$code);
+            // $code = $this->NextTransactionNo($transcode);
+            // $transno = str_replace('YYMM',date("ym"),$code);
 
-            return $transno;
+            // return $transno;
         }
     }
 

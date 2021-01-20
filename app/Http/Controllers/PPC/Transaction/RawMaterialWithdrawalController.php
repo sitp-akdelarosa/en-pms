@@ -406,11 +406,34 @@ class RawMaterialWithdrawalController extends Controller
     public function save(Request $req)
     {
         $params = [];
-        if ($req->trans_no == '') {
-            $f = Auth::user()->firstname;
-            $l = Auth::user()->lastname;
+        $trans_no = '';
 
-            $trans_no = $this->_helper->TransactionNo($f[0].$l[0].'-RMW');
+        if ($req->trans_no == '') {
+            $check_whs = DB::table('ppc_update_inventories')->select('warehouse')->whereIn('id',$req->inv_ids)->distinct()->count();
+
+            if ($check_whs > 0) {
+                $whs = DB::table('ppc_update_inventories')
+                            ->select('warehouse')
+                            ->whereIn('id',$req->inv_ids)
+                            ->distinct()
+                            ->first();
+
+                $trans_no = $this->_helper->TransactionNo('RMW', $whs->warehouse);
+            } else {
+                $return_data = [
+                    'msg' => "No warehouse was specified. Please check Material's warehouse in inventory module.",
+                    'status' => 'failed',
+                    'data' => [],
+                    'trans_no' => ''
+                ];
+
+                return response()->json($return_data); 
+            }
+
+            // $f = Auth::user()->firstname;
+            // $l = Auth::user()->lastname;
+
+            //$trans_no = $this->_helper->TransactionNo($f[0].$l[0].'-RMW');
             $info = new PpcRawMaterialWithdrawalInfo();
             $info->trans_no = $trans_no;
             $info->create_user = Auth::user()->id;

@@ -594,11 +594,33 @@ class ProductWithdrawalController extends Controller
             
         } else {
             $inserted_data = 0;
+            $trans_no = '';
             # add transaction
-            $f = Auth::user()->firstname;
-            $l = Auth::user()->lastname;
+            // $f = Auth::user()->firstname;
+            // $l = Auth::user()->lastname;
 
-            $trans_no = $this->_helper->TransactionNo($f[0].$l[0].'-PW');
+            $check_whs = DB::table('ppc_update_inventories')->select('warehouse')->whereIn('id',$req->detail_inv_id)->distinct()->count();
+
+            if ($check_whs > 0) {
+                $whs = DB::table('ppc_update_inventories')
+                            ->select('warehouse')
+                            ->whereIn('id',$req->detail_inv_id)
+                            ->distinct()
+                            ->first();
+
+                $trans_no = $this->_helper->TransactionNo('PW', $whs->warehouse);
+            } else {
+                $return_data = [
+                    'msg' => "No warehouse was specified. Please check Material's warehouse in inventory module.",
+                    'status' => 'failed',
+                    'info' => [],
+                    'datails' => []
+                ];
+
+                return response()->json($return_data); 
+            }
+
+            //$trans_no = $this->_helper->TransactionNo($f[0].$l[0].'-PW');
 
             $trans = DB::table('ppc_product_withdrawal_infos')->insertGetId([
                         'trans_no' => $trans_no,
