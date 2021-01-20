@@ -14,7 +14,6 @@ use App\PpcDivision;
 use App\PpcPreTravelSheet;
 use App\PpcOperator;
 use App\RptFgSummary;
-use App\PpcJoTravelSheet;
 use App\PpcJoDetailsSummary;
 use Event;
 use App\Events\TravelSheet;
@@ -195,14 +194,15 @@ class ProductionOutputController extends Controller
         $qtynextsc = 0;
         $good = $prod_good;
         foreach ($scno as $key => $sc_no) {
-            $jo_travel_sheet =  DB::table('ppc_jo_travel_sheets as jts')
-                                    ->leftJoin('ppc_jo_details as jd', 'jd.jo_summary_id','=','jts.id')
-                                    ->where('jts.jo_no',$jo_no)
+            $jo_travel_sheet =  DB::table('ppc_pre_travel_sheets as pts')
+                                    ->leftJoin('ppc_jo_details_summaries as js', 'js.jo_no','=','pts.jo_no')
+                                    ->leftJoin('ppc_jo_details as jd', 'jd.jo_summary_id','=','js.id')
+                                    ->where('pts.jo_no',$jo_no)
                                     ->where('jd.sc_no' , $sc_no)
                                     ->select('jd.sc_no as sc_no',
                                             'jd.sched_qty as sched_qty',
                                             'jd.back_order_qty as back_order_qty',
-                                            'jts.id as id'
+                                            'pts.id as id'
                                         )
                                     ->first();
             $RptFgSummary = RptFgSummary::where('sc_no' , $sc_no)
@@ -266,9 +266,9 @@ class ProductionOutputController extends Controller
                             ->select('qty')
                             ->first();
             if($jo_travel_sheet->sched_qty == $totalqty->qty && $sc_no == end($scno)){
-                PpcJoTravelSheet::where('id' ,$jo_travel_sheet->id)->update(['status' => 5 ]);
+                //PpcPreTravelSheet::where('id' ,$jo_travel_sheet->id)->update(['status' => 5 ]);
                 ProdTravelSheet::where('jo_no' ,$jo_no)->update(['status' => 5 ]);
-                PpcPreTravelSheet::where('jo_no' ,$jo_no)->update(['status' => 5]);    
+                PpcPreTravelSheet::where('jo_no' ,$jo_no)->update(['status' => 5]);
             }
         }
     }
