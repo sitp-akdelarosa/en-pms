@@ -590,7 +590,7 @@ class TravelSheetController extends Controller
                                             ]);
 
                 if ($update) {
-                    $jo = DB::table('v_jo_list')->where('travel_sheet_id', $id)->first();
+                    $jo = DB::table('v_jo_list')->where('travel_sheet_id', (int)$id)->first();
 
                     PpcJoDetailsSummary::where('id', $jo->jo_summary_id)
                                         ->update([
