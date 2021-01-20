@@ -161,7 +161,7 @@ class TransferItemController extends Controller
                 ]);
             }
 
-            $noti = Notification::where('read',0)->get();
+            $noti = Notification::select('to','content')->where('read',0)->get();
 
             Event::fire(new Notify($noti));
 
@@ -512,7 +512,7 @@ class TransferItemController extends Controller
                 'update_user' => Auth::user()->id
             ]);
         }
-        $noti = Notification::where('read',0)->get();
+        $noti = Notification::select('to','content')->where('read',0)->get();
         Event::fire(new Notify($noti));
 
         $this->_audit->insert([

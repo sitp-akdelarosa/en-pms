@@ -153,6 +153,7 @@ $( function() {
         } else if ($('#qty_r').val() < 0){
             msg("Please Input valit number","warning");
         } else {
+            $('.lodaingOverlay-modal').show();
             $.ajax({
                 dataType: 'json',
                 type:'POST',
@@ -165,7 +166,9 @@ $( function() {
                 $('#modal_receive_item').modal('hide');
                 console.log(data);
             }).fail( function(xhr, textStatus, errorThrown) {
-                msg(xhr,textStatus);
+                ErrorMsg(xhr);
+            }).always( function() {
+                $('.lodaingOverlay-modal').hide();
             });
         }
     });
