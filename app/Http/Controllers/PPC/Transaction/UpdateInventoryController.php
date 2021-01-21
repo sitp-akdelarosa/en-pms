@@ -1575,7 +1575,7 @@ class UpdateInventoryController extends Controller
                 $sheet->cell('L1', "lotnumber");
                 $sheet->cell('M1', "warehouse");
                 $sheet->cell('N1', "supplierheatno");
-                $sheet->cell('N1', "materialused");
+                $sheet->cell('O1', "materialused");
                 
             });
         })->download('xlsx');
