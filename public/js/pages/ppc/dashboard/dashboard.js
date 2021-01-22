@@ -229,6 +229,7 @@ function dashboardDataTable(arr) {
     data: arr,
     deferRender: true,
     scrollX: true,
+    order: [[18, 'desc']],
     columns: [{
       data: 'jo_sequence',
       name: 'jo_sequence'
@@ -284,11 +285,43 @@ function dashboardDataTable(arr) {
       data: 'issued_qty',
       name: 'issued_qty'
     }, {
+      data: 'update_date',
+      name: 'update_date'
+    }, {
       data: 'end_date',
       name: 'end_date'
     }, {
-      data: function data(e) {
-        return e.status;
+      data: function data(x) {
+        switch (x.status) {
+          case 1:
+          case '1':
+            return 'DONE PROCESS';
+            break;
+
+          case 2:
+          case '2':
+            return 'ON-GOING';
+            break;
+
+          case 3:
+          case '31':
+            return 'CANCELLED';
+            break;
+
+          case 4:
+          case '4':
+            return 'TRANSFER ITEM';
+            break;
+
+          case 5:
+          case '5':
+            return 'ALL PROCESS DONE';
+            break;
+
+          default:
+            return 'PENDING';
+            break;
+        }
       },
       name: 'status' // { data: 'status', name: 'p.status'}
 
@@ -315,7 +348,37 @@ function dashboardDataTable(arr) {
     // bStateSave: true,
     lengthMenu: [[5, 10, 15, 20, -1], [5, 10, 15, 20, "All"]],
     pageLength: 10,
-    order: [[0, "desc"]]
+    createdRow: function createdRow(row, data, dataIndex) {
+      if (data.status == 2 || data.status == '2') {
+        $(row).css('background-color', '#001F3F'); // NAVY
+
+        $(row).css('color', '#fff');
+      }
+
+      if (data.status == 3 || data.status == '3') {
+        $(row).css('background-color', '#ff6266'); // RED
+
+        $(row).css('color', '#fff');
+      }
+
+      if (data.status == 4 || data.status == '4') {
+        $(row).css('background-color', '#7460ee'); // PURPLE
+
+        $(row).css('color', '#fff');
+      }
+
+      if (data.status == 5 || data.status == '1') {
+        $(row).css('background-color', 'rgb(139 241 191)'); // GREEN
+
+        $(row).css('color', '#000000');
+      }
+
+      if (data.status == 6 || data.status == '5') {
+        $(row).css('background-color', 'rgb(121 204 241)'); // BLUE
+
+        $(row).css('color', '#000000');
+      }
+    }
   });
 }
 

@@ -45,6 +45,7 @@
                             <th>Order Qty.</th>
                             <th>Total Issued Qty</th>
                             <th>Issued Qty</th> 
+                            <th>Update Date</th> 
                             <th>End Date</th>                      
                             <th>Status</th>
 

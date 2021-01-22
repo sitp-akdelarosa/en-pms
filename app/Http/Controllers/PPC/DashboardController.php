@@ -181,17 +181,43 @@ class DashboardController extends Controller
 		// return dd(DB::getQueryLog());
 	   return DataTables::of($travel_sheet)
 				->editColumn('status', function($data) {
-					$status = ''; //ON PROCESS
-					if ($data->status == 1) {
-						$status = 'READY FOR FG';
-					}else if($data->status == 2){
-						$status = 'FINISHED';
-					}else if($data->status == 3){
-						$status = 'CANCELLED';
-					}else if($data->status == 4){
-						$status = 'TRANSFER ITEM';
-					}
-					return $status;
+                    switch ($data->status) {
+                        case 1:
+                        case '1':
+                            return 'DONE PROCESS';
+                            break;
+                        case 2:
+                        case '2':
+                            return 'ON-GOING';
+                            break;
+                        case 3:
+                        case '31':
+                            return 'CANCELLED';
+                            break;
+                        case 4:
+                        case '4':
+                            return 'TRANSFER ITEM';
+                            break;
+                        case 5:
+                        case '5':
+                            return 'ALL PROCESS DONE';
+                            break;
+                    
+                        default:
+                            return 'PENDING';
+                            break;
+                    }
+					// $status = ''; //ON PROCESS
+					// if ($data->status == 1) {
+					// 	$status = 'READY FOR FG';
+					// }else if($data->status == 2){
+					// 	$status = 'FINISHED';
+					// }else if($data->status == 3){
+					// 	$status = 'CANCELLED';
+					// }else if($data->status == 4){
+					// 	$status = 'TRANSFER ITEM';
+					// }
+					// return $status;
 				})->make(true);
 	}
 
