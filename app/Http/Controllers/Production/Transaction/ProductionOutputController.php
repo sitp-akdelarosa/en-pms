@@ -497,13 +497,13 @@ class ProductionOutputController extends Controller
 
                 PpcPreTravelSheet::where('id',$data[0]->pre_travel_sheet_id)
                                     ->update([
-                                        'status' => 6,
+                                        'status' => 2,
                                         'updated_at' => date('Y-m-d H:i:s')
                                     ]);
 
                 PpcJoDetailsSummary::where('id', $jo->jo_summary_id)
                                     ->update([
-                                        'status' => 6,
+                                        'status' => 2,
                                         'updated_at' => date('Y-m-d H:i:s')
                                     ]);
             }
