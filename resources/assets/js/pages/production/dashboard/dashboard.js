@@ -31,18 +31,45 @@ function getDashboard() {
             { data: 'rework', name: 'p.rework' },
             { data: 'scrap', name: 'p.scrap' },
             { data: function(x) {
-                var status = 'ON PROCESS';
-                if (x.status == 1) {
-                    status = 'DONE'; //READY FOR FG
-                } else if (x.status == 2){
-                    status = 'FINISHED';
-                } else if (x.status == 3){
-                    status = 'CANCELLED';
-                } else if (x.status == 4){
-                    status = 'TRANSFER ITEM';
+                switch (x.status) {
+                    case 1:
+                    case '1':
+                        return 'DONE PROCESS'
+                        break;
+                    case 2:
+                    case '2':
+                        return 'ON-GOING'
+                        break;
+                    case 3:
+                    case '31':
+                        return 'CANCELLED'
+                        break;
+                    case 4:
+                    case '4':
+                        return 'TRANSFER ITEM'
+                        break;
+                    case 5:
+                    case '5':
+                        return 'ALL PROCESS DONE'
+                        break;
+                
+                    default:
+                        return 'PENDING';
+                        break;
                 }
-                return status;
-            } }
+                // var status = '';
+                // if (x.status == 1) {
+                //     status = 'DONE'; //READY FOR FG
+                // } else if (x.status == 2){
+                //     status = 'FINISHED';
+                // } else if (x.status == 3){
+                //     status = 'CANCELLED';
+                // } else if (x.status == 4){
+                //     status = 'TRANSFER ITEM';
+                // }
+                // return status;
+            } },
+            { data: 'end_date', name: 'p.end_date' },
         ],
         fnDrawCallback: function() {
             $("#tbl_prod_dashboard").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");

@@ -18565,10 +18565,6 @@ function TravelSheetDataTable(ajax_url, object_data) {
           case '6':
             return 'In Production';
             break;
-
-          default:
-            return 'wala';
-            break;
         }
       },
       name: 'status',

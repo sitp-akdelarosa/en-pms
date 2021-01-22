@@ -146,20 +146,51 @@ function getDashboard() {
       name: 'p.scrap'
     }, {
       data: function data(x) {
-        var status = 'ON PROCESS';
+        switch (x.status) {
+          case 1:
+          case '1':
+            return 'DONE PROCESS';
+            break;
 
-        if (x.status == 1) {
-          status = 'DONE'; //READY FOR FG
-        } else if (x.status == 2) {
-          status = 'FINISHED';
-        } else if (x.status == 3) {
-          status = 'CANCELLED';
-        } else if (x.status == 4) {
-          status = 'TRANSFER ITEM';
-        }
+          case 2:
+          case '2':
+            return 'ON-GOING';
+            break;
 
-        return status;
+          case 3:
+          case '31':
+            return 'CANCELLED';
+            break;
+
+          case 4:
+          case '4':
+            return 'TRANSFER ITEM';
+            break;
+
+          case 5:
+          case '5':
+            return 'ALL PROCESS DONE';
+            break;
+
+          default:
+            return 'PENDING';
+            break;
+        } // var status = '';
+        // if (x.status == 1) {
+        //     status = 'DONE'; //READY FOR FG
+        // } else if (x.status == 2){
+        //     status = 'FINISHED';
+        // } else if (x.status == 3){
+        //     status = 'CANCELLED';
+        // } else if (x.status == 4){
+        //     status = 'TRANSFER ITEM';
+        // }
+        // return status;
+
       }
+    }, {
+      data: 'end_date',
+      name: 'p.end_date'
     }],
     fnDrawCallback: function fnDrawCallback() {
       $("#tbl_prod_dashboard").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");

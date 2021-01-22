@@ -122,11 +122,18 @@ class ProductionOutputController extends Controller
                             ->where('id',$req->travel_sheet_process_id)
                             ->first();
 
-            if ($processes->unprocessed == 0) {
+            if ($processes->unprocessed < 1) {
                 DB::table('prod_travel_sheet_processes')
                             ->where('id',$req->travel_sheet_process_id)
                             ->update([
-                                'status' => 1,
+                                'status' => 1, // DONE PROCESS
+                                'is_current' => 1
+                            ]);
+            } elseif ($processes->unprocessed > 0) {
+                DB::table('prod_travel_sheet_processes')
+                            ->where('id',$req->travel_sheet_process_id)
+                            ->update([
+                                'status' => 2, // ON-GOING
                                 'is_current' => 1
                             ]);
             }
@@ -185,6 +192,11 @@ class ProductionOutputController extends Controller
                                 ->where('status' , 1)
                                 ->first();
         if($ptsp->unprocessed == 0){
+            // $prod_ts = ProdTravelSheet::select('pre_travel_sheet_id')->where('id',$travel_sheet_id)->first();
+
+            // PpcPreTravelSheet::where('id',$prod_ts->pre_travel_sheet_id)
+            //                 ->update([ 'status' => 5 ]);
+
             ProdTravelSheetProcess::where('travel_sheet_id',$travel_sheet_id)
                                 ->update([ 'status' => 5 ]);
         }

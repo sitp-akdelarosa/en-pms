@@ -1052,9 +1052,6 @@ function TravelSheetDataTable(ajax_url, object_data) {
 					case '6':
 						return 'In Production';
 						break;
-					default:
-						return 'wala';
-						break;
 				}
 			}, name: 'status', width: '7.14%' },
             { data: 'updated_at', name: 'updated_at', width: '7.14%' },

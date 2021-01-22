@@ -25,6 +25,7 @@
                         <th>Rework</th>
                         <th>Scrap</th>
                         <th>Status</th>
+                        <th>Date</th>
                     </tr>
                 </thead>
                 <tbody id="tbl_dashboard_body"></tbody>

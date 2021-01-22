@@ -181,7 +181,7 @@ class DashboardController extends Controller
 		// return dd(DB::getQueryLog());
 	   return DataTables::of($travel_sheet)
 				->editColumn('status', function($data) {
-					$status = 'ON PROCESS';
+					$status = ''; //ON PROCESS
 					if ($data->status == 1) {
 						$status = 'READY FOR FG';
 					}else if($data->status == 2){
