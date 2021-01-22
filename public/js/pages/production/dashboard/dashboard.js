@@ -172,8 +172,14 @@ function getDashboard() {
             return 'ALL PROCESS DONE';
             break;
 
-          default:
-            return 'PENDING';
+          case 7:
+          case '7':
+            return 'RECEIVED';
+            break;
+
+          case 0:
+          case '0':
+            return 'WAITING';
             break;
         } // var status = '';
         // if (x.status == 1) {

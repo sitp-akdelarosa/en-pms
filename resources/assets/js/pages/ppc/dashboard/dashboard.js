@@ -208,10 +208,16 @@ function dashboardDataTable(arr) {
                         case 5:
                         case '5':
                             return 'ALL PROCESS DONE';
-                            break;
-                    
-                        default:
-                            return 'PENDING';
+							break;
+							
+						case 7:
+                        case '7':
+                            return 'RECEIVED';
+							break;
+							
+						case 0:
+                        case '0':
+                            return 'WAITING';
                             break;
                     }
 			}, name: 'status'}
