@@ -3,6 +3,18 @@ $(function () {
 	get_chart();
 	get_jono('');
 
+	$(document).on('shown.bs.modal', function () {
+		$($.fn.dataTable.tables(true)).DataTable()
+			.columns.adjust();
+		
+		$('#srch_status').select2({
+			// allowClear: true,
+			placeholder: 'Select Status'
+		}).val(null);
+
+		$('.loadingOverlay-modal').hide();
+	});
+
 	$('#jo_no').on('change', function (e) {
 		e.preventDefault();
 		get_chart($(this).val());
@@ -13,6 +25,7 @@ $(function () {
 	});
 
 	$('#btn_search_filter').on('click', function() {
+		$('.loadingOverlay-modal').show();
 		$('#modal_ppc_dashboard').modal('show');
 	});
 
@@ -72,6 +85,11 @@ $(function () {
 			"&srch_status=" + srch_status;
 
 		window.location.href = url;
+	});
+
+	$('#btn_search_clear').on('click', function() {
+		$('.srch-clear').val('');
+		$('#srch_status').select2({}).val(null).trigger('change.select2');
 	});
 });
 

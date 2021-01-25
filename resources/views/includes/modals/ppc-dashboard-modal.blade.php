@@ -114,7 +114,14 @@
                             <div class="form-group row">
                                 <label for="srch_status" class="col-sm-3 control-label mt-5">Status:</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control validate srch-clear" name="srch_status" id="srch_status">
+                                    <select class="form-control validate srch-clear" name="srch_status[]" id="srch_status" multiple="multiple">
+                                        <option value="0">WAITING</option>
+                                        <option value="1">DONE PROCESS</option>
+                                        <option value="2">ON-GOING</option>
+                                        <option value="3">CANCELLED</option>
+                                        <option value="5">ALL PROCESS DONE</option>
+                                        <option value="7">RECEIVED</option>
+                                    </select>
                                     <div id="srch_status_feedback"></div>
                                 </div>
                             </div>
@@ -123,8 +130,10 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn bg-red" data-dismiss="modal">Close</button>
-                    <button type="button" id="btn_search_excel" class="btn bg-green float-right">Download Excel</button>
+                    
                     <button type="submit" class="btn bg-blue float-right permission-button">Filter</button>
+                    <button type="button" id="btn_search_excel" class="btn bg-green float-right">Download Excel</button>
+                    <button type="button" id="btn_search_clear" class="btn btn-secondary float-right">Clear</button>
                 </div>
                 
             </div>

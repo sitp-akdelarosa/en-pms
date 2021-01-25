@@ -97,6 +97,14 @@ $(function () {
   dashboardDataTable([]);
   get_chart();
   get_jono('');
+  $(document).on('shown.bs.modal', function () {
+    $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+    $('#srch_status').select2({
+      // allowClear: true,
+      placeholder: 'Select Status'
+    }).val(null);
+    $('.loadingOverlay-modal').hide();
+  });
   $('#jo_no').on('change', function (e) {
     e.preventDefault();
     get_chart($(this).val());
@@ -105,6 +113,7 @@ $(function () {
     $(".dataTables_scrollHeadInner").css("width", "100%");
   });
   $('#btn_search_filter').on('click', function () {
+    $('.loadingOverlay-modal').show();
     $('#modal_ppc_dashboard').modal('show');
   });
   $('#srch_date_from').on('change', function () {
@@ -144,6 +153,10 @@ $(function () {
     var srch_status = $('#srch_status').val();
     var url = downloadSearchExcelURL + "?srch_date_from=" + srch_date_from + "&srch_date_to=" + srch_date_to + "&srch_jo_sequence=" + srch_jo_sequence + "&srch_prod_code=" + srch_prod_code + "&srch_description=" + srch_description + "&srch_div_code=" + srch_div_code + "&srch_plant=" + srch_plant + "&srch_process=" + srch_process + "&srch_material_used=" + srch_material_used + "&srch_material_heat_no=" + srch_material_heat_no + "&srch_lot_no=" + srch_lot_no + "&srch_status=" + srch_status;
     window.location.href = url;
+  });
+  $('#btn_search_clear').on('click', function () {
+    $('.srch-clear').val('');
+    $('#srch_status').select2({}).val(null).trigger('change.select2');
   });
 });
 

@@ -119,61 +119,13 @@ class DashboardController extends Controller
 			return response()->json($data);
 		}
 		if (isset($req->date_from) && isset($req->date_to)) {
-			// $travel_sheet = DB::table('prod_travel_sheets as ts')
-			// 					->join('prod_travel_sheet_processes as p','ts.id','=','p.travel_sheet_id')
-			// 					->leftjoin('ppc_divisions as d','d.div_code','=','p.div_code')                                
-			// 					->leftjoin('ppc_product_codes as pc', 'ts.prod_code', '=', 'pc.product_code')
-			// 					->leftjoin('admin_assign_production_lines as pl', 'pl.product_line', '=', 'pc.product_type')
-			// 					->where('pl.user_id' ,Auth::user()->id)
-			// 					->whereIn('ts.status',[0,1,2,5])
-			// 					->whereBetween(DB::raw('left(p.updated_at,10)'), [$req->date_from, $req->date_to])
-			// 					->select(
-			// 						DB::raw("ts.jo_sequence as jo_sequence"),
-			// 						DB::raw("ts.prod_code as prod_code"),
-			// 						DB::raw("ifnull(pc.code_description,ts.description) as description"),
-			// 						DB::raw("d.plant as plant"),
-			// 						DB::raw("p.process as process"),
-			// 						DB::raw("ts.material_used as material_used"),
-			// 						DB::raw("ts.material_heat_no as material_heat_no"),
-			// 						DB::raw("ts.lot_no as lot_no"),
-			// 						DB::raw("ts.order_qty as order_qty"),
-			// 						DB::raw("ts.total_issued_qty as total_issued_qty"),
-			// 						DB::raw("ts.issued_qty as issued_qty"),
-			// 						DB::raw("p.div_code as div_code"),
-			// 						DB::raw("p.status as status")
-			// 					)
-			// 					->orderBy('ts.id', 'DESC')
-			// 					->orderBy('p.sequence' , 'ASC');
+			
 			$travel_sheet = DB::table('v_dashboard_ppc')
 								->where('user_id' ,Auth::user()->id)
 								->whereIn('travel_sheet_status',[0,1,2,5])
 								->whereBetween('updated_at', [$req->date_from, $req->date_to]);
 									
 		}else{
-			// $travel_sheet = DB::table('prod_travel_sheets as ts')
-			// 					->join('prod_travel_sheet_processes as p','ts.id','=','p.travel_sheet_id')
-			// 					->leftjoin('ppc_divisions as d','d.div_code','=','p.div_code')
-			// 					->leftjoin('ppc_product_codes as pc', 'ts.prod_code', '=', 'pc.product_code')
-			// 					->leftjoin('admin_assign_production_lines as pl', 'pl.product_line', '=', 'pc.product_type')
-			// 					->where('pl.user_id' ,Auth::user()->id)
-			// 					->where('ts.status',2)
-			// 					->select(
-			// 						DB::raw("ts.jo_sequence as jo_sequence"),
-			// 						DB::raw("ts.prod_code as prod_code"),
-			// 						DB::raw("ifnull(pc.code_description,ts.description) as description"),
-			// 						DB::raw("d.plant as plant"),
-			// 						DB::raw("p.process as process"),
-			// 						DB::raw("ts.material_used as material_used"),
-			// 						DB::raw("ts.material_heat_no as material_heat_no"),
-			// 						DB::raw("ts.lot_no as lot_no"),
-			// 						DB::raw("ts.order_qty as order_qty"),
-			// 						DB::raw("ts.total_issued_qty as total_issued_qty"),
-			// 						DB::raw("ts.issued_qty as issued_qty"),
-			// 						DB::raw("p.div_code as div_code"),
-			// 						DB::raw("p.status as status")
-			// 					)
-			// 					->orderBy('ts.id', 'DESC')
-			// 					->orderBy('p.sequence' , 'ASC');
 			$travel_sheet = DB::table('v_dashboard_ppc')
 								->where('user_id' ,Auth::user()->id)
 								->where('travel_sheet_status',2);
@@ -344,14 +296,18 @@ class DashboardController extends Controller
         }
 
         if (!is_null($req->srch_status)) {
-            $equal = "= ";
-            $_value = $req->srch_status;
-            
-            if (Str::contains($req->srch_status, '*')){
-                $equal = "LIKE ";
-                $_value = str_replace("*","%",$req->srch_status);
+
+            $_value = "";
+            $comma = "";
+
+            foreach ($req->srch_status as $key => $status) {
+                if ($key > 0) {
+                    $comma = ", ";
+                }
+                $_value .= $comma . "'".$status."'";
             }
-            $srch_status = " AND `status` ".$equal." '".$_value."'";
+
+            $srch_status = " AND `status` in (".$_value.")";
 		}
 		
         
