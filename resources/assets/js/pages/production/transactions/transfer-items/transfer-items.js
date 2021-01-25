@@ -12,8 +12,6 @@ $( function() {
     });
 
     $('#jo_no').on('keydown', function(e) {
-        e.preventDefault();
-
 		if (e.keyCode === 13) {
 			getJOdetails($(this).val());
 		}
@@ -83,8 +81,10 @@ $( function() {
                     data:  $(this).serialize()
                 }).done(function(data, textStatus, xhr){
                     msg(data.msg, data.status);
-                    transfer_item_arr = data.transfer_item;
-                    makeTransferItemTable(transfer_item_arr);
+
+                    getTransferEntry(getTransferEntryURL, { _token: token });
+                    // transfer_item_arr = data.transfer_item;
+                    // makeTransferItemTable(transfer_item_arr);
                     getReceiveItems();
                     $('#modal_transfer_entry').modal('hide');
                 }).fail( function(xhr, textStatus, errorThrown) {
@@ -210,10 +210,15 @@ function getTransferEntry(ajax_url, object_data) {
                 ErrorMsg(xhr);
             }
         },
-        bLengthChange : false,
+        // bLengthChange : false,
         searching: true,
-        paging: false,
+        // paging: false,
         order: [[10,'desc']],
+        lengthMenu: [
+			[5, 10, 15, 20, -1],
+			[5, 10, 15, 20, "All"]
+		],
+		pageLength: 10,
         columns: [ 
             { data: function(x) {
                 return "<input type='checkbox' class='table-checkbox check_item' value='"+x.id+"'>";

@@ -52,7 +52,7 @@
 					</div>
 				</div>
 
-				<table class="table table-sm table-bordered table-hover table-striped dt-responsive nowrap" id="tbl_transfer_entry" style="width: 100%">
+				<table class="table table-sm table-bordered table-hover table-striped nowrap" id="tbl_transfer_entry" style="width: 100%">
 					<thead class="thead-dark">
 						<tr>
 							<th width="5%">
