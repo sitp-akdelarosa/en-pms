@@ -115,7 +115,7 @@ class TransferItemController extends Controller
             $items->receive_remarks = "";
             $items->receive_qty = 0;
             $items->item_status = 0;
-
+            $items->date_transfered = date('Y-m-d h:i:s');
             $items->create_user = Auth::user()->id;
             $items->update_user = Auth::user()->id;
             $items->created_at = date('Y-m-d h:i:s');
@@ -226,38 +226,9 @@ class TransferItemController extends Controller
 
     public function received_items()
     {
-        $receive = DB::table('prod_transfer_items as i')
-                    ->join('ppc_divisions as d','d.id','=','i.div_code')
-                    ->orderBy('i.id','desc')
-                    // ->where('i.item_status',0)
-                    ->where('d.user_id',Auth::user()->id)
-                    ->select(
-                        'i.id as id',
-                        'i.jo_no as jo_no',
-                        'i.prod_order_no as prod_order_no',
-                        'i.prod_code as prod_code',
-                        'i.description as description',
-                        'i.current_process as current_process',
-                        DB::raw("(SELECT process FROM prod_travel_sheet_processes as p
-                                    WHERE p.id = i.current_process) as current_process_name"),
-                        DB::raw("(SELECT div_code FROM prod_travel_sheet_processes as p
-                                    WHERE p.id = i.current_process) as current_div_code"),
-                        'i.div_code as div_code',
-                        DB::raw("(SELECT div_code FROM ppc_divisions as d
-                                    WHERE d.id = i.div_code) as div_code_code"),
-                        'i.process as process',
-                        'i.qty as qty',
-                        'i.status as status',
-                        'i.remarks as remarks',
-                        'i.create_user as create_user',
-                        DB::raw("DATE_FORMAT(i.created_at, '%Y-%m-%d') as created_at"),
-                        'i.update_user as update_user',
-                        DB::raw("DATE_FORMAT(i.updated_at, '%Y-%m-%d') as updated_at"),
-                        'i.receive_qty as receive_qty',
-                        DB::raw("(i.qty - i.receive_qty) as remaining_qty"),
-                        'i.item_status',
-                        'i.receive_remarks as receive_remarks'
-                    )->get();
+        $receive = DB::table('v_receive_items')
+                    ->orderBy('updated_at','desc')
+                    ->where('user_id',Auth::user()->id)->get();
         if (count((array)$receive) > 0) {
             return $receive;
         }
@@ -484,8 +455,9 @@ class TransferItemController extends Controller
         }
         
         $item->receive_remarks = $req->remarks;
-        $item->receive_qty = $item->receive_qty + $req->qty;
+        $item->receive_qty = $received_qty;
         $item->update_user = Auth::user()->id;
+        $items->date_received = date('Y-m-d h:i:s');
         $item->update();
 
         //Notification

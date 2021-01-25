@@ -444,6 +444,7 @@ function makeReceiveItemsTable(arr) {
     },
     fnInitComplete: function fnInitComplete() {
       $('.dataTables_scrollBody').slimscroll();
+      $("#tbl_received_items").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
     }
   });
 }

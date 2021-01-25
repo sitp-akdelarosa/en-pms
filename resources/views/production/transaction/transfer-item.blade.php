@@ -78,7 +78,7 @@
 
 
 			<div class="tab-pane {{ $receive_active }}" id="received_items">
-				<table class="table table-bordered table-sm table-hover table-striped dt-responsive nowrap" id="tbl_received_items" style="width: 100%">
+				<table class="table table-bordered table-sm table-hover table-striped nowrap" id="tbl_received_items" style="width: 100%">
 					<thead class="thead-dark">
 						<tr>
 							 <th width="5%">
@@ -87,9 +87,9 @@
 							<th width="5%"></th>
 							<th>Job Order No.</th>
 							<th>Product Code</th>
-							<th>From Division Code</th>
+							<th>From Div Code</th>
 							<th>From process</th>
-							<th>To Division Code</th>
+							<th>To Div Code</th>
 							<th>To Process</th>
 							<th>Qty.</th>
 							<th>Status</th>
