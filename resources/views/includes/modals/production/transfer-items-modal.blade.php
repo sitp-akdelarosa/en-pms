@@ -51,7 +51,8 @@
 			                        <div class="input-group input-group-sm">
 			                            <div class="input-group-prepend">
 			                                <span class="input-group-text">Product Code:</span>
-			                            </div>
+										</div>
+										<input type="hidden" class="form-control clear" name="travel_sheet_id" id="travel_sheet_id">
 			                            <input type="text" class="form-control validate clear" name="prod_code" id="prod_code" readonly>
 			                            <span id="prod_code_feedback"></span>
 			                        </div>
@@ -82,7 +83,28 @@
 			                            <span id="curr_process_feedback"></span>
 			                        </div>
 			                    </div>
-			                </div>
+							</div>
+							
+							<div class="form-group row">
+			                    <div class="col-sm-12">
+			                        <div class="input-group input-group-sm">
+			                            <div class="input-group-prepend">
+			                                <span class="input-group-text">Output Status:</span>
+			                            </div>
+			                            <select class="form-control select-validate clear" name="ostatus" id="ostatus" title="Where will you get the quantity to transfer?">
+	                            			<option style="display:none"></option>
+	                            			<option value="good">GOOD</option>
+	                            			<option value="rework">REWORK</option>
+	                            			<option value="scrap">SCRAP</option>
+											<option value="convert">CONVERT</option>
+											<option value="alloy_mix">ALLOY MIX</option>
+											<option value="nc">N/C</option>
+			                            </select>			
+			                            <span id="status_feedback"></span>
+			                        </div>
+			                    </div>
+							</div>
+							
 			            	<div class="form-group row">
 			                    <div class="col-sm-12">
 			                        <div class="input-group input-group-sm">

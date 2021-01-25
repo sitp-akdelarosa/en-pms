@@ -110,13 +110,16 @@ $(function () {
       getJOdetails($(this).val());
     }
   });
-  $('#curr_process').on('change', function () {
-    //checkIfSameDivCode();
-    if ($(this).val() != '') {
-      getDivCodeProcess($('#jo_no').val(), $(this).find("option:selected").text());
-      getUnprocessed($(this).find("option:selected").text(), $('#jo_no').val(), $(this).val());
+  $('#ostatus').on('change', function () {
+    if ($('#curr_process').val() == '') {
+      msg('Please select current Process.', 'failed');
     } else {
-      $('#unprocessed').val(0);
+      if ($('#curr_process').val() != '') {
+        getDivCodeProcess($('#jo_no').val(), $('#curr_process').find("option:selected").text());
+        getProcessQty($('#curr_process').find("option:selected").text(), $('#jo_no').val(), $('#curr_process').val(), $(this).val());
+      } else {
+        $('#unprocessed').val(0);
+      }
     }
   });
   $('#process').on('change', function () {
@@ -153,6 +156,8 @@ $(function () {
     } else if (parseInt($('#unprocessed').val()) < parseInt($('#UnprocessTransfer').val())) {
       totalqty -= parseInt($('#unprocessed').val());
       msg('The total of pending qty is greather than ' + totalqty + ' to # of item to transfer', 'warning');
+    } else if (parseFloat($('#qty').val()) !== parseFloat($('#unprocessed').val())) {
+      msg("Partial Transfer is not allowed", "warning");
     } else if ($('#qty').val() < 0) {
       msg("Please Input valid number", "warning");
     } else {
@@ -202,6 +207,7 @@ $(function () {
     data['update_user'] = $(this).attr('data-update_user');
     data['updated_at'] = $(this).attr('data-updated_at');
     data['div_code_code'] = $(this).attr('data-div_code_code');
+    data['output_status'] = $(this).attr('data-output_status');
     data.length = 1;
     getJOdetails($(this).attr('data-jo_no'), data);
     $('#modal_transfer_entry').modal('show');
@@ -235,7 +241,7 @@ $(function () {
     if (parseInt($('#transferred_qty_r').val()) < parseInt($('#qty_r').val())) {
       msg('Input qty is greather than transfer qty', 'warning');
     } else if ($('#qty_r').val() < 0) {
-      msg("Please Input valit number", "warning");
+      msg("Please Input valid number", "warning");
     } else {
       $('.lodaingOverlay-modal').show();
       $.ajax({
@@ -519,10 +525,12 @@ function getJOdetails(jo_no, edit) {
       $('#prod_order_no').val(jo.prod_order_no);
       $('#prod_code').val(jo.prod_code);
       $('#description').val(jo.description);
+      $('#travel_sheet_id').val(jo.id);
     } else {
       $('#prod_order_no').val('');
       $('#prod_code').val('');
       $('#description').val('');
+      $('#travel_sheet_id').val('');
       msg("J.O. Number is not in the list.", "failed");
     }
 
@@ -533,12 +541,12 @@ function getJOdetails(jo_no, edit) {
 
     if (edit !== undefined) {
       if (edit.length > 0) {
+        DivisionCode(edit['process'], edit['div_code_code']);
+        getProcessQty(edit['process'], edit['jo_no'], edit['current_process'], edit['output_status']);
+        getDivCodeProcess(edit['jo_no'], edit['process']);
         $('#id').val(edit['id']);
         $('#jo_no').val(edit['jo_no']);
         $('#curr_process').val(edit['current_process']);
-        getUnprocessed(edit['process'], edit['jo_no'], edit['current_process']);
-        getDivCodeProcess(edit['jo_no'], edit['process']);
-        DivisionCode(edit['process'], edit['div_code_code']);
         $('#qty').val(edit['qty']);
         $('#status').val(edit['status']);
         $('#remarks').val(edit['remarks']);
@@ -612,7 +620,7 @@ function DivisionCode(process, div_code) {
   });
 }
 
-function getUnprocessed(process, jo_no, current_process) {
+function getProcessQty(process, jo_no, current_process, output_status) {
   $('.lodaingOverlay-modal').show();
   $.ajax({
     url: unprocessedItem,
@@ -622,7 +630,8 @@ function getUnprocessed(process, jo_no, current_process) {
       _token: token,
       process: process,
       jo_no: jo_no,
-      current_process: current_process
+      current_process: current_process,
+      output_status: output_status
     }
   }).done(function (data, textStatus, xhr) {
     //$.each(data.UnprocessTravel, function(i, x) {

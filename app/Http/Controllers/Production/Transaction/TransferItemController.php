@@ -81,6 +81,8 @@ class TransferItemController extends Controller
                 $items->item_status = 0;
                 $items->receive_remarks = "";
                 $items->receive_qty = 0;
+                $items->output_status = $req->ostatus;
+                $items->date_transfered = date('Y-m-d h:i:s');
                 $items->update_user = Auth::user()->id;
                 $items->updated_at = date('Y-m-d h:i:s');
                 $items->update();
@@ -101,6 +103,24 @@ class TransferItemController extends Controller
                 ];
             }
         } else {
+            $check = ProdTransferItem::where([
+                                        ['jo_no','=',strtoupper($req->jo_no)],
+                                        ['current_process', '=', $req->curr_process],
+                                        ['div_code', '=', $req->div_code],
+                                        ['process', '=', strtoupper($req->process)],
+                                        ['status', '=', strtoupper($req->status)],
+                                        ['create_user', '=', Auth::user()->id]
+                                    ])->count();
+            
+            if ($check > 0) {
+                $data = [
+                    'msg' => 'Already transfered items.',
+                    'status' => 'failed',
+                    'transfer_item' => $this->getTransferEntry()
+                ];
+                return response()->json($data);
+            }
+
             $items = new ProdTransferItem();
             $items->jo_no = strtoupper($req->jo_no);
             $items->prod_order_no = strtoupper($req->prod_order_no);
@@ -115,6 +135,7 @@ class TransferItemController extends Controller
             $items->receive_remarks = "";
             $items->receive_qty = 0;
             $items->item_status = 0;
+            $items->output_status = $req->ostatus;
             $items->date_transfered = date('Y-m-d h:i:s');
             $items->create_user = Auth::user()->id;
             $items->update_user = Auth::user()->id;
@@ -208,6 +229,7 @@ class TransferItemController extends Controller
                                         data-qty='".$data->qty."'
                                         data-status='".$data->status."'
                                         data-remarks='".$data->remarks."'
+                                        data-output_status='".$data->output_status."'
                                         data-create_user='".$data->create_user."'
                                         data-created_at='".$data->created_at."'
                                         data-update_user='".$data->update_user."'
@@ -379,7 +401,7 @@ class TransferItemController extends Controller
         $UnprocessTravel =DB::table('prod_travel_sheet_processes')
                             ->where('id',$req->current_process)
                             ->select(
-                                DB::raw("(good+rework+scrap) as total_qty"), 
+                                DB::raw("`".$req->output_status."` as total_qty"), 
                                 'div_code', 
                                 'leader'
                             )
@@ -452,12 +474,18 @@ class TransferItemController extends Controller
 
         if ($item->qty == $received_qty) {
             $item->item_status = 1;
+
+            ProdTravelSheetProcess::where('travel_sheet_id' , $jo_no->id)
+                                ->where('process' , $req->current_process_name)
+                                ->update([
+                                    'is_current' => 0
+                                ]);
         }
         
         $item->receive_remarks = $req->remarks;
         $item->receive_qty = $received_qty;
         $item->update_user = Auth::user()->id;
-        $items->date_received = date('Y-m-d h:i:s');
+        $item->date_received = date('Y-m-d h:i:s');
         $item->update();
 
         //Notification

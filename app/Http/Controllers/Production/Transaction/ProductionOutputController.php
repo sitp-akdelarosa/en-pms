@@ -134,7 +134,6 @@ class ProductionOutputController extends Controller
                             ->where('id',$req->travel_sheet_process_id)
                             ->update([
                                 'status' => 2, // ON-GOING
-                                'is_current' => 1
                             ]);
             }
 
