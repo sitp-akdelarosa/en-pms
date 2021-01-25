@@ -215,7 +215,7 @@ class DashboardController extends Controller
                 $equal = "LIKE ";
                 $_value = str_replace("*","%",$req->srch_prod_code);
             }
-            $srch_prod_code = " AND prod_code ".$equal." '".$_value."'";
+            $srch_prod_code = " AND call  ".$equal." '".$_value."'";
         }
 
         if (!is_null($req->srch_description)) {
@@ -307,7 +307,7 @@ class DashboardController extends Controller
                 $_value .= $comma . "'".$status."'";
             }
 
-            $srch_status = " AND `status` in (".$_value.")";
+            $srch_status = " AND `pstatus` in (".$_value.")";
 		}
 		
         

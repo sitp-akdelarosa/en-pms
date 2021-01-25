@@ -305,7 +305,7 @@ function dashboardDataTable(arr) {
       name: 'end_date'
     }, {
       data: function data(x) {
-        switch (x.status) {
+        switch (x.pstatus) {
           case 1:
           case '1':
             return 'DONE PROCESS';
@@ -342,7 +342,7 @@ function dashboardDataTable(arr) {
             break;
         }
       },
-      name: 'status' // { data: 'status', name: 'p.status'}
+      name: 'pstatus' // { data: 'status', name: 'p.status'}
 
     }],
     language: {
