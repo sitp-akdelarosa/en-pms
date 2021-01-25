@@ -268,27 +268,27 @@ function dashboardDataTable(arr) {
 		],
 		pageLength: 10,
 		createdRow: function(row, data, dataIndex) {
-            if (data.status == 2 || data.status == '2') {
+            if (data.pstatus == 2 || data.pstatus == '2') {
                 $(row).css('background-color', '#001F3F'); // NAVY
 				$(row).css('color', '#fff');
             }
 
-            if (data.status == 3  || data.status == '3') {
+            if (data.pstatus == 3  || data.pstatus == '3') {
                 $(row).css('background-color', '#ff6266'); // RED
                 $(row).css('color', '#fff');
             }
 
-            if (data.status == 4  || data.status == '4') {
+            if (data.pstatus == 4  || data.pstatus == '4') {
                 $(row).css('background-color', '#7460ee'); // PURPLE
 				$(row).css('color', '#fff');
             }
 
-            if (data.status == 5  || data.status == '1') {
+            if (data.pstatus == 5  || data.pstatus == '1') {
                 $(row).css('background-color', 'rgb(139 241 191)'); // GREEN
 				$(row).css('color', '#000000');
             }
 
-            if (data.status == 6  || data.status == '5') {
+            if (data.pstatus == 6  || data.pstatus == '5') {
                 $(row).css('background-color', 'rgb(121 204 241)'); // BLUE
 				$(row).css('color', '#000000');
             }
