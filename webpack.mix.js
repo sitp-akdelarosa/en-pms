@@ -136,11 +136,13 @@ mix.js('resources/assets/js/app.js', 'public/js')
     .js('resources/assets/js/pages/ppc/transactions/raw-material-withdrawal/raw-material-withdrawal.js', 'public/js/pages/ppc/transactions/raw-material-withdrawal/raw-material-withdrawal.js')
     .js('resources/assets/js/pages/ppc/transactions/product-withdrawal/product-withdrawal.js', 'public/js/pages/ppc/transactions/product-withdrawal/product-withdrawal.js')
 
-    .js('resources/assets/js/pages/ppc/reports/fg-summary.js', 'public/js/pages/ppc/reports/')
-    .js('resources/assets/js/pages/ppc/reports/transfer-item-report.js', 'public/js/pages/ppc/reports/')
-
     .js('resources/assets/js/pages/production/dashboard/dashboard.js', 'public/js/pages/production/dashboard')
     .js('resources/assets/js/pages/production/transactions/production-output/production-output.js', 'public/js/pages/production/transactions/production-output/production-output.js')
     .js('resources/assets/js/pages/production/transactions/transfer-items/transfer-items.js', 'public/js/pages/production/transactions/transfer-items/transfer-items.js')
 
+    .js('resources/assets/js/pages/ppc/reports/fg-summary.js', 'public/js/pages/ppc/reports/')
+    .js('resources/assets/js/pages/ppc/reports/transfer-item-report.js', 'public/js/pages/ppc/reports/')
+    .js('resources/assets/js/pages/ppc/reports/travel-sheet-status.js', 'public/js/pages/ppc/reports/')
+
     .js('resources/assets/js/pages/production/reports/operators-output.js', 'public/js/pages/production/reports')
+    

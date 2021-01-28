@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 24);
+/******/ 	return __webpack_require__(__webpack_require__.s = 22);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -325,11 +325,9 @@ function makeProdOutputTable(arr) {
     }, {
       data: 'nc'
     }, {
-      data: function data(x) {
-        return x.good + x.rework + x.scrap + x.convert + x.alloy_mix + x.nc;
-      }
+      data: 'total'
     }, {
-      data: 'created_at'
+      data: 'process_date'
     }],
     fnInitComplete: function fnInitComplete() {
       $('.dataTables_scrollBody').slimscroll();
@@ -485,7 +483,7 @@ function getTransferQty(id) {
 
 /***/ }),
 
-/***/ 24:
+/***/ 22:
 /*!********************************************************************************************************!*\
   !*** multi ./resources/assets/js/pages/production/transactions/production-output/production-output.js ***!
   \********************************************************************************************************/

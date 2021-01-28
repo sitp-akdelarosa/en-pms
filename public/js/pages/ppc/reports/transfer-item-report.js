@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 22);
+/******/ 	return __webpack_require__(__webpack_require__.s = 25);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -95,9 +95,16 @@
 
 var transfer_item_arr = [];
 $(function () {
-  getTransferEntry();
-  check_permission(code_permission);
+  init();
 });
+
+function init() {
+  check_permission(code_permission, function (output) {
+    if (output == 1) {}
+
+    getTransferEntry();
+  });
+}
 
 function getTransferEntry() {
   transfer_item_arr = [];
@@ -189,7 +196,7 @@ function makeTransferItemTable(arr) {
 
 /***/ }),
 
-/***/ 22:
+/***/ 25:
 /*!*****************************************************************************!*\
   !*** multi ./resources/assets/js/pages/ppc/reports/transfer-item-report.js ***!
   \*****************************************************************************/

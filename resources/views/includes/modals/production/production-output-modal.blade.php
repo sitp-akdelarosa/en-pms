@@ -146,9 +146,29 @@
 			                            <span id="issued_qty_feedback"></span>
 				                    </div>
 				                </div>
-				            </div>
+							</div>
+							<div class="form-group row">
+				                <div class="col-sm-6">
+				                    <div class="input-group input-group-sm">
+				                        <div class="input-group-prepend">
+				                            <span class="input-group-text">Process Date:</span>
+				                        </div>
+				                        <input type="date" class="form-control validate zero" name="process_date" id="process_date">
+				                        <span id="process_date_feedback"></span>
+				                    </div>
+								</div>
+								<div class="col-sm-6">
+				                    <div class="input-group input-group-sm">
+				                        <div class="input-group-prepend">
+				                            <span class="input-group-text">Process Time:</span>
+				                        </div>
+				                        <input type="time" class="form-control validate zero" name="process_time" id="process_time">
+				                        <span id="process_time_feedback"></span>
+				                    </div>
+				                </div>
+							</div>
 
-                            <div class="form-group row">
+                            {{-- <div class="form-group row">
                                 <div class="col-sm-6">
                                     <div class="input-group input-group-sm">
                                         <div class="input-group-prepend">
@@ -186,7 +206,7 @@
                                         <input type="text" class="form-control" name="updated_date" id="updated_date" value="{{date('m/d/Y')}}" readonly>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
 
@@ -313,7 +333,7 @@
 				                        <span id="nc_feedback"></span>
 				                    </div>
 				                </div>
-				            </div>
+							</div>
 
                     	</div>
 
@@ -331,7 +351,7 @@
 	                                <th width="20%">Alloy Mix</th>
 	                                <th width="30%">Non Conformance</th>
 	                                <th width="10%">Total</th>
-	                                <th width="20%">Input Date</th>
+	                                <th width="20%">Process Date/Time</th>
 		                        </thead>
 		                        <tbody id="tbl_production_ouput_body"></tbody>
 		                    </table>

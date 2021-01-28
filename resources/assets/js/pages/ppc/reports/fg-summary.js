@@ -1,6 +1,6 @@
 var FG_arr = [];
 $( function() {
-    getFG(0);
+    init();
 
     $('#tbl_fg_summary').on('click', '.btn_edit_fg', function() {
 		$('#id').val($(this).attr('data-id'));
@@ -58,6 +58,14 @@ $( function() {
     });
 
 });
+
+function init() {
+    check_permission(code_permission, function(output) {
+        if (output == 1) {}
+
+        getFG(0);
+    });
+}
 
 function getFG(status) {
     transfer_item_arr = [];

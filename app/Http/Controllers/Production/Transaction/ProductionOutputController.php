@@ -75,6 +75,20 @@ class ProductionOutputController extends Controller
         PpcJoDetailsSummary::where('jo_no' , $req->jo_no)->update(['status' => 2 ]);
         ProdTravelSheet::where('id',$req->travel_sheet_id)->update(['status' => 2 ]);
 
+        $date = '';
+
+        if (isset($req->process_date) && isset($req->process_time)) {
+            $date = $req->process_date.' '.$req->process_time;
+        } elseif (!isset($req->process_date) && isset($req->process_time)) {
+            $date = date('Y-m-d').' '.$req->process_time;
+        } elseif (isset($req->process_date) && !isset($req->process_time)) {
+            $date = $req->process_date.' '.date('H:i:s');
+        } else {
+            $date = date('Y-m-d H:i:s');
+        }
+        
+        //$date->getTimestamp();
+
         $prod_output = new ProdProductionOutput();
 
         $prod_output->travel_sheet_id = $req->travel_sheet_id;
@@ -92,6 +106,7 @@ class ProductionOutputController extends Controller
         $prod_output->current_process = strtoupper($req->current_process);
         $prod_output->machine_no = strtoupper($req->machine_no);
         $prod_output->operator = strtoupper($req->operator);
+        $prod_output->process_date = $date;
         $prod_output->create_user = Auth::user()->id;
         $prod_output->update_user = Auth::user()->id;
 
@@ -316,7 +331,20 @@ class ProductionOutputController extends Controller
 
     public function get_outputs(Request $req)
     {
-        $data = ProdProductionOutput::where('travel_sheet_process_id',$req->id)
+        $data = ProdProductionOutput::select(
+                                        'travel_sheet_id',
+                                        'travel_sheet_process_id',
+                                        'id',
+                                        'unprocessed',
+                                        'good',
+                                        'rework',
+                                        'scrap',
+                                        'convert',
+                                        'alloy_mix',
+                                        'nc',
+                                        DB::raw("(`good`+`rework`+`scrap`+`convert`+`alloy_mix`+`nc`) as total"),
+                                        DB::raw("ifnull(process_date,updated_at) as process_date")
+                                    )->where('travel_sheet_process_id',$req->id)
                                     ->where('deleted',0)->get();
         return response()->json($data);
     }

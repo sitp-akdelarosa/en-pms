@@ -227,10 +227,8 @@ function makeProdOutputTable(arr) {
             {data:'convert'},
             {data:'alloy_mix'},
             {data:'nc'},
-            {data: function(x) {
-            	return x.good + x.rework + x.scrap + x.convert + x.alloy_mix + x.nc;
-            }},
-            {data:'created_at'},
+            {data: 'total'},
+            {data:'process_date'},
         ],
         fnInitComplete: function() {
             $('.dataTables_scrollBody').slimscroll();
