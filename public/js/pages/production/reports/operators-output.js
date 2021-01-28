@@ -94,10 +94,10 @@
 /***/ (function(module, exports) {
 
 $(function () {
-  check_permission(code_permission);
-  makeOperatorTable();
+  init();
   $("#frm_operator").on('submit', function (e) {
     e.preventDefault();
+    $('.loadingOverlay').show();
     $.ajax({
       dataType: 'json',
       type: 'POST',
@@ -110,20 +110,29 @@ $(function () {
         makeOperatorTable(data.ppo);
       }
     }).fail(function (xhr, textStatus, errorThrown) {
-      var errors = xhr.responseJSON.errors;
-      showErrors(errors);
+      ErrorMsg(xhr);
+    }).always(function () {
+      $('.loadingOverlay').hide();
     });
   });
 });
+
+function init() {
+  check_permission(code_permission, function (output) {
+    if (output == 1) {}
+
+    makeOperatorTable();
+  });
+}
 
 function makeOperatorTable(arr) {
   $('#tbl_operator').dataTable().fnClearTable();
   $('#tbl_operator').dataTable().fnDestroy();
   $('#tbl_operator').dataTable({
     data: arr,
-    bLengthChange: false,
-    searching: false,
-    paging: false,
+    lengthMenu: [[5, 10, 15, 20, -1], [5, 10, 15, 20, "All"]],
+    pageLength: 10,
+    order: [[9, 'desc']],
     columns: [{
       data: 'jo_no',
       name: 'jo_no'
@@ -152,9 +161,15 @@ function makeOperatorTable(arr) {
       data: 'scrap',
       name: 'scrap'
     }, {
-      data: 'created_at',
-      name: 'created_at'
-    }]
+      data: 'updated_at',
+      name: 'updated_at'
+    }],
+    fnDrawCallback: function fnDrawCallback() {
+      $("#tbl_travel_sheet").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
+    },
+    initComplete: function initComplete() {
+      $('.loadingOverlay').hide();
+    }
   });
 }
 

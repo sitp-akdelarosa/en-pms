@@ -62,7 +62,7 @@ foreach ($user_accesses as $user_access){
 
                         </div>
                     </form>
-		            <table class="table table-striped table-sm dt-responsive" id="tbl_operator" width="100%">
+		            <table class="table table-striped table-bordered table-sm dt-responsive" id="tbl_operator" width="100%">
 		                <thead class="thead-dark">
 		                    <tr>
 		                        <th>J.O. No.</th>

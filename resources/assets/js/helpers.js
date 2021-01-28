@@ -698,6 +698,9 @@ function ErrorMsg(xhr) {
 
 		$('#msg_content').html(msg);
 		$('#modalMsg').modal('show');
+
+		$('.loadingOverlay').hide();
+		$('.loadingOverlay-modal').hide();
 	}
 	
 }
