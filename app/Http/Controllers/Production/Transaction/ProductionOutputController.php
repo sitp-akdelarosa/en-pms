@@ -178,7 +178,8 @@ class ProductionOutputController extends Controller
                                         'nc',
                                         DB::raw("(`good`+`rework`+`scrap`+`convert`+`alloy_mix`+`nc`) as total"),
                                         DB::raw("ifnull(process_date,updated_at) as process_date")
-                                    )->where('travel_sheet_process_id',$req->travel_sheet_process_id)->get();
+                                    )->where('deleted',0)
+                                    ->where('travel_sheet_process_id',$req->travel_sheet_process_id)->get();
 
             $unprocessed = $this->deductUnprocessed($req->unprocessed,$req->good,$req->rework,$req->scrap);
 
@@ -396,6 +397,7 @@ class ProductionOutputController extends Controller
                                         'convert' => DB::raw("`convert` - ".$prod_output->convert),
                                         'alloy_mix' => DB::raw("`alloy_mix` - ".$prod_output->alloy_mix),
                                         'nc' => DB::raw("`nc` - ".$prod_output->nc),
+                                        'status' => 2,
                                         'update_user' => Auth::user()->id
                                     ]);
 
@@ -405,17 +407,17 @@ class ProductionOutputController extends Controller
                 $unprocessed = $total;
             }
 
-            $prod_travel = ProdTravelSheetProcess::where('id',$value["travel_sheet_process_id"])->first();
-            $next_sequence = $prod_travel->sequence + 1;
-            $lastsequnce = ProdTravelSheetProcess::where('travel_sheet_id',$prod_travel->travel_sheet_id)
-                                    ->where('sequence',$next_sequence)
-                                    ->update([
-                                        'unprocessed' => DB::raw("`unprocessed` - ".$currenunprocessed)
-                                    ]);
+            // $prod_travel = ProdTravelSheetProcess::where('id',$value["travel_sheet_process_id"])->first();
+            // $next_sequence = $prod_travel->sequence + 1;
+            // $lastsequnce = ProdTravelSheetProcess::where('travel_sheet_id',$prod_travel->travel_sheet_id)
+            //                         ->where('sequence',$next_sequence)
+            //                         ->update([
+            //                             'unprocessed' => DB::raw("`unprocessed` - ".$currenunprocessed),
+            //                         ]);
 
-            if($lastsequnce == 0 ){
-                $this->destroyFGSummary($prod_travel->travel_sheet_id,$prod_output->good);
-            }
+            // if($lastsequnce == 0 ){
+            //     $this->destroyFGSummary($prod_travel->travel_sheet_id,$prod_output->good);
+            // }
 
             ProdProductionOutput::where('id',$value["id"])
                                     ->update([
