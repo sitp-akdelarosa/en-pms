@@ -238,24 +238,6 @@ function getTransferEntry(ajax_url, object_data) {
     });
 }
 
-// function getReceiveItems(ajax_url, object_data) {
-//     received_items_arr = [];
-//     $.ajax({
-//         url: getReceiveItemsURL,
-//         type: 'GET',
-//         dataType: 'JSON',
-//         data: {
-//             _token: token
-//         },
-//     }).done(function(data, textStatus, xhr) {
-//         received_items_arr = data;
-//         console.log(received_items_arr);
-//         makeReceiveItemsTable(received_items_arr);
-//     }).fail(function(xhr, textStatus, errorThrown) {
-//         ErrorMsg(xhr);
-//     });
-// }
-
 function getReceiveItems(ajax_url, object_data) {
     var tbl_received_items = $('#tbl_received_items').DataTable();
 

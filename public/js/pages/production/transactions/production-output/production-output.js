@@ -118,7 +118,15 @@ $(function () {
     $('#sequence').val($(this).attr('data-sequence'));
     $('#unprocessed').val($(this).attr('data-unprocessed'));
     getTransferQty($(this).attr('data-id'));
+    $('.loadingOverlay-modal').show();
     getOutputs($(this).attr('data-id'));
+
+    if ($(this).attr('data-unprocessed') > 0) {
+      $('#btn_save_output').prop('disabled', false);
+    } else {
+      $('#btn_save_output').prop('disabled', true);
+    }
+
     $('#modal_production_output').modal('show');
   });
   $('#btn_delete_set').on('click', function () {
@@ -195,7 +203,7 @@ $(function () {
     } else if ($('#good').val() < 0 || $('#scrap').val() < 0 || $('#rework').val() < 0 || $('#nc').val() < 0 || $('#alloy_mix').val() < 0 || $('#convert').val() < 0) {
       msg("Please Input valit number", "warning");
     } else {
-      $('.loadingOverlay').show();
+      $('.loadingOverlay-modal').show();
       $.ajax({
         dataType: 'json',
         type: 'POST',
@@ -218,7 +226,7 @@ $(function () {
       }).fail(function (xhr, textStatus, errorThrown) {
         ErrorMsg(xhr);
       }).always(function (xhr, textStatus) {
-        $('.loadingOverlay').hide();
+        $('.loadingOverlay-modal').hide();
       });
     }
   });
@@ -330,6 +338,7 @@ function makeProdOutputTable(arr) {
       data: 'process_date'
     }],
     fnInitComplete: function fnInitComplete() {
+      $('.loadingOverlay-modal').hide();
       $('.dataTables_scrollBody').slimscroll();
     }
   });
@@ -382,13 +391,7 @@ function makeSearchTable(arr) {
     order: [[1, 'asc']],
     columns: [{
       data: function data(x) {
-        var disabled = 'disabled';
-
-        if (x.unprocessed > 0) {
-          disabled = '';
-        }
-
-        return "<button class='btn btn-sm bg-blue btn_edit_travel_sheet' " + "data-travel_sheet_id='" + x.travel_sheet_id + "' " + "data-id='" + x.id + "' " + "data-jo_no='" + x.jo_no + "' " + "data-jo_sequence='" + x.jo_sequence + "' " + "data-prod_order_no='" + x.prod_order_no + "' " + "data-material_used='" + x.material_used + "' " + "data-material_heat_no='" + x.material_heat_no + "' " + "data-lot_no='" + x.lot_no + "' " + "data-type='" + x.type + "' " + "data-order_qty='" + x.order_qty + "' " + "data-previous_process='" + x.previous_process + "' " + "data-process='" + x.process + "' " + "data-sequence='" + x.sequence + "' " + "data-unprocessed='" + x.unprocessed + "' " + "data-prod_code='" + x.prod_code + "' " + "data-description='" + x.description + "' " + "data-total_issued_qty='" + x.total_issued_qty + "' " + "data-issued_qty='" + x.issued_qty + "' " + "data-sc_no='" + x.sc_no + "' " + "" + disabled + ">" + "<i class='fa fa-edit'></i>" + "</button>";
+        return "<button class='btn btn-sm bg-blue btn_edit_travel_sheet' " + "data-travel_sheet_id='" + x.travel_sheet_id + "' " + "data-id='" + x.id + "' " + "data-jo_no='" + x.jo_no + "' " + "data-jo_sequence='" + x.jo_sequence + "' " + "data-prod_order_no='" + x.prod_order_no + "' " + "data-material_used='" + x.material_used + "' " + "data-material_heat_no='" + x.material_heat_no + "' " + "data-lot_no='" + x.lot_no + "' " + "data-type='" + x.type + "' " + "data-order_qty='" + x.order_qty + "' " + "data-previous_process='" + x.previous_process + "' " + "data-process='" + x.process + "' " + "data-sequence='" + x.sequence + "' " + "data-unprocessed='" + x.unprocessed + "' " + "data-prod_code='" + x.prod_code + "' " + "data-description='" + x.description + "' " + "data-total_issued_qty='" + x.total_issued_qty + "' " + "data-issued_qty='" + x.issued_qty + "' " + "data-sc_no='" + x.sc_no + "'>" + "<i class='fa fa-edit'></i>" + "</button>";
       },
       searchable: false,
       orderable: false,
@@ -445,6 +448,10 @@ function makeSearchTable(arr) {
 
         $(row).css('color', '#000000');
       }
+    },
+    fnInitComplete: function fnInitComplete() {
+      $('.loadingOverlay').hide();
+      $('.dataTables_scrollBody').slimscroll();
     }
   });
 }

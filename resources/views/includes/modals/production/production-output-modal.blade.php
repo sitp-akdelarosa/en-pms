@@ -10,7 +10,7 @@
                 </div>
 
                 <div class="modal-body table-responsive">
-                    <div class="loadingOverlay"></div>
+                    <div class="loadingOverlay-modal"></div>
 
                     <div class="row">
                         <div class="col-md-4">
@@ -358,7 +358,7 @@
 
 		                    <div class="row justify-content-center">
 		                    	<div class="col-md-3">
-		                    		<button type="submit" class="btn btn-sm btn-block bg-blue permission-button">
+		                    		<button type="submit" id="btn_save_output" class="btn btn-sm btn-block bg-blue permission-button">
 		                    			<i class="fa fa-floppy-o"></i> Save
 		                    		</button>
 		                    	</div> </form>

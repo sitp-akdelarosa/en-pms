@@ -165,7 +165,20 @@ class ProductionOutputController extends Controller
                                 $req->prod_order,$req->prod_code,$req->description,$prod_output->good);
             }
 
-            $output = ProdProductionOutput::where('travel_sheet_process_id',$req->travel_sheet_process_id)->get();
+            $output = ProdProductionOutput::select(
+                                        'travel_sheet_id',
+                                        'travel_sheet_process_id',
+                                        'id',
+                                        'unprocessed',
+                                        'good',
+                                        'rework',
+                                        'scrap',
+                                        'convert',
+                                        'alloy_mix',
+                                        'nc',
+                                        DB::raw("(`good`+`rework`+`scrap`+`convert`+`alloy_mix`+`nc`) as total"),
+                                        DB::raw("ifnull(process_date,updated_at) as process_date")
+                                    )->where('travel_sheet_process_id',$req->travel_sheet_process_id)->get();
 
             $unprocessed = $this->deductUnprocessed($req->unprocessed,$req->good,$req->rework,$req->scrap);
 

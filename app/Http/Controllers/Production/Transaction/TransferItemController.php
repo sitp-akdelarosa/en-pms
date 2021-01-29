@@ -416,9 +416,9 @@ class TransferItemController extends Controller
                         ->select('div_code')
                         ->get();
 
-        $divs = DB::select("SELECT d.div_code,p.process FROM enpms.ppc_divisions as d
-                            inner join enpms.ppc_division_processes as p
-                            on d.id = p.division_id");
+        // $divs = DB::select("SELECT d.div_code,p.process FROM enpms.ppc_divisions as d
+        //                     inner join enpms.ppc_division_processes as p
+        //                     on d.id = p.division_id");
 
         if (count((array)$divs)) {
             foreach ($divs as $key => $div) {
