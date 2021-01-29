@@ -2,9 +2,7 @@ var transfer_item_arr = [];
 var received_items_arr = [];
 
 $( function() {
-    getTransferEntry(getTransferEntryURL, { _token: token });
-    getReceiveItems();
-    checkAllCheckboxesInTable('.check_all_transfer_item','.check_item');
+    
     init();
 
     $('#jo_no').on('change', function() {
@@ -18,17 +16,18 @@ $( function() {
     });
 
     $('#ostatus').on('change', function() {
-        if ($('#curr_process').val() == '') {
-            msg('Please select current Process.', 'failed');
-        } else {
-            if ($('#curr_process').val() != '') {
-                getDivCodeProcess($('#jo_no').val(),$('#curr_process').find("option:selected").text());
-                getProcessQty($('#curr_process').find("option:selected").text(),$('#jo_no').val(),$('#curr_process').val(), $(this).val());
+        if ($(this).val() !== '') {
+            if ($('#curr_process').val() == '') {
+                msg('Please select current Process.', 'failed');
             } else {
-                $('#unprocessed').val(0);
+                if ($('#curr_process').val() != '') {
+                    getDivCodeProcess($('#jo_no').val(),$('#curr_process').find("option:selected").text());
+                    getProcessQty($('#curr_process').find("option:selected").text(),$('#jo_no').val(),$('#curr_process').val(), $(this).val());
+                } else {
+                    $('#unprocessed').val(0);
+                }
             }
         }
-            
     });
 
     $('#process').on('change', function() {
@@ -89,9 +88,7 @@ $( function() {
                     msg(data.msg, data.status);
 
                     getTransferEntry(getTransferEntryURL, { _token: token });
-                    // transfer_item_arr = data.transfer_item;
-                    // makeTransferItemTable(transfer_item_arr);
-                    getReceiveItems();
+                    getReceiveItems(getReceiveItemsURL, { _token: token });
                     $('#modal_transfer_entry').modal('hide');
                 }).fail( function(xhr, textStatus, errorThrown) {
                     ErrorMsg(xhr);
@@ -119,8 +116,10 @@ $( function() {
         data['created_at'] = $(this).attr('data-created_at');
         data['update_user'] = $(this).attr('data-update_user');
         data['updated_at'] = $(this).attr('data-updated_at');
-        data['div_code_code'] = $(this).attr('data-div_code_code');
+        data['user_div_code'] = $(this).attr('data-user_div_code');
         data['output_status'] = $(this).attr('data-output_status');
+        data['transfer_date'] = $(this).attr('data-transfer_date');
+        data['transfer_time'] = $(this).attr('data-transfer_time');
         data.length = 1;
 
         getJOdetails($(this).attr('data-jo_no'),data);
@@ -144,7 +143,7 @@ $( function() {
         $('#receive_qty').val($(this).attr('data-receive_qty'));
         $('#remaining_qty').val($(this).attr('data-remaining_qty'));
         $('#current_process_r').val($(this).attr('data-current_process'));
-        $('#div_code_code_r').val($(this).attr('data-div_code_code'));
+        $('#user_div_code_r').val($(this).attr('data-user_div_code'));
         $('#current_div_code_r').val($(this).attr('data-current_div_code'));
         $('#current_process_name_r').val($(this).attr('data-current_process_name'));
         $('#current_process_name_r').val($(this).attr('data-current_process_name'));
@@ -168,7 +167,7 @@ $( function() {
                 data: $(this).serialize()
             }).done(function(data, textStatus, xhr){
                 msg('Process Received', 'success');
-                getReceiveItems();
+                getReceiveItems(getReceiveItemsURL, { _token: token });
                 getTransferEntry(getTransferEntryURL, { _token: token });
                 $('#modal_receive_item').modal('hide');
                 console.log(data);
@@ -184,25 +183,12 @@ $( function() {
 function init() {
     check_permission(code_permission, function(output) {
         if (output == 1) {}
+
+        getTransferEntry(getTransferEntryURL, { _token: token });
+        getReceiveItems(getReceiveItemsURL, { _token: token });
+        checkAllCheckboxesInTable('.check_all_transfer_item','.check_item');
     });
 }
-
-// function getTransferEntry() {
-//     transfer_item_arr = [];
-//     $.ajax({
-//         url: getTransferEntryURL,
-//         type: 'GET',
-//         dataType: 'JSON',
-//         data: {
-//             _token: token
-//         },
-//     }).done(function(data, textStatus, xhr) {
-//         transfer_item_arr = data;
-//         makeTransferItemTable(transfer_item_arr);
-//     }).fail(function(xhr, textStatus, errorThrown) {
-//         ErrorMsg(xhr);
-//     });
-// }
 
 function getTransferEntry(ajax_url, object_data) {
     var tbl_transfer_entry = $('#tbl_transfer_entry').DataTable();
@@ -217,7 +203,8 @@ function getTransferEntry(ajax_url, object_data) {
                 ErrorMsg(xhr);
             }
         },
-        // bLengthChange : false,
+        processing: true,
+		serverSide: true,
         searching: true,
         // paging: false,
         order: [[10,'desc']],
@@ -231,101 +218,80 @@ function getTransferEntry(ajax_url, object_data) {
                 return "<input type='checkbox' class='table-checkbox check_item' value='"+x.id+"'>";
             }, searchable: false, orderable: false, width: '3.33%' },
             { data: 'action', name: 'action', searchable: false, orderable: false, width: '3.33%' },
-            { data: 'jo_no', name: 'jo_no', width: '10.33%' }, 
+            { data: 'jo_no', name: 'jo_no', width: '9.33%' }, 
             { data: 'prod_code', name: 'prod_code', width: '8.33%' },
-            { data: 'current_process_name', name: 'current_process_name', width: '10.33%' },
-            { data: 'div_code_code', name: 'div_code_code', width: '8.33%' },
-            { data: 'process', name: 'process', width: '10.33%' },
-            { data: 'qty', name: 'qty', width: '8.33%' },
-            { data: 'status', name: 'status', width: '8.33%' },
-            { data: 'remarks', name: 'remarks', width: '8.33%' },
-            { data: 'created_at', name: 'created_at', width: '10.33%' },
-            { data: 'item_status', name: 'item_status', width: '10.33%'}
+            { data: 'current_process_name', name: 'current_process_name', width: '9.33%' },
+            { data: 'process', name: 'process', width: '9.33%' },
+            { data: 'div_code_name', name: 'div_code_name', width: '7.33%' },
+            { data: 'qty', name: 'qty', width: '7.33%' },
+            { data: 'status', name: 'status', width: '7.33%' },
+            { data: 'remarks', name: 'remarks', width: '7.33%' },
+            { data: 'date_transfered', name: 'date_transfered', width: '9.33%' },
+            { data: 'item_status', name: 'item_status', width: '9.33%'},
+            { data: 'date_received', name: 'date_received', width: '9.33%' },
         ],
-        fnDrawCallback: function() {
+        fnInitComplete: function() {
+            $('.loadingOverlay').hide();
+            $('.dataTables_scrollBody').slimscroll();
             $("#tbl_transfer_entry").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
         },
-        initComplete: function() {
-            $('.loadingOverlay').hide();
-        }
     });
 }
 
-function getReceiveItems() {
-    received_items_arr = [];
-    $.ajax({
-        url: getReceiveItemsURL,
-        type: 'GET',
-        dataType: 'JSON',
-        data: {
-            _token: token
+// function getReceiveItems(ajax_url, object_data) {
+//     received_items_arr = [];
+//     $.ajax({
+//         url: getReceiveItemsURL,
+//         type: 'GET',
+//         dataType: 'JSON',
+//         data: {
+//             _token: token
+//         },
+//     }).done(function(data, textStatus, xhr) {
+//         received_items_arr = data;
+//         console.log(received_items_arr);
+//         makeReceiveItemsTable(received_items_arr);
+//     }).fail(function(xhr, textStatus, errorThrown) {
+//         ErrorMsg(xhr);
+//     });
+// }
+
+function getReceiveItems(ajax_url, object_data) {
+    var tbl_received_items = $('#tbl_received_items').DataTable();
+
+    tbl_received_items.clear();
+    tbl_received_items.destroy();
+    tbl_received_items = $('#tbl_received_items').DataTable({
+        ajax: {
+            url: ajax_url,
+            data: object_data,
+            error: function(xhr,textStatus, errorThrown) {
+                ErrorMsg(xhr);
+            }
         },
-    }).done(function(data, textStatus, xhr) {
-        received_items_arr = data;
-        console.log(received_items_arr);
-        makeReceiveItemsTable(received_items_arr);
-    }).fail(function(xhr, textStatus, errorThrown) {
-        ErrorMsg(xhr);
-    });
-}
-
-function makeReceiveItemsTable(arr) {
-    $('#tbl_received_items').dataTable().fnClearTable();
-    $('#tbl_received_items').dataTable().fnDestroy();
-    $('#tbl_received_items').dataTable({
-        data: arr,
-        bLengthChange : false,
+        processing: true,
+		serverSide: true,
         searching: true,
-        paging: false,
         order: [[11,'asc']],
         columns: [ 
             { data: function(x) {
                 return "<input type='checkbox' class='table-checkbox check_receive_item' value='"+x.id+"'>";
-            }, searchable: false, orderable: false },
-            { data: function(x) {
-                var disabled = '';
-
-                if (x.item_status == 1) {
-                    disabled = 'disabled';
-                }
-                return "<button class='btn btn-sm btn-primary btn_receive' "+
-                            "data-id='"+x.id+"'"+
-                            "data-jo_no='"+x.jo_no+"'"+
-                            "data-current_process_name='"+x.current_process_name+"'"+
-                            "data-div_code_code='"+x.div_code_code+"'"+
-                            "data-current_process='"+x.current_process+"'"+
-                            "data-qty='"+x.qty+"'"+
-                            "data-receive_qty='"+x.receive_qty+"'"+
-                            "data-remaining_qty='"+x.remaining_qty+"'"+
-                            "data-process='"+x.process+"'"+
-                            "data-current_div_code='"+x.current_div_code+"'"+
-                            "data-prod_order_no='"+x.prod_order_no+"'"+
-                            "data-prod_code='"+x.prod_code+"'"+
-                            "data-description='"+x.description+"'"+
-                            "data-div_code='"+x.div_code+"'"+
-                            "data-status='"+x.status+"'"+
-                            "data-remarks='"+x.remarks+"'"+
-                            "data-create_user='"+x.create_user+"'"+
-                            "data-created_at='"+x.created_at+"'"+
-                            "data-item_status='"+x.item_status+"' "+
-                            "data-update_user='"+x.update_user+"' " +
-                            "data-updated_at='"+x.updated_at+"' "+disabled+">"+
-                            '<i class="fa fa-edit"></i> Receive'+
-                        '</button>';
-            }, searchable: false, orderable: false },
-            { data: 'jo_no' },
-            { data: 'prod_code' },
-            { data: 'current_div_code' },
-            { data: 'current_process_name' },
-            { data: 'div_code_code' },
-            { data: 'process' },
-            { data: 'qty' },
-            { data: 'status' },
-            { data: 'remarks' },
-            { data: 'created_at' },
-            { data: 'receive_qty' },
-            { data: 'remaining_qty' },
-            { data: 'receive_remarks' },
+            }, searchable: false, orderable: false, width: '6.66%' },
+            { data: 'action', name: 'action', width: '6.66%', searchable: false, orderable: false },
+            { data: 'jo_no', name: 'jo_no', width: '6.66%' },
+            { data: 'prod_code', name: 'prod_code', width: '6.66%' },
+            { data: 'current_div_code', name: 'current_div_code', width: '6.66%' },
+            { data: 'current_process_name', name: 'current_process_name', width: '6.66%' },
+            { data: 'user_div_code', name: 'user_div_code', width: '6.66%' },
+            { data: 'process', name: 'process', width: '6.66%' },
+            { data: 'qty', name: 'qty', width: '6.66%' },
+            { data: 'status', name: 'status', width: '6.66%' },
+            { data: 'remarks', name: 'remarks', width: '6.66%' },
+            { data: 'date_transfered', name: 'date_transfered', width: '6.66%' },
+            { data: 'date_received', name: 'date_received', width: '6.66%' },
+            { data: 'receive_qty', name: 'receive_qty', width: '6.66%' },
+            { data: 'remaining_qty', name: 'remaining_qty', width: '6.66%' },
+            { data: 'receive_remarks', name: 'receive_remarks', width: '6.66%' },
         ],
         createdRow: function(row, data, dataIndex) {
             if (data.item_status == 0 || data.item_status == '0') {
@@ -371,7 +337,7 @@ function delete_set(checkboxClass,deleteTransferItem) {
                     $('.check_all_transfer_item').prop('checked',false);
                     msg(data.msg,data.status)
                     getTransferEntry(getTransferEntryURL, { _token: token });
-                    getReceiveItems();
+                    getReceiveItems(getReceiveItemsURL, { _token: token });
                     clear();
                 }).fail(function(xhr, textStatus, errorThrown) {
                     msg(errorThrown,'error');
@@ -424,14 +390,12 @@ function getJOdetails(jo_no,edit) {
 
         if (edit !== undefined) {
             if (edit.length > 0) {
-                DivisionCode(edit['process'],edit['div_code_code']);
-                getProcessQty(edit['process'],edit['jo_no'],edit['current_process'], edit['output_status']);
-
-                getDivCodeProcess(edit['jo_no'],edit['process']);
+                $('#ostatus').val(edit['output_status']);
 
                 $('#id').val(edit['id']);
                 $('#jo_no').val(edit['jo_no']);
                 $('#curr_process').val(edit['current_process']);
+                
                 $('#qty').val(edit['qty']);
                 $('#status').val(edit['status']);
                 $('#remarks').val(edit['remarks']);
@@ -439,6 +403,14 @@ function getJOdetails(jo_no,edit) {
                 $('#created_date').val(edit['created_at']);
                 $('#update_user').val(edit['update_user']);
                 $('#updated_date').val(edit['updated_at']);
+
+                $('#transfer_date').val(edit['transfer_date']);
+                $('#transfer_time').val(edit['transfer_time']);
+
+                DivisionCode(edit['process'],edit['user_div_code']);
+                getProcessQty(edit['process'],edit['jo_no'],edit['current_process'], edit['output_status']);
+
+                getDivCodeProcess(edit['jo_no'],edit['process']);
             }
         }
             

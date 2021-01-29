@@ -3,7 +3,7 @@
         <form id="frm_transfer_items" role="form" method="POST"  action="{{ url('/prod/transfer-item/save') }}">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Transfer Entry</h5>
+                    <h4 class="modal-title">Transfer Entry</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -12,7 +12,7 @@
                 <div class="modal-body table-responsive">
                     <div class="loadingOverlay-modal"></div>
 
-                    <h5>FROM</h5>
+                    <h6>FROM</h6>
                     <hr/>
                     <div class="row mb-10">
                         <div class="col-md-7">
@@ -119,36 +119,13 @@
 			            </div>
 
 			            <div class="col-md-5">
-							<div id="hide_create">
-	                            <div class="form-group row">
-	                                <div class="col-sm-12">
-	                                    <div class="input-group input-group-sm">
-	                                        <div class="input-group-prepend">
-	                                            <span class="input-group-text">Created By:</span>
-	                                        </div>
-	                                        <input type="text" class="form-control" name="create_user" id="create_user" value="{{Auth::user()->user_id}}" readonly>
-	                                    </div>
-	                                </div>
-	                            </div>
-
-	                            <div class="form-group row">
-	                                <div class="col-sm-12">
-	                                    <div class="input-group input-group-sm">
-	                                        <div class="input-group-prepend">
-	                                            <span class="input-group-text">Created Date:</span>
-	                                        </div>
-	                                        <input type="text" class="form-control" name="created_date" id="created_date" value="{{date('m/d/Y')}}" readonly>
-	                                    </div>
-	                                </div>
-	                            </div>
-							</div>
                             <div class="form-group row">
                                 <div class="col-sm-12">
                                     <div class="input-group input-group-sm">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text">Updated By:</span>
+                                            <span class="input-group-text">Transfer Date:</span>
                                         </div>
-                                        <input type="text" class="form-control" name="update_user" id="update_user" value="{{Auth::user()->user_id}}" readonly>
+                                        <input type="date" class="form-control" name="transfer_date" id="transfer_date">
                                     </div>
                                 </div>
                             </div>
@@ -157,16 +134,16 @@
                                 <div class="col-sm-12">
                                     <div class="input-group input-group-sm">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text">Updated Date:</span>
+                                            <span class="input-group-text">Transfer Time:</span>
                                         </div>
-                                        <input type="text" class="form-control" name="updated_date" id="updated_date" value="{{date('m/d/Y')}}" readonly>
+                                        <input type="time" class="form-control" name="transfer_time" id="transfer_time">
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <h5>TO</h5>
+                    <h6>TO</h6>
                     <hr/>
 
                     <div class="row">
@@ -275,7 +252,7 @@
                             <input type="hidden" id="prod_code_r" name="prod_code" class="clear">
                             <input type="hidden" id="process_r" name="process" class="clear">
                             <input type="hidden" id="current_process_r" name="current_process" class="clear">
-                            <input type="hidden" id="div_code_code_r" name="div_code_code" class="clear">
+                            <input type="hidden" id="user_div_code_r" name="user_div_code" class="clear">
                             <input type="hidden" id="current_div_code_r" name="current_div_code" class="clear">
                             <input type="hidden" id="current_process_name_r" name="current_process_name" class="clear">
 							<input type="hidden" id="status_r" name="status" class="clear">
