@@ -530,8 +530,9 @@ class ProductionScheduleController extends Controller
      */
     public function getTravel_sheet(Request $req)
     {
-        $data = DB::table('v_jo_list')
-                    ->where('user_id', Auth::user()->id);
+        $data = DB::select(
+                            DB::raw("CALL GET_prod_sched_jo_list(".Auth::user()->id.",NULL,NULL,NULL)")
+                        );
 
         // return response()->json($data);
 
@@ -541,7 +542,6 @@ class ProductionScheduleController extends Controller
                                         data-jo_no='".$data->jo_no."' data-prod_code='".$data->product_code."'
                                         data-issued_qty='".$data->issued_qty."' title='Edit J.O. Details'
                                         data-status='".$data->status."' data-sched_qty='".$data->sched_qty."'
-                                        data-qty_per_sheet='".$data->qty_per_sheet."' data-iso_code='".$data->iso_code."'
                                         data-sc_no='".$data->sc_no."' data-idJO='".$data->jo_summary_id."'
                                         data-id='".$data->travel_sheet_id."' data-status='".$data->status."'
                                     >
@@ -551,7 +551,6 @@ class ProductionScheduleController extends Controller
                                         data-jo_no='".$data->jo_no."' data-prod_code='".$data->product_code."'
                                         data-issued_qty='".$data->issued_qty."' title='Cancel J.O. Details'
                                         data-status='".$data->status."' data-sched_qty='".$data->sched_qty."'
-                                        data-qty_per_sheet='".$data->qty_per_sheet."' data-iso_code='".$data->iso_code."'
                                         data-sc_no='".$data->sc_no."' data-idJO='".$data->jo_summary_id."'
                                         data-id='".$data->travel_sheet_id."' data-status='".$data->status."'
                                     >

@@ -20,13 +20,9 @@ class PDFController extends Controller
 
 	public function RawMaterialWithdrawalSlip(Request $req)
 	{
-		$cutt = DB::table('ppc_cutting_schedules')->select('id')
-					->where('withdrawal_slip_no', $req->trans_id)
-					->first();
-
-		$raw_material = DB::table('v_raw_material_withdrawal_slip')
-							->where('trans_id',$req->trans_id)
-							->get();
+		$raw_material = DB::select(
+                            DB::raw("CALL GET_raw_material_withdrawal_slip(".$req->trans_id.")")
+                        );
 
 		$data = [
 			'date' => $this->_helper->convertDate($req->date, 'F d, Y'),

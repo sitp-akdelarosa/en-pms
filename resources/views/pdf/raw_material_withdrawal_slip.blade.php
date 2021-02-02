@@ -41,31 +41,32 @@
 							<?php $row = 0; ?>
 							@foreach ($raw_materials as $key => $rm)
 
-							<?php $row++;
-								  $slash =' '; if ($rm->thickness !== '') { $slash = ' / '; } 
+							<?php 
+								$row++;
 							?>
 								<tr>
 									<td width="8.3%">{{ $rm->alloy }}</td>
-									<td width="8.3%">{{ $rm->material_type }}</td>
+									<td width="8.3%">{{ $rm->item }}</td>
 									<td width="8.3%">{{ $rm->schedule }}</td>
-									<td width="8.3%">{{ $rm->size.$slash.$rm->thickness }}</td>
+									<td width="8.3%">{{ $rm->size }}</td>
 									<td width="8.3%">{{ $rm->length }}</td>
 									<td width="8.3%">{{ $rm->issued_qty }}</td>
-									<td width="8.3%">{{ $rm->heat_no }}</td>
-									<td width="8.3%">{{ $rm->suplier_heat_no }}</td>
+									<td width="8.3%">{{ $rm->material_heat_no }}</td>
+									<td width="8.3%">{{ $rm->supplier_heat_no }}</td>
 									<th width="0.01%"></th>
 									<td width="8.3%" class="left-double-border">
 										<?php 
 											if ($rm->lot_no == null) {
 												echo '';
 											} else {
-												$lt = explode(',',$rm->lot_no);
-												$lt_whole = '';
-												foreach ($lt as $key => $lot_no) {
-													$lt_whole .= $lot_no."<br/>";
-												}
+												echo $rm->lot_no;
+												// $lt = explode(',',$rm->lot_no);
+												// $lt_whole = '';
+												// foreach ($lt as $key => $lot_no) {
+												// 	$lt_whole .= $lot_no."<br/>";
+												// }
 
-												echo $lt_whole;
+												// echo $lt_whole;
 											} 
 										?>
 									</td>
@@ -75,13 +76,14 @@
 											if ($rm->sc_no == null) {
 												echo '';
 											} else {
-												$scno = explode(',',$rm->sc_no);
-												$sc_whole = '';
-												foreach ($scno as $key => $sc) {
-													$sc_whole .= $sc."<br/>";
-												}
+												echo $rm->sc_no;
+												// $scno = explode(',',$rm->sc_no);
+												// $sc_whole = '';
+												// foreach ($scno as $key => $sc) {
+												// 	$sc_whole .= $sc."<br/>";
+												// }
 
-												echo $sc_whole;
+												// echo $sc_whole;
 											} 
 										?>
 									</td>
@@ -90,17 +92,18 @@
 											if ($rm->product_code == null) {
 												echo '';
 											} else {
-												$pc = explode(',',$rm->product_code);
-												$pc_whole = '';
-												foreach ($pc as $key => $prod_code) {
-													$pc_whole .= $prod_code."<br/>";
-												}
+												echo $rm->product_code;
+												// $pc = explode(',',$rm->product_code);
+												// $pc_whole = '';
+												// foreach ($pc as $key => $prod_code) {
+												// 	$pc_whole .= $prod_code."<br/>";
+												// }
 
-												echo $pc_whole;
+												// echo $pc_whole;
 											} 
 										?>
 									</td>
-									<td width="4.3%">{{ ($rm->sched_qty == null)? '': $rm->sched_qty}}</td>
+									<td width="4.3%">{{ ($rm->assign_qty == null)? '': $rm->assign_qty}}</td>
 								</tr>
 							@endforeach
 							@while ($row <= 20)
