@@ -92,7 +92,7 @@
 											if ($rm->product_code == null) {
 												echo '';
 											} else {
-												echo $rm->product_code;
+												echo $rm->description;
 												// $pc = explode(',',$rm->product_code);
 												// $pc_whole = '';
 												// foreach ($pc as $key => $prod_code) {
