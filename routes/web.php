@@ -540,9 +540,15 @@ Route::group(['prefix' => 'prod', 'middleware' => ['ajax-session-expired', 'auth
 			->name('prod.reports.operators-output');
 		Route::post('/operators-output/search_operator', 'Production\Reports\OperatorsOutputController@search_operator')
 			->name('prod.reports.operators-output.search_operator');
+		Route::get('/operators-output/downloadExcel', 'Production\Reports\OperatorsOutputController@downloadExcel')
+			->name('prod.reports.operators-output.downloadExcel');
 
 		Route::get('/summary-report', 'Production\Reports\SummaryReportController@index')
 			->name('prod.reports.production-summary-report');
+		Route::post('/summary-report/search_summart_report', 'Production\Reports\SummaryReportController@search_summart_report')
+			->name('prod.reports.production-summary-report.search_summart_report');
+		Route::get('/summary-report/downloadExcel', 'Production\Reports\SummaryReportController@downloadExcel')
+			->name('prod.reports.production-summary-report.downloadExcel');
 	});
 });
 
