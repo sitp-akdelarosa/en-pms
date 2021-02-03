@@ -107,9 +107,9 @@ class PDFController extends Controller
 		];
 		// return dd($data);
 		$options = [
-			'margin-top'    => 5,
+			'margin-top'    => 3,
 			'margin-right'  => 5,
-			'margin-bottom' => 5,
+			'margin-bottom' => 3,
 			'margin-left'   => 5,
 		];
 

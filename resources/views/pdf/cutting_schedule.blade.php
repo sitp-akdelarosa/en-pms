@@ -150,12 +150,12 @@ for ($x = 1; $x <= $page; $x++) {
                     <tr height="80px">
                         <td colspan="8">
                             <p class="left"><strong>Prepared By:</strong></p>
-                            <p style="border-bottom: 1px solid; font-weight:700;font-size:16px">{{ $prepared_by }}</p>
+                            <p style="border-bottom: 1px solid; font-weight:700;font-size:14px">{{ $prepared_by }}</p>
                             <p><strong>PPC STAFF</strong></p>
                         </td>
                         <td colspan="9">
                             <p class="left"><strong>Received By:</strong></p>
-                            <p style="border-bottom: 1px solid; font-weight:700;font-size:16px">{{ $leader }}</p>
+                            <p style="border-bottom: 1px solid; font-weight:700;font-size:14px">{{ $leader }}</p>
                             <p><strong>LEADER</strong></p>
                         </td>
 
