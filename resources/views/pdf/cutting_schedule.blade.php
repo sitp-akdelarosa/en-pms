@@ -175,9 +175,7 @@ for ($x = 1; $x <= $page; $x++) {
 @if($x%2 == 0)
 <br />
 @else
-<br />
 <hr />
-<br />
 @endif
 <?php } ?>
 @endsection
