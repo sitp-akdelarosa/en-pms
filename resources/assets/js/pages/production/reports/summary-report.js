@@ -15,7 +15,7 @@ $( function() {
                 $("#btnDownload").attr("disabled", true);
             } else {
                 $("#btnDownload").attr("disabled", false);
-                makeOperatorTable(data.ppo);
+                makeSummaryTable(data.ppo);
             }
         }).fail( function(xhr, textStatus, errorThrown) {
             ErrorMsg(xhr);
@@ -26,7 +26,7 @@ $( function() {
 
     $('#btnDownload').on('click', function () {
         alert("");
-		window.location.href = downloadExcel+"?date_from="+$('#date_from').val() +"&date_to="+$('#date_to').val() +"&search_operator="+$('#search_operator').val();
+		window.location.href = downloadExcel+"?date_from="+$('#date_from').val() +"&date_to="+$('#date_to').val();
 	});
 	
 });
@@ -35,11 +35,11 @@ function init() {
     check_permission(code_permission, function(output) {
         if (output == 1) {}
 
-        makeOperatorTable();
+        makeSummaryTable();
     });
 }
 
-function makeOperatorTable(arr) {
+function makeSummaryTable(arr) {
     $('#tbl_summary').dataTable().fnClearTable();
     $('#tbl_summary').dataTable().fnDestroy();
     $('#tbl_summary').dataTable({
