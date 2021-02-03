@@ -165,8 +165,6 @@ $(function () {
     getRawMaterialList($(this).val());
   });
   $('#trans_no').on('keydown', function (e) {
-    e.preventDefault();
-
     if (e.keyCode === 13) {
       getRawMaterialList($(this).val());
     }
