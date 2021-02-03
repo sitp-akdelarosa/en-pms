@@ -147,16 +147,16 @@ for ($x = 1; $x <= $page; $x++) {
 
                 </tbody>
                 <tfoot>
-                    <tr height="70px">
+                    <tr height="55px">
                         <td colspan="8">
                             <p class="left"><strong>Prepared By:</strong></p>
                             <p style="border-bottom: 1px solid; font-weight:700;font-size:14px">{{ $prepared_by }}</p>
-                            <p><strong>PPC STAFF</strong></p>
+                            <p><strong style="font-size:11px">PPC STAFF</strong></p>
                         </td>
                         <td colspan="9">
                             <p class="left"><strong>Received By:</strong></p>
                             <p style="border-bottom: 1px solid; font-weight:700;font-size:14px">{{ $leader }}</p>
-                            <p><strong>LEADER</strong></p>
+                            <p><strong style="font-size:11px">LEADER</strong></p>
                         </td>
 
                     </tr>
