@@ -15,7 +15,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">Date:</span>
                             </div>
-                            <input type="date" class="form-control input-sm validate" name="date" id="date" value="{{date('Y-m-d')}}">
+                            <input type="date" class="form-control input-sm validate" name="date" id="date">
                             <div id="date_feedback"></div>
                         </div>
                     </div>

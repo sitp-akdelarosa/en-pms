@@ -1,10 +1,18 @@
 var transfer_item_arr = [];
 
 $( function() {
-    getTransferEntry();
-    check_permission(code_permission);
+    
+    init();
 
 });
+
+function init() {
+    check_permission(code_permission, function(output) {
+        if (output == 1) {}
+
+        getTransferEntry();
+    });
+}
 
 function getTransferEntry() {
     transfer_item_arr = [];

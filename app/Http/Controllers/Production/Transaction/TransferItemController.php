@@ -63,6 +63,18 @@ class TransferItemController extends Controller
                 'status' => 'required'
         ],['not_in' => 'The :attribute field is not be in 0.']);
 
+        $trans_date = '';
+
+        if (isset($req->transfer_date) && isset($req->transfer_time)) {
+            $trans_date = $req->transfer_date.' '.$req->transfer_time;
+        } elseif (!isset($req->transfer_date) && isset($req->transfer_time)) {
+            $trans_date = date('Y-m-d').' '.$req->transfer_time;
+        } elseif (isset($req->transfer_date) && !isset($req->transfer_time)) {
+            $trans_date = $req->transfer_date.' '.date('H:i:s');
+        } else {
+            $trans_date = date('Y-m-d H:i:s');
+        }
+
         if (isset($req->id)) {
             $items = ProdTransferItem::find($req->id);
 
@@ -82,7 +94,7 @@ class TransferItemController extends Controller
                 $items->receive_remarks = "";
                 $items->receive_qty = 0;
                 $items->output_status = $req->ostatus;
-                $items->date_transfered = date('Y-m-d h:i:s');
+                $items->date_transfered = $trans_date;
                 $items->update_user = Auth::user()->id;
                 $items->updated_at = date('Y-m-d h:i:s');
                 $items->update();
@@ -136,7 +148,7 @@ class TransferItemController extends Controller
             $items->receive_qty = 0;
             $items->item_status = 0;
             $items->output_status = $req->ostatus;
-            $items->date_transfered = date('Y-m-d h:i:s');
+            $items->date_transfered = $trans_date;
             $items->create_user = Auth::user()->id;
             $items->update_user = Auth::user()->id;
             $items->created_at = date('Y-m-d h:i:s');
@@ -216,6 +228,9 @@ class TransferItemController extends Controller
                                 $disabled = 'disabled';
                             }
 
+                            $transfer_date = substr($data->date_transfered, 0, 10);
+                            $transfer_time = substr($data->date_transfered, -8);
+
                             return "<button class='btn btn-sm btn-primary btn_edit'
                                         data-id='".$data->id."'
                                         data-jo_no='".$data->jo_no."'
@@ -224,12 +239,14 @@ class TransferItemController extends Controller
                                         data-description='".$data->description."'
                                         data-current_process='".$data->current_process."'
                                         data-div_code='".$data->div_code."'
-                                        data-div_code_code='".$data->div_code_code."'
+                                        data-user_div_code='".$data->user_div_code."'
                                         data-process='".$data->process."'
                                         data-qty='".$data->qty."'
                                         data-status='".$data->status."'
                                         data-remarks='".$data->remarks."'
                                         data-output_status='".$data->output_status."'
+                                        data-transfer_date='".$transfer_date."'
+                                        data-transfer_time='".$transfer_time."'
                                         data-create_user='".$data->create_user."'
                                         data-created_at='".$data->created_at."'
                                         data-update_user='".$data->update_user."'
@@ -248,14 +265,50 @@ class TransferItemController extends Controller
 
     public function received_items()
     {
-        $receive = DB::table('v_receive_items')
-                    ->orderBy('updated_at','desc')
-                    ->where('user_id',Auth::user()->id)->get();
-        if (count((array)$receive) > 0) {
-            return $receive;
-        }
-        
-        return ''; 
+        $receivables = DB::select(DB::raw("CALL GET_received_items(".Auth::user()->id.")"));
+        return DataTables::of($receivables)
+						->editColumn('id', function($data) {
+							return $data->id;
+                        })
+                        ->editColumn('item_status', function($data) {
+							if ($data->item_status == 1) {
+                                return "RECEIVED";
+                            } else {
+                                return "TRANSFERED";
+                            }
+                        })
+                        ->addColumn('action', function($data) {
+                            $disabled ='';
+                            if ($data->item_status != 0) {
+                                $disabled = 'disabled';
+                            }
+
+                            return "<button class='btn btn-sm btn-primary btn_receive' 
+                                        data-id='".$data->id."'
+                                        data-jo_no='".$data->jo_no."'
+                                        data-current_process_name='".$data->current_process_name."'
+                                        data-user_div_code='".$data->user_div_code."'
+                                        data-current_process='".$data->current_process."'
+                                        data-qty='".$data->qty."'
+                                        data-receive_qty='".$data->receive_qty."'
+                                        data-remaining_qty='".$data->remaining_qty."'
+                                        data-process='".$data->process."'
+                                        data-current_div_code='".$data->current_div_code."'
+                                        data-prod_order_no='".$data->prod_order_no."'
+                                        data-prod_code='".$data->prod_code."'
+                                        data-description='".$data->description."'
+                                        data-div_code='".$data->div_code."'
+                                        data-status='".$data->status."'
+                                        data-remarks='".$data->remarks."'
+                                        data-create_user='".$data->create_user."'
+                                        data-created_at='".$data->created_at."'
+                                        data-item_status='".$data->item_status."'
+                                        data-update_user='".$data->update_user."'
+                                        data-updated_at='".$data->updated_at."' ".$disabled.">
+                                        <i class='fa fa-edit'></i> Receive
+                                    </button>";
+                        })
+                        ->make(true);
     }
 
     public function DivisionCode(Request $req)
@@ -363,9 +416,9 @@ class TransferItemController extends Controller
                         ->select('div_code')
                         ->get();
 
-        $divs = DB::select("SELECT d.div_code,p.process FROM enpms.ppc_divisions as d
-                            inner join enpms.ppc_division_processes as p
-                            on d.id = p.division_id");
+        // $divs = DB::select("SELECT d.div_code,p.process FROM enpms.ppc_divisions as d
+        //                     inner join enpms.ppc_division_processes as p
+        //                     on d.id = p.division_id");
 
         if (count((array)$divs)) {
             foreach ($divs as $key => $div) {
@@ -398,28 +451,36 @@ class TransferItemController extends Controller
 
     public function unprocessedItem(Request $req)
     {
-        $UnprocessTravel =DB::table('prod_travel_sheet_processes')
-                            ->where('id',$req->current_process)
-                            ->select(
-                                DB::raw("`".$req->output_status."` as total_qty"), 
-                                'div_code', 
-                                'leader'
-                            )
-                            ->first();
-
-        $UnprocessTransfer = DB::table('prod_transfer_items as i')
-                        ->join('prod_travel_sheet_processes as tsp', 'tsp.id', '=', 'i.current_process')
-                        ->where('i.current_process', $req->current_process)
-                        ->where('i.item_status' , 0 )  
-                        ->select(DB::raw("SUM(i.qty) as qty"))->groupBy('i.current_process')->first();
-        $qty =0;            
-        if(isset($UnprocessTransfer->qty)){
-            $qty = $UnprocessTransfer->qty;
-        }
         $data = [
-            'UnprocessTravel' => $UnprocessTravel,
-            'UnprocessTransfer' => $qty
-        ];  
+                'UnprocessTravel' => [],
+                'UnprocessTransfer' => 0
+            ];
+
+        if (isset($req->output_status)) {
+            $UnprocessTravel =DB::table('prod_travel_sheet_processes')
+                                ->where('id',$req->current_process)
+                                ->select(
+                                    DB::raw("`".$req->output_status."` as total_qty"), 
+                                    'div_code', 
+                                    'leader'
+                                )
+                                ->first();
+
+            $UnprocessTransfer = DB::table('prod_transfer_items as i')
+                            ->join('prod_travel_sheet_processes as tsp', 'tsp.id', '=', 'i.current_process')
+                            ->where('i.current_process', $req->current_process)
+                            ->where('i.item_status' , 0 )  
+                            ->select(DB::raw("SUM(i.qty) as qty"))->groupBy('i.current_process')->first();
+            $qty =0;            
+            if(isset($UnprocessTransfer->qty)){
+                $qty = $UnprocessTransfer->qty;
+            }
+            $data = [
+                'UnprocessTravel' => $UnprocessTravel,
+                'UnprocessTransfer' => $qty
+            ];
+        }
+
         return response()->json($data);
     }
 
@@ -439,7 +500,7 @@ class TransferItemController extends Controller
         }
 
         $data = ProdTravelSheetProcess::where('travel_sheet_id' , $jo_no->id)
-                ->where('div_code',$req->div_code_code)
+                ->where('div_code',$req->user_div_code)
                 ->where('process',$req->process)
                 ->update([
                     'unprocessed' => DB::raw("`unprocessed` + ".$qty)
@@ -455,7 +516,7 @@ class TransferItemController extends Controller
                     'unprocessed' => $req->qty,
                     'process' => $req->process,
                     'previous_process' => $req->current_process_name,
-                    'div_code' => $req->div_code_code,
+                    'div_code' => $req->user_div_code,
                     'sequence' => $tsp->sequence,
                     'status' => 4,
                     // strtolower($req->status) => $qtyprocess,
@@ -491,14 +552,14 @@ class TransferItemController extends Controller
         //Notification
         Notification::where('content_id',$req->id)->update(['read' => 1]);
         $to_notify = DB::table('ppc_divisions')
-                        ->where('div_code',$req->div_code_code)
+                        ->where('div_code',$req->user_div_code)
                         ->select('user_id')
                         ->get();
         $notis = [];
         foreach ($to_notify as $key => $notify) {
             Notification::create([
                 'title' => "Received Items",
-                'content' => "Division Code [".$req->div_code_code."] and its process [".$req->process."] has been 
+                'content' => "Division Code [".$req->user_div_code."] and its process [".$req->process."] has been 
                                  received the transfer item from 
                                  Division Code [".$req->current_div_code."] and its process [".$req->current_process_name."].",
                 'from' => Auth::user()->firstname." ".Auth::user()->lastname,

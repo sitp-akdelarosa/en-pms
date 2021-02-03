@@ -393,16 +393,29 @@ class ProductionScheduleController extends Controller
                     // $jocode = $this->_helper->TransactionNo($f[0] . $l[0] . '-JO');
                     $jocode = '';
 
-                    $check_whs = DB::table('ppc_update_inventories')->select('warehouse')->where('heat_no',$bom->heat_no)->distinct()->count();
+                    $whs = DB::select(
+                                        DB::raw(
+                                            "CALL GET_warehouse_for__prod_sched(
+                                                '".$bom->heat_no."',
+                                                '".$bom->rmw_no."'
+                                                )"
+                                        )
+                                    );
 
-                    if ($check_whs > 0) {
-                        $whs = DB::table('ppc_update_inventories')
-                                    ->select('warehouse')
-                                    ->where('heat_no',$bom->heat_no)
-                                    ->distinct()
-                                    ->first();
+                    if (count((array)$whs) > 0) {
+                        // $whs = DB::table('ppc_update_inventories')
+                        //             ->select('warehouse')
+                        //             ->where('heat_no',$bom->heat_no)
+                        //             ->distinct()
+                        //             ->first();
 
-                        $jocode = $this->_helper->TransactionNo('JO', $whs->warehouse);
+                        $jocode = $this->_helper->TransactionNo('JO', $whs[0]->warehouse);
+                    } else {
+                        $data = [
+                            'msg' => "There is an error occured when getting warehouse.",
+                            'status' => 'failed'
+                        ];
+                        return response()->json($data);
                     }
 
                     $jo_sum = new PpcJoDetailsSummary();
@@ -530,8 +543,9 @@ class ProductionScheduleController extends Controller
      */
     public function getTravel_sheet(Request $req)
     {
-        $data = DB::table('v_jo_list')
-                    ->where('user_id', Auth::user()->id);
+        $data = DB::select(
+                            DB::raw("CALL GET_prod_sched_jo_list(".Auth::user()->id.",NULL,NULL,NULL)")
+                        );
 
         // return response()->json($data);
 
@@ -541,7 +555,6 @@ class ProductionScheduleController extends Controller
                                         data-jo_no='".$data->jo_no."' data-prod_code='".$data->product_code."'
                                         data-issued_qty='".$data->issued_qty."' title='Edit J.O. Details'
                                         data-status='".$data->status."' data-sched_qty='".$data->sched_qty."'
-                                        data-qty_per_sheet='".$data->qty_per_sheet."' data-iso_code='".$data->iso_code."'
                                         data-sc_no='".$data->sc_no."' data-idJO='".$data->jo_summary_id."'
                                         data-id='".$data->travel_sheet_id."' data-status='".$data->status."'
                                     >
@@ -551,7 +564,6 @@ class ProductionScheduleController extends Controller
                                         data-jo_no='".$data->jo_no."' data-prod_code='".$data->product_code."'
                                         data-issued_qty='".$data->issued_qty."' title='Cancel J.O. Details'
                                         data-status='".$data->status."' data-sched_qty='".$data->sched_qty."'
-                                        data-qty_per_sheet='".$data->qty_per_sheet."' data-iso_code='".$data->iso_code."'
                                         data-sc_no='".$data->sc_no."' data-idJO='".$data->jo_summary_id."'
                                         data-id='".$data->travel_sheet_id."' data-status='".$data->status."'
                                     >

@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 23);
+/******/ 	return __webpack_require__(__webpack_require__.s = 21);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -240,7 +240,7 @@ function getDashboard() {
 
 /***/ }),
 
-/***/ 23:
+/***/ 21:
 /*!***************************************************************************!*\
   !*** multi ./resources/assets/js/pages/production/dashboard/dashboard.js ***!
   \***************************************************************************/

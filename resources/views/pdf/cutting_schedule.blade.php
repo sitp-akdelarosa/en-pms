@@ -91,7 +91,17 @@ for ($x = 1; $x <= $page; $x++) {
                             <td>{{ $rm->item }}</td>
                             <td>{{ $rm->class }}</td>
                             <td>{{ $rm->lot_no }}</td>
-                            <td>{{ $rm->sc_no }}</td>
+                            <td>
+                                <?php
+                                    $sc = '';
+                                    if (strpos($rm->sc_no, ',') !== false) {
+                                        $sc = str_replace(',','</br>',$rm->sc_no);
+                                        echo $sc;
+                                    } else {
+                                        echo $rm->sc_no;
+                                    }
+                                ?>
+                            </td>
                             <td>{{ $rm->jo_qty }}</td>
                             <td>{{ $rm->cut_weight }}</td>
                             <td>{{ $rm->cut_length }}</td>
@@ -137,16 +147,16 @@ for ($x = 1; $x <= $page; $x++) {
 
                 </tbody>
                 <tfoot>
-                    <tr height="80px">
+                    <tr height="55px">
                         <td colspan="8">
                             <p class="left"><strong>Prepared By:</strong></p>
-                            <p style="border-bottom: 1px solid; font-weight:700;font-size:16px">{{ $prepared_by }}</p>
-                            <p><strong>PPC STAFF</strong></p>
+                            <p style="border-bottom: 1px solid; font-weight:700;font-size:14px">{{ $prepared_by }}</p>
+                            <p><strong style="font-size:11px">PPC STAFF</strong></p>
                         </td>
                         <td colspan="9">
                             <p class="left"><strong>Received By:</strong></p>
-                            <p style="border-bottom: 1px solid; font-weight:700;font-size:16px">{{ $leader }}</p>
-                            <p><strong>LEADER</strong></p>
+                            <p style="border-bottom: 1px solid; font-weight:700;font-size:14px">{{ $leader }}</p>
+                            <p><strong style="font-size:11px">LEADER</strong></p>
                         </td>
 
                     </tr>
@@ -165,9 +175,7 @@ for ($x = 1; $x <= $page; $x++) {
 @if($x%2 == 0)
 <br />
 @else
-<br />
 <hr />
-<br />
 @endif
 <?php } ?>
 @endsection

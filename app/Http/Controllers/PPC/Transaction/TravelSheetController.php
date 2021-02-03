@@ -70,17 +70,17 @@ class TravelSheetController extends Controller
             }
             
             $data = DB::select(
-                        DB::raw("CALL GET_JO_list(".Auth::user()->id.",".$FROM.",".$TO.",".(int)$req->status.")")
+                        DB::raw("CALL GET_prod_sched_jo_list(".Auth::user()->id.",".$FROM.",".$TO.",".(int)$req->status.")")
                     );
         } else {
 
             if (is_null($req->status)) {
                 $data = DB::select(
-                            DB::raw("CALL GET_JO_list(".Auth::user()->id.",NULL,NULL,NULL)")
+                            DB::raw("CALL GET_prod_sched_jo_list(".Auth::user()->id.",NULL,NULL,NULL)")
                         );
             } else {
                 $data = DB::select(
-                            DB::raw("CALL GET_JO_list(".Auth::user()->id.",NULL,NULL,".(int)$req->status.")")
+                            DB::raw("CALL GET_prod_sched_jo_list(".Auth::user()->id.",NULL,NULL,".(int)$req->status.")")
                         );
             }
            

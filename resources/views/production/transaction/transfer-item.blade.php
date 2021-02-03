@@ -62,13 +62,14 @@
 							<th>Job Order No.</th>
 							<th>Product Code</th>
 							<th>Process</th>
-							<th>Transfer To</th>
-							<th>To Process</th>
+							<th>Transfer To(Process)</th>
+							<th>Transfer To(Div. Code)</th>
 							<th>Qty.</th>
 							<th>Status</th>
 							<th>Remarks</th>
-							<th>Date</th>
+							<th>Date Transferred</th>
 							<th>Item Status</th>
+							<th>Date Received</th>
 						</tr>
 					</thead>
 					<tbody id="tbl_transfer_entry_body"></tbody>
@@ -95,6 +96,7 @@
 							<th>Status</th>
 							<th>Transfer Note</th>
 							<th>Date Transferred</th>
+							<th>Date Received</th>
 							<th>Received Qty</th>
 							<th>Remaining Qty</th>
 							<th>Receive Remarks</th>

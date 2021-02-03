@@ -20,13 +20,31 @@ class PDFController extends Controller
 
 	public function RawMaterialWithdrawalSlip(Request $req)
 	{
-		$cutt = DB::table('ppc_cutting_schedules')->select('id')
-					->where('withdrawal_slip_no', $req->trans_id)
-					->first();
+		// $raw_material = DB::select(
+        //                     DB::raw("CALL GET_raw_material_withdrawal_slip(".$req->trans_id.")")
+		// 				);
+						
+		$raw_material = DB::select("select distinct rmwd.id as id,
+											rmwi.trans_no as trans_no,
+											rmwd.alloy as alloy,
+											rmwd.item as item,
+											rmwd.`schedule` as `schedule`,
+											rmwd.size as size,
+											i.length as length,
+											rmwd.issued_qty as issued_qty,
+											rmwd.material_heat_no as material_heat_no,
+											i.supplier_heat_no as supplier_heat_no,
+											rmwd.inv_id as inv_id
+									from ppc_raw_material_withdrawal_infos as rmwi
 
-		$raw_material = DB::table('v_raw_material_withdrawal_slip')
-							->where('trans_id',$req->trans_id)
-							->get();
+									join ppc_raw_material_withdrawal_details as rmwd
+									on rmwi.id = rmwd.trans_id
+
+									join ppc_update_inventories as i
+									on rmwd.inv_id = i.id
+
+									where rmwi.id = ".$req->trans_id." 
+									order by rmwd.id asc");
 
 		$data = [
 			'date' => $this->_helper->convertDate($req->date, 'F d, Y'),
@@ -47,11 +65,6 @@ class PDFController extends Controller
 		$cut_data = [];
 
 		$iso = AdminSettingIso::where('iso_code', $req->iso_control_no)->first();
-		// $id = implode(',', $ids);
-		// $cut_data = DB::select("SELECT * FROM vCuttingSched where id in (".$id.")");
-
-		// $iso = AdminSettingIso::where('iso_code',$req->iso_control_no)->first();
-
 		$jo_no_arr = explode(',',$req->jo_no);
 
 		$cut_data = DB::table('v_jo_list_for_cutting_sched')
@@ -78,37 +91,6 @@ class PDFController extends Controller
 						->whereIn('jo_no',$jo_no_arr)
 						->where('status','<>','3')
 						->get()->toArray();
-		
-
-		// foreach ($req->no as $key => $no) {
-		// 	array_push(
-		// 		$cut_data,
-		// 		(object)array(
-		// 			'id'=>$req->id[$key],
-		// 			'jo_no' => $req->no[$key],
-		// 			'p_alloy' => $req->p_alloy[$key],
-		// 			'p_size' => $req->p_size[$key],
-		// 			'p_item' => $req->p_item[$key],
-		// 			'p_class' => $req->p_class[$key],
-		// 			'cut_weight' => $req->cut_weight[$key],
-		// 			'cut_length' => $req->cut_length[$key],
-		// 			'cut_width' => $req->cut_width[$key],
-		// 			'schedule' => $req->schedule[$key],
-		// 			'qty_needed_inbox' => $req->qty_needed_inbox[$key],
-		// 			'sc_no' => $req->sc_no[$key],
-		// 			'jo_qty' => $req->jo_qty[$key],
-		// 			'needed_qty' => $req->needed_qty[$key],
-		// 			'qty_cut' => '0',
-		// 			'plate_qty' => $req->issued_qty[$key],
-		// 			'item' => $req->item[$key],
-		// 			'size' => $req->size[$key],
-		// 			'material_heat_no' => $req->mat_heat_no[$key],
-		// 			'lot_no' => $req->lot_no[$key],
-		// 			'supplier_heat_no' => $req->supplier_heat_no[$key],
-		// 			'material_used' => $req->material_used[$key]
-		// 		)
-		// 	);
-		// }
 
 		$leader = DB::table('users')->where('id',$req->leader)->select(DB::raw("CONCAT(firstname,' ',lastname) as fullname"))->first();
 
@@ -125,9 +107,9 @@ class PDFController extends Controller
 		];
 		// return dd($data);
 		$options = [
-			'margin-top'    => 5,
+			'margin-top'    => 3,
 			'margin-right'  => 5,
-			'margin-bottom' => 10,
+			'margin-bottom' => 3,
 			'margin-left'   => 5,
 		];
 

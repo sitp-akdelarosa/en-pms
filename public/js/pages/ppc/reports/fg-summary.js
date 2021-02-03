@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 21);
+/******/ 	return __webpack_require__(__webpack_require__.s = 24);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -95,7 +95,7 @@
 
 var FG_arr = [];
 $(function () {
-  getFG(0);
+  init();
   $('#tbl_fg_summary').on('click', '.btn_edit_fg', function () {
     $('#id').val($(this).attr('data-id'));
     $('#current_sc_no').val($(this).attr('data-sc_no'));
@@ -152,6 +152,14 @@ $(function () {
     getFG($(this).val());
   });
 });
+
+function init() {
+  check_permission(code_permission, function (output) {
+    if (output == 1) {}
+
+    getFG(0);
+  });
+}
 
 function getFG(status) {
   transfer_item_arr = [];
@@ -233,7 +241,7 @@ function clear() {
 
 /***/ }),
 
-/***/ 21:
+/***/ 24:
 /*!*******************************************************************!*\
   !*** multi ./resources/assets/js/pages/ppc/reports/fg-summary.js ***!
   \*******************************************************************/
