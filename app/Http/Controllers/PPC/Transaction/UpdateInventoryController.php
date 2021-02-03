@@ -897,8 +897,8 @@ class UpdateInventoryController extends Controller
                 $UP->size = strtoupper($req->size);
                 $UP->width = (!is_null($req->width))? strtoupper($req->width): 'N/A';
                 $UP->length = (!is_null($req->length))? strtoupper($req->length): 'N/A';
-                $UP->qty_weight = $req->qty_weight;
-                $UP->qty_pcs = $req->qty_pcs;
+                $UP->qty_weight = (double)$req->qty_weight;
+                $UP->qty_pcs = (double)$req->qty_pcs;
                 $UP->weight_uom = 'KGS';
                 $UP->pcs_uom = 'PCS';
                 $UP->heat_no = strtoupper($req->heat_no);

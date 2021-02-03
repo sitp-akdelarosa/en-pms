@@ -107,7 +107,7 @@ $(function () {
   $(document).on('shown.bs.modal', function () {
     $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
   });
-  $('#tbl_materials_paginate .pagination').on('click', '.paginate_button', function () {
+  $('Atbl_materials_paginate .pagination').on('click', '.paginate_button', function () {
     alert('unchecked'); // $('input:checkbox .check_all_inventories').prop('checked', false);
   });
   $('#item_class').on('change', function () {

@@ -158,7 +158,7 @@
                                 <label for="qty_weight" class="col-sm-3 control-label mt-5">Qty/Weight:</label>
                                 <div class="col-sm-9">
                                     <div class="input-group mb-3 input-group-sm">
-                                        <input type="number" class="form-control validate clear " step=".01" name="qty_weight" id="qty_weight">
+                                        <input type="number" step="0.01" class="form-control validate clear number" name="qty_weight" id="qty_weight">
                                         <input type="hidden" class="form-control validate clear " name="finish_weight" id="finish_weight">
                                         <div class="input-group-append">
                                             <span class="input-group-text">KGS</span>
@@ -172,7 +172,7 @@
                                 <label for="qty_pcs" class="col-sm-3 control-label mt-5">Qty/Pcs:</label>
                                 <div class="col-sm-9">
                                     <div class="input-group mb-3 input-group-sm">
-										<input type="number" class="form-control validate clear " name="qty_pcs" id="qty_pcs">
+										<input type="number" step="0.01" class="form-control validate clear number" name="qty_pcs" id="qty_pcs">
                                         <div class="input-group-append">
                                             <span class="input-group-text">PCS</span>
                                         </div>

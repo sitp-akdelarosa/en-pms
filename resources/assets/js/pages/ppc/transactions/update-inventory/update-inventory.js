@@ -16,7 +16,7 @@ $(function () {
 	});
 
 
-	$('#tbl_materials_paginate .pagination').on('click', '.paginate_button',function () {
+	$('Atbl_materials_paginate .pagination').on('click', '.paginate_button',function () {
 		alert('unchecked');
 		// $('input:checkbox .check_all_inventories').prop('checked', false);
 	});

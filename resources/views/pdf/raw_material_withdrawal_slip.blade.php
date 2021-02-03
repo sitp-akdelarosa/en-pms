@@ -42,6 +42,28 @@
 							@foreach ($raw_materials as $key => $rm)
 
 							<?php 
+								$items = null;
+
+								if (isset($rm->id)) {
+									$items = \DB::select("SELECT rmw_no,
+															jo_summary_id,
+															jo_no,
+															lot_no,
+															product_code,
+															`description`,
+															sc_no,
+															SUM(assign_qty) as assign_qty
+													FROM v_jo_details_for_rmw
+													where rmw_no = '".$rm->trans_no."'
+													and rmw_id = ".$rm->id."
+													group by rmw_no,
+															jo_summary_id,
+															jo_no,
+															lot_no,
+															product_code,
+															`description`,
+															sc_no");
+								}
 								$row++;
 							?>
 								<tr>
@@ -49,61 +71,118 @@
 									<td width="8.3%">{{ $rm->item }}</td>
 									<td width="8.3%">{{ $rm->schedule }}</td>
 									<td width="8.3%">{{ $rm->size }}</td>
-									<td width="8.3%">{{ $rm->length }}</td>
+									<td width="8.3%">{{ $rm->length." MM" }}</td>
 									<td width="8.3%">{{ $rm->issued_qty }}</td>
 									<td width="8.3%">{{ $rm->material_heat_no }}</td>
 									<td width="8.3%">{{ $rm->supplier_heat_no }}</td>
 									<th width="0.01%"></th>
 									<td width="8.3%" class="left-double-border">
 										<?php 
-											if ($rm->lot_no == null) {
-												echo '';
-											} else {
-												echo $rm->lot_no;
-												// $lt = explode(',',$rm->lot_no);
-												// $lt_whole = '';
-												// foreach ($lt as $key => $lot_no) {
-												// 	$lt_whole .= $lot_no."<br/>";
-												// }
+											if (isset($items)) {
+												$prev_lot_no = [];
+												array_push($prev_lot_no, $items[0]->lot_no);
+												$lot_no = '';
+												foreach ($items as $key => $item) {
+													if (!in_array($item->lot_no, $prev_lot_no)) {
+														$lot_no .= $item->lot_no.'</br>';
+													} else {
+														$lot_no = $item->lot_no.'</br>';
+													}
 
-												// echo $lt_whole;
-											} 
+													array_push($prev_lot_no, $item->lot_no);
+												}
+												echo $lot_no;
+											}
+											// if ($rm->lot_no == null) {
+											// 	echo '';
+											// } else {
+											// 	echo $rm->lot_no;
+											// 	// $lt = explode(',',$rm->lot_no);
+											// 	// $lt_whole = '';
+											// 	// foreach ($lt as $key => $lot_no) {
+											// 	// 	$lt_whole .= $lot_no."<br/>";
+											// 	// }
+
+											// 	// echo $lt_whole;
+											// } 
 										?>
 									</td>
 									
 									<td width="8.3%">
-										<?php 
-											if ($rm->sc_no == null) {
-												echo '';
-											} else {
-												echo $rm->sc_no;
-												// $scno = explode(',',$rm->sc_no);
-												// $sc_whole = '';
-												// foreach ($scno as $key => $sc) {
-												// 	$sc_whole .= $sc."<br/>";
-												// }
+										<?php
+											if (isset($items)) {
+												$prev_sc_no = [];
+												array_push($prev_sc_no, $items[0]->sc_no);
+												$sc_no = '';
+												foreach ($items as $key => $item) {
+													if (!in_array($item->sc_no, $prev_sc_no)) {
+														$sc_no .= $item->sc_no.'</br>';
+													} else {
+														$sc_no = $item->sc_no.'</br>';
+													}
 
-												// echo $sc_whole;
-											} 
+													array_push($prev_sc_no, $item->sc_no);
+												}
+												echo $sc_no;
+											}
+											// if ($rm->sc_no == null) {
+											// 	echo '';
+											// } else {
+											// 	echo $rm->sc_no;
+											// 	// $scno = explode(',',$rm->sc_no);
+											// 	// $sc_whole = '';
+											// 	// foreach ($scno as $key => $sc) {
+											// 	// 	$sc_whole .= $sc."<br/>";
+											// 	// }
+
+											// 	// echo $sc_whole;
+											// } 
 										?>
 									</td>
 									<td width="12.3%">
-										<?php 
-											if ($rm->product_code == null) {
-												echo '';
-											} else {
-												echo $rm->description;
-												// $pc = explode(',',$rm->product_code);
-												// $pc_whole = '';
-												// foreach ($pc as $key => $prod_code) {
-												// 	$pc_whole .= $prod_code."<br/>";
-												// }
+										<?php
+											if (isset($items)) {
+												
+												$prev_description = [];
+												array_push($prev_description, $items[0]->description);
+												$description = '';
+												foreach ($items as $key => $item) {
+													if (!in_array($item->description, $prev_description)) {
+														$description .= $item->description.'</br>';
+													} else {
+														$description = $item->description.'</br>';
+													}
 
-												// echo $pc_whole;
-											} 
+													array_push($prev_description, $item->description);
+												}
+												echo $description;
+											}
+											// if ($rm->product_code == null) {
+											// 	echo '';
+											// } else {
+											// 	echo $rm->description;
+											// 	// $pc = explode(',',$rm->product_code);
+											// 	// $pc_whole = '';
+											// 	// foreach ($pc as $key => $prod_code) {
+											// 	// 	$pc_whole .= $prod_code."<br/>";
+											// 	// }
+
+											// 	// echo $pc_whole;
+											// } 
 										?>
 									</td>
-									<td width="4.3%">{{ ($rm->assign_qty == null)? '': $rm->assign_qty}}</td>
+									<td width="4.3%">
+										<?php
+											if (isset($items)) {
+												$assign_qty = 0;
+												foreach ($items as $key => $item) {
+													$assign_qty += (double)$item->assign_qty;
+												}
+
+												echo $assign_qty;
+											}
+										?>
+									</td>
 								</tr>
 							@endforeach
 							@while ($row <= 20)

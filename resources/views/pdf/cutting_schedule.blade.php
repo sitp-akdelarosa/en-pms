@@ -91,7 +91,17 @@ for ($x = 1; $x <= $page; $x++) {
                             <td>{{ $rm->item }}</td>
                             <td>{{ $rm->class }}</td>
                             <td>{{ $rm->lot_no }}</td>
-                            <td>{{ $rm->sc_no }}</td>
+                            <td>
+                                <?php
+                                    $sc = '';
+                                    if (strpos($rm->sc_no, ',') !== false) {
+                                        $sc = str_replace(',','</br>',$rm->sc_no);
+                                        echo $sc;
+                                    } else {
+                                        echo $rm->sc_no;
+                                    }
+                                ?>
+                            </td>
                             <td>{{ $rm->jo_qty }}</td>
                             <td>{{ $rm->cut_weight }}</td>
                             <td>{{ $rm->cut_length }}</td>

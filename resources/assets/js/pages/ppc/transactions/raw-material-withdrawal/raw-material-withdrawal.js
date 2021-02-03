@@ -515,6 +515,9 @@ function getRawMaterialList(trans_no, to = '') {
 		} else {
 			rawMaterial = [];
 			var count = rawMaterial.length + 1;
+			var create_date = data.details[0].created_at;
+			var print_date = create_date.slice(0,-9);
+
 			$.each(data.details, function (i, x) {
 				rawMaterial.push({
 					count: count,
@@ -553,9 +556,14 @@ function getRawMaterialList(trans_no, to = '') {
 				$('#update_user').val(x.update_user);
 				$('#updated_at').val(x.updated_at);
 			});
+
 			$('#id').val(data.trans_id);
 			$('#trans_no').val(data.trans_no);
 			$('#status').val(data.istatus);
+
+			console.log(print_date);
+
+			$('#date').val(print_date);
 
 			buttonState(data.istatus);
 			
