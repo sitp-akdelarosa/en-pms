@@ -443,6 +443,10 @@ Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', '
 	Route::group(['prefix' => 'reports'], function () {
 		Route::get('/travel-sheet-status', 'PPC\Reports\TravelSheetStatusController@index')
 			->name('reports.travel-sheet-status');
+		Route::post('/travel-sheet-status/search_travelsheet', 'PPC\Reports\TravelSheetStatusController@search_travelsheet')
+			->name('reports.travel-sheet-status.search_travelsheet');
+		Route::get('/travel-sheet-status/downloadExcel', 'PPC\Reports\TravelSheetStatusController@downloadExcel')
+			->name('reports.travel-sheet-status.downloadExcel');
 
 		Route::get('/transfer-item', 'PPC\Reports\TransferItemController@index')
 			->name('reports.transfer-item');

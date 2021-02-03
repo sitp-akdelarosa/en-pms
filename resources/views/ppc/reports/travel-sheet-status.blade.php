@@ -13,7 +13,7 @@
         <div class="col-lg-12">
         	 <div class="box">
                 <div class="box-body">
-	            	<form method="post" action="" id="frm_travel_sheet_status">
+	            	<form method="post" action="" id="frm_travel_sheet_status" action="{{ url('/ppc/reports/travel-sheet-status/search_travelsheet') }}">
 	                    @csrf
 	                    <input type="hidden" name="id" class="clear" id="id">
 	            		<div class="row mb-5">
@@ -82,14 +82,17 @@
 	                                            <input type="checkbox" class="table-checkbox check_all">
 	                                        </th>
 	                                        <th width="5%"></th>
-		            						<th>Division Code</th>
-		            						<th>Leader</th>
-		            						<th>Process</th>
-		            						<th>Unprocess</th>
-		            						<th>Good</th>
-		            						<th>Rework</th>
-		            						<th>Scrap</th>
-		            						<th>Convert</th>
+		            						<th>SC #</th>
+		            						<th>JO #</th>
+		            						<th>Product Code</th>
+		            						<th>Description</th>
+		            						<th>Based Qty</th>
+		            						<th>Prod Output Qty</th>
+		            						<th>Remaining</th>
+		            						<th>Current Process</th>
+		            						<th>Status</th>
+		            						<th>FG Stocks</th>
+		            						<th>CRUDE Stocks</th>
 		            					</tr>
 		            				</thead>
 		            				<tbody id="tbl_travel_sheet_status_body"></tbody>
@@ -120,3 +123,16 @@
 
 </section>
 @endsection
+@push('scripts')
+    <script type="text/javascript">
+        var token = $('meta[name="csrf-token"]').attr('content');
+        var code_permission = 'R0004';
+    </script>	
+	<script type="text/javascript">
+        var token = $('meta[name="csrf-token"]').attr('content');
+        var code_permission = 'R0004';
+        var downloadExcel = "{{ url('/ppc/reports/travel-sheet-status/downloadExcel') }}";
+    </script>
+	<script type="text/javascript" src="{{ asset('/js/pages/ppc/reports/travel-sheet-status.js') }}"></script>
+
+@endpush
