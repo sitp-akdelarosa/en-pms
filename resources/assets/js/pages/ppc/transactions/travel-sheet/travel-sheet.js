@@ -368,7 +368,7 @@ $( function() {
 				sameProcess = 1
 			}
 		});
-		if (sameProcess == 0) {
+		//if (sameProcess == 0) {
 			if ($('#process').val() == '') {
 				msg("Please Select a Process.", 'warning');
 			} else {
@@ -421,9 +421,9 @@ $( function() {
 					makeProcessList(process_array,null);
 				});
 			}
-		} else {
-			msg("The Process already existing.", "failed");
-		}
+		// } else {
+		// 	msg("The Process already existing.", "failed");
+		// }
 		$('#cancel_process').hide();
 	});
 
