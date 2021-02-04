@@ -31,8 +31,9 @@ $( function() {
     });
 
     $('#process').on('change', function() {
-        DivisionCode($(this).val(),'');
+        DivisionCode($(this).val(),$(this).attr('data-div_code'));
         checkIfSameDivCode();
+        $('#process_id').val($(this).find("option:selected").attr('data-process_id'));
     });
 
     $('#div_code').on('change', function() {
@@ -120,6 +121,7 @@ $( function() {
         data['output_status'] = $(this).attr('data-output_status');
         data['transfer_date'] = $(this).attr('data-transfer_date');
         data['transfer_time'] = $(this).attr('data-transfer_time');
+        data['process_id'] = $(this).attr('data-process_id');
         data.length = 1;
 
         getJOdetails($(this).attr('data-jo_no'),data);
@@ -148,6 +150,7 @@ $( function() {
         $('#current_process_name_r').val($(this).attr('data-current_process_name'));
         $('#current_process_name_r').val($(this).attr('data-current_process_name'));
         $('#status_r').val($(this).attr('data-status'));
+        $('#process_id_r').val($(this).attr('data-process_id'));
         $('#note').val($(this).attr('data-remarks'));
         $('#modal_receive_item').modal('show');
     });
@@ -159,7 +162,7 @@ $( function() {
         } else if ($('#qty_r').val() < 0){
             msg("Please Input valid number","warning");
         } else {
-            $('.lodaingOverlay-modal').show();
+            $('.loadingOverlay-modal').show();
             $.ajax({
                 dataType: 'json',
                 type:'POST',
@@ -174,7 +177,7 @@ $( function() {
             }).fail( function(xhr, textStatus, errorThrown) {
                 ErrorMsg(xhr);
             }).always( function() {
-                $('.lodaingOverlay-modal').hide();
+                $('.loadingOverlay-modal').hide();
             });
         }
     });
@@ -389,10 +392,12 @@ function getJOdetails(jo_no,edit) {
                 $('#transfer_date').val(edit['transfer_date']);
                 $('#transfer_time').val(edit['transfer_time']);
 
-                DivisionCode(edit['process'],edit['user_div_code']);
+                $('#process_id').val(edit['process_id']);
+
+                getDivCodeProcess(edit['jo_no'],edit['process'], edit['div_code']);
                 getProcessQty(edit['process'],edit['jo_no'],edit['current_process'], edit['output_status']);
 
-                getDivCodeProcess(edit['jo_no'],edit['process']);
+                //DivisionCode(edit['process'],edit['user_div_code']);
             }
         }
             
@@ -403,7 +408,7 @@ function getJOdetails(jo_no,edit) {
     });
 }
 
-function getDivCodeProcess(jo_no,process) {
+function getDivCodeProcess(jo_no,process,div_code) {
     $('.lodaingOverlay-modal').show();
     var options = '<option value=""></option>';
     $('#process').html(options);
@@ -415,13 +420,19 @@ function getDivCodeProcess(jo_no,process) {
     }).done(function(data, textStatus, xhr) {
         $.each(data, function(i, x) {
             if (x.process == process) {
-                options = "<option value='"+x.process+"' selected>"+x.process+"</option>";
+                options = "<option data-process_id='"+x.process_id+"' value='"+x.process+"' selected>"+x.process+"</option>";
             } else {
-                options = "<option value='"+x.process+"'>"+x.process+"</option>";
+                options = "<option data-process_id='"+x.process_id+"' value='"+x.process+"'>"+x.process+"</option>";
             }
             $('#process').append(options);
         });
+
+        if (div_code !== '') {
+            $('#process').attr('data-div_code',div_code);
+        }
+
         $('#process').trigger('change');
+        // after change DivisionCode() will execute
     }).fail(function(xhr, textStatus, errorThrown) {
         ErrorMsg(xhr);
     }).always( function() {
@@ -429,7 +440,8 @@ function getDivCodeProcess(jo_no,process) {
     });
 }
 
-function DivisionCode(process,div_code) {
+function DivisionCode(process,div_code_id) {
+    $('.lodaingOverlay-modal').show();
     var opt = "<option value=''></option>";
     $('#div_code').html(opt);
     $.ajax({
@@ -440,7 +452,7 @@ function DivisionCode(process,div_code) {
     }).done(function(data, textStatus, xhr) {
         var select = '';
         $.each(data, function(i, x) {
-            if (x.div_code == div_code) {
+            if (x.id == div_code_id) {
                 select = 'selected';
             }else if($('#userDivCode').val() == x.div_code){
                  select = 'selected';
@@ -449,7 +461,9 @@ function DivisionCode(process,div_code) {
             select = '';
         });
     }).fail(function(xhr, textStatus, errorThrown) {
-        console.log(errorThrown);
+        ErrorMsg(xhr);
+    }).always( function() {
+        $('.lodaingOverlay-modal').hide();
     });
 }
 

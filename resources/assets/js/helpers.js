@@ -701,6 +701,8 @@ function ErrorMsg(xhr) {
 
 		$('.loadingOverlay').hide();
 		$('.loadingOverlay-modal').hide();
+	} else if (xhr.status == 422) {
+		showErrors(xhr.responseJSON.errors);
 	}
 	
 }
