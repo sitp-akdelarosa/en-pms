@@ -106,7 +106,9 @@ $(function () {
     }).done(function (data, textStatus, xhr) {
       if (data.status == 'failed') {
         msg(data.msg, data.status);
+        $("#btnDownload").attr("disabled", true);
       } else {
+        $("#btnDownload").attr("disabled", false);
         makeOperatorTable(data.ppo);
       }
     }).fail(function (xhr, textStatus, errorThrown) {
@@ -114,6 +116,10 @@ $(function () {
     }).always(function () {
       $('.loadingOverlay').hide();
     });
+  });
+  $('#btnDownload').on('click', function () {
+    alert("");
+    window.location.href = downloadExcel + "?date_from=" + $('#date_from').val() + "&date_to=" + $('#date_to').val() + "&search_operator=" + $('#search_operator').val();
   });
 });
 
@@ -165,7 +171,7 @@ function makeOperatorTable(arr) {
       name: 'updated_at'
     }],
     fnDrawCallback: function fnDrawCallback() {
-      $("#tbl_travel_sheet").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
+      $("#tbl_operator").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
     },
     initComplete: function initComplete() {
       $('.loadingOverlay').hide();

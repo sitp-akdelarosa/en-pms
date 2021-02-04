@@ -443,6 +443,10 @@ Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', '
 	Route::group(['prefix' => 'reports'], function () {
 		Route::get('/travel-sheet-status', 'PPC\Reports\TravelSheetStatusController@index')
 			->name('reports.travel-sheet-status');
+		Route::post('/travel-sheet-status/search_travelsheet', 'PPC\Reports\TravelSheetStatusController@search_travelsheet')
+			->name('reports.travel-sheet-status.search_travelsheet');
+		Route::get('/travel-sheet-status/downloadExcel', 'PPC\Reports\TravelSheetStatusController@downloadExcel')
+			->name('reports.travel-sheet-status.downloadExcel');
 
 		Route::get('/transfer-item', 'PPC\Reports\TransferItemController@index')
 			->name('reports.transfer-item');
@@ -540,9 +544,15 @@ Route::group(['prefix' => 'prod', 'middleware' => ['ajax-session-expired', 'auth
 			->name('prod.reports.operators-output');
 		Route::post('/operators-output/search_operator', 'Production\Reports\OperatorsOutputController@search_operator')
 			->name('prod.reports.operators-output.search_operator');
+		Route::get('/operators-output/downloadExcel', 'Production\Reports\OperatorsOutputController@downloadExcel')
+			->name('prod.reports.operators-output.downloadExcel');
 
 		Route::get('/summary-report', 'Production\Reports\SummaryReportController@index')
 			->name('prod.reports.production-summary-report');
+		Route::post('/summary-report/search_summart_report', 'Production\Reports\SummaryReportController@search_summart_report')
+			->name('prod.reports.production-summary-report.search_summart_report');
+		Route::get('/summary-report/downloadExcel', 'Production\Reports\SummaryReportController@downloadExcel')
+			->name('prod.reports.production-summary-report.downloadExcel');
 	});
 });
 

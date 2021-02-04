@@ -59,6 +59,9 @@ foreach ($user_accesses as $user_access){
 							<div class="col-md-1">
                             	<button type="submit" class="btn btn-block bg-blue   permission-button">Search</button>
                             </div>
+							<div class="col-md-1">
+                            	<button type="button" id="btnDownload" class="btn btn-block bg-green  permission-button" disabled>Download</button>
+                            </div>
 
                         </div>
                     </form>
@@ -89,6 +92,12 @@ foreach ($user_accesses as $user_access){
     <script type="text/javascript">
         var token = $('meta[name="csrf-token"]').attr('content');
         var code_permission = 'R0004';
+    </script>	
+	<script type="text/javascript">
+        var token = $('meta[name="csrf-token"]').attr('content');
+        var code_permission = 'R0004';
+        var downloadExcel = "{{ url('/prod/reports/operators-output/downloadExcel') }}";
     </script>
     <script type="text/javascript" src="{{ asset('/js/pages/production/reports/operators-output.js') }}"></script>
+
 @endpush

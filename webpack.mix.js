@@ -145,4 +145,5 @@ mix.js('resources/assets/js/app.js', 'public/js')
     .js('resources/assets/js/pages/ppc/reports/travel-sheet-status.js', 'public/js/pages/ppc/reports/')
 
     .js('resources/assets/js/pages/production/reports/operators-output.js', 'public/js/pages/production/reports')
+    .js('resources/assets/js/pages/production/reports/summary-report.js', 'public/js/pages/production/reports')
     
