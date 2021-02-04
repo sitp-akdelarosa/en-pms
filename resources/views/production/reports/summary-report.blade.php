@@ -18,7 +18,7 @@ foreach ($user_accesses as $user_access){
     }
 ?>
 <section class="content-header">
-    <h1>Operators Output</h1>
+    <h1>Production Summary Report</h1>
 </section>
 <section class="content">
 	<div class="row justify-content-center">

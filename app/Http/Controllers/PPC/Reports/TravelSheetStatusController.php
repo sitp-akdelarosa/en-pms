@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HelpersController;
 use App\Http\Controllers\Admin\AuditTrailController;
+use DB;
+use Excel;
 
 class TravelSheetStatusController extends Controller
 {
@@ -85,60 +87,72 @@ class TravelSheetStatusController extends Controller
                 });
 
                 $sheet->cell('A4', function($cell) {
+                    $cell->setAlignment('center');
                     $cell->setValue("#");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
             
                 $sheet->cell('B4', function($cell) {
+                    $cell->setAlignment('center');
                     $cell->setValue("SC#");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
 
                 $sheet->cell('C4', function($cell) {
+                    $cell->setAlignment('center');
                     $cell->setValue("JO#");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
 
                 $sheet->cell('D4', function($cell) {
+                    $cell->setAlignment('center');
                     $cell->setValue("ProductCode /C");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
 
                 $sheet->cell('E4', function($cell) {
+                    $cell->setAlignment('center');
                     $cell->setValue("Description");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
 
                 $sheet->cell('F4', function($cell) {
+                    $cell->setAlignment('center');
                     $cell->setValue("Based Qty");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
 
                 $sheet->cell('G4', function($cell) {
+                    $cell->setAlignment('center');
                     $cell->setValue("Prod Output Qty");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
 
                 $sheet->cell('H4', function($cell) {
+                    $cell->setAlignment('center');
                     $cell->setValue("Remaining");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
 
                 $sheet->cell('I4', function($cell) {
+                    $cell->setAlignment('center');
                     $cell->setValue("Current Process");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
 
                 $sheet->cell('J4', function($cell) {
+                    $cell->setAlignment('center');
                     $cell->setValue("Status");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
 
                 $sheet->cell('K4', function($cell) {
+                    $cell->setAlignment('center');
                     $cell->setValue("FG Stocks");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
                 $sheet->cell('L4', function($cell) {
+                    $cell->setAlignment('center');
                     $cell->setValue("CRUDE Stocks");
                     $cell->setBorder('thick','thick','thick','thick');
                 });

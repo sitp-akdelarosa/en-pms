@@ -25,7 +25,6 @@ $( function() {
     });
 
     $('#btnDownload').on('click', function () {
-        alert("");
 		window.location.href = downloadExcel+"?date_from="+$('#date_from').val() +"&date_to="+$('#date_to').val();
 	});
 	
@@ -51,25 +50,25 @@ function makeSummaryTable(arr) {
         pageLength: 10,
         order: [[9,'desc']],
         columns: [ 
-            { data: 'date', name: 'date'},
-            { data: 'mc', name: 'mc'},
-            { data: 'jo_no', name: 'jo_no'},
-            { data: 'item', name: 'item'},
+            { data: 'date_upload', name: 'date_upload'},
+            { data: 'sc_no', name: 'sc_no'},
+            { data: 'prod_code', name: 'prod_code'},
+            { data: 'description', name: 'description'},
             { data: 'alloy', name: 'alloy'},
             { data: 'size', name: 'size'},
             { data: 'class', name: 'class'},
             { data: 'heatno', name: 'heatno'},
-            { data: 'total', name: 'total'},
-            { data: 'oGood', name: 'oGood'},
-            { data: 'oRework', name: 'oRework'},
-            { data: 'oScrap', name: 'oScrap'},
-            { data: 'weight', name: 'weight'},
-            { data: 'wGood', name: 'wGood'},
-            { data: 'wRework', name: 'wRework'},
-            { data: 'wScrap', name: 'wScrap'},
-            { data: 'rRework', name: 'rRework'},
-            { data: 'rScrap', name: 'rScrap'},
-            { data: 'jo_no', name: 'jo_no'},
+            { data: 'quantity', name: 'quantity'},
+            { data: 'good', name: 'good'},
+            { data: 'rework', name: 'rework'},
+            { data: 'scrap', name: 'scrap'},
+            { data: 'finish_weight', name: 'finish_weight'},
+            { data: 'wgood', name: 'wgood'},
+            { data: 'wrework', name: 'wrework'},
+            { data: 'wscrap', name: 'wscrap'},
+            { data: 'rrework', name: 'rrework'},
+            { data: 'rscrap', name: 'rscrap'},
+            { data: 'jono', name: 'jono'},
         ],
         fnDrawCallback: function() {
             $("#tbl_summary").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");

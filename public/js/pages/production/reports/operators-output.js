@@ -171,7 +171,7 @@ function makeOperatorTable(arr) {
       name: 'updated_at'
     }],
     fnDrawCallback: function fnDrawCallback() {
-      $("#tbl_travel_sheet").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
+      $("#tbl_operator").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
     },
     initComplete: function initComplete() {
       $('.loadingOverlay').hide();

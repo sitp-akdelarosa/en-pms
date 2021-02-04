@@ -107,37 +107,6 @@
 					
     	</div>
 	</div>
-	
-	<div class="row justify-content-center">
-		<div class="col-lg-10">
-			<div class="box">
-				<div class="box-body">
-					<div class="table-responsive">
-						<table class="table table-sm table-hover table-bordered table-striped nowrap" id="tbl_travel_sheet_status" style="width:100%">
-							<thead class="thead-dark">
-								<tr>
-									<th width="5%"></th>
-									<th>SC#</th>
-									<th>JO#</th>
-									<th>Product Code</th>
-									<th>Description</th>
-									<th>Based Qty</th>
-									<th>Prod. Output Qty</th>
-									<th>Remaining Qty</th>
-									<th>Current Process</th>
-									<th>Status</th>
-									<th>FG Stocks</th>
-									<th>CRUDE Stocks</th>
-								</tr>
-							</thead>
-							<tbody id="tbl_travel_sheet_status_body"></tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
     <div class="row">
 		<div class="col-md-12">
 			<div class="row justify-content-center">
@@ -168,7 +137,6 @@
 
 @endsection
 @push('scripts')
-<<<<<<< HEAD
     <script type="text/javascript">
         var token = $('meta[name="csrf-token"]').attr('content');
         var code_permission = 'R0004';
@@ -179,12 +147,4 @@
         var downloadExcel = "{{ url('/ppc/reports/travel-sheet-status/downloadExcel') }}";
     </script>
 	<script type="text/javascript" src="{{ asset('/js/pages/ppc/reports/travel-sheet-status.js') }}"></script>
-
-=======
-	<script type="text/javascript">
-		var token = $('meta[name="csrf-token"]').attr('content');
-		var code_permission = "R0001";
-	</script>
-	<script type="text/javascript" src="{{ asset('/js/pages/ppc/reports/travel-sheet-status.js') }}"></script>
->>>>>>> 18fbf2d3b9d530a9716b3065cc9438a93b4066a4
 @endpush

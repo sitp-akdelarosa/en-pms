@@ -24,6 +24,7 @@
     "/js/pages/ppc/transactions/upload-orders/upload-orders.js": "/js/pages/ppc/transactions/upload-orders/upload-orders.js",
     "/js/pages/production/dashboard/dashboard.js": "/js/pages/production/dashboard/dashboard.js",
     "/js/pages/production/reports/operators-output.js": "/js/pages/production/reports/operators-output.js",
+    "/js/pages/production/reports/summary-report.js": "/js/pages/production/reports/summary-report.js",
     "/js/pages/production/transactions/production-output/production-output.js": "/js/pages/production/transactions/production-output/production-output.js",
     "/js/pages/production/transactions/transfer-items/transfer-items.js": "/js/pages/production/transactions/transfer-items/transfer-items.js",
     "/js/pages/profile.js": "/js/pages/profile.js",
