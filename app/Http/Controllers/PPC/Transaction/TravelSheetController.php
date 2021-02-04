@@ -394,25 +394,34 @@ class TravelSheetController extends Controller
         }    
         ProdTravelSheet::where('jo_no',$jo_no)->delete();
 
-        $travel_sheet = DB::table('ppc_pre_travel_sheet_products as tsp')
-                            ->join('v_jo_list as ts','tsp.jo_no','=','ts.jo_no')
-                            ->where('tsp.jo_no',$jo_no)
-                            ->select(
-                                DB::raw('tsp.pre_travel_sheet_id as id'),
-                                DB::raw('tsp.prod_code as prod_code'),
-                                DB::raw('tsp.issued_qty_per_sheet as issued_qty'),
-                                DB::raw('tsp.jo_sequence as jo_sequence'),
-                                DB::raw('ts.jo_no as jo_no'),
-                                DB::raw('tsp.sc_no as sc_no'),
-                                DB::raw('ts.description as description'),
-                                DB::raw('ts.back_order_qty as order_qty'),
-                                DB::raw('ts.sched_qty as sched_qty'),
-                                DB::raw('ts.material_used as material_used'),
-                                DB::raw('ts.material_heat_no as material_heat_no'),
-                                DB::raw('ts.lot_no as prod_heat_no'),
-                                DB::raw("IF(LEFT(ts.product_code,1) = 'Z','Finish','Semi-Finish') as type")
-                            )
-                            ->get();
+        $travel_sheet = DB::select("select tsp.pre_travel_sheet_id as id,
+                                            tsp.prod_code as prod_code,
+                                            tsp.issued_qty_per_sheet as issued_qty,
+                                            tsp.jo_sequence as jo_sequence,
+                                            ts.jo_no as jo_no,
+                                            tsp.sc_no as sc_no,
+                                            ts.description as description,
+                                            SUM(ts.back_order_qty) as order_qty,
+                                            SUM(ts.sched_qty) as sched_qty,
+                                            ts.material_used as material_used,
+                                            ts.material_heat_no as material_heat_no,
+                                            ts.lot_no as prod_heat_no,
+                                            IF(LEFT(ts.product_code,1) = 'Z','Finish','Semi-Finish') as type 
+                                    from ppc_pre_travel_sheet_products as tsp
+                                    join v_jo_list as ts
+                                    on tsp.jo_no = ts.jo_no
+                                    where tsp.jo_no = '".$jo_no."'
+                                    GROUP BY tsp.pre_travel_sheet_id,
+                                            tsp.prod_code,
+                                            tsp.issued_qty_per_sheet,
+                                            tsp.jo_sequence,
+                                            ts.jo_no,
+                                            tsp.sc_no,
+                                            ts.description,
+                                            ts.material_used,
+                                            ts.material_heat_no,
+                                            ts.lot_no,
+                                            ts.product_code");
 
         foreach ($travel_sheet as $key => $ts) {
             $jo = ProdTravelSheet::create([
