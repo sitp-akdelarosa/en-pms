@@ -154,8 +154,8 @@ $(function () {
     } else if (parseInt($('#unprocessed').val()) < parseInt($('#UnprocessTransfer').val())) {
       totalqty -= parseInt($('#unprocessed').val());
       msg('The total of pending qty is greather than ' + totalqty + ' to # of item to transfer', 'warning');
-    } else if (parseFloat($('#qty').val()) !== parseFloat($('#unprocessed').val())) {
-      msg("Partial Transfer is not allowed", "warning");
+    } else if (parseFloat($('#qty').val()) > parseFloat($('#unprocessed').val())) {
+      msg("You cannot transfer more quantity than the available quantity.", "warning");
     } else if ($('#qty').val() < 0) {
       msg("Please Input valid number", "warning");
     } else {
