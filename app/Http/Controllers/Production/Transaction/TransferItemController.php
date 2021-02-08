@@ -96,7 +96,11 @@ class TransferItemController extends Controller
                 $items->receive_qty = 0;
                 $items->output_status = $req->ostatus;
                 $items->date_transfered = $trans_date;
-                $items->process_id = $req->process_id;
+
+                if (strtoupper($req->status) !== 'REWORK') {
+                    $items->process_id = $req->process_id;
+                }
+                
                 $items->update_user = Auth::user()->id;
                 $items->updated_at = date('Y-m-d h:i:s');
                 $items->update();
@@ -152,7 +156,11 @@ class TransferItemController extends Controller
             $items->item_status = 0;
             $items->output_status = $req->ostatus;
             $items->date_transfered = $trans_date;
-            $items->process_id = $req->process_id;
+
+            if (strtoupper($req->status) !== 'REWORK') {
+                $items->process_id = $req->process_id;
+            }
+            
             $items->create_user = Auth::user()->id;
             $items->update_user = Auth::user()->id;
             $items->created_at = date('Y-m-d h:i:s');
@@ -510,18 +518,20 @@ class TransferItemController extends Controller
         }
 
         $data = ProdTravelSheetProcess::where('id' , $req->process_id)
-                // ->where('div_code',$req->user_div_code)
-                // ->where('process',$req->process)
+                ->where('div_code',$req->user_div_code)
+                ->where('process',$req->process)
                 ->update([
                     'unprocessed' => DB::raw("`unprocessed` + ".$qty)
                     // strtolower($req->status) => DB::raw( strtolower($req->status)."+".$qtyprocess)
                 ]);
+
+        $hasNewProcess = 0;
         
         //Inserting new process if different Div Code and the process not yet existing in that div code
         if($data == 0){
             $tsp = ProdTravelSheetProcess::where('travel_sheet_id' , $jo_no->id)->where('process' , $req->process)->first();
 
-            $data = ProdTravelSheetProcess::create([
+            $newProcess = ProdTravelSheetProcess::insertGetId([
                     'travel_sheet_id' => $jo_no->id,
                     'unprocessed' => $req->qty,
                     'process' => $req->process,
@@ -533,6 +543,8 @@ class TransferItemController extends Controller
                     'create_user' => Auth::user()->id,
                     'update_user' => Auth::user()->id,
                 ]);
+
+            $hasNewProcess++;
         }
 
         //Update qty of the unprocessed in production output
@@ -552,6 +564,11 @@ class TransferItemController extends Controller
                                 ->update([
                                     'is_current' => 0
                                 ]);
+        }
+
+        // if has new process inserted, update the transfer data
+        if ($hasNewProcess > 0) {
+            $item->process_id = $newProcess;
         }
         
         $item->receive_remarks = $req->remarks;

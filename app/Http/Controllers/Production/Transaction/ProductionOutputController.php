@@ -486,12 +486,15 @@ class ProductionOutputController extends Controller
 
     private function deductUnprocessed($req)
     {
-        $unprocessed = $req->unprocessed;
-        $good = $req->good;
-        $rework = $req->rework;
-        $scrap = $req->scrap;
+        $unprocessed = ((int)$req->unprocessed == 0)? 0:(int)$req->unprocessed;
+        $good = ((int)$req->good == 0)? 0:(int)$req->good;
+        $rework = ((int)$req->rework == 0)? 0:(int)$req->rework;
+        $scrap = ((int)$req->scrap == 0)? 0:(int)$req->scrap;
+        $convert = ((int)$req->convert == 0)? 0:(int)$req->convert;
+        $alloy_mix = ((int)$req->alloy_mix == 0)? 0:(int)$req->alloy_mix;
+        $nc = ((int)$req->nc == 0)? 0:(int)$req->nc;
         
-        $sum = $good + $rework + $scrap;
+        $sum = $good + $rework + $scrap + $convert + $alloy_mix + $nc;
         $diff = $unprocessed - $sum;
         return $diff;
     }
