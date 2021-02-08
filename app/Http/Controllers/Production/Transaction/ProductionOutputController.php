@@ -95,7 +95,7 @@ class ProductionOutputController extends Controller
         $prod_output->travel_sheet_process_id = $req->travel_sheet_process_id;
         $prod_output->jo_no = $req->jo_no;
 
-        $prod_output->unprocessed = $this->deductUnprocessed($req->unprocessed,$req->good,$req->rework,$req->scrap);
+        $prod_output->unprocessed = $this->deductUnprocessed($req);
         $prod_output->good = $req->good;
         $prod_output->rework = $req->rework;
         $prod_output->scrap = $req->scrap;
@@ -114,14 +114,14 @@ class ProductionOutputController extends Controller
             $status = 0;
             $end_date = null;
             // check if the inputed quantity covers the unprocess quantity 
-            if ($this->deductUnprocessed($req->unprocessed,$req->good,$req->rework,$req->scrap) == 0) {
+            if ($this->deductUnprocessed($req) == 0) {
                 // assign end date of the process
                 $end_date = date('Y-m-d H:i:s');
             }
 
             ProdTravelSheetProcess::where('id',$req->travel_sheet_process_id)
                                     ->update([
-                                        'unprocessed' => $this->deductUnprocessed($req->unprocessed,$req->good,$req->rework,$req->scrap),
+                                        'unprocessed' => $this->deductUnprocessed($req),
                                         'good' => DB::raw("`good` + ".$prod_output->good),
                                         'rework' => DB::raw("`rework` + ".$prod_output->rework),
                                         'scrap' => DB::raw("`scrap` + ".$prod_output->scrap),
@@ -192,7 +192,7 @@ class ProductionOutputController extends Controller
                                     ->where('travel_sheet_process_id',$req->travel_sheet_process_id)->get();
 
             // get unprocess qty
-            $unprocessed = $this->deductUnprocessed($req->unprocessed,$req->good,$req->rework,$req->scrap);
+            $unprocessed = $this->deductUnprocessed($req);
 
             // get travel sheet data
             $travel_sheet = $this->getTravelSheetData($req->jo_sequence);
@@ -401,6 +401,8 @@ class ProductionOutputController extends Controller
         foreach ($req->chkArray as $key => $value) {
 
             $prod_output = ProdProductionOutput::where('id',$value["id"])->where('deleted',0)->first();
+
+            // return outputs to unprocess
             ProdTravelSheetProcess::where('id',$value["travel_sheet_process_id"])
                                     ->update([
                                         'unprocessed' => DB::raw("`unprocessed` + ".$prod_output->good." + ".$prod_output->rework." + ".$prod_output->scrap),
@@ -432,12 +434,12 @@ class ProductionOutputController extends Controller
             //     $this->destroyFGSummary($prod_travel->travel_sheet_id,$prod_output->good);
             // }
 
-            ProdProductionOutput::where('id',$value["id"])
-                                    ->update([
-                                        'deleted' => 1,
-                                        'delete_user' => Auth::user()->id,
-                                        'deleted_at' => date('Y-m-d H:i:s')
-                                    ]);
+            ProdProductionOutput::where('id',$value["id"])->delete();
+                                    // ->update([
+                                    //     'deleted' => 1,
+                                    //     'delete_user' => Auth::user()->id,
+                                    //     'deleted_at' => date('Y-m-d H:i:s')
+                                    // ]);
         }
 
         $ProdTravelSheet = ProdTravelSheet::where('id',$req->chkArray[0]['travel_sheet_id'])->first();
@@ -482,8 +484,13 @@ class ProductionOutputController extends Controller
         return $data;
     }
 
-    private function deductUnprocessed($unprocessed,$good,$rework,$scrap)
+    private function deductUnprocessed($req)
     {
+        $unprocessed = $req->unprocessed;
+        $good = $req->good;
+        $rework = $req->rework;
+        $scrap = $req->scrap;
+        
         $sum = $good + $rework + $scrap;
         $diff = $unprocessed - $sum;
         return $diff;
