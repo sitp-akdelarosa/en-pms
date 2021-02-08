@@ -446,7 +446,7 @@ class TransferItemController extends Controller
         $current_processes = DB::table('prod_travel_sheet_processes')
                         ->whereIn('div_code',$div_codes)
                         ->where('travel_sheet_id',$id)
-                        ->where('is_current','<>',0)
+                        /* ->where('is_current','<>',0) */
                         ->select('id','process')
                         ->groupBy('id','process')
                         ->orderBy('id','asc')
