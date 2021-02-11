@@ -126,12 +126,10 @@ class TravelSheetController extends Controller
                                                     tsp.sequence
                                             order by sequence asc");
             } else {
-                $product = DB::table('ppc_product_codes')->select('id')->where('product_code',$req->prod_code)->first();
-                $prod_processes = PpcProductProcess::where('prod_id',$product->id)
-                                    ->select('id','process','sequence','remarks')
-                                    ->groupBy('id','process','sequence','remarks')
-                                    ->orderBy('sequence','asc')
-                                    ->get();
+                //$product = DB::table('ppc_product_codes')->select('id')->where('product_code',$req->prod_code)->first();
+                $prod_processes = DB::select(
+                                        DB::raw("CALL GET_product_processes('".$req->prod_code."')")
+                                    );
             }
             
         }else{
@@ -143,21 +141,13 @@ class TravelSheetController extends Controller
         }
 
         foreach ($prod_processes as $key => $process) {
+            $div_codes = DB::select(
+                                        DB::raw("CALL GET_division_codes_for_processes('".$process->process."',".Auth::user()->id.")")
+                                    );
             array_push($data,[
                 'id' => $process->id,
                 'process' => $process->process,
-                'div_code' => DB::select("SELECT d.div_code as div_code
-                                from ppc_division_processes as dp
-                                inner join ppc_divisions as d
-                                on d.id = dp.division_id
-                                inner join ppc_division_productlines as dpl
-                                on d.id = dpl.division_id
-                                inner join admin_assign_production_lines as pl
-                                on dpl.productline = pl.product_line
-                                where dp.process = '".$process->process."'
-                                AND pl.user_id = ".Auth::user()->id."
-                                AND d.is_disable = 0
-                                group by d.div_code"),
+                'div_code' => $div_codes,
                 'sequence' => $process->sequence,
                 'remarks' => $process->remarks
             ]);

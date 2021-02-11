@@ -98,10 +98,6 @@ $( function() {
 			.columns.adjust();
 	});
 
-	$('[data-toggle="popover"]').popover({
-		trigger: 'hover'
-	});
-
 	// notification controls
 	$('.view_notification').on('hover', function() {
 		$('#notification_bell').html('<i class="fa fa-bell"></i>');

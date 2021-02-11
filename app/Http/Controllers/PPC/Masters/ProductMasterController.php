@@ -78,9 +78,8 @@ class ProductMasterController extends Controller
                                     data-prod_type='".$data->prod_type."' 
                                     data-character_num='".$data->character_num."' 
                                     data-character_code='".$data->character_code."' 
-                                    data-description='".$data->description."' data-toggle='popover' 
-										data-content='This Button is to view/edit this assembly.' 
-										data-placement='right'>
+                                    data-description='".$data->description."'
+										title='This Button is to view/edit this assembly.'>
                                     <i class='fa fa-edit'></i>
                                     </button>";
                         })
@@ -498,17 +497,15 @@ class ProductMasterController extends Controller
                                         data-finish_weight='".$data->finish_weight."'
                                         data-create_user='".$data->create_user."'
                                         data-disabled='".$data->disabled."'
-                                        data-updated_at='".$data->updated_at."' data-toggle='popover' 
-										data-content='This Button is to Edit ".$data->product_code.".' 
-										data-placement='right'>
+                                        data-updated_at='".$data->updated_at."'
+										title='This Button is to Edit ".$data->product_code.".'>
                                         <i class='fa fa-edit'></i>
                                     </button>
                                     
                                     <button class='btn btn-sm bg-purple btn_assign_process' 
-                                    data-id='".$data->id."' data-prod_line='".$data->product_type."'
-                                    data-product_code='".$data->product_code."' data-toggle='popover' 
-										data-content='This Button is to Assign Process for ".$data->product_code.".' 
-										data-placement='right'>
+                                        data-id='".$data->id."' data-prod_line='".$data->product_type."'
+                                        data-product_code='".$data->product_code."'
+										title='This Button is to Assign Process for ".$data->product_code.".'>
                                     <i class='fa fa-refresh'></i>
                                     </button>";
                         })
