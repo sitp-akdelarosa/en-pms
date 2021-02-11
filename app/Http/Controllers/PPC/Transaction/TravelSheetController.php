@@ -126,9 +126,9 @@ class TravelSheetController extends Controller
                                                     tsp.sequence
                                             order by sequence asc");
             } else {
-                //$product = DB::table('ppc_product_codes')->select('id')->where('product_code',$req->prod_code)->first();
+                $product = DB::table('ppc_product_codes')->select('id')->where('product_code',$req->prod_code)->first();
                 $prod_processes = DB::select(
-                                        DB::raw("CALL GET_product_processes('".$req->prod_code."')")
+                                        DB::raw("CALL GET_product_processes(".$product->id.",'".$req->prod_code."')")
                                     );
             }
             
