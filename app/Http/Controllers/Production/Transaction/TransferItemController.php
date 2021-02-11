@@ -566,7 +566,7 @@ class TransferItemController extends Controller
                                 ]);
         }
 
-        // if has new process inserted, update the transfer data
+        // if has new process inserted, update the process_id of transfer data
         if ($hasNewProcess > 0) {
             $item->process_id = $newProcess;
         }
