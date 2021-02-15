@@ -218,7 +218,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td colspan="13" style="text-align: right">ISO Control No. {{ $iso_code }}</td>
+								<td colspan="13" style="text-align: right">{{ $iso_code }}</td>
 							</tr>
 						</tfoot>
 					</table>
