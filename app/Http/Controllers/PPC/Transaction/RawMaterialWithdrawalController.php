@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HelpersController;
 use App\Http\Controllers\Admin\AuditTrailController;
 use Illuminate\Support\Str;
+use App\AdminSettingIso;
 use App\PpcUpdateInventory;
 use App\PpcUploadOrder;
 use App\PpcRawMaterialWithdrawalInfo;
@@ -37,8 +38,13 @@ class RawMaterialWithdrawalController extends Controller
 
     public function index()
     {
+        $iso = AdminSettingIso::select('iso_name','iso_code')->where('iso_name','like','%WITHDRAW SLIP')->get();
         $user_accesses = $this->_helper->UserAccess();
-        return view('ppc.transaction.raw-material-withdrawal',['user_accesses' => $user_accesses]);
+
+        return view('ppc.transaction.raw-material-withdrawal',[
+                    'user_accesses' => $user_accesses,
+                    'iso' => $iso
+                ]);
     }
 
     public function getScNo()

@@ -58,6 +58,23 @@
                     </div>
                 </div>
 
+                <div class="form-group row">
+                    <div class="col-sm-12">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">ISO Code:</span>
+                            </div>
+                            <select class="form-control input-sm validate clear" name="iso" id="iso">
+                                @foreach ($iso as $i)
+                                    <option value="{{ $i->iso_code }}">{{ $i->iso_name }}</option>
+                                @endforeach
+                                
+                            </select>
+                            <div id="iso_feedback"></div>
+                        </div>
+                    </div>
+                </div>
+
                 <input type="hidden" name="print_format" id="print_format" value="material_withdrawal">
 
                 {{-- <div class="form-group row">
