@@ -4268,15 +4268,15 @@ $( function() {
 		var ExistProcess = 1;
 		if (chkArray.length > 0) {
 
-			$.each(chkArray, function(i, x) {
-				$.each(selected_process_arr, function(ii, xx) {
-					if(xx.process == x ) { 
-						ExistProcess = 0; 
-					}
-				});	
-			});
+			// $.each(chkArray, function(i, x) {
+			// 	$.each(selected_process_arr, function(ii, xx) {
+			// 		if(xx.process == x ) { 
+			// 			ExistProcess = 0; 
+			// 		}
+			// 	});	
+			// });
 
-			if(ExistProcess == 1) {
+			// if(ExistProcess == 1) {
 				if ($('#state').val() !== 'edit') {
 					$('#selected_set').val(setArray).trigger('change');
 					if ($('#state').val() == 'add') {
@@ -4298,9 +4298,9 @@ $( function() {
 				});
 				selectedProcessTable(selected_process_arr);
 				$('#selected_set_feedback').html("Reminder: If one of the selected set has saved processes, the saved processes will be overight with selected processes below.");
-			} else {
-				msg("The Process already existing on the Process Table." , "failed");
-			}
+			// } else {
+			// 	msg("The Process already existing on the Process Table." , "failed");
+			// }
 		} else {
 			msg("Please select at least 1 item." , "failed");
 		}

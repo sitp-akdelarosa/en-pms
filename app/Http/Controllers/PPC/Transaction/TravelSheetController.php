@@ -68,9 +68,15 @@ class TravelSheetController extends Controller
                     $TO = $FROM;
                 }
             }
+
+            $status = (int)$req->status;
+
+            if (is_null($req->status)) {
+                $status = "NULL";
+            }
             
             $data = DB::select(
-                        DB::raw("CALL GET_prod_sched_jo_list(".Auth::user()->id.",".$FROM.",".$TO.",".(int)$req->status.")")
+                        DB::raw("CALL GET_prod_sched_jo_list(".Auth::user()->id.",".$FROM.",".$TO.",".$status.")")
                     );
         } else {
 
