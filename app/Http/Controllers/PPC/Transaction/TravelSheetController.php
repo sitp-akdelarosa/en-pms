@@ -68,9 +68,15 @@ class TravelSheetController extends Controller
                     $TO = $FROM;
                 }
             }
+
+            $status = (int)$req->status;
+
+            if (is_null($req->status)) {
+                $status = "NULL";
+            }
             
             $data = DB::select(
-                        DB::raw("CALL GET_prod_sched_jo_list(".Auth::user()->id.",".$FROM.",".$TO.",".(int)$req->status.")")
+                        DB::raw("CALL GET_prod_sched_jo_list(".Auth::user()->id.",".$FROM.",".$TO.",".$status.")")
                     );
         } else {
 
@@ -127,11 +133,9 @@ class TravelSheetController extends Controller
                                             order by sequence asc");
             } else {
                 $product = DB::table('ppc_product_codes')->select('id')->where('product_code',$req->prod_code)->first();
-                $prod_processes = PpcProductProcess::where('prod_id',$product->id)
-                                    ->select('id','process','sequence','remarks')
-                                    ->groupBy('id','process','sequence','remarks')
-                                    ->orderBy('sequence','asc')
-                                    ->get();
+                $prod_processes = DB::select(
+                                        DB::raw("CALL GET_product_processes(".$product->id.",'".$req->prod_code."')")
+                                    );
             }
             
         }else{
@@ -143,21 +147,13 @@ class TravelSheetController extends Controller
         }
 
         foreach ($prod_processes as $key => $process) {
+            $div_codes = DB::select(
+                                        DB::raw("CALL GET_division_codes_for_processes('".$process->process."',".Auth::user()->id.")")
+                                    );
             array_push($data,[
                 'id' => $process->id,
                 'process' => $process->process,
-                'div_code' => DB::select("SELECT d.div_code as div_code
-                                from ppc_division_processes as dp
-                                inner join ppc_divisions as d
-                                on d.id = dp.division_id
-                                inner join ppc_division_productlines as dpl
-                                on d.id = dpl.division_id
-                                inner join admin_assign_production_lines as pl
-                                on dpl.productline = pl.product_line
-                                where dp.process = '".$process->process."'
-                                AND pl.user_id = ".Auth::user()->id."
-                                AND d.is_disable = 0
-                                group by d.div_code"),
+                'div_code' => $div_codes,
                 'sequence' => $process->sequence,
                 'remarks' => $process->remarks
             ]);
@@ -394,25 +390,34 @@ class TravelSheetController extends Controller
         }    
         ProdTravelSheet::where('jo_no',$jo_no)->delete();
 
-        $travel_sheet = DB::table('ppc_pre_travel_sheet_products as tsp')
-                            ->join('v_jo_list as ts','tsp.jo_no','=','ts.jo_no')
-                            ->where('tsp.jo_no',$jo_no)
-                            ->select(
-                                DB::raw('tsp.pre_travel_sheet_id as id'),
-                                DB::raw('tsp.prod_code as prod_code'),
-                                DB::raw('tsp.issued_qty_per_sheet as issued_qty'),
-                                DB::raw('tsp.jo_sequence as jo_sequence'),
-                                DB::raw('ts.jo_no as jo_no'),
-                                DB::raw('tsp.sc_no as sc_no'),
-                                DB::raw('ts.description as description'),
-                                DB::raw('ts.back_order_qty as order_qty'),
-                                DB::raw('ts.sched_qty as sched_qty'),
-                                DB::raw('ts.material_used as material_used'),
-                                DB::raw('ts.material_heat_no as material_heat_no'),
-                                DB::raw('ts.lot_no as prod_heat_no'),
-                                DB::raw("IF(LEFT(ts.product_code,1) = 'Z','Finish','Semi-Finish') as type")
-                            )
-                            ->get();
+        $travel_sheet = DB::select("select tsp.pre_travel_sheet_id as id,
+                                            tsp.prod_code as prod_code,
+                                            tsp.issued_qty_per_sheet as issued_qty,
+                                            tsp.jo_sequence as jo_sequence,
+                                            ts.jo_no as jo_no,
+                                            tsp.sc_no as sc_no,
+                                            ts.description as description,
+                                            SUM(ts.back_order_qty) as order_qty,
+                                            SUM(ts.sched_qty) as sched_qty,
+                                            ts.material_used as material_used,
+                                            ts.material_heat_no as material_heat_no,
+                                            ts.lot_no as prod_heat_no,
+                                            IF(LEFT(ts.product_code,1) = 'Z','Finish','Semi-Finish') as type 
+                                    from ppc_pre_travel_sheet_products as tsp
+                                    join v_jo_list as ts
+                                    on tsp.jo_no = ts.jo_no
+                                    where tsp.jo_no = '".$jo_no."'
+                                    GROUP BY tsp.pre_travel_sheet_id,
+                                            tsp.prod_code,
+                                            tsp.issued_qty_per_sheet,
+                                            tsp.jo_sequence,
+                                            ts.jo_no,
+                                            tsp.sc_no,
+                                            ts.description,
+                                            ts.material_used,
+                                            ts.material_heat_no,
+                                            ts.lot_no,
+                                            ts.product_code");
 
         foreach ($travel_sheet as $key => $ts) {
             $jo = ProdTravelSheet::create([

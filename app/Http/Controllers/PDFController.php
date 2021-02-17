@@ -45,7 +45,7 @@ class PDFController extends Controller
 
 									where rmwi.id = ".$req->trans_id." 
 									order by rmwd.id asc");
-
+		
 		$data = [
 			'date' => $this->_helper->convertDate($req->date, 'F d, Y'),
 			'raw_materials' => $raw_material,
@@ -54,6 +54,7 @@ class PDFController extends Controller
 			'trans_no' => $req->trans_no,
 			'print_format' => $req->print_format,
 			'plant' => $req->plant,
+			'iso_code' => $req->iso
 		];
 
 		$pdf = PDF::loadView('pdf.raw_material_withdrawal_slip', $data);
@@ -187,7 +188,7 @@ class PDFController extends Controller
 		$options = [
 			'margin-top'    => 5,
 			'margin-right'  => 5,
-			'margin-bottom' => 10,
+			'margin-bottom' => 3,
 			'margin-left'   => 5,
 		];
 

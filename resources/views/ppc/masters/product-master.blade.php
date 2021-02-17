@@ -80,37 +80,32 @@ foreach ($user_accesses as $user_access){
 
 							<div class="row justify-content-center">
 								<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3 mb-5" id="div_add">
-									<button type="button" id="btn_add_assembly" class="btn bg-green btn-block permission-button switch" data-toggle='popover' 
-										data-content='This Button is to add new assembly data.' 
-										data-placement='right'>
+									<button type="button" id="btn_add_assembly" class="btn bg-green btn-block permission-button switch" 
+										title='This Button is to add new assembly data.'>
 										<i class="fa fa-plus"></i> Add
 									</button>
 								</div>
 								<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3 mb-5" id="div_save">
-									<button type="submit" id="btn_save_assembly" class="btn bg-blue btn-block permission-button switch" data-toggle='popover' 
-										data-content='This Button is to save this assembly data.' 
-										data-placement='right'>
+									<button type="submit" id="btn_save_assembly" class="btn bg-blue btn-block permission-button switch" 
+										title='This Button is to save this assembly data.'>
 										<i class="fa fa-floppy-o"></i> Save
 									</button>
 								</div>
 								<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3 mb-5" id="div_clear">
-									<button type="button" id="btn_clear_assembly" class="btn bg-gray btn-block switch" data-toggle='popover' 
-										data-content='This Button is to clear all input fields.' 
-										data-placement='right'>
+									<button type="button" id="btn_clear_assembly" class="btn bg-gray btn-block switch" 
+										title='This Button is to clear all input fields.'>
 										<i class="fa fa-refresh"></i> Clear
 									</button>
 								</div>
 								<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3 mb-5" id="div_delete">
-									<button type="button" id="btn_delete_assembly" class="btn bg-red btn-block permission-button switch" data-toggle='popover' 
-										data-content='This Button is to delete selected assemblies in the table.' 
-										data-placement='right'>
+									<button type="button" id="btn_delete_assembly" class="btn bg-red btn-block permission-button switch" 
+										title='This Button is to delete selected assemblies in the table.'>
 										<i class="fa fa-trash"></i> Delete
 									</button>
 								</div>
 								<div class="col-lg-2 col-md-2 col-sm-3 col-xs-3 mb-5" id="div_cancel">
-									<button type="button" id="btn_cancel_assembly" class="btn bg-red btn-block switch" data-toggle='popover' 
-										data-content='This Button is to cancel editing this assembly data.' 
-										data-placement='right'>
+									<button type="button" id="btn_cancel_assembly" class="btn bg-red btn-block switch" 
+										title='This Button is to cancel editing this assembly data.'>
 										<i class="fa fa-times"></i> Cancel
 									</button>
 								</div>
@@ -472,30 +467,26 @@ foreach ($user_accesses as $user_access){
 
 							<div class="row justify-content-center">
 								<div class="col-lg-3 col-md-4 mb-5" id="add_code">
-									<button type="button" id="btn_add_code" class="btn bg-blue btn-block permission-button switch_code" data-toggle="popover" 
-											data-content="This Button is to Add another Product Code." 
-											data-placement="right">
+									<button type="button" id="btn_add_code" class="btn bg-blue btn-block permission-button switch_code"
+											title="This Button is to Add another Product Code.">
 										<i class="fa fa-plus"></i> Add new
 									</button>
 								</div>
 								<div class="col-lg-3 col-md-4 mb-5" id="save_code">
-									<button type="submit" id="btn_save" class="btn bg-green btn-block permission-button switch_code" data-toggle="popover" 
-											data-content="This Button is to Save Product Code Details." 
-											data-placement="right">
+									<button type="submit" id="btn_save" class="btn bg-green btn-block permission-button switch_code"
+											title="This Button is to Save Product Code Details.">
 										<i class="fa fa-floppy-o"></i> Save
 									</button>
 								</div>
 								<div class="col-lg-3 col-md-4 mb-5" id="clear_code">
-									<button type="button" id="btn_clear_code" class="btn bg-gray btn-block switch_code" data-toggle="popover" 
-											data-content="This Button is to Clear Product Codes details in input fields." 
-											data-placement="right">
+									<button type="button" id="btn_clear_code" class="btn bg-gray btn-block switch_code"
+											title="This Button is to Clear Product Codes details in input fields.">
 										<i class="fa fa-refresh"></i> Clear
 									</button>
 								</div>
 								<div class="col-lg-3 col-md-4 mb-5" id="cancel_code">
-									<button type="button" id="btn_cancel" class="btn bg-red btn-block switch_code" data-toggle="popover" 
-											data-content="This Button is to Cancel saving of edit / new Product Codes." 
-											data-placement="right">
+									<button type="button" id="btn_cancel" class="btn bg-red btn-block switch_code"
+											title="This Button is to Cancel saving of edit / new Product Codes.">
 										<i class="fa fa-times"></i> Cancel
 									</button>
 								</div>
@@ -525,16 +516,14 @@ foreach ($user_accesses as $user_access){
 
 						<div class="row justify-content-center">
 							<div class="col-md-3 mb-5">
-								<button type="button" id="btn_delete_product" class="btn bg-red btn-block permission-button"  data-toggle="popover" 
-										data-content="This Button is to delete selected Product Codes." 
-										data-placement="right">
+								<button type="button" id="btn_delete_product" class="btn bg-red btn-block permission-button"
+										title="This Button is to delete selected Product Codes.">
 									<i class="fa fa-trash"></i> Delete Product
 								</button>
 							</div>
 							<div class="col-md-3 mb-5">
-								<button type="button" id="btn_excel_product" class="btn bg-green btn-block"  data-toggle="popover" 
-										data-content="This Button is to initialize Excel download." 
-										data-placement="right">
+								<button type="button" id="btn_excel_product" class="btn bg-green btn-block"
+										title="This Button is to initialize Excel download.">
 									<i class="fa fa-file-excel-o"></i> Extract to Excel
 								</button>
 							</div>

@@ -254,6 +254,7 @@ $(function () {
 			'&&prepared_by=' + $('#prepared_by').val() +
 			'&&print_format=' + $('#print_format').val() +
 			'&&plant=' + $('#plant').val() +
+			'&&iso=' + $('#iso').val() +
 			'&&received_by=' + $('#received_by').val();
 
 		if ($('#trans_no').val() == '' || $('#id').val() == '') {

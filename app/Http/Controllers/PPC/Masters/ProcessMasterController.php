@@ -184,7 +184,8 @@ class ProcessMasterController extends Controller
                     ->join('ppc_process_productlines as pp','p.id','=','pp.set_id')
                     ->join('admin_assign_production_lines as apl','apl.product_line','=','pp.product_line')
                     ->select('p.id as id', 'p.set as text')
-                    ->where('apl.user_id',Auth::user()->id)->get();
+                    ->where('apl.user_id',Auth::user()->id)
+                    ->distinct()->get();
 
         return response()->json($set);
     }

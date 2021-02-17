@@ -75,6 +75,7 @@ class TransferItemController extends Controller
             $trans_date = date('Y-m-d H:i:s');
         }
 
+        // check if transsaction id for update
         if (isset($req->id)) {
             $items = ProdTransferItem::find($req->id);
 
@@ -95,6 +96,11 @@ class TransferItemController extends Controller
                 $items->receive_qty = 0;
                 $items->output_status = $req->ostatus;
                 $items->date_transfered = $trans_date;
+
+                if (strtoupper($req->status) !== 'REWORK') {
+                    $items->process_id = $req->process_id;
+                }
+                
                 $items->update_user = Auth::user()->id;
                 $items->updated_at = date('Y-m-d h:i:s');
                 $items->update();
@@ -115,6 +121,7 @@ class TransferItemController extends Controller
                 ];
             }
         } else {
+            // check if data already exist
             $check = ProdTransferItem::where([
                                         ['jo_no','=',strtoupper($req->jo_no)],
                                         ['current_process', '=', $req->curr_process],
@@ -132,7 +139,7 @@ class TransferItemController extends Controller
                 ];
                 return response()->json($data);
             }
-
+            // save transaction
             $items = new ProdTransferItem();
             $items->jo_no = strtoupper($req->jo_no);
             $items->prod_order_no = strtoupper($req->prod_order_no);
@@ -149,6 +156,11 @@ class TransferItemController extends Controller
             $items->item_status = 0;
             $items->output_status = $req->ostatus;
             $items->date_transfered = $trans_date;
+
+            if (strtoupper($req->status) !== 'REWORK') {
+                $items->process_id = $req->process_id;
+            }
+            
             $items->create_user = Auth::user()->id;
             $items->update_user = Auth::user()->id;
             $items->created_at = date('Y-m-d h:i:s');
@@ -165,6 +177,7 @@ class TransferItemController extends Controller
                 'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
             ]);
 
+            // get person to notify
             $to_notify = DB::table('ppc_divisions as d')
                         ->join('ppc_division_processes as p','p.division_id','=','d.id')
                         ->where('d.id',$items->div_code)
@@ -175,6 +188,7 @@ class TransferItemController extends Controller
             $notis = [];
 
             foreach ($to_notify as $key => $notify) {
+                // make notification
                 Notification::create([
                     'title' => "Transfer Items",
                     'content' => "Items from Division Code [".$this->_helper->currentDivCodeID($req->curr_process).
@@ -194,8 +208,10 @@ class TransferItemController extends Controller
                 ]);
             }
 
+            // get created notification
             $noti = Notification::select('to','content')->where('read',0)->get();
 
+            // send notification
             Event::fire(new Notify($noti));
 
             $data = [
@@ -247,6 +263,7 @@ class TransferItemController extends Controller
                                         data-output_status='".$data->output_status."'
                                         data-transfer_date='".$transfer_date."'
                                         data-transfer_time='".$transfer_time."'
+                                        data-process_id='".$data->process_id."'
                                         data-create_user='".$data->create_user."'
                                         data-created_at='".$data->created_at."'
                                         data-update_user='".$data->update_user."'
@@ -304,6 +321,7 @@ class TransferItemController extends Controller
                                         data-create_user='".$data->create_user."'
                                         data-created_at='".$data->created_at."'
                                         data-item_status='".$data->item_status."'
+                                        data-process_id='".$data->process_id."'
                                         data-update_user='".$data->update_user."'
                                         data-updated_at='".$data->updated_at."' ".$disabled.">
                                         <i class='fa fa-edit'></i> Receive
@@ -329,7 +347,7 @@ class TransferItemController extends Controller
         $process =DB::table('prod_travel_sheet_processes as tsp')
                 ->join('prod_travel_sheets as ts', 'ts.id', '=', 'tsp.travel_sheet_id')
                             ->where('tsp.travel_sheet_id',$jo->id)
-                            ->select('tsp.process as process')
+                            ->select('tsp.id as process_id','tsp.process as process')
                             ->get();
         return response()->json($process);
     }
@@ -437,7 +455,7 @@ class TransferItemController extends Controller
         $current_processes = DB::table('prod_travel_sheet_processes')
                         ->whereIn('div_code',$div_codes)
                         ->where('travel_sheet_id',$id)
-                        ->where('is_current','<>',0)
+                        /* ->where('is_current','<>',0) */
                         ->select('id','process')
                         ->groupBy('id','process')
                         ->orderBy('id','asc')
@@ -500,19 +518,21 @@ class TransferItemController extends Controller
             $qtyprocess = 0;
         }
 
-        $data = ProdTravelSheetProcess::where('travel_sheet_id' , $jo_no->id)
+        $data = ProdTravelSheetProcess::where('id' , $req->process_id)
                 ->where('div_code',$req->user_div_code)
                 ->where('process',$req->process)
                 ->update([
                     'unprocessed' => DB::raw("`unprocessed` + ".$qty)
                     //  strtolower($req->status) => DB::raw( strtolower($req->status)."+".$qtyprocess)
                 ]);
+
+        $hasNewProcess = 0;
         
         //Inserting new process if different Div Code and the process not yet existing in that div code
         if($data == 0){
             $tsp = ProdTravelSheetProcess::where('travel_sheet_id' , $jo_no->id)->where('process' , $req->process)->first();
 
-            $data = ProdTravelSheetProcess::create([
+            $newProcess = ProdTravelSheetProcess::insertGetId([
                     'travel_sheet_id' => $jo_no->id,
                     'unprocessed' => $req->qty,
                     'process' => $req->process,
@@ -524,12 +544,21 @@ class TransferItemController extends Controller
                     'create_user' => Auth::user()->id,
                     'update_user' => Auth::user()->id,
                 ]);
+
+            $hasNewProcess++;
         }
 
         //Update qty of the unprocessed in production output
+<<<<<<< HEAD
         ProdTravelSheetProcess::where('id' , $req->current_process)
                                 ->update([strtolower($req->ostatus) => DB::raw(strtolower($req->ostatus)." - ".$req->qty)]);
         //Update Status 
+=======
+        // ProdTravelSheetProcess::where('id' , $req->current_process)
+        //                         ->update(['unprocessed' => DB::raw("`unprocessed` - ".$req->qty)]);
+
+        //Update Status and receive item
+>>>>>>> e28c40a640befe91c64aa4debf4e09b41ee24369
         $item = ProdTransferItem::find($req->id);
 
         $received_qty =  (double)$item->receive_qty + $req->qty;
@@ -543,6 +572,11 @@ class TransferItemController extends Controller
                                     'is_current' => 0
                                 ]);
         }
+
+        // if has new process inserted, update the process_id of transfer data
+        if ($hasNewProcess > 0) {
+            $item->process_id = $newProcess;
+        }
         
         $item->receive_remarks = $req->remarks;
         $item->receive_qty = $received_qty;
@@ -550,14 +584,17 @@ class TransferItemController extends Controller
         $item->date_received = date('Y-m-d h:i:s');
         $item->update();
 
-        //Notification
+        // Read notification
         Notification::where('content_id',$req->id)->update(['read' => 1]);
+
+        // get users to notify depending on division
         $to_notify = DB::table('ppc_divisions')
                         ->where('div_code',$req->user_div_code)
                         ->select('user_id')
                         ->get();
         $notis = [];
         foreach ($to_notify as $key => $notify) {
+            // create notification
             Notification::create([
                 'title' => "Received Items",
                 'content' => "Division Code [".$req->user_div_code."] and its process [".$req->process."] has been 
@@ -574,7 +611,10 @@ class TransferItemController extends Controller
                 'update_user' => Auth::user()->id
             ]);
         }
+        // get created notification
         $noti = Notification::select('to','content')->where('read',0)->get();
+
+        // send notification
         Event::fire(new Notify($noti));
 
         $this->_audit->insert([

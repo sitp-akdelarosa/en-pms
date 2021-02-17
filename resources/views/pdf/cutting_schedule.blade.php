@@ -33,14 +33,14 @@ for ($x = 1; $x <= $page; $x++) {
 	$_date_issued = date("m/d/Y", strtotime($date_issued));
 ?>
 <div class="container text-center">
-    <div class="row center">
-        <div class="col-xs-3" style="font-size:10px;">
-            <h4 class="center" style="font-weight:900">CUTTING SCHEDULE</h4>
+    <div class="row center" style="margin-bottom:0px">
+        <div class="col-xs-3" style="font-size:10px;margin-bottom:0px">
+            <h4 class="center" style="font-weight:900;margin-bottom:0px">CUTTING SCHEDULE</h4>
         </div>
     </div>
     <br>
 
-    <div class="row" style=" padding-bottom:5px">
+    <div class="row" style=" padding-bottom:5px;">
         <div class="col-xs-12" style="width:100%;">
             <table class="table table-sm" style="font-size:12px;width:100%;">
                 <tr>
@@ -85,7 +85,7 @@ for ($x = 1; $x <= $page; $x++) {
 
                     @foreach (array_slice($cut_data,$countrows) as $key => $rm)
                         <tr>
-                            <td height="50px">{{ $rm->jo_no }}</td>
+                            <td height="40px">{{ $rm->jo_no }}</td>
                             <td>{{ $rm->alloy }}</td>
                             <td>{{ $rm->size }}</td>
                             <td>{{ $rm->item }}</td>
@@ -124,7 +124,7 @@ for ($x = 1; $x <= $page; $x++) {
 
                     @while ($cnt <= 5) 
                         <tr>
-                            <td height="50px"></td>
+                            <td height="40px"></td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -147,7 +147,7 @@ for ($x = 1; $x <= $page; $x++) {
 
                 </tbody>
                 <tfoot>
-                    <tr height="55px">
+                    <tr height="40px">
                         <td colspan="8">
                             <p class="left"><strong>Prepared By:</strong></p>
                             <p style="border-bottom: 1px solid; font-weight:700;font-size:14px">{{ $prepared_by }}</p>

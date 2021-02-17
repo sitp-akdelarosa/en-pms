@@ -217,6 +217,9 @@
 									<p align="center"><strong>LINE LEADER/SUPERVISOR</strong></p>
 								</td>
 							</tr>
+							<tr>
+								<td colspan="13" style="text-align: right">{{ $iso_code }}</td>
+							</tr>
 						</tfoot>
 					</table>
 				</div>

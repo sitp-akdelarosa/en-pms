@@ -312,7 +312,7 @@ $(function () {
     $('#modal_withdrawal_slip').modal('show');
   });
   $('#btn_print').on('click', function () {
-    var print_link = RawMaterialWithdrawalSlipURL + '?trans_id=' + $('#id').val() + '&&trans_no=' + $('#trans_no').val() + '&&date=' + $('#date').val() + '&&prepared_by=' + $('#prepared_by').val() + '&&print_format=' + $('#print_format').val() + '&&plant=' + $('#plant').val() + '&&received_by=' + $('#received_by').val();
+    var print_link = RawMaterialWithdrawalSlipURL + '?trans_id=' + $('#id').val() + '&&trans_no=' + $('#trans_no').val() + '&&date=' + $('#date').val() + '&&prepared_by=' + $('#prepared_by').val() + '&&print_format=' + $('#print_format').val() + '&&plant=' + $('#plant').val() + '&&iso=' + $('#iso').val() + '&&received_by=' + $('#received_by').val();
 
     if ($('#trans_no').val() == '' || $('#id').val() == '') {
       msg('Please Navigate to a Transaction Number first.', 'failed');

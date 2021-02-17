@@ -95,7 +95,7 @@ class ProductionOutputController extends Controller
         $prod_output->travel_sheet_process_id = $req->travel_sheet_process_id;
         $prod_output->jo_no = $req->jo_no;
 
-        $prod_output->unprocessed = $this->deductUnprocessed($req->unprocessed,$req->good,$req->rework,$req->scrap);
+        $prod_output->unprocessed = $this->deductUnprocessed($req);
         $prod_output->good = $req->good;
         $prod_output->rework = $req->rework;
         $prod_output->scrap = $req->scrap;
@@ -113,13 +113,15 @@ class ProductionOutputController extends Controller
         if ($prod_output->save()) {
             $status = 0;
             $end_date = null;
-            if ($this->deductUnprocessed($req->unprocessed,$req->good,$req->rework,$req->scrap) == 0) {
+            // check if the inputed quantity covers the unprocess quantity 
+            if ($this->deductUnprocessed($req) == 0) {
+                // assign end date of the process
                 $end_date = date('Y-m-d H:i:s');
             }
 
             ProdTravelSheetProcess::where('id',$req->travel_sheet_process_id)
                                     ->update([
-                                        'unprocessed' => $this->deductUnprocessed($req->unprocessed,$req->good,$req->rework,$req->scrap),
+                                        'unprocessed' => $this->deductUnprocessed($req),
                                         'good' => DB::raw("`good` + ".$prod_output->good),
                                         'rework' => DB::raw("`rework` + ".$prod_output->rework),
                                         'scrap' => DB::raw("`scrap` + ".$prod_output->scrap),
@@ -133,11 +135,14 @@ class ProductionOutputController extends Controller
                                         'update_user' => Auth::user()->id
                                     ]);
 
+            // Get process data
             $processes = DB::table('prod_travel_sheet_processes')
                             ->where('id',$req->travel_sheet_process_id)
                             ->first();
 
+            // check if unprocess is 0
             if ($processes->unprocessed < 1) {
+                // assign status to 0 as DONE PROCESS
                 DB::table('prod_travel_sheet_processes')
                             ->where('id',$req->travel_sheet_process_id)
                             ->update([
@@ -145,6 +150,7 @@ class ProductionOutputController extends Controller
                                 'is_current' => 1
                             ]);
             } elseif ($processes->unprocessed > 0) {
+                // assign status to 2 as ON-GOING
                 DB::table('prod_travel_sheet_processes')
                             ->where('id',$req->travel_sheet_process_id)
                             ->update([
@@ -152,6 +158,7 @@ class ProductionOutputController extends Controller
                             ]);
             }
 
+            // accumulate process sequence to get next process
             $next_sequence = $req->sequence + 1;
 
             // check if has next process
@@ -159,12 +166,15 @@ class ProductionOutputController extends Controller
                                         ['travel_sheet_id',$req->travel_sheet_id],
                                         ['sequence',$next_sequence]
                                     ])->where('status' , 0)->count();
-                                    
+            
+            // if travel sheet has no next process
             if($lastsequnce == 0){
+                // register travel sheet to FG
                 $this->saveFGSummary($req->travel_sheet_process_id,$req->travel_sheet_id,$req->jo_no,
                                 $req->prod_order,$req->prod_code,$req->description,$prod_output->good);
             }
 
+            //get output data
             $output = ProdProductionOutput::select(
                                         'travel_sheet_id',
                                         'travel_sheet_process_id',
@@ -181,8 +191,10 @@ class ProductionOutputController extends Controller
                                     )->where('deleted',0)
                                     ->where('travel_sheet_process_id',$req->travel_sheet_process_id)->get();
 
-            $unprocessed = $this->deductUnprocessed($req->unprocessed,$req->good,$req->rework,$req->scrap);
+            // get unprocess qty
+            $unprocessed = $this->deductUnprocessed($req);
 
+            // get travel sheet data
             $travel_sheet = $this->getTravelSheetData($req->jo_sequence);
 
             $data = [
@@ -193,6 +205,7 @@ class ProductionOutputController extends Controller
                 'travel_sheet' => $travel_sheet
             ];
 
+            // fire event
             Event::fire(new TravelSheet($travel_sheet));
         }
 
@@ -388,6 +401,8 @@ class ProductionOutputController extends Controller
         foreach ($req->chkArray as $key => $value) {
 
             $prod_output = ProdProductionOutput::where('id',$value["id"])->where('deleted',0)->first();
+
+            // return outputs to unprocess
             ProdTravelSheetProcess::where('id',$value["travel_sheet_process_id"])
                                     ->update([
                                         'unprocessed' => DB::raw("`unprocessed` + ".$prod_output->good." + ".$prod_output->rework." + ".$prod_output->scrap),
@@ -419,12 +434,12 @@ class ProductionOutputController extends Controller
             //     $this->destroyFGSummary($prod_travel->travel_sheet_id,$prod_output->good);
             // }
 
-            ProdProductionOutput::where('id',$value["id"])
-                                    ->update([
-                                        'deleted' => 1,
-                                        'delete_user' => Auth::user()->id,
-                                        'deleted_at' => date('Y-m-d H:i:s')
-                                    ]);
+            ProdProductionOutput::where('id',$value["id"])->delete();
+                                    // ->update([
+                                    //     'deleted' => 1,
+                                    //     'delete_user' => Auth::user()->id,
+                                    //     'deleted_at' => date('Y-m-d H:i:s')
+                                    // ]);
         }
 
         $ProdTravelSheet = ProdTravelSheet::where('id',$req->chkArray[0]['travel_sheet_id'])->first();
@@ -469,9 +484,17 @@ class ProductionOutputController extends Controller
         return $data;
     }
 
-    private function deductUnprocessed($unprocessed,$good,$rework,$scrap)
+    private function deductUnprocessed($req)
     {
-        $sum = $good + $rework + $scrap;
+        $unprocessed = ((int)$req->unprocessed == 0)? 0:(int)$req->unprocessed;
+        $good = ((int)$req->good == 0)? 0:(int)$req->good;
+        $rework = ((int)$req->rework == 0)? 0:(int)$req->rework;
+        $scrap = ((int)$req->scrap == 0)? 0:(int)$req->scrap;
+        $convert = ((int)$req->convert == 0)? 0:(int)$req->convert;
+        $alloy_mix = ((int)$req->alloy_mix == 0)? 0:(int)$req->alloy_mix;
+        $nc = ((int)$req->nc == 0)? 0:(int)$req->nc;
+        
+        $sum = $good + $rework + $scrap + $convert + $alloy_mix + $nc;
         $diff = $unprocessed - $sum;
         return $diff;
     }

@@ -429,10 +429,6 @@ function getAssemblies() {
 		],
 		initComplete: function () {
 			$('.loadingOverlay').hide();
-			
-			$('.btn_edit_assembly').popover({
-				trigger: 'hover focus'
-			});
 
 			$('#tbl_prodcode_assembly .dt-checkboxes-select-all input[type=checkbox]').addClass('table-checkbox');
 		},
@@ -2016,25 +2012,12 @@ function getProductCodes() {
 					}
 					return '<button type="button" class="btn ' + bg_color + ' btn_enable_disable" data-id="' + data.id + '" '+
 							'data-disabled="' + data.disabled+'" '+
-							'data-toggle="popover" '+
-							'data-content="This Button is to Disable / Enable '+data.product_code+'" '+
-							'data-placement="right" '+
+							'title="This Button is to Disable / Enable '+data.product_code+'" '+
 							'>' + enable_disable + '</button>';
 				}, name: 'pc.disabled', orderable: false, searchable: false, width: '6.66%' 
 			},
 		],
 		initComplete: function() {
-			$('.btn_edit_product').popover({
-				trigger: 'hover focus'
-			});
-
-			$('.btn_assign_process').popover({
-				trigger: 'hover focus'
-			});
-
-			$('.btn_enable_disable').popover({
-				trigger: 'hover focus'
-			});
 
 			$('#tbl_product_code .dt-checkboxes-select-all input[type=checkbox]').addClass('table-checkbox');
 		},

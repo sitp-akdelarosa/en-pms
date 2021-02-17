@@ -429,10 +429,6 @@ function getAssemblies() {
 		],
 		initComplete: function () {
 			$('.loadingOverlay').hide();
-			
-			$('.btn_edit_assembly').popover({
-				trigger: 'hover focus'
-			});
 
 			$('#tbl_prodcode_assembly .dt-checkboxes-select-all input[type=checkbox]').addClass('table-checkbox');
 		},

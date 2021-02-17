@@ -368,7 +368,7 @@ $( function() {
 				sameProcess = 1
 			}
 		});
-		if (sameProcess == 0) {
+		//if (sameProcess == 0) {
 			if ($('#process').val() == '') {
 				msg("Please Select a Process.", 'warning');
 			} else {
@@ -421,9 +421,9 @@ $( function() {
 					makeProcessList(process_array,null);
 				});
 			}
-		} else {
-			msg("The Process already existing.", "failed");
-		}
+		// } else {
+		// 	msg("The Process already existing.", "failed");
+		// }
 		$('#cancel_process').hide();
 	});
 
@@ -723,6 +723,7 @@ function getProcess(set,prod_code,old_data) {
 }
 
 function showProcessList(set, prod_code, old_data, jo) {
+	$('.loadingOverlay-modal').show();
 	$.ajax({
 		url: getProcessURL,
 		type: 'GET',
@@ -756,6 +757,8 @@ function showProcessList(set, prod_code, old_data, jo) {
 		makeProcessList(process_array, old_data);
 	}).fail(function (xhr, textStatus, errorThrown) {
 		msg(errorThrown, textStatus);
+	}).always( function() {
+		$('.loadingOverlay-modal').hide();
 	});
 }
 

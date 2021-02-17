@@ -188,7 +188,7 @@ for ($x = 1; $x <= $page; $x++) {
 
 					</tbody>
 					<tfoot>
-						<tr height="80px">
+						<tr height="50px">
 							<td colspan="5">
 								<p class="left"><strong>Prepared By:</strong></p>
 								<p style="border-bottom: 1px solid">{{ $prepared_by }}</p>
