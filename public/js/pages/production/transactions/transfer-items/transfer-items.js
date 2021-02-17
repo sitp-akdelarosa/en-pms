@@ -229,8 +229,8 @@ $(function () {
     $('#user_div_code_r').val($(this).attr('data-user_div_code'));
     $('#current_div_code_r').val($(this).attr('data-current_div_code'));
     $('#current_process_name_r').val($(this).attr('data-current_process_name'));
-    $('#current_process_name_r').val($(this).attr('data-current_process_name'));
     $('#status_r').val($(this).attr('data-status'));
+    $('#ostatus_r').val($(this).attr('data-ostatus'));
     $('#note').val($(this).attr('data-remarks'));
     $('#modal_receive_item').modal('show');
   });

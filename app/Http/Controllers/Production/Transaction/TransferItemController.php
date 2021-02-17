@@ -299,6 +299,7 @@ class TransferItemController extends Controller
                                         data-description='".$data->description."'
                                         data-div_code='".$data->div_code."'
                                         data-status='".$data->status."'
+                                        data-ostatus='".$data->output_status."'
                                         data-remarks='".$data->remarks."'
                                         data-create_user='".$data->create_user."'
                                         data-created_at='".$data->created_at."'
@@ -504,7 +505,7 @@ class TransferItemController extends Controller
                 ->where('process',$req->process)
                 ->update([
                     'unprocessed' => DB::raw("`unprocessed` + ".$qty)
-                    // strtolower($req->status) => DB::raw( strtolower($req->status)."+".$qtyprocess)
+                    //  strtolower($req->status) => DB::raw( strtolower($req->status)."+".$qtyprocess)
                 ]);
         
         //Inserting new process if different Div Code and the process not yet existing in that div code
@@ -526,8 +527,8 @@ class TransferItemController extends Controller
         }
 
         //Update qty of the unprocessed in production output
-        // ProdTravelSheetProcess::where('id' , $req->current_process)
-        //                         ->update(['unprocessed' => DB::raw("`unprocessed` - ".$req->qty)]);
+        ProdTravelSheetProcess::where('id' , $req->current_process)
+                                ->update([strtolower($req->ostatus) => DB::raw(strtolower($req->ostatus)." - ".$req->qty)]);
         //Update Status 
         $item = ProdTransferItem::find($req->id);
 

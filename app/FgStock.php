@@ -15,5 +15,5 @@ class FgStock extends Model
     				'status',
     				'create_user',
     				'update_user'
-    			]
+	];
 }
