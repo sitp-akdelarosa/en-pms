@@ -122,23 +122,38 @@ class TransferItemController extends Controller
             }
         } else {
             // check if data already exist
-            $check = ProdTransferItem::where([
-                                        ['jo_no','=',strtoupper($req->jo_no)],
-                                        ['current_process', '=', $req->curr_process],
-                                        ['div_code', '=', $req->div_code],
-                                        ['process', '=', strtoupper($req->process)],
-                                        ['status', '=', strtoupper($req->status)],
-                                        ['create_user', '=', Auth::user()->id]
-                                    ])->count();
+            $check = DB::select(DB::raw("select (select (good+rework+scrap+`convert`+alloy_mix+nc)
+                                        from enpms.prod_travel_sheet_processes
+                                        where id = 663) as current_process,
+                                        (select (good+rework+scrap+`convert`+alloy_mix+nc)
+                                        from enpms.prod_travel_sheet_processes
+                                        where process = 'QC INSPECTION'
+                                        and travel_sheet_id = 76) as to_process"));
             
-            if ($check > 0) {
+            if ((double)$check[0]->current_process <= (double)$check[0]->to_process) {
                 $data = [
                     'msg' => 'Already transfered items.',
                     'status' => 'failed',
                     'transfer_item' => $this->getTransferEntry()
                 ];
+                
                 return response()->json($data);
             }
+
+            // get reamaining qty
+            $remaining_qty = (double)$check[0]->current_process - (double)$check[0]->to_process;
+
+            // check if transfer qty is more than the remaining qty of process
+            if ((double)$req->qty > (double)$remaining_qty) {
+                $data = [
+                    'msg' => 'Quantity to transfer is more than '.$remaining_qty.' remaining quantity for transfer.',
+                    'status' => 'failed',
+                    'transfer_item' => $this->getTransferEntry()
+                ];
+
+                return response()->json($data);
+            }
+
             // save transaction
             $items = new ProdTransferItem();
             $items->jo_no = strtoupper($req->jo_no);
@@ -518,6 +533,7 @@ class TransferItemController extends Controller
             $qtyprocess = 0;
         }
 
+        // accumulate the unprocess of next process.
         $data = ProdTravelSheetProcess::where('id' , $req->process_id)
                 ->where('div_code',$req->user_div_code)
                 ->where('process',$req->process)
@@ -549,8 +565,13 @@ class TransferItemController extends Controller
         }
 
         //Update qty of the unprocessed in production output
-        ProdTravelSheetProcess::where('id' , $req->current_process)
-                                ->update([strtolower($req->ostatus) => DB::raw(strtolower($req->ostatus)." - ".$req->qty)]);
+        //added by jawo 2021-02-17 start
+        // ProdTravelSheetProcess::where('id' , $req->current_process)
+        //                         ->update([
+        //                             strtolower($req->ostatus) => DB::raw(strtolower($req->ostatus)." - ".$req->qty)
+        //                         ]);
+        //added by jawo 2021-02-17 end
+        
         //Update Status 
         $item = ProdTransferItem::find($req->id);
 

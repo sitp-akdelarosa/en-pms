@@ -257,11 +257,8 @@
                             <input type="hidden" id="current_div_code_r" name="current_div_code" class="clear">
                             <input type="hidden" id="current_process_name_r" name="current_process_name" class="clear">
 							<input type="hidden" id="status_r" name="status" class="clear">
-<<<<<<< HEAD
 							<input type="hidden" id="ostatus_r" name="ostatus" class="clear">
-=======
 							<input type="hidden" id="process_id_r" name="process_id" class="clear">
->>>>>>> e28c40a640befe91c64aa4debf4e09b41ee24369
 							
 							<div class="form-group row">
 								<div class="col-sm-1">NOTE:</div>
