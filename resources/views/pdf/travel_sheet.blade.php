@@ -74,7 +74,7 @@
 											<td class="text-center">Type:</td>
 											<td class="text-center" colspan="4">{{ $header->type }}</td>
 											<td class="text-center" colspan="2">Material Used:</td>
-											<td class="text-center">{{ $header->bar_size }}</td>
+											<td class="text-center" style="font-size:14px;font-weight:900;">{{ $header->bar_size }}</td>
 											{{-- <td>{{ $header->bar_size.' x '.$header->cut_weight }}</td> --}}
 										</tr>
 										<tr>
@@ -110,11 +110,11 @@
 											<td class="text-center">Issued Qty.</td>
 											<td class="text-center"><strong style="font-size: 16px">{{ $header->issued_qty }}</strong></td>
 											<td class="text-center">Lot No.</td>
-											<td class="text-center" colspan="2">{{ $header->lot_no }}</td>
+											<td class="text-center" colspan="2" style="font-size:14px;font-weight:900;">{{ $header->lot_no }}</td>
 
-											<td class="text-center">{{ $header->cut_weight }}</td> {{-- cut wt --}}
-											<td class="text-center">{{ $header->cut_length }}</td> {{-- cut length --}}
-											<td class="text-center">{{ $header->cut_width}}</td> {{-- cut width --}}
+											<td class="text-center" style="font-size:14px;font-weight:900;">{{ $header->cut_weight }}</td> {{-- cut wt --}}
+											<td class="text-center" style="font-size:14px;font-weight:900;">{{ $header->cut_length }}</td> {{-- cut length --}}
+											<td class="text-center" style="font-size:14px;font-weight:900;">{{ $header->cut_width}}</td> {{-- cut width --}}
 										</tr>
 										<tr>
 											<td class="text-center" rowspan="2">Process</td>
