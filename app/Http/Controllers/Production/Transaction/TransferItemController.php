@@ -549,16 +549,9 @@ class TransferItemController extends Controller
         }
 
         //Update qty of the unprocessed in production output
-<<<<<<< HEAD
         ProdTravelSheetProcess::where('id' , $req->current_process)
                                 ->update([strtolower($req->ostatus) => DB::raw(strtolower($req->ostatus)." - ".$req->qty)]);
         //Update Status 
-=======
-        // ProdTravelSheetProcess::where('id' , $req->current_process)
-        //                         ->update(['unprocessed' => DB::raw("`unprocessed` - ".$req->qty)]);
-
-        //Update Status and receive item
->>>>>>> e28c40a640befe91c64aa4debf4e09b41ee24369
         $item = ProdTransferItem::find($req->id);
 
         $received_qty =  (double)$item->receive_qty + $req->qty;
