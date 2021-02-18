@@ -164,7 +164,7 @@ class RawMaterialWithdrawalController extends Controller
 
     private function first()
     {
-        $info = PpcRawMaterialWithdrawalInfo::select('id','trans_no','status')
+        $info = PpcRawMaterialWithdrawalInfo::select('id','trans_no','status','created_at')
                                             ->where("id", "=", function ($query) {
                                                 $query->select(DB::raw(" MIN(id)"))
                                                   ->from('ppc_raw_material_withdrawal_infos')
@@ -214,7 +214,8 @@ class RawMaterialWithdrawalController extends Controller
                 'trans_id' => $info->id,
                 'trans_no' => $info->trans_no,
                 'istatus' => $info->status,
-                'details' => $details
+                'details' => $details,
+                'created_at' => $info->created_at
             ];
 
             return response()->json($data);
@@ -228,7 +229,7 @@ class RawMaterialWithdrawalController extends Controller
                                             ->where('create_user',Auth::user()->id)
                                             ->first();
 
-        $info = PpcRawMaterialWithdrawalInfo::select('id','trans_no','status')
+        $info = PpcRawMaterialWithdrawalInfo::select('id','trans_no','status','created_at')
                                             ->where('id','<',$latest->id)
                                             ->orderBy("id","DESC")
                                             ->where('create_user',Auth::user()->id)
@@ -276,7 +277,8 @@ class RawMaterialWithdrawalController extends Controller
                 'trans_id' => $info->id,
                 'trans_no' => $info->trans_no,
                 'istatus' => $info->status,
-                'details' => $details
+                'details' => $details,
+                'created_at' => $info->created_at
             ];
 
             return response()->json($data);
@@ -292,7 +294,7 @@ class RawMaterialWithdrawalController extends Controller
                                             ->where('create_user',Auth::user()->id)
                                             ->first();
 
-        $info = PpcRawMaterialWithdrawalInfo::select('id','trans_no','status')
+        $info = PpcRawMaterialWithdrawalInfo::select('id','trans_no','status','created_at')
                                             ->where('id','>',$latest->id)
                                             ->where('create_user',Auth::user()->id)
                                             ->orderBy("id")
@@ -340,7 +342,8 @@ class RawMaterialWithdrawalController extends Controller
                 'trans_id' => $info->id,
                 'trans_no' => $info->trans_no,
                 'istatus' => $info->status,
-                'details' => $details
+                'details' => $details,
+                'created_at' => $info->created_at
             ];
 
             return response()->json($data);
@@ -351,7 +354,7 @@ class RawMaterialWithdrawalController extends Controller
 
     private function last()
     {
-        $info = PpcRawMaterialWithdrawalInfo::select('id','trans_no','status')
+        $info = PpcRawMaterialWithdrawalInfo::select('id','trans_no','status','created_at')
                                             ->where("id", "=", function ($query) {
                                                 $query->select(DB::raw(" MAX(id)"))
                                                   ->from('ppc_raw_material_withdrawal_infos')
@@ -402,7 +405,8 @@ class RawMaterialWithdrawalController extends Controller
                 'trans_id' => $info->id,
                 'trans_no' => $info->trans_no,
                 'istatus' => $info->status,
-                'details' => $details
+                'details' => $details,
+                'created_at' => $info->created_at
             ];
 
             return response()->json($data);

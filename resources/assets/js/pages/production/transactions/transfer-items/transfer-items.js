@@ -149,11 +149,8 @@ $( function() {
         $('#current_div_code_r').val($(this).attr('data-current_div_code'));
         $('#current_process_name_r').val($(this).attr('data-current_process_name'));
         $('#status_r').val($(this).attr('data-status'));
-<<<<<<< HEAD
         $('#ostatus_r').val($(this).attr('data-ostatus'));
-=======
         $('#process_id_r').val($(this).attr('data-process_id'));
->>>>>>> e28c40a640befe91c64aa4debf4e09b41ee24369
         $('#note').val($(this).attr('data-remarks'));
         $('#modal_receive_item').modal('show');
     });

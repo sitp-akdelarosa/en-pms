@@ -551,8 +551,8 @@ function getRawMaterialList(trans_no) {
     } else {
       rawMaterial = [];
       var count = rawMaterial.length + 1;
-      var create_date = data.details[0].created_at;
-      var print_date = create_date.slice(0, -9);
+      var create_date = data.created_at.date;
+      var print_date = create_date.slice(0, 10);
       $.each(data.details, function (i, x) {
         rawMaterial.push({
           count: count,
