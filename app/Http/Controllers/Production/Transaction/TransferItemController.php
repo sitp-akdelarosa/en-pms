@@ -124,11 +124,11 @@ class TransferItemController extends Controller
             // check if data already exist
             $check = DB::select(DB::raw("select (select (good+rework+scrap+`convert`+alloy_mix+nc)
                                         from enpms.prod_travel_sheet_processes
-                                        where id = 663) as current_process,
+                                        where id = ".$req->curr_process.") as current_process,
                                         (select (good+rework+scrap+`convert`+alloy_mix+nc)
                                         from enpms.prod_travel_sheet_processes
-                                        where process = 'QC INSPECTION'
-                                        and travel_sheet_id = 76) as to_process"));
+                                        where process = '".strtoupper($req->process)."'
+                                        and travel_sheet_id = ".$req->travel_sheet_id.") as to_process"));
             
             if ((double)$check[0]->current_process <= (double)$check[0]->to_process) {
                 $data = [
