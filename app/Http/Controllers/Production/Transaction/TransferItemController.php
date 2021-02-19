@@ -129,29 +129,30 @@ class TransferItemController extends Controller
                                         from enpms.prod_travel_sheet_processes
                                         where process = '".strtoupper($req->process)."'
                                         and travel_sheet_id = ".$req->travel_sheet_id.") as to_process"));
-            
-            if ((double)$check[0]->current_process <= (double)$check[0]->to_process) {
-                $data = [
-                    'msg' => 'Already transfered items.',
-                    'status' => 'failed',
-                    'transfer_item' => $this->getTransferEntry()
-                ];
-                
-                return response()->json($data);
-            }
+            if (isset($check)) {
+                if ((double)$check[0]->current_process <= (double)$check[0]->to_process) {
+                    $data = [
+                        'msg' => 'Already transfered items.',
+                        'status' => 'failed',
+                        'transfer_item' => $this->getTransferEntry()
+                    ];
+                    
+                    return response()->json($data);
+                }
 
-            // get reamaining qty
-            $remaining_qty = (double)$check[0]->current_process - (double)$check[0]->to_process;
+                // get reamaining qty
+                $remaining_qty = (double)$check[0]->current_process - (double)$check[0]->to_process;
 
-            // check if transfer qty is more than the remaining qty of process
-            if ((double)$req->qty > (double)$remaining_qty) {
-                $data = [
-                    'msg' => 'Quantity to transfer is more than '.$remaining_qty.' remaining quantity for transfer.',
-                    'status' => 'failed',
-                    'transfer_item' => $this->getTransferEntry()
-                ];
+                // check if transfer qty is more than the remaining qty of process
+                if ((double)$req->qty > (double)$remaining_qty) {
+                    $data = [
+                        'msg' => 'Quantity to transfer is more than '.$remaining_qty.' remaining quantity for transfer.',
+                        'status' => 'failed',
+                        'transfer_item' => $this->getTransferEntry()
+                    ];
 
-                return response()->json($data);
+                    return response()->json($data);
+                }
             }
 
             // save transaction
