@@ -128,7 +128,8 @@ class TransferItemController extends Controller
                                         (select (good+rework+scrap+`convert`+alloy_mix+nc)
                                         from enpms.prod_travel_sheet_processes
                                         where process = '".strtoupper($req->process)."'
-                                        and travel_sheet_id = ".$req->travel_sheet_id.") as to_process"));
+                                        and travel_sheet_id = ".$req->travel_sheet_id." 
+                                        and div_code = ".$req->div_code.") as to_process"));
             if (isset($check)) {
                 if ((double)$check[0]->current_process <= (double)$check[0]->to_process) {
                     $data = [
@@ -535,10 +536,8 @@ class TransferItemController extends Controller
         }
 
         // accumulate the unprocess of next process.
-        $data = ProdTravelSheetProcess::where('id' , $req->process_id)
-                ->where('div_code',$req->user_div_code)
-                ->where('process',$req->process)
-                ->update([
+        $data = ProdTravelSheetProcess::where('id' , $req->process_id)->where('div_code',$req->user_div_code)
+                ->where('process',$req->process)->update([
                     'unprocessed' => DB::raw("`unprocessed` + ".$qty)
                     //  strtolower($req->status) => DB::raw( strtolower($req->status)."+".$qtyprocess)
                 ]);
