@@ -127,6 +127,10 @@
 		var getDivCodeProcessURL = "{{ url('/prod/transfer-item/div-code-process') }}";
 		var unprocessedItem = "{{ url('/prod/transfer-item/get-unprocessed') }}";
 
+		var getProcessURL = "{{ url('masters/division-master/get-process') }}";
+		var getDivisionCodeDLL = "{{ url('/prod/transfer-item/getDivisionCodeDLL') }}";
+		var SaveNewProcess = "{{ url('/prod/transfer-item/SaveNewProcess') }}";
+
 
 	</script>
 	<script type="text/javascript" src="{{ asset('/js/pages/production/transactions/transfer-items/transfer-items.js') }}"></script>

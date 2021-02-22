@@ -356,6 +356,14 @@ class TransferItemController extends Controller
         return response()->json($div_code);
     }
 
+    public function DivisionCodeDLL(Request $req)
+    {
+        $div_code = DB::table('ppc_divisions as d')
+                    ->select('d.id as id', 'd.div_code as div_code', 'd.plant as plant')
+                    ->get();
+        return response()->json($div_code);
+    }
+
     public function getDivCodeProcess(Request $req)
     {
         $jo = ProdTravelSheet::where('jo_no',$req->jo_no)
@@ -640,6 +648,46 @@ class TransferItemController extends Controller
             'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
         ]);
 
+        return response()->json($data);
+
+    }
+
+    public function SaveNewProcess(Request $req)
+    {
+        $data = [
+            'msg' => "Process was successfully added.",
+            'status' => "success"
+        ];
+
+        foreach ($req->processes as $key => $process) {
+            $travel_process = ProdTravelSheetProcess::where('travel_sheet_id' , $req->travel_sheet_id)
+                                        ->where('div_code',$req->division)
+                                        ->where('process' , $process)
+                                        ->get();
+
+            if ($travel_process->count() != 0) {
+                $data = [
+                    'msg' => 'This process ('.$process.') already on the travel sheet.',
+                    'status' => 'failed'
+                ];
+            }else{
+                $tsp = ProdTravelSheetProcess::where('id' , $req->curr_process)->first();
+
+                $newProcess = ProdTravelSheetProcess::insertGetId([
+                        'travel_sheet_id' => $req->travel_sheet_id,
+                        'unprocessed' => 0,
+                        'process' => $process,
+                        'previous_process' => $req->current_process_name,
+                        'div_code' => $req->division,
+                        'sequence' => $tsp->sequence,
+                        'status' => 0,
+                        'create_user' => Auth::user()->id,
+                        'update_user' => Auth::user()->id,
+                    ]);
+            }
+
+
+        }
         return response()->json($data);
 
     }

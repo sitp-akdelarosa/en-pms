@@ -1,5 +1,6 @@
 var transfer_item_arr = [];
 var received_items_arr = [];
+var process_arr = [];
 
 $( function() {
     
@@ -181,12 +182,57 @@ $( function() {
             });
         }
     });
+
+    $('#btn_process').on('click', function () {
+        process_arr = [];
+        addProcess(process_arr);
+        $("#pDivision").val("");
+        $("#pProcess").val("");
+        $('#modal_process').modal('show');
+    });
+
+    $('#btn_add_process').on('click', function () {
+        if ($('#pProcess').val() == "") {
+            msg("The Process field is required.", "failed");
+        } else {
+            if (process_arr.indexOf($('#pProcess').val()) != -1) {
+                msg("The Process already existing.", "failed");
+            } else {
+                process_arr.push($('#pProcess').val());
+                addProcess(process_arr);
+            }
+        }
+    });
+    $('#btnSaveNewProcess').on('click', function () {
+        SaveProcess();
+    });
+
+    $('#tbl_process_body').on('click', '.btn_remove_process', function () {
+        var count = $(this).attr('data-count');
+        $('#' + count).remove();
+        count--;
+        process_arr.splice(count, 1);
+        addProcess(process_arr);
+
+        if ($('#tbl_process_body > tr').length < 1) {
+            $('#tbl_process_body').html('<tr>' +
+                '<td colspan="3" class="text-center">No data displayed.</td>' +
+                '</tr>');
+        }
+    });
+    $('#pDivision').on('change', function () {
+        process_arr = [];
+        addProcess(process_arr);
+        getProcess();
+    });
+
 });
 
 function init() {
     check_permission(code_permission, function(output) {
         if (output == 1) {}
 
+        getDivisionCodeddl();
         getTransferEntry(getTransferEntryURL, { _token: token });
         getReceiveItems(getReceiveItemsURL, { _token: token });
         checkAllCheckboxesInTable('.check_all_transfer_item','.check_item');
@@ -501,3 +547,111 @@ function checkIfSameDivCode() {
 function clear() {
     $('.clear').val('');
 }
+
+
+function addProcess(arr) {
+    var tbl = '';
+    $('#tbl_process_body').html(tbl);
+
+    var cnt = 1;
+    $.each(arr, function (i, x) {
+        tbl = '<tr id="' + cnt + '">' +
+            '<td>' + cnt + '</td>' +
+            '<td>' + x +
+            '<input type="hidden" name="processes[]" value="' + x + '">' +
+            '</td>' +
+            '<td>' +
+            '<span class="btn_remove_process" data-count="' + cnt + '">' +
+            '<i class="text-red fa fa-times"></i>' +
+            '</span>' +
+            '</td>' +
+            '</tr>';
+        $('#tbl_process_body').append(tbl);
+        cnt++;
+    });
+
+    if(arr.length == 0){
+        if ($('#tbl_process_body > tr').length < 1) {
+            $('#tbl_process_body').html('<tr>' +
+                '<td colspan="3" class="text-center">No data displayed.</td>' +
+                '</tr>');
+        }
+    }
+}
+
+function getProcess() {
+    var opt = "<option value=''></option>";
+    $("#pProcess").html(opt);
+    $.ajax({
+        url: getProcessURL,
+        type: 'GET',
+        dataType: 'JSON',
+        data: { _token: token, division_id: $('#pDivision').val() },
+    }).done(function (data, textStatus, xhr) {
+        $.each(data, function (i, x) {
+            opt = "<option value='" + x.process + "'>" + x.process + "</option>";
+            $("#pProcess").append(opt);
+        });
+    }).fail(function (xhr, textStatus, errorThrown) {
+        msg(errorThrown, textStatus);
+    });
+}
+
+function getDivisionCodeddl() {
+    var opt = "<option value=''></option>";
+    $("#pDivision").html(opt);
+    $.ajax({
+        url: getDivisionCodeDLL,
+        type: 'GET',
+        dataType: 'JSON',
+        data: { _token: token},
+    }).done(function (data, textStatus, xhr) {
+        $.each(data, function (i, x) {
+            opt = "<option value='" + x.id + "'>" + x.div_code + "</option>";
+            $("#pDivision").append(opt);
+        });
+    }).fail(function (xhr, textStatus, errorThrown) {
+        msg(errorThrown, textStatus);
+    });
+}
+
+function SaveProcess() {
+    var isValid = true;
+    if ($("#travel_sheet_id").val() == ''){
+        msg("Please input JONo.", "failed");
+        isValid = false;
+    } else if ($("#current_process_name").val() == '') {
+        msg("Please input Current Process.", "failed");
+        isValid = false;
+    } else if ($("#division").val() == '') {
+        msg("Please input division.", "failed");
+        isValid = false;
+    } else if (process_arr.length== 0) {
+        msg("Please input new process.", "failed");
+        isValid = false;
+    }
+    if(isValid){
+        $.ajax({
+            url: SaveNewProcess,
+            type: 'GET',
+            dataType: 'JSON',
+            data: {
+                _token: token,
+                travel_sheet_id: $("#travel_sheet_id").val(),
+                processes: process_arr,
+                division: $('#pDivision option:selected').text(),
+                current_process_name: $("#current_process_name").val(),
+                curr_process: $("#curr_process").val()
+            },
+        }).done(function (data, textStatus, xhr) {
+            msg(data.msg, data.status);
+            if(data.status == ""){
+                getDivCodeProcess($('#jo_no').val(), $('#curr_process').find("option:selected").text());
+            }
+        }).fail(function (xhr, textStatus, errorThrown) {
+            msg(errorThrown, textStatus);
+        });
+    }
+}
+
+
