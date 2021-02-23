@@ -129,9 +129,34 @@ $( function() {
 
         $('#modal_transfer_entry').modal('show');
     });
+    $('#tbl_transfer_entry_body').on('click', '.btn_delete', function (e) {
+        var data = [];
+        data.push({
+            id: $(this).attr('data-id'),
+            jo_no: $(this).attr('data-jo_no'),
+            prod_order_no: $(this).attr('data-prod_order_no'),
+            prod_code: $(this).attr('data-prod_code'),
+            description: $(this).attr('data-description'),
+            current_process: $(this).attr('data-current_process'),
+            div_code: $(this).attr('data-div_code'),
+            process: $(this).attr('data-process'),
+            qty: $(this).attr('data-qty'),
+            status: $(this).attr('data-status'),
+            remarks: $(this).attr('data-remarks'),
+            create_user: $(this).attr('data-create_user'),
+            created_at: $(this).attr('data-created_at'),
+            update_user: $(this).attr('data-update_user'),
+            updated_at: $(this).attr('data-updated_at'),
+            user_div_code: $(this).attr('data-user_div_code'),
+            output_status: $(this).attr('data-output_status'),
+            transfer_date: $(this).attr('data-transfer_date'),
+            transfer_time: $(this).attr('data-transfer_time'),
+            process_id: $(this).attr('data-process_id'),
+            item_status: $(this).attr('data-item_status'),
+            travel_sheet_id: $(this).attr('data-travel_sheet_id'),
+        });
+        delete_set(data);
 
-    $('#btn_delete_set').on('click', function() {
-        delete_set('.check_item',deleteTransferItem);
     });
 
     $('#tbl_received_items_body').on('click', '.btn_receive', function(event) { 
@@ -337,49 +362,43 @@ function getReceiveItems(ajax_url, object_data) {
     });
 }
 
-function delete_set(checkboxClass,deleteTransferItem) {
-    var chkArray = [];
-    $(checkboxClass+":checked").each(function() {
-        chkArray.push($(this).val());
-    });
-
-    if (chkArray.length > 0) {
-        swal({
-        title: "Are you sure?",
-        text: "You will not be able to recover your data!",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#f95454",
-        confirmButtonText: "Yes",
-        cancelButtonText: "No",
-        closeOnConfirm: true,
-        closeOnCancel: false
-        }, function(isConfirm){
-            if (isConfirm) {
-                $.ajax({
-                    url: deleteTransferItem,
-                    type: 'POST',
-                    dataType: 'JSON',
-                    data: {
-                        _token:token,
-                        id: chkArray
-                    },
-                }).done(function(data, textStatus, xhr) {
-                    $('.check_all_transfer_item').prop('checked',false);
-                    msg(data.msg,data.status)
-                    getTransferEntry(getTransferEntryURL, { _token: token });
-                    getReceiveItems(getReceiveItemsURL, { _token: token });
-                    clear();
-                }).fail(function(xhr, textStatus, errorThrown) {
-                    msg(errorThrown,'error');
-                });
-            } else {
-                swal("Cancelled", "Your data is safe and not deleted.");
-            }
-        });
-    }else {
-        msg("Please select at least 1 item." ,"failed");
+function delete_set(data) {
+    var msgtext = "You will not be able to recover your data and the qty will return to the process!";
+    if (data[0].item_status == 0){
+        msgtext = "You will not be able to recover your data!";
     }
+    swal({
+    title: "Are you sure?",
+    text: msgtext,
+    type: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#f95454",
+    confirmButtonText: "Yes",
+    cancelButtonText: "No",
+    closeOnConfirm: true,
+    closeOnCancel: false
+    }, function(isConfirm){
+        if (isConfirm) {
+            $.ajax({
+                url: deleteTransferItem,
+                type: 'GET',
+                dataType: 'JSON',
+                data: {
+                    _token: token,
+                    data: data
+                },
+            }).done(function(data, textStatus, xhr) {
+                msg(data.msg,data.status);
+                getTransferEntry(getTransferEntryURL, { _token: token });
+                getReceiveItems(getReceiveItemsURL, { _token: token });
+                clear();
+            }).fail(function(xhr, textStatus, errorThrown) {
+                msg(errorThrown,'error');
+            });
+        } else {
+            swal("Cancelled", "Your data is safe and not deleted.");
+        }
+    });
 }
 
 function getJOdetails(jo_no,edit) {

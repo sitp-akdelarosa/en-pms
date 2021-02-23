@@ -518,7 +518,7 @@ Route::group(['prefix' => 'prod', 'middleware' => ['ajax-session-expired', 'auth
 			->name('prod.transfer-item.get-output');
 		Route::get('/received_items', 'Production\Transaction\TransferItemController@received_items')
 			->name('prod.transfer-item.received_items');
-		Route::post('/destroy', 'Production\Transaction\TransferItemController@destroy')
+		Route::get('/destroy', 'Production\Transaction\TransferItemController@destroy')
 			->name('prod.transfer-item.destroy');
 		Route::post('/save', 'Production\Transaction\TransferItemController@save')
 			->name('prod.transfer-item.save');

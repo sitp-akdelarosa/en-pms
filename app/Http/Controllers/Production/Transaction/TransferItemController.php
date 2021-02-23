@@ -286,6 +286,31 @@ class TransferItemController extends Controller
                                         data-update_user='".$data->update_user."'
                                         data-updated_at='".$data->updated_at."' ".$disabled.">
                                         <i class='fa fa-edit'></i>
+                                    </button>
+                                    <button class='btn btn-sm btn-danger btn_delete'
+                                        data-id='".$data->id."'
+                                        data-jo_no='".$data->jo_no."'
+                                        data-prod_order_no='".$data->prod_order_no."'
+                                        data-prod_code='".$data->prod_code."'
+                                        data-description='".$data->description."'
+                                        data-current_process='".$data->current_process."'
+                                        data-div_code='".$data->div_code."'
+                                        data-user_div_code='".$data->user_div_code."'
+                                        data-process='".$data->process."'
+                                        data-qty='".$data->qty."'
+                                        data-status='".$data->status."'
+                                        data-remarks='".$data->remarks."'
+                                        data-output_status='".$data->output_status."'
+                                        data-transfer_date='".$transfer_date."'
+                                        data-transfer_time='".$transfer_time."'
+                                        data-process_id='".$data->process_id."'
+                                        data-create_user='".$data->create_user."'
+                                        data-created_at='".$data->created_at."'
+                                        data-update_user='".$data->update_user."'
+                                        data-item_status='".$data->item_status."'
+                                        data-travel_sheet_id='".$data->travel_sheet_id."'
+                                        data-updated_at='".$data->updated_at."'>
+                                        <i class='fa fa-trash'></i>
                                     </button>";
                         })
                         ->make(true);
@@ -379,35 +404,43 @@ class TransferItemController extends Controller
 
     public function destroy(Request $req)
     {
-        if (is_array($req->id)) {
-            foreach ($req->id as $key => $id) {
-                $set = ProdTransferItem::find($id);
-                $set->delete();
-                if($set->item_status == 0){
-                    Notification::where('content_id',$req->id)->delete();
+        $data = [
+            'msg' => 'Successfully deleted',
+            'status' => 'success'
+        ];
+        if($req->data[0]['item_status']!= 0){
+            $exist = ProdTravelSheetProcess::where('travel_sheet_id' , $req->data[0]['travel_sheet_id'])->where('process' , $req->data[0]['process'])->first();
+            if(isset($exist)){
+                if($exist->unprocessed != $req->data[0]['qty'] ){
+                    $data = [
+                        'msg' => 'The qty already moving cant be delete',
+                        'status' => 'failed'
+                    ];
                 }
-            }
-        }else {
-            $set = ProdTransferItem::find($req->id);
-            $set->deleted = 1;
-            $set->deleted_at = date('Y-m-d H:i:s');
-            $set->delete_user = Auth::user()->id;
-            $set->update();
-
-            if($set->item_status == 0){
-                Notification::where('content_id',$req->id)->delete();
+            return response()->json($data);
             }
         }
+       
+        $set = ProdTransferItem::find($req->data[0]['id']);
+        $set->deleted = 1;
+        $set->deleted_at = date('Y-m-d H:i:s');
+        $set->delete_user = Auth::user()->id;
+        $set->update();
+
+        if($set->item_status == 0){
+            Notification::where('content_id',$req->data[0]['id'])->delete();
+        }
+        
         $data = [
             'msg' => "Data was successfully deleted.",
             'status' => "success"
         ];
-        $ids = implode(',', $req->id);
+
         $this->_audit->insert([
             'user_type' => Auth::user()->user_type,
             'module_id' => $this->_moduleID,
             'module' => 'Transfer Item',
-            'action' => 'Deleted data ID '.$ids,
+            'action' => 'Deleted data ID '.$req->data[0]['travel_sheet_id'],
             'user' => Auth::user()->id,
             'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
         ]);
