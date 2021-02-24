@@ -526,8 +526,8 @@ Route::group(['prefix' => 'prod', 'middleware' => ['ajax-session-expired', 'auth
 			->name('prod.transfer-item.getDivCodeProcess');
 		Route::get('/getDivisionCode', 'Production\Transaction\TransferItemController@DivisionCode')
 			->name('prod.transfer-item.getDivisionCode');
-		Route::get('/getDivisionCodeDLL', 'Production\Transaction\TransferItemController@DivisionCodeDLL')
-			->name('prod.transfer-item.getDivisionCodeDLL');
+		Route::get('/get-extra-divcode', 'Production\Transaction\TransferItemController@getExtraDivCode')
+			->name('prod.transfer-item.get-extra-divcode');
 		Route::post('/getCurrentGood', 'Production\Transaction\TransferItemController@getGood')
 			->name('prod.transfer-item.getCurrentGood');
 		Route::post('/get-unprocessed', 'Production\Transaction\TransferItemController@unprocessedItem')
@@ -536,6 +536,8 @@ Route::group(['prefix' => 'prod', 'middleware' => ['ajax-session-expired', 'auth
 			->name('prod.transfer-item.receive-process');
 		Route::get('/SaveNewProcess', 'Production\Transaction\TransferItemController@SaveNewProcess')
 			->name('prod.transfer-item.SaveNewProcess');
+		Route::get('/get-extra-process', 'Production\Transaction\TransferItemController@getExtraProcess')
+				->name('prod.transfer-item.get-extra-process');
 	});
 
 	Route::group(['prefix' => 'receive-item'], function () {

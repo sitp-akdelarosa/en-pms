@@ -127,8 +127,8 @@
 		var getDivCodeProcessURL = "{{ url('/prod/transfer-item/div-code-process') }}";
 		var unprocessedItem = "{{ url('/prod/transfer-item/get-unprocessed') }}";
 
-		var getProcessURL = "{{ url('masters/division-master/get-process') }}";
-		var getDivisionCodeDLL = "{{ url('/prod/transfer-item/getDivisionCodeDLL') }}";
+		var getExtraProcessURL = "{{ url('/prod/transfer-item/get-extra-process') }}";
+		var getExtraDivCodeURL= "{{ url('/prod/transfer-item/get-extra-divcode') }}";
 		var SaveNewProcess = "{{ url('/prod/transfer-item/SaveNewProcess') }}";
 
 

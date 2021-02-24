@@ -10,12 +10,9 @@ use Illuminate\Support\Facades\Auth;
 use App\ProdTransferItem;
 use App\ProdTravelSheet;
 use App\ProdTravelSheetProcess;
-use App\User;
 use DB;
 use DataTables;
 use App\PpcDivision;
-use App\PpcDivisionProcess;
-use App\PpcProductCode;
 use App\Notification;
 use Event;
 use App\Events\Notify;
@@ -353,14 +350,6 @@ class TransferItemController extends Controller
                     ->leftjoin('ppc_division_processes as dp', 'd.id', '=', 'dp.division_id')
                     ->select('d.id as id', 'd.div_code as div_code', 'd.plant as plant')
                     ->where('dp.process', $req->process)->get();
-        return response()->json($div_code);
-    }
-
-    public function DivisionCodeDLL(Request $req)
-    {
-        $div_code = DB::table('ppc_divisions as d')
-                    ->select('d.id as id', 'd.div_code as div_code', 'd.plant as plant')
-                    ->get();
         return response()->json($div_code);
     }
 
@@ -775,4 +764,26 @@ class TransferItemController extends Controller
 
     }
 
+    public function getExtraDivCode(Request $req)
+    {
+        $div = DB::select("SELECT distinct d.id as id, d.div_code as `text` 
+                            FROM ppc_divisions d
+                            join ppc_division_processes as dp
+                            on dp.division_id = d.id
+                            order by d.div_code");
+        return response()->json($div);
+    }
+
+    public function getExtraProcess(Request $req)
+	{
+		$pro = DB::select("SELECT distinct 
+                                    dp.process as id,
+                                    dp.process as `text`
+                            FROM ppc_divisions d
+                            join ppc_division_processes as dp
+                            on dp.division_id = d.id
+                            where d.id = ".$req->div_code_id."
+                            order by dp.process");
+		return response()->json($pro);
+	}
 }

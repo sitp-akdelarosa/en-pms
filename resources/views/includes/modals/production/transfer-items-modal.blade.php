@@ -356,7 +356,7 @@
         <form>
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Processes</h5>
+                    <h5 class="modal-title">Add Extra Processes</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -364,22 +364,23 @@
                 
                 <div class="modal-body">
                     <div class="form-group row">
-                        <label for="process" class="col-sm-3 control-label mt-5">Division:</label>
-                        <div class="col-sm-7">
-                            <select class="form-control form-control-sm select-validate clear" id="pDivision" name="division">
+						<label for="pDivision" class="col-sm-3 control-label mt-5">Division:</label>
+                        <div class="col-sm-9">
+                            <select class="form-control form-control-sm select-validate clear" id="pDivision" name="division" style="width:100%">
                                 <option value=""></option>
                             </select>
-                            <div id="process_feedback"></div>
+                            <div id="pDivision_feedback"></div>
                         </div>
                     </div>
 					<div class="form-group row">
-                        <label for="process" class="col-sm-3 control-label mt-5">Process:</label>
+						<label for="pProcess" class="col-sm-3 control-label mt-5">Process:</label>
                         <div class="col-sm-7">
-                            <select class="form-control form-control-sm select-validate clear" id="pProcess" name="process">
+                            <select class="form-control form-control-sm select-validate clear" id="pProcess" name="process" style="width:100%">
                                 <option value=""></option>
                             </select>
-                            <div id="process_feedback"></div>
+                            <div id="pProcess_feedback"></div>
                         </div>
+
                         <div class="col-sm-2">
                             <button type="button" class="btn btn-sm btn-block bg-green" id="btn_add_process">
                                 <i class="fa fa-plus"></i>

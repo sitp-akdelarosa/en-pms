@@ -202,8 +202,8 @@ $( function() {
     $('#btn_process').on('click', function () {
         process_arr = [];
         addProcess(process_arr);
-        $("#pDivision").val("");
-        $("#pProcess").val("");
+        $('#pDivision').select2().val(null).trigger('change.select2');
+        $("#pProcess").select2().val(null).trigger('change.select2');
         $('#modal_process').modal('show');
     });
 
@@ -236,10 +236,14 @@ $( function() {
                 '</tr>');
         }
     });
-    $('#pDivision').on('change', function () {
-        process_arr = [];
-        addProcess(process_arr);
-        getProcess();
+    // $('#pDivision').on('change', function () {
+    //     process_arr = [];
+    //     addProcess(process_arr);
+    //     getProcess();
+    // });
+
+    $('#pDivision').on('change', function() {
+        getExtraProcess($(this).val());
     });
 
 });
@@ -248,10 +252,11 @@ function init() {
     check_permission(code_permission, function(output) {
         if (output == 1) {}
 
-        getDivisionCodeddl();
         getTransferEntry(getTransferEntryURL, { _token: token });
         getReceiveItems(getReceiveItemsURL, { _token: token });
         checkAllCheckboxesInTable('.check_all_transfer_item','.check_item');
+
+        getExtraDivCode();
     });
 }
 
@@ -630,46 +635,10 @@ function addProcess(arr) {
     }
 }
 
-function getProcess() {
-    var opt = "<option value=''></option>";
-    $("#pProcess").html(opt);
-    $.ajax({
-        url: getProcessURL,
-        type: 'GET',
-        dataType: 'JSON',
-        data: { _token: token, division_id: $('#pDivision').val() },
-    }).done(function (data, textStatus, xhr) {
-        $.each(data, function (i, x) {
-            opt = "<option value='" + x.process + "'>" + x.process + "</option>";
-            $("#pProcess").append(opt);
-        });
-    }).fail(function (xhr, textStatus, errorThrown) {
-        msg(errorThrown, textStatus);
-    });
-}
-
-function getDivisionCodeddl() {
-    var opt = "<option value=''></option>";
-    $("#pDivision").html(opt);
-    $.ajax({
-        url: getDivisionCodeDLL,
-        type: 'GET',
-        dataType: 'JSON',
-        data: { _token: token},
-    }).done(function (data, textStatus, xhr) {
-        $.each(data, function (i, x) {
-            opt = "<option value='" + x.id + "'>" + x.div_code + "</option>";
-            $("#pDivision").append(opt);
-        });
-    }).fail(function (xhr, textStatus, errorThrown) {
-        msg(errorThrown, textStatus);
-    });
-}
-
 function SaveProcess() {
     var isValid = true;
     if ($("#travel_sheet_id").val() == ''){
-        msg("Please input JONo.", "failed");
+        msg("Please input J.O. No.", "failed");
         isValid = false;
     } else if ($("#current_process_name").val() == '') {
         msg("Please input Current Process.", "failed");
@@ -696,13 +665,55 @@ function SaveProcess() {
             },
         }).done(function (data, textStatus, xhr) {
             msg(data.msg, data.status);
-            if(data.status == ""){
+            //if(data.status == ""){
                 getDivCodeProcess($('#jo_no').val(), $('#curr_process').find("option:selected").text());
-            }
+            //}
         }).fail(function (xhr, textStatus, errorThrown) {
             msg(errorThrown, textStatus);
         });
     }
+}
+
+function getExtraProcess(div_code_id) {
+    $.ajax({
+		url: getExtraProcessURL,
+		type: 'GET',
+		dataType: 'JSON',
+		data: { 
+            _token: token,
+            div_code_id: div_code_id
+        },
+	}).done(function (data, textStatus, xhr) {
+		$('#pProcess').select2({
+			allowClear: true,
+			placeholder: 'Select Extra Process',
+			data: data
+		}).val(data).trigger('change.select2');
+
+	}).fail(function (xhr, textStatus, errorThrown) {
+		ErrorMsg(xhr);
+	}).always(function () {
+		$('.loadingOverlay-modal').hide();
+	});
+}
+
+function getExtraDivCode() {
+    $.ajax({
+        url: getExtraDivCodeURL,
+        type: 'GET',
+        dataType: 'JSON',
+        data: {
+            _token: token
+        },
+    }).done(function (data, textStatus, xhr) {
+        $('#pDivision').select2({
+			allowClear: true,
+			placeholder: 'Select Extra Div Code',
+			data: data
+		}).val(data).trigger('change.select2');
+    }).fail(function (xhr, textStatus, errorThrown) {
+        ErrorMsg(xhr);
+    });
 }
 
 

@@ -516,15 +516,6 @@ class RawMaterialWithdrawalController extends Controller
                                                ->where('trans_no',$req->trans_no)
                                                ->first();
 
-            // $RawMatQuantity = PpcRawMaterialWithdrawalDetails::where('trans_id',$info->id)->get();
-
-            // foreach ($RawMatQuantity as $key => $rw) {
-            //     PpcUpdateInventory::where('heat_no',$rw->material_heat_no)
-            //                         ->increment('quantity',(int)$rw->issued_qty);
-            // }
-
-            // PpcRawMaterialWithdrawalDetails::where('trans_id',$info->id)->delete();
-
             PpcRawMaterialWithdrawalInfo::where('trans_no',$req->trans_no)
                                         ->update([
                                             'update_user' => Auth::user()->id,
