@@ -286,31 +286,6 @@ class TransferItemController extends Controller
                                         data-update_user='".$data->update_user."'
                                         data-updated_at='".$data->updated_at."' ".$disabled.">
                                         <i class='fa fa-edit'></i>
-                                    </button>
-                                    <button class='btn btn-sm btn-danger btn_delete'
-                                        data-id='".$data->id."'
-                                        data-jo_no='".$data->jo_no."'
-                                        data-prod_order_no='".$data->prod_order_no."'
-                                        data-prod_code='".$data->prod_code."'
-                                        data-description='".$data->description."'
-                                        data-current_process='".$data->current_process."'
-                                        data-div_code='".$data->div_code."'
-                                        data-user_div_code='".$data->user_div_code."'
-                                        data-process='".$data->process."'
-                                        data-qty='".$data->qty."'
-                                        data-status='".$data->status."'
-                                        data-remarks='".$data->remarks."'
-                                        data-output_status='".$data->output_status."'
-                                        data-transfer_date='".$transfer_date."'
-                                        data-transfer_time='".$transfer_time."'
-                                        data-process_id='".$data->process_id."'
-                                        data-create_user='".$data->create_user."'
-                                        data-created_at='".$data->created_at."'
-                                        data-update_user='".$data->update_user."'
-                                        data-item_status='".$data->item_status."'
-                                        data-travel_sheet_id='".$data->travel_sheet_id."'
-                                        data-updated_at='".$data->updated_at."'>
-                                        <i class='fa fa-trash'></i>
                                     </button>";
                         })
                         ->make(true);
@@ -405,45 +380,120 @@ class TransferItemController extends Controller
     public function destroy(Request $req)
     {
         $data = [
-            'msg' => 'Successfully deleted',
-            'status' => 'success'
+            'msg' => 'Deleting items was failed.',
+            'status' => 'failed'
         ];
-        if($req->data[0]['item_status']!= 0){
-            $exist = ProdTravelSheetProcess::where('travel_sheet_id' , $req->data[0]['travel_sheet_id'])->where('process' , $req->data[0]['process'])->first();
-            if(isset($exist)){
-                if($exist->unprocessed != $req->data[0]['qty'] ){
-                    $data = [
-                        'msg' => 'The qty already moving cant be delete',
-                        'status' => 'failed'
-                    ];
+
+        $moved_qty_id = [];
+        $deleted = 0;
+
+        if (isset($req->ids)) {
+            foreach ($req->ids as $key => $id) {
+                $transfer_item = ProdTransferItem::find($id);
+
+                if ($transfer_item->item_status == 1) {
+                    // check if qty already moved
+                    $process = ProdTravelSheetProcess::find($transfer_item->process_id);
+
+                    $moved_qty = $process->good + $process->rework + $process->scrap + $process->convert + $process->alloy_mix + $process->nc;
+
+                    if ($moved_qty > 0) {
+                        array_push($moved_qty_id,$transfer_item->id);
+                    } else {
+                        // delete transfer item
+                        $transfer_item->deleted = 1;
+                        $transfer_item->deleted_at = date('Y-m-d H:i:s');
+                        $transfer_item->delete_user = Auth::user()->id;
+                        $transfer_item->update();
+
+                        $deleted++;
+
+                        // deduct from receive process
+                        $process->unprocessed = $process->unprocessed - $transfer_item->receive_qty;
+                        $process->update();
+
+                        // delete notification
+                        Notification::where('content_id',$id)->delete();
+
+                        // make audit
+                        $current = ProdTravelSheetProcess::find($transfer_item->current_process);
+                        $msg = "Deleted Transfer data of ".$transfer_item->jo_no." from ".$current->div_code." ".$current->process." to ".$transfer_item->process."";
+
+                        $this->_audit->insert([
+                            'user_type' => Auth::user()->user_type,
+                            'module_id' => $this->_moduleID,
+                            'module' => 'Transfer Item',
+                            'action' => $msg,
+                            'user' => Auth::user()->id,
+                            'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
+                        ]);
+                    }
+                } else {
+                    // delete transfer item
+                    $transfer_item->deleted = 1;
+                    $transfer_item->deleted_at = date('Y-m-d H:i:s');
+                    $transfer_item->delete_user = Auth::user()->id;
+                    $transfer_item->update();
+
+                    $deleted++;
+                    // delete notification
+                    Notification::where('content_id',$id)->delete();
+
+                    // make audit
+                    $current = ProdTravelSheetProcess::find($transfer_item->current_process);
+                    $msg = "Deleted Transfer data of ".$transfer_item->jo_no." from ".$current->div_code." ".$current->process." to ".$transfer_item->process."";
+
+                    $this->_audit->insert([
+                        'user_type' => Auth::user()->user_type,
+                        'module_id' => $this->_moduleID,
+                        'module' => 'Transfer Item',
+                        'action' => $msg,
+                        'user' => Auth::user()->id,
+                        'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
+                    ]);
                 }
-            return response()->json($data);
             }
+            
         }
-       
-        $set = ProdTransferItem::find($req->data[0]['id']);
-        $set->deleted = 1;
-        $set->deleted_at = date('Y-m-d H:i:s');
-        $set->delete_user = Auth::user()->id;
-        $set->update();
 
-        if($set->item_status == 0){
-            Notification::where('content_id',$req->data[0]['id'])->delete();
+        $moved = [];
+
+        if (count($moved_qty_id) > 0) {
+            $id = implode(",",$moved_qty_id);
+            $moved = DB::select("select ti.jo_no as jo_no,
+                                        ti.prod_code as prod_code,
+                                        ti.description as description,
+                                        (select div_code 
+                                        from prod_travel_sheet_processes as p 
+                                        where p.id = ti.current_process
+                                        limit 1) as current_div_code,
+                                        (select process 
+                                        from prod_travel_sheet_processes as p 
+                                        where p.id = ti.current_process
+                                        limit 1) as current_process,
+                                        (select div_code 
+                                        from ppc_divisions as d 
+                                        where d.id = ti.div_code
+                                        limit 1) as to_div_code,
+                                        ti.process as to_process,
+                                        ti.receive_qty
+                                from prod_transfer_items as ti
+                                where ti.id in (".$id.")");
         }
-        
-        $data = [
-            'msg' => "Data was successfully deleted.",
-            'status' => "success"
-        ];
 
-        $this->_audit->insert([
-            'user_type' => Auth::user()->user_type,
-            'module_id' => $this->_moduleID,
-            'module' => 'Transfer Item',
-            'action' => 'Deleted data ID '.$req->data[0]['travel_sheet_id'],
-            'user' => Auth::user()->id,
-            'fullname' => Auth::user()->firstname. ' ' .Auth::user()->lastname
-        ]);
+        if ($deleted > 0) {
+            $data = [
+                'msg' => "Data was successfully deleted.",
+                'status' => "success",
+                'moved_data' => $moved
+            ];
+        } else {
+            $data = [
+                'msg' => "Nothing was deleted.",
+                'status' => "failed",
+                'moved_data' => $moved
+            ];
+        }
 
         return response()->json($data);
     }

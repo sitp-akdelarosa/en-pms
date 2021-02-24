@@ -414,3 +414,44 @@
         </form>
     </div>
 </div>
+
+<div id="modal_moved_data" class="modal fade " data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document">
+        <form>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">These Items were already processed and cannot be deleted.</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table table-sm table-striped table-bordered dt-responsive nowrap" id="tbl_moved_data" style="width:100%">
+                                <thead class="thead-dark">
+                                    <th>J.O. No.</th>
+                                    <th>Product Code</th>
+                                    <th>Description</th>
+									<th>From Div Code</th>
+									<th>From Process</th>
+									<th>To Div Code</th>
+									<th>To Process</th>
+									<th>Receive Qty</th>
+                                </thead>
+                                <tbody id="tbl_process_body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn bg-red" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn bg-blue float-right" id="btnSaveNewProcess" >
+                        <i class="fa fa-floppy-o"></i> Save
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

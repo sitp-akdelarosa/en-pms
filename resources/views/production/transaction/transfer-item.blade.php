@@ -45,11 +45,11 @@
 							<i class="fa fa-plus"></i> Add
 						</button>
 					</div>
-					<!-- <div class="col-md-2">
+					<div class="col-md-2">
 						 <button type="submit" class="btn btn-sm btn-block bg-red permission-button"  id="btn_delete_set">
 							<i class="fa fa-trash"></i> Delete
 						</button>
-					</div> -->
+					</div>
 				</div>
 
 				<table class="table table-sm table-bordered table-hover table-striped nowrap" id="tbl_transfer_entry" style="width: 100%">
