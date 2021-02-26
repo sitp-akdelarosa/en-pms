@@ -119,10 +119,10 @@ class TransferItemController extends Controller
             }
         } else {
             // check if data already exist
-            $check = DB::select(DB::raw("select (select (good+rework+scrap+`convert`+alloy_mix+nc)
+            $check = DB::select(DB::raw("select (select `".strtolower($req->status)."`
                                         from enpms.prod_travel_sheet_processes
                                         where id = ".$req->curr_process.") as current_process,
-                                        (select (good+rework+scrap+`convert`+alloy_mix+nc)
+                                        (select `" . strtolower($req->status) . "`
                                         from enpms.prod_travel_sheet_processes
                                         where process = '".strtoupper($req->process)."'
                                         and travel_sheet_id = ".$req->travel_sheet_id." 
@@ -150,6 +150,38 @@ class TransferItemController extends Controller
                     ];
 
                     return response()->json($data);
+                }
+
+                $check_existence = DB::select("SELECT sum(ti.qty) as qty, ti.process as process, d.div_code as div_code 
+                                                FROM prod_transfer_items as ti
+                                                join ppc_divisions as d
+                                                on d.id = ti.div_code
+                                                where jo_no = '".$req->jo_no."'
+                                                and deleted <> 1
+                                                and current_process = ".$req->curr_process."
+                                                and `status` = '".$req->status. "'
+                                                group by ti.process, d.div_code
+                                                ");
+                if (isset($check_existence)) {
+                    if ((float)$check_existence[0]->qty >= (float)$req->qty) {
+                        $msg = $req->status . ' quantity('. $req->qty.') is already transfered to Process: '. $check_existence[0]->process .', Div Code: '. $check_existence[0]->div_code .', Qty: '. $check_existence[0]->qty;
+                        $data = [
+                            'msg' => $msg,
+                            'status' => 'failed',
+                            'transfer_item' => $this->getTransferEntry()
+                        ];
+
+                        return response()->json($data);
+                    } else if ((float)$req->qty > (float)$check_existence[0]->qty) {
+                        $msg = 'You already transfered to Process: ' . $check_existence[0]->process . ', Div Code: ' . $check_existence[0]->div_code . ', Qty: ' . $check_existence[0]->qty.', Please transfer the remaining quantity.';
+                        $data = [
+                            'msg' => $msg,
+                            'status' => 'failed',
+                            'transfer_item' => $this->getTransferEntry()
+                        ];
+
+                        return response()->json($data);
+                    }
                 }
             }
 
