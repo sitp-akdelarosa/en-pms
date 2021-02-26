@@ -127,7 +127,7 @@ class TransferItemController extends Controller
                                         where process = '".strtoupper($req->process)."'
                                         and travel_sheet_id = ".$req->travel_sheet_id." 
                                         and div_code = ".$req->div_code.") as to_process"));
-            if (isset($check)) {
+            if (count((array)$check) > 0) {
                 if ((double)$check[0]->current_process <= (double)$check[0]->to_process) {
                     $data = [
                         'msg' => 'Already transfered items.',
@@ -162,7 +162,7 @@ class TransferItemController extends Controller
                                                 and `status` = '".$req->status. "'
                                                 group by ti.process, d.div_code
                                                 ");
-                if (isset($check_existence)) {
+                if (count((array)$check_existence) > 0) {
                     if ((float)$check_existence[0]->qty >= (float)$req->qty) {
                         $msg = $req->status . ' quantity('. $req->qty.') is already transfered to Process: '. $check_existence[0]->process .', Div Code: '. $check_existence[0]->div_code .', Qty: '. $check_existence[0]->qty;
                         $data = [
