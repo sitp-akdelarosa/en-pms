@@ -172,7 +172,6 @@ foreach ($user_accesses as $user_access){
 @endsection
 @push('scripts')
 	<script type="text/javascript">
-		var token = $('meta[name="csrf-token"]').attr('content');
 		var processListURL = "{{ url('masters/process-master/process-list') }}";
 		var saveProcessURL = "{{ url('masters/process-master/save') }}";
 		var selectedProcessListURL = "{{ url('masters/process-master/selected-process-list') }}";
@@ -180,8 +179,6 @@ foreach ($user_accesses as $user_access){
         var deleteSetURL = "{{ url('masters/process-master/delete-set') }}";
         var productLineURL = "{{ url('masters/process-master/get-product-line') }}";
         var selectedProductLineURL = "{{ url('masters/process-master/selected-product-line') }}";
-
-        var code_permission = "M0005";
     </script>
 	<script type="text/javascript" src="{{ asset('/js/pages/ppc/masters/process-master/process-master.js') }}"></script>
 @endpush

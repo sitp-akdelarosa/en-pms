@@ -29,7 +29,12 @@ class OperatorMasterController extends Controller
     public function index()
     {
         $user_accesses = $this->_helper->UserAccess();
-        return view('ppc.masters.operator-master',['user_accesses' => $user_accesses]);
+        $permission_access = $this->_helper->check_permission('M0006');
+
+        return view('ppc.masters.operator-master', [
+            'user_accesses' => $user_accesses,
+            'permission_access' => $permission_access
+        ]);
     }
 
     public function save(Request $request)

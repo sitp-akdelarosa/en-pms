@@ -326,7 +326,6 @@ foreach ($user_accesses as $user_access){
 <?php $__env->stopSection(); ?>
 <?php $__env->startPush('scripts'); ?>
     <script type="text/javascript">
-        var token = $('meta[name="csrf-token"]').attr('content');
         var getScNoURL = "<?php echo e(url('/transaction/raw-material-withdrawal/get-sc-no')); ?>";
         var getMaterialHeatNoURL = "<?php echo e(url('/transaction/raw-material-withdrawal/get-heat-no')); ?>";
         var deleteRawMaterial = "<?php echo e(url('/transaction/raw-material-withdrawal/destroy')); ?>";
@@ -334,7 +333,6 @@ foreach ($user_accesses as $user_access){
         var scnosuggestURL = "<?php echo e(url('/transaction/raw-material-withdrawal/scnosuggest')); ?>";
         var getMaterialDetailsURL = "<?php echo e(url('/transaction/raw-material-withdrawal/material-details')); ?>";
         var RawMaterialWithdrawalSlipURL = "<?php echo e(url('/pdf/raw-material-withdrawal-slip')); ?>";
-        var code_permission = 'T0003';
         var getComputationIssuedQty = "<?php echo e(url('/transaction/raw-material-withdrawal/getComputationIssuedQty')); ?>";
         var excelSearchRawMaterialURL = "<?php echo e(url('/transaction/raw-material-withdrawal/search-raw-material-excel')); ?>";
         var confirmWithdrawalURL = "<?php echo e(url('/transaction/raw-material-withdrawal/confirm-raw-material-withdrawal')); ?>";

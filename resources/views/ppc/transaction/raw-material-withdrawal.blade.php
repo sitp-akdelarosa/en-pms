@@ -385,7 +385,6 @@ foreach ($user_accesses as $user_access){
 @endsection
 @push('scripts')
     <script type="text/javascript">
-        var token = $('meta[name="csrf-token"]').attr('content');
         var getScNoURL = "{{ url('/transaction/raw-material-withdrawal/get-sc-no') }}";
         var getMaterialHeatNoURL = "{{ url('/transaction/raw-material-withdrawal/get-heat-no') }}";
         var deleteRawMaterial = "{{ url('/transaction/raw-material-withdrawal/destroy') }}";
@@ -393,7 +392,6 @@ foreach ($user_accesses as $user_access){
         var scnosuggestURL = "{{ url('/transaction/raw-material-withdrawal/scnosuggest') }}";
         var getMaterialDetailsURL = "{{ url('/transaction/raw-material-withdrawal/material-details') }}";
         var RawMaterialWithdrawalSlipURL = "{{ url('/pdf/raw-material-withdrawal-slip') }}";
-        var code_permission = 'T0003';
         var getComputationIssuedQty = "{{ url('/transaction/raw-material-withdrawal/getComputationIssuedQty') }}";
         var excelSearchRawMaterialURL = "{{ url('/transaction/raw-material-withdrawal/search-raw-material-excel') }}";
         var confirmWithdrawalURL = "{{ url('/transaction/raw-material-withdrawal/confirm-raw-material-withdrawal') }}";

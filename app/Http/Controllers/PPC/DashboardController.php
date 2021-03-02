@@ -29,7 +29,12 @@ class DashboardController extends Controller
 
 		$user_accesses = $this->_helper->UserAccess();
 
-		return view('ppc.dashboard',['from' => $dateFrom,'to' => $dateTo, 'user_accesses' => $user_accesses]);
+        return view('ppc.dashboard', [
+            'from' => $dateFrom,
+            'to' => $dateTo, 
+            'user_accesses' => $user_accesses,
+            'permission_access' => 0
+        ]);
 	}
 
 	public function pie_graph(Request $req)
@@ -363,79 +368,79 @@ class DashboardController extends Controller
                     // Set all borders (top, right, bottom, left)
                     $cells->setBorder('solid', 'solid', 'solid', 'solid');
                 });
-                $sheet->cell('A4', function($cell) use($dt) {
+                $sheet->cell('A4', function($cell) {
                     $cell->setValue("J.O. No.");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
-                $sheet->cell('B4', function($cell) use($dt) {
+                $sheet->cell('B4', function($cell) {
                     $cell->setValue("Item Code");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
-                $sheet->cell('C4', function($cell) use($dt) {
+                $sheet->cell('C4', function($cell) {
                     $cell->setValue("Description");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
-                $sheet->cell('D4', function($cell) use($dt) {
+                $sheet->cell('D4', function($cell) {
                     $cell->setValue("Division");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
-                $sheet->cell('E4', function($cell) use($dt) {
+                $sheet->cell('E4', function($cell) {
                     $cell->setValue("Plant");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
-                $sheet->cell('F4', function($cell) use($dt) {
+                $sheet->cell('F4', function($cell) {
                     $cell->setValue("Process");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
-                $sheet->cell('G4', function($cell) use($dt) {
+                $sheet->cell('G4', function($cell) {
                     $cell->setValue("Material");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
-                $sheet->cell('H4', function($cell) use($dt) {
+                $sheet->cell('H4', function($cell) {
                     $cell->setValue("Heat No.");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
-                $sheet->cell('I4', function($cell) use($dt) {
+                $sheet->cell('I4', function($cell) {
                     $cell->setValue("Lot No.");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
-                $sheet->cell('J4', function($cell) use($dt) {
+                $sheet->cell('J4', function($cell) {
                     $cell->setValue("Sched Qty");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
-                $sheet->cell('K4', function($cell) use($dt) {
+                $sheet->cell('K4', function($cell) {
                     $cell->setValue("Unprocess");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
-                $sheet->cell('L4', function($cell) use($dt) {
+                $sheet->cell('L4', function($cell) {
                     $cell->setValue("Good");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
-                $sheet->cell('M4', function($cell) use($dt) {
+                $sheet->cell('M4', function($cell) {
                     $cell->setValue("Scrap");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
-                $sheet->cell('N4', function($cell) use($dt) {
+                $sheet->cell('N4', function($cell) {
                     $cell->setValue("Total Output");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
-                $sheet->cell('O4', function($cell) use($dt) {
+                $sheet->cell('O4', function($cell) {
                     $cell->setValue("Order Qty");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
-                $sheet->cell('P4', function($cell) use($dt) {
+                $sheet->cell('P4', function($cell) {
                     $cell->setValue("Total Issued Qty.");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
-                $sheet->cell('Q4', function($cell) use($dt) {
+                $sheet->cell('Q4', function($cell) {
                     $cell->setValue("Issued Qty.");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
-                $sheet->cell('R4', function($cell) use($dt) {
+                $sheet->cell('R4', function($cell) {
                     $cell->setValue("End Date");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
-                $sheet->cell('S4', function($cell) use($dt) {
+                $sheet->cell('S4', function($cell) {
                     $cell->setValue("Status");
                     $cell->setBorder('thick','thick','thick','thick');
                 });

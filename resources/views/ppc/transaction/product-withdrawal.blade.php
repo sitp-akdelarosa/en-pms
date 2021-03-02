@@ -350,8 +350,6 @@ foreach ($user_accesses as $user_access){
 @endsection
 @push('scripts')
     <script type="text/javascript">
-        var token = $('meta[name="csrf-token"]').attr('content');
-        var code_permission = 'T0009';
         var getWithdrawalTransactionURL = "{{ url('/transaction/product-withdrawal/get-withdrawal-transaction') }}";
         var getInventoryURL = "{{ url('/transaction/product-withdrawal/get-product-inventory') }}";
         var ProductWithdrawalSlipPrintURL = "{{ url('/pdf/product-withdrawal-slip') }}";

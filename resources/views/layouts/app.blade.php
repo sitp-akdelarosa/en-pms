@@ -8,6 +8,7 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="permission_access" content="{{ $permission_access }}">
 
     @if(Auth::check())
     <meta name="user_id" content="{{ Auth::user()->id }}">
@@ -44,6 +45,8 @@
 
     <script type="text/javascript">
         var getAuditTrailDataURL = "{{ url('/admin/audit-trail/get-data') }}";
+        var token = document.querySelector("meta[name='csrf-token']").getAttribute('content');
+		var permission_access = document.querySelector("meta[name='permission_access']").getAttribute('content');
     </script>
 
     <script src="{{ mix('/js/main.js') }}"></script>

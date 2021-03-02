@@ -57,8 +57,6 @@ foreach ($user_accesses as $user_access){
 
 @push('scripts')
     <script type="text/javascript">
-        var code_permission = "M0002";
-        var token = $('meta[name="csrf-token"]').attr('content');
         var dropdownListURL = "{{ url('masters/dropdown-master/dropdown-list') }}";
         var dropdownNamesURL = "{{ url('masters/dropdown-master/names') }}"
         var getDropdownItemURL = "{{ url('masters/dropdown-master/items') }}";

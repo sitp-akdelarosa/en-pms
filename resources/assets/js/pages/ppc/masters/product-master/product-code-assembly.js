@@ -221,16 +221,22 @@ $( function() {
 });
 
 function init() {
-	check_permission(code_permission, function(output) {
-		if (output == 1) {}		
-	});
+	view_assembly();
+
+	if (permission_access == '2' || permission_access == 2) {
+        $('.permission').prop('readonly', true);
+        $('.permission-button').prop('disabled', true);
+    } else {
+        $('.permission').prop('readonly', false);
+        $('.permission-button').prop('disabled', false);
+    }
 
 	$('#div_cancel').hide();
 	checkAllCheckboxesInTable('#tbl_prodcode_assembly', '.check_all', '.check_item', '#btn_delete_assembly');
 	getAssemblies();
 	get_dropdown_product_assembly();
 
-	view_assembly();
+	
 }
 
 function view_assembly() {

@@ -193,6 +193,14 @@ function init() {
 }
 
 function initializePage(){
+	if (permission_access == '2' || permission_access == 2) {
+        $('.permission').prop('readonly', true);
+        $('.permission-button').prop('disabled', true);
+    } else {
+        $('.permission').prop('readonly', false);
+        $('.permission-button').prop('disabled', false);
+    }
+	
 	$("#btn_delete").on('click', removeUploadByID);
 
 	$('#frm_upload_order').on('submit', function(e) {

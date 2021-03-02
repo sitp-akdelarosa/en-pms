@@ -34,7 +34,12 @@ class MaterialMasterController extends Controller
 	public function index()
 	{
 		$user_accesses = $this->_helper->UserAccess();
-		return view('ppc.masters.material-master',['user_accesses' => $user_accesses]);
+		$permission_access = $this->_helper->check_permission('M0004');
+
+		return view('ppc.masters.material-master', [
+			'user_accesses' => $user_accesses,
+			'permission_access' => $permission_access
+		]);
 	}
 
 	public function material_assembly_list()

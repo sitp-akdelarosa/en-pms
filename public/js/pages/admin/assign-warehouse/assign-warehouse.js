@@ -258,11 +258,14 @@ $(function () {
 });
 
 function init() {
-  check_permission(code_permission, function (output) {
-    if (output == 1) {
-      $("#btn_delete").prop('disabled', true);
-    }
-  });
+  if (permission_access == '2' || permission_access == 2) {
+    $('.permission').prop('readonly', true);
+    $('.permission-button').prop('disabled', true);
+  } else {
+    $('.permission').prop('readonly', false);
+    $('.permission-button').prop('disabled', false);
+    $("#btn_delete").prop('disabled', true);
+  }
 }
 
 function get_assigned_warehouse(user_id) {

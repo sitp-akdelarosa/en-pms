@@ -274,14 +274,18 @@ class HelpersController extends Controller
         return count((array)$object);
     }
 
-    public function check_permission(Request $req)
+    public function check_permission($code)
     {
         if (isset(Auth::user()->id)) {
-            $access = AdminModuleAccess::where('user_id',Auth::user()->id)
-                            ->where('code',$req->code)
+            $permission = AdminModuleAccess::where('user_id',Auth::user()->id)
+                            ->where('code',$code)
                             ->select('access')->first();
 
-            return response()->json($access);
+            if (count((array)$permission) > 0) {
+                return $permission->access;
+            }
+
+            return 2;
         }
         
     }

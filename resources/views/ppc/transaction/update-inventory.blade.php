@@ -153,7 +153,6 @@ foreach ($user_accesses as $user_access){
 @endsection
 @push('scripts')
     <script type="text/javascript">
-        var token = $('meta[name="csrf-token"]').attr('content');
         var checkfile = "{{ url('/transaction/update-inventory/CheckFileUpdateInventory') }}";
         var uploadInventory = "{{ url('/transaction/update-inventory/UploadInventory') }}";
         var materialDataTable = "{{ url('/transaction/update-inventory/materials') }}";
@@ -163,7 +162,6 @@ foreach ($user_accesses as $user_access){
         var warehouseURL = "{{ url('/transaction/update-inventory/warehouse') }}";
         var GetItemCodeURL = "{{ url('/transaction/update-inventory/GetItemCode') }}";
         var getItemCodeDetailsurl = "{{ url('/transaction/update-inventory/GetItemCodeDetails') }}";
-        var code_permission = 'T0001';
         var downloadNonexistingURL = "{{ url('/transaction/update-inventory/download-unregistered-materials') }}";
         var getNonexistingURL = "{{ url('/transaction/update-inventory/get-unregistered-materials') }}";
         var downloadMaterialFormatURL = "{{ url('/transaction/update-inventory/download-inventory-material-format') }}";

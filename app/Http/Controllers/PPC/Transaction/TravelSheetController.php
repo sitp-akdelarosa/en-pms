@@ -43,7 +43,12 @@ class TravelSheetController extends Controller
     public function index()
     {
         $user_accesses = $this->_helper->UserAccess();
-        return view('ppc.transaction.travel-sheet',['user_accesses' => $user_accesses]);
+        $permission_access = $this->_helper->check_permission('T0006');
+
+        return view('ppc.transaction.travel-sheet', [
+            'user_accesses' => $user_accesses,
+            'permission_access' => $permission_access
+        ]);
     }
 
     public function getJoDetails(Request $req)

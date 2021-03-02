@@ -20,12 +20,19 @@ class AuditTrailController extends Controller
         // $this->middleware('ajax-session-expired');
         // $this->middleware('auth');
         $this->_helper = new HelpersController;
+
+        $this->_moduleID = $this->_helper->moduleID('A0004');
     }
 
     public function index()
     {
         $user_accesses = $this->_helper->UserAccess();
-        return view('admin.audit-trail',['user_accesses' => $user_accesses]);
+        $permission_access = $this->_helper->check_permission('A0004');
+
+        return view('admin.audit-trail', [
+            'user_accesses' => $user_accesses,
+            'permission_access' => $permission_access
+        ]);
     }
 
     public function getAllAuditTrail()

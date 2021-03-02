@@ -36,7 +36,11 @@ class TransferItemController extends Controller
     public function index()
     {
         $user_accesses = $this->_helper->UserAccess();
-        return view('production.transaction.transfer-item',['user_accesses' => $user_accesses]);
+        $permission_access = $this->_helper->check_permission('T0008');
+        return view('production.transaction.transfer-item',[
+                    'user_accesses' => $user_accesses,
+                    'permission_access' => $permission_access
+                ]);
     }
 
     public function save(Request $req)

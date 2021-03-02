@@ -41,7 +41,12 @@ class ProductionScheduleController extends Controller
     public function index()
     {
         $user_accesses = $this->_helper->UserAccess();
-        return view('ppc.transaction.production-schedule', ['user_accesses' => $user_accesses]);
+        $permission_access = $this->_helper->check_permission('T0004');
+
+        return view('ppc.transaction.production-schedule', [
+            'user_accesses' => $user_accesses,
+            'permission_access' => $permission_access
+        ]);
     }
 
     /**
@@ -1702,7 +1707,8 @@ class ProductionScheduleController extends Controller
                 case 'S/S PLATE':
                     $data = $this->calculatePlate(
                                     $prod,
-                                    $inventory
+                                    $inventory,
+                                    $req
                                 );
                     break;
                     
@@ -1995,8 +2001,4 @@ class ProductionScheduleController extends Controller
         $data = PpcJoDetails::where('jo_summary_id',$req->jo_summary_id);
         return DataTables::of($data)->make(true);
     }
-
-    
-
-    
 }

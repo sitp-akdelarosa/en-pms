@@ -46,7 +46,7 @@ foreach ($user_accesses as $user_access){
 
 		<div class="box-body">
 			<div class="table-responsive">
-				<table class="table table-striped table-sm dt-responsive nowrap" id="tbl_user" style="width:100%">
+				<table class="table table-striped table-sm table-bordered dt-responsive nowrap" id="tbl_user" style="width:100%">
 					<thead class="thead-dark">
 						<tr>
 							<th>
@@ -76,7 +76,6 @@ foreach ($user_accesses as $user_access){
 
 @push('scripts')
 	<script type="text/javascript">
-		var token = $('meta[name="csrf-token"]').attr('content');
 		var userDeleteURL = "{{ url('/admin/user-master/destroy') }}";
 		var userListURL = "{{ url('/admin/user-master/list') }}";
 		var defaultPhoto = "{{ asset('images/default-profile.png') }}";
@@ -84,7 +83,6 @@ foreach ($user_accesses as $user_access){
 		var userModuleURL = "{{ url('admin/user-master/user-access') }}";
 		var UserTypeURL = "{{ route('admin.users-type-users') }}";
 		var DivCodeURL = "{{ route('admin.div-code-users') }}";
-		var code_module = "A0001";
 	</script>
 	<script type="text/javascript" src="{{ mix('/js/pages/admin/user-master/user-master.js') }}"></script>
 @endpush

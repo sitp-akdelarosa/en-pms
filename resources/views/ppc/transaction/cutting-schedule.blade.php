@@ -172,8 +172,6 @@ if ($exist == 0) {
 @endsection
 @push('scripts')
     <script type="text/javascript">
-        var token = $('meta[name="csrf-token"]').attr('content');
-        var code_permission = "T0005";
         var JOListURL = "{{ url('/transaction/cutting-schedule/jo-list') }}";
         var getLeaderURL = "{{ url('/transaction/cutting-schedule/cut-sched-leader') }}";
         var saveCuttSchedURL = "{{ url('/transaction/cutting-schedule/save-cutt-sched') }}";

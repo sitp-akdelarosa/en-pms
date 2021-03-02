@@ -113,8 +113,6 @@
 
 @push('scripts')
 	<script type="text/javascript">
-		var token = $('meta[name="csrf-token"]').attr('content');
-		var code_permission = 'T0008';
 		var userDivCode = "{{ Auth::user()->div_code }}";
 		var getJOdetailsURL = "{{ url('/prod/transfer-item/get-jo') }}";
 		var getTransferEntryURL = "{{ url('/prod/transfer-item/get-transfer-entry') }}";

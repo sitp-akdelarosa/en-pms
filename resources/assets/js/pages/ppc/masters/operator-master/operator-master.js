@@ -251,12 +251,18 @@ $( function() {
 });
 
 function init() {
-    check_permission(code_permission, function(output) {
-        if (output == 1) {}
-        viewState('');
-        getOperators();
-        checkAllCheckboxesInTable('#tbl_operator','.check_all','.check_item');
-    });
+	viewState('');
+
+	if (permission_access == '2' || permission_access == 2) {
+        $('.permission').prop('readonly', true);
+        $('.permission-button').prop('disabled', true);
+    } else {
+        $('.permission').prop('readonly', false);
+        $('.permission-button').prop('disabled', false);
+    }
+	
+	getOperators();
+	checkAllCheckboxesInTable('#tbl_operator','.check_all','.check_item');
 }
 
 //Multiple Delete 
@@ -392,15 +398,15 @@ function getOperators() {
 			{
                 data: function(data) {
                     return data.id;//'<input type="checkbox" class="table-checkbox check_item" value="'+data.id+'">';
-                }, name: 'id', orderable: false, searchable: false
+                }, name: 'id', orderable: false, searchable: false, width: '5.5%'
             },
-            { data: 'action', name: 'action', orderable: false, searchable: false },
-            { data: 'operator_id', name: 'operator_id' },
-            { data: 'firstname', name: 'firstname' },
-			{ data: 'lastname', name: 'lastname' },
-			{ data: 'nickname', name: 'nickname' },
-			{ data: 'position', name: 'position' },
-            { data: 'updated_at', name: 'updated_at' },
+            { data: 'action', name: 'action', orderable: false, searchable: false, width: '5.5%' },
+            { data: 'operator_id', name: 'operator_id', width: '16.5%' },
+            { data: 'firstname', name: 'firstname', width: '16.5%' },
+			{ data: 'lastname', name: 'lastname', width: '16.5%' },
+			{ data: 'nickname', name: 'nickname', width: '12.5%' },
+			{ data: 'position', name: 'position', width: '21.5%' },
+            { data: 'updated_at', name: 'updated_at', width: '12.5%' },
             {
                 data: function (data) {
 					var enable_disable;
@@ -418,7 +424,7 @@ function getOperators() {
 							'data-content="This Button is to Disable / Enable '+data.firstname+' '+data.lastname+'" '+
 							'data-placement="right" '+
 							'>' + enable_disable + '</button>';
-                }, name: 'disabled', orderable: false, searchable: false
+                }, name: 'disabled', orderable: false, searchable: false, width: '5.5%'
             }
 		],
 		initComplete: function() {
@@ -431,6 +437,7 @@ function getOperators() {
 			});
 
 			$('#tbl_operator .dt-checkboxes-select-all input[type=checkbox]').addClass('table-checkbox');
+			$("#tbl_operator").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
 		},
 		fnDrawCallback: function() {
 		},

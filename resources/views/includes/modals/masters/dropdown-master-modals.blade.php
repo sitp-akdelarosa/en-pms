@@ -86,7 +86,7 @@
 
                     <div class="row">
                         <div class="col-md-12">
-                            <table class="table table-sm table-hover table-striped dt-responsive nowrap" style="width: 100%" id="tbl_item_list">
+                            <table class="table table-sm table-hover table-striped table-bordered dt-responsive nowrap" style="width: 100%" id="tbl_item_list">
                                 <thead class="thead-dark">
                                     <th>#</th>
                                     <th>Items / Options</th>

@@ -33,7 +33,7 @@ foreach ($user_accesses as $user_access){
 						<div class="row mb-5">
 							<div class="col-md-4">
 								<h5>Choose User</h5>
-								<table class="table table-sm table-hover table-striped dt-responsive nowrap" id="tbl_users" style="width:100%">
+								<table class="table table-sm table-hover table-bordered table-striped dt-responsive nowrap" id="tbl_users" style="width:100%">
 									<thead class="thead-dark">
 										<tr>
 											<th width="5%">
@@ -50,7 +50,7 @@ foreach ($user_accesses as $user_access){
 
 							<div class="col-md-3">
 								<h5>Assign user to Warehouse</h5>
-								<table class="table table-striped table-sm dt-responsive" id="tbl_warehouse" style="width:100%">
+								<table class="table table-striped table-sm table-bordered dt-responsive" id="tbl_warehouse" style="width:100%">
 									<thead class="thead-dark">
 										<tr>
 											<th>
@@ -66,7 +66,7 @@ foreach ($user_accesses as $user_access){
 
 							<div class="col-md-5">
 								<h5>Assiged Warehouse</h5>
-								<table class="table table-striped table-sm dt-responsive" id="tbl_assign_warehouse" style="width:100%">
+								<table class="table table-striped table-sm table-bordered dt-responsive" id="tbl_assign_warehouse" style="width:100%">
 									<thead class="thead-dark">
 										<tr>
 											<th>
@@ -110,14 +110,11 @@ foreach ($user_accesses as $user_access){
 @endsection
 @push('scripts')
 	<script type="text/javascript">
-		var token = $('meta[name="csrf-token"]').attr('content');
 		var getUserURL = "{{ url('/admin/assign-warehouse/users') }}";
 		var WarehouseListURL = "{{ url('/admin/assign-warehouse/list') }}";
 		var WarehouseDeleteURL = "{{ url('/admin/assign-warehouse/destroy') }}";
 		var dropdownWarehouse = "{{ url('/admin/assign-warehouse/warehouse-select') }}";
 		var SaveURL = "{{ route('admin.assign-warehouse.save') }}";
-		var code_permission = "A0006";
-
 	</script>
 	<script type="text/javascript" src="{{ asset('/js/pages/admin/assign-warehouse/assign-warehouse.js') }}"></script>
 @endpush

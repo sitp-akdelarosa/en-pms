@@ -36,7 +36,6 @@
 
 @push('scripts')
     <script type="text/javascript">
-        var token = $('meta[name="csrf-token"]').attr('content');
         var getTransferItemsURL = "{{ url('/for-approval/transfer-items') }}";
         var answerRequestURL = "{{ url('/for-approval/answer') }}";
     </script>

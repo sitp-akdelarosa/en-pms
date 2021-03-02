@@ -77,7 +77,7 @@ foreach ($user_accesses as $user_access){
 						<div class="row">
 							<div class="col-12">
 								<div class="table-responsive">
-									<table class="table table-sm table-striped" id="tbl_type" style="width:100%">
+									<table class="table table-sm table-bordered table-striped" id="tbl_type" style="width:100%">
 										<thead class="thead-dark">
 											<tr>
 												<th width="5%">
@@ -110,12 +110,10 @@ foreach ($user_accesses as $user_access){
 
 @push('scripts')
 	<script type="text/javascript">
-		var token = $('meta[name="csrf-token"]').attr('content');
 		var typeDeleteURL = "{{ url('/admin/user-type/destroy') }}";
 		var typeListURL = "{{ url('/admin/user-type/list') }}";
 		var moduleListURL = "{{ url('/admin/user-type/module-list') }}";
 		var saveUrl = "{{ route('admin.user-type.save') }}";
-		var code_permission = "A0003";
 	</script>
 	<script type="text/javascript" src="{{ mix('/js/pages/admin/user-type/user-type.js') }}"></script>
 @endpush

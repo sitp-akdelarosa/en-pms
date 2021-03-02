@@ -104,12 +104,10 @@ foreach ($user_accesses as $user_access){
 
 @push('scripts')
     <script type="text/javascript">
-        var token = $('meta[name="csrf-token"]').attr('content');
         var checkfile = "{{ url('/transaction/upload-orders/CheckFile') }}";
         var datatableUpload = "{{ url('/transaction/upload-orders/DatatableUpload') }}";
         var deleteselected = "{{ url('/transaction/upload-orders/deletefromtemp') }}";
         var overwriteURL = "{{ url('/transaction/upload-orders/overwrite') }}";
-        var code_permission = 'T0002';
         var downloadNonexistingURL = "{{ url('/transaction/upload-orders/download-unregistered-products') }}";
         var getNonexistingURL = "{{ url('/transaction/upload-orders/get-unregistered-products') }}";
         var excelSearchFilterURL = "{{ url('/transaction/upload-orders/search-orders-excel') }}";

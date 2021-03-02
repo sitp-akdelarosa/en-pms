@@ -540,7 +540,6 @@ foreach ($user_accesses as $user_access){
 @endsection
 @push('scripts')
 	<script type="text/javascript">
-		var token = $('meta[name="csrf-token"]').attr('content');
 		var assemblyListURL = "{{ url('/masters/product-master/assembly/list') }}";
 		var assemblyDeleteURL = "{{ url('/masters/product-master/assembly/destroy') }}";
 		var prodTypeURL = "{{ url('/masters/product-master/code/product-type') }}";
@@ -560,8 +559,6 @@ foreach ($user_accesses as $user_access){
 		var disabledURL = "{{ url('/masters/product-master/enable-disabled-product') }}";
 
 		var getSetURL = "{{ url('masters/process-master/get-set') }}";
-
-		var code_permission = "M0003";
 	</script>
 	<script type="text/javascript" src="{{ asset('/js/pages/ppc/masters/product-master/product-master.js') }}"></script>
 @endpush

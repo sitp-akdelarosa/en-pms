@@ -26,7 +26,11 @@ class NotificationController extends Controller
     public function index()
     {
     	$user_accesses = $this->_helper->UserAccess();
-        return view('notification',['user_accesses' => $user_accesses]);
+
+		return view('notification', [
+			'user_accesses' => $user_accesses,
+			'permission_access' => 0
+		]);
     }
 
     public function getUnreadNotification()

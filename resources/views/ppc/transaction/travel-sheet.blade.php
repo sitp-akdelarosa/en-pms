@@ -134,7 +134,6 @@ foreach ($user_accesses as $user_access){
 
 @push('scripts')
     <script type="text/javascript">
-        var token = $('meta[name="csrf-token"]').attr('content');
         var joDetailsListURL = "{{ url('/transaction/travel-sheet/set-up/jo-list') }}";
         var getProcessURL = "{{ url('/transaction/travel-sheet/set-up/process') }}";
         var getSc_noURL = "{{ url('transaction/travel-sheet/get-Sc_no') }}";
@@ -151,7 +150,6 @@ foreach ($user_accesses as $user_access){
         var ProceedToProductionURL = "{{ url('/transaction/travel-sheet/proceed-to-production') }}";
 
         var getProcessDivURL = "{{ url('/transaction/travel-sheet/get-process-div') }}";
-        var code_permission = 'T0006';
         
     </script>
     <script type="text/javascript" src="{{ asset('/js/pages/ppc/transactions/travel-sheet/travel-sheet.js') }}"></script>

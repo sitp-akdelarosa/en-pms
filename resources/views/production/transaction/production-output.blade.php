@@ -96,8 +96,6 @@ foreach ($user_accesses as $user_access){
 @endsection
 @push('scripts')
     <script type="text/javascript">
-        var token = $('meta[name="csrf-token"]').attr('content');
-        var code_permission = 'T0007';
         var getOutputsURL = "{{ url('/prod/production-output/get-output') }}";
         var deleteProductonOutput = "{{ url('/prod/production-output/destroy') }}";
         var getOperatorURl = "{{ url('/prod/production-output/get-Operator') }}";    

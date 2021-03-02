@@ -98,7 +98,6 @@
 
 @push('scripts')
     <script type="text/javascript">
-        var token = $('meta[name="csrf-token"]').attr('content');
         var get_dashboard = "{{ url('/dashboard/get-dashboard') }}";
         var get_chartURl = "{{ url('/dashboard/pie-graph') }}";
         var get_jonoURL = "{{ url('/dashboard/get-jono') }}";

@@ -28,7 +28,12 @@ class SummaryReportController extends Controller
     public function index()
     {
         $user_accesses = $this->_helper->UserAccess();
-        return view('production.reports.summary-report',['user_accesses' => $user_accesses]);
+        $permission_access = $this->_helper->check_permission('R0005');
+
+        return view('production.reports.summary-report', [
+            'user_accesses' => $user_accesses,
+            'permission_access' => $permission_access
+        ]);
     }
     public function search_summart_report(Request $req)
     {

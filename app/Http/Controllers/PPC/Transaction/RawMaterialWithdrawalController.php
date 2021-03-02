@@ -40,9 +40,11 @@ class RawMaterialWithdrawalController extends Controller
     {
         $iso = AdminSettingIso::select('iso_name','iso_code')->where('iso_name','like','%WITHDRAW SLIP')->get();
         $user_accesses = $this->_helper->UserAccess();
+        $permission_access = $this->_helper->check_permission('T0003');
 
         return view('ppc.transaction.raw-material-withdrawal',[
                     'user_accesses' => $user_accesses,
+                    'permission_access' => $permission_access,
                     'iso' => $iso
                 ]);
     }

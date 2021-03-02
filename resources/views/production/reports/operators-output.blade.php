@@ -90,12 +90,6 @@ foreach ($user_accesses as $user_access){
 @endsection
 @push('scripts')
     <script type="text/javascript">
-        var token = $('meta[name="csrf-token"]').attr('content');
-        var code_permission = 'R0004';
-    </script>	
-	<script type="text/javascript">
-        var token = $('meta[name="csrf-token"]').attr('content');
-        var code_permission = 'R0004';
         var downloadExcel = "{{ url('/prod/reports/operators-output/downloadExcel') }}";
     </script>
     <script type="text/javascript" src="{{ asset('/js/pages/production/reports/operators-output.js') }}"></script>

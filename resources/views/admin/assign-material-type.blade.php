@@ -66,7 +66,7 @@ foreach ($user_accesses as $user_access){
 
 							<div class="col-md-5">
 								<h5>Assiged Material Type</h5>
-								<table class="table table-striped table-sm dt-responsive" id="tbl_assign_materialtype" style="width:100%">
+								<table class="table table-striped table-sm table-bordered dt-responsive" id="tbl_assign_materialtype" style="width:100%">
 									<thead class="thead-dark">
 										<tr>
 											<th>
@@ -110,14 +110,11 @@ foreach ($user_accesses as $user_access){
 @endsection
 @push('scripts')
 	<script type="text/javascript">
-		var token = $('meta[name="csrf-token"]').attr('content');
 		var getUserURL = "{{ url('/admin/assign-material-type/users') }}";
 		var MaterialTypeListURL = "{{ url('/admin/assign-material-type/list') }}";
 		var MaterialTypeDeleteURL = "{{ url('/admin/assign-material-type/destroy') }}";
 		var dropdownMaterial = "{{ url('/admin/assign-material-type/materialtype-select') }}";
 		var SaveURL = "{{ route('admin.assign-material-type.save') }}";
-		var code_permission = "A0002";
-
 	</script>
 	<script type="text/javascript" src="{{ asset('/js/pages/admin/assign-material-type/assign-material-type.js') }}"></script>
 @endpush

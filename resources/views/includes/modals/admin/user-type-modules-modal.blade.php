@@ -13,7 +13,7 @@
 
 				<div class="row">
 					<div class="col-md-12">
-						<table class="table table-sm table-striped" width="100%" id="tbl_modules">
+						<table class="table table-sm table-striped table-bordered" width="100%" id="tbl_modules">
 							<thead class="thead-dark">
 								<tr>
 									<th>

@@ -387,14 +387,17 @@ $( function() {
 });
 
 function init() {
-    check_permission(code_permission, function (output) {
-        if (output == 1) { }
+    viewState('');
+    
+    if (permission_access == '2' || permission_access == 2) {
+        $('.permission').prop('readonly', true);
+        $('.permission-button').prop('disabled', true);
+    } else {
+        $('.permission').prop('readonly', false);
+        $('.permission-button').prop('disabled', false);
+    }
 
-        getWithdrawalTransaction('', '');
-        viewState('');
-    });
-    
-    
+    getWithdrawalTransaction('', ''); 
 }
 
 function clear() {

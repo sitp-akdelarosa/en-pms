@@ -11,12 +11,12 @@
 
 <section class="content">
 	<div class="row justify-content-center">
-        <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
             <div class="box">
                 <div class="box-body">
                     <div class="row">
-                        <div class="col-md-5">
+                        <div class="col-md-4">
                             <form method="post" action="{{ url('/masters/operator-master/save') }}" id="frm_operator">
                                 @csrf
                                 <input type="hidden" id="id" name="id" class="clear">
@@ -113,15 +113,15 @@
                             </form>
                         </div>
 
-                        <div class="col-md-7">
-                            <div class="table-responsive">
-                                <table class="table table-sm table-striped table-bordered dt-responsive nowrap" id="tbl_operator" style="width:100%">
+                        <div class="col-md-8">
+                            {{-- <div class="table-responsive"> --}}
+                                <table class="table table-sm table-striped table-bordered nowrap" id="tbl_operator" style="width:100%">
                                     <thead class="thead-dark">
                                         <tr>
-                                            <th width="5%">
+                                            <th>
                                                 <input type="checkbox" class="table-checkbox check_all">
                                             </th>
-                                            <th width="5%"></th>
+                                            <th></th>
                                             <th>Operator's ID</th>
                                             <th>First Name</th>
                                             <th>Last Name</th>
@@ -133,7 +133,7 @@
                                     </thead>
                                     <tbody id="tbl_operator_body"></tbody>
                                 </table>
-                            </div>
+                            {{-- </div> --}}
                         </div>
                     </div>
 
@@ -148,8 +148,6 @@
 @endsection
 @push('scripts')
 	<script type="text/javascript">
-		var token = $('meta[name="csrf-token"]').attr('content');
-        var code_permission = "M0006";
         var getOperatorsURL = "{{ url('/masters/operator-master/get-operators') }}";
         var deleteOM = "{{ url('/masters/operator-master/destroy') }}";
         var disabledURL = "{{ url('/masters/operator-master/enable-disabled-operator') }}";

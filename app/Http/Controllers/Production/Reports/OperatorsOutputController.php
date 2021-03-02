@@ -30,7 +30,12 @@ class OperatorsOutputController extends Controller
     public function index()
     {
         $user_accesses = $this->_helper->UserAccess();
-        return view('production.reports.operators-output',['user_accesses' => $user_accesses]);
+        $permission_access = $this->_helper->check_permission('R0004');
+
+        return view('production.reports.operators-output', [
+            'user_accesses' => $user_accesses,
+            'permission_access' => $permission_access
+        ]);
     }
 
     public function search_operator(Request $req)
@@ -58,7 +63,7 @@ class OperatorsOutputController extends Controller
             if (count($prod_production_outputs) == 0) {
                 $data = ['msg' => 'There are no existing data on that input date range','status' => 'failed'];
             } else {
-                $this->$_Operators_data =$prod_production_outputs;
+                $this->$_Operators_data = $prod_production_outputs;
                 $data = ['status' => 'success','ppo' => $prod_production_outputs];
             }
 

@@ -375,12 +375,16 @@ $(function () {
 });
 
 function init() {
-    check_permission(code_permission, function(output) {
-		if (output == 1) {}
-		
-		getRawMaterialList();
-		checkAllCheckboxesInTable('.check_all', '.check_item');
-    });
+	if (permission_access == '2' || permission_access == 2) {
+        $('.permission').prop('readonly', true);
+        $('.permission-button').prop('disabled', true);
+    } else {
+        $('.permission').prop('readonly', false);
+        $('.permission-button').prop('disabled', false);
+    }
+
+	getRawMaterialList();
+	checkAllCheckboxesInTable('.check_all', '.check_item');
 }
 
 function buttonState(status) {

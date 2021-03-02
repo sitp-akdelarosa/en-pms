@@ -32,7 +32,12 @@ class CuttingScheduleController extends Controller
 	public function index()
 	{
 		$user_accesses = $this->_helper->UserAccess();
-		return view('ppc.transaction.cutting-schedule', ['user_accesses' => $user_accesses]);
+		$permission_access = $this->_helper->check_permission('T0005');
+
+		return view('ppc.transaction.cutting-schedule', [
+			'user_accesses' => $user_accesses,
+			'permission_access' => $permission_access
+		]);
 	}
 
 	/**

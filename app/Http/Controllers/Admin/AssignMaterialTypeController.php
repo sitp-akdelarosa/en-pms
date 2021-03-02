@@ -32,7 +32,12 @@ class AssignMaterialTypeController extends Controller
 	public function index()
 	{
 		$user_accesses = $this->_helper->UserAccess();
-		return view('admin.assign-material-type',['user_accesses' => $user_accesses]);
+		$permission_access = $this->_helper->check_permission('A0006');
+		
+		return view('admin.assign-material-type', [
+			'user_accesses' => $user_accesses,
+			'permission_access' => $permission_access
+		]);
 	}
 
 	public function materialtype_list(Request $req)

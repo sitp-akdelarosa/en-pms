@@ -31,7 +31,12 @@ class DropdownMasterController extends Controller
     public function index()
     {
         $user_accesses = $this->_helper->UserAccess();
-        return view('ppc.masters.dropdown-master',['user_accesses' => $user_accesses]);
+        $permission_access = $this->_helper->check_permission('M0002');
+
+        return view('ppc.masters.dropdown-master', [
+            'user_accesses' => $user_accesses,
+            'permission_access' => $permission_access
+        ]);
     }
 
     public function dropdown_names()

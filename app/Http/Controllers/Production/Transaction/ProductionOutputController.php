@@ -37,7 +37,11 @@ class ProductionOutputController extends Controller
     public function index()
     {
         $user_accesses = $this->_helper->UserAccess();
-        return view('production.transaction.production-output',['user_accesses' => $user_accesses]);
+        $permission_access = $this->_helper->check_permission('T0007');
+        return view('production.transaction.production-output',[
+                    'user_accesses' => $user_accesses,
+                    'permission_access' => $permission_access
+                ]);
     }
 
     public function store(Request $req)

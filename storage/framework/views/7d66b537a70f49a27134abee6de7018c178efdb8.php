@@ -8,6 +8,7 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+    <meta name="permission_access" content="<?php echo e($permission_access); ?>">
 
     <?php if(Auth::check()): ?>
     <meta name="user_id" content="<?php echo e(Auth::user()->id); ?>">
@@ -44,6 +45,8 @@
 
     <script type="text/javascript">
         var getAuditTrailDataURL = "<?php echo e(url('/admin/audit-trail/get-data')); ?>";
+        var token = document.querySelector("meta[name='csrf-token']").getAttribute('content');
+		var permission_access = document.querySelector("meta[name='permission_access']").getAttribute('content');
     </script>
 
     <script src="<?php echo e(mix('/js/main.js')); ?>"></script>

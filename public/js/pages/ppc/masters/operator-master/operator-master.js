@@ -350,13 +350,18 @@ $(function () {
 });
 
 function init() {
-  check_permission(code_permission, function (output) {
-    if (output == 1) {}
+  viewState('');
 
-    viewState('');
-    getOperators();
-    checkAllCheckboxesInTable('#tbl_operator', '.check_all', '.check_item');
-  });
+  if (permission_access == '2' || permission_access == 2) {
+    $('.permission').prop('readonly', true);
+    $('.permission-button').prop('disabled', true);
+  } else {
+    $('.permission').prop('readonly', false);
+    $('.permission-button').prop('disabled', false);
+  }
+
+  getOperators();
+  checkAllCheckboxesInTable('#tbl_operator', '.check_all', '.check_item');
 } //Multiple Delete 
 
 
@@ -492,30 +497,38 @@ function getOperators() {
       },
       name: 'id',
       orderable: false,
-      searchable: false
+      searchable: false,
+      width: '5.5%'
     }, {
       data: 'action',
       name: 'action',
       orderable: false,
-      searchable: false
+      searchable: false,
+      width: '5.5%'
     }, {
       data: 'operator_id',
-      name: 'operator_id'
+      name: 'operator_id',
+      width: '16.5%'
     }, {
       data: 'firstname',
-      name: 'firstname'
+      name: 'firstname',
+      width: '16.5%'
     }, {
       data: 'lastname',
-      name: 'lastname'
+      name: 'lastname',
+      width: '16.5%'
     }, {
       data: 'nickname',
-      name: 'nickname'
+      name: 'nickname',
+      width: '12.5%'
     }, {
       data: 'position',
-      name: 'position'
+      name: 'position',
+      width: '21.5%'
     }, {
       data: 'updated_at',
-      name: 'updated_at'
+      name: 'updated_at',
+      width: '12.5%'
     }, {
       data: function data(_data2) {
         var enable_disable;
@@ -533,7 +546,8 @@ function getOperators() {
       },
       name: 'disabled',
       orderable: false,
-      searchable: false
+      searchable: false,
+      width: '5.5%'
     }],
     initComplete: function initComplete() {
       $('.btn_edit').popover({
@@ -543,6 +557,7 @@ function getOperators() {
         trigger: 'hover focus'
       });
       $('#tbl_operator .dt-checkboxes-select-all input[type=checkbox]').addClass('table-checkbox');
+      $("#tbl_operator").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
     },
     fnDrawCallback: function fnDrawCallback() {},
     createdRow: function createdRow(row, data, dataIndex) {

@@ -263,22 +263,26 @@ $(function () {
 });
 
 function init() {
-    check_permission(code_permission, function(output) {
-        if (output == 1) {
-			view_div();
-			get_dropdown_productline();
+	if (permission_access == '2' || permission_access == 2) {
+        $('.permission').prop('readonly', true);
+        $('.permission-button').prop('disabled', true);
+    } else {
+        $('.permission').prop('readonly', false);
+        $('.permission-button').prop('disabled', false);
+    }
 
-			getLeaders();
+	view_div();
+	get_dropdown_productline();
 
-			viewProcess(view_process_arr);
+	getLeaders();
 
-			// getDatatable('tbl_division', divListURL, dataColumn, [], 0);
-			divisionTable();
-			get_dropdown_items_by_id(1, '#process');
+	viewProcess(view_process_arr);
 
-			checkAllCheckboxesInTable('#tbl_division','.check_all', '.check_item');
-		}
-    });
+	// getDatatable('tbl_division', divListURL, dataColumn, [], 0);
+	divisionTable();
+	get_dropdown_items_by_id(1, '#process');
+
+	checkAllCheckboxesInTable('#tbl_division','.check_all', '.check_item');
 }
 
 function divisionTable() {

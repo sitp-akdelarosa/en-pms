@@ -24,10 +24,10 @@ foreach ($user_accesses as $user_access){
 
 <section class="content">
     <div class="row justify-content-center">
-        <div class="col-lg-10">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="box">
                 <div class="box-body">
-                    <table class="table table-sm table-hover table-striped" id="tbl_audit" style="width: 100%">
+                    <table class="table table-sm table-hover table-bordered table-striped nowrap" id="tbl_audit" style="width: 100%">
                         <thead class="thead-dark">
                             <tr>
                                 <th>ID</th>
@@ -49,10 +49,6 @@ foreach ($user_accesses as $user_access){
 @endsection
 
 @push('scripts')
-    <script type="text/javascript">
-        var token = $('meta[name="csrf-token"]').attr('content');
-        var code_permission = "A0004";
-    </script>
     <script type="text/javascript" src="{{ mix('/js/pages/admin/audit-trail/audit-trail.js') }}"></script>
 @endpush
 

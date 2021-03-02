@@ -26,10 +26,12 @@ class ProfileController extends Controller
     {
     	$user = User::where('user_id',$user_id)->first();
     	$user_accesses = $this->_helper->UserAccess();
-        return view('profile',[
-        	'user_accesses' => $user_accesses,
-        	'user' => $user
-        ]);
+
+		return view('profile', [
+			'user_accesses' => $user_accesses,
+			'permission_access' => 0,
+			'user' => $user
+		]);
     }
 
     public function getActivity(Request $req)

@@ -32,6 +32,11 @@ class DashboardController extends Controller
 
         $user_accesses = $this->_helper->UserAccess();
 
+        return view('production.dashboard', [
+            'user_accesses' => $user_accesses,
+            'permission_access' => 0
+        ]);
+
         // $division_id = Auth::user()->div_code;
         // $ppc_divisions = DB::table('ppc_divisions')->where('id',  $division_id)->first();
         
@@ -39,11 +44,11 @@ class DashboardController extends Controller
             // $div_code = $ppc_divisions->div_code;
             // $processes = DB::table('prod_travel_sheet_processes')->where('div_code', $ppc_divisions->div_code)->get();
 
-            return view('production.dashboard',[
-                'user_accesses' => $user_accesses,
+            // return view('production.dashboard',[
+                // 'user_accesses' => $user_accesses,
                 // 'details' => $details,
                 // 'processes' => $processes
-            ]);
+            // ]);
         // }
     }
     public function get_process()

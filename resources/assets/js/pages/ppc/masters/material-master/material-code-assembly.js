@@ -255,13 +255,18 @@ $( function() {
 });
 
 function init() {
-	check_permission(code_permission, function(output) {
-		if (output == 1) {}
-		view_assembly();
-		get_dropdown_material_type_assembly()
-		checkAllCheckboxesInTable('#tbl_matcode_assembly','.check_all','.check_item');
-		assemblyDataTable();
-	});
+	if (permission_access == '2' || permission_access == 2) {
+        $('.permission').prop('readonly', true);
+        $('.permission-button').prop('disabled', true);
+    } else {
+        $('.permission').prop('readonly', false);
+        $('.permission-button').prop('disabled', false);
+    }
+
+	view_assembly();
+	get_dropdown_material_type_assembly()
+	checkAllCheckboxesInTable('#tbl_matcode_assembly','.check_all','.check_item');
+	assemblyDataTable();
 }
 
 function view_assembly() {

@@ -304,19 +304,22 @@ $( function() {
 });
 
 function init() {
-	check_permission(code_permission, function(output) {
-		if (output == 1) {
-			$('#btn_delete_set').prop('disabled', true);
-		}
-
-		get_dropdown_productline();
-		get_set();
-		processSelection();
-		checkAllCheckboxesInTable('#tbl_added_sets', '.check_all_sets', '.check_set', '#btn_delete_set');
-		checkAllCheckboxesInTable('#tbl_select_process', '.check_all', '.check_item');
-	});
-
 	GUIState('view');
+
+	if (permission_access == '2' || permission_access == 2) {
+        $('.permission').prop('readonly', true);
+        $('.permission-button').prop('disabled', true);
+    } else {
+        $('.permission').prop('readonly', false);
+        $('.permission-button').prop('disabled', false);
+		$('#btn_delete_set').prop('disabled', true);
+    }
+
+	get_dropdown_productline();
+	get_set();
+	processSelection();
+	checkAllCheckboxesInTable('#tbl_added_sets', '.check_all_sets', '.check_set', '#btn_delete_set');
+	checkAllCheckboxesInTable('#tbl_select_process', '.check_all', '.check_item');
 }
 
 function GUIState(state) {

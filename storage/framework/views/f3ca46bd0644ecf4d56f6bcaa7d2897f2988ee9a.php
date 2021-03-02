@@ -226,7 +226,6 @@ foreach ($user_accesses as $user_access){
 <?php $__env->stopSection(); ?>
 <?php $__env->startPush('scripts'); ?>
     <script type="text/javascript">
-        var token = $('meta[name="csrf-token"]').attr('content');
         var ordersURL = "<?php echo e(url('/transaction/production-schedule/get-orders')); ?>";
         var getMaterialsURL = "<?php echo e(url('/transaction/production-schedule/get-materials')); ?>";
         var getProductsURL = "<?php echo e(url('/transaction/production-schedule/get-products')); ?>";
@@ -248,9 +247,7 @@ foreach ($user_accesses as $user_access){
         // var getMaterialsURL = "<?php echo e(url('/transaction/production-schedule/get-materials')); ?>";
         var getJODetailsURL = "<?php echo e(url('/transaction/production-schedule/get-jo-details')); ?>";
         var deleteJoDetailItemURL = "<?php echo e(url('/transaction/production-schedule/delete-jo-detail-item')); ?>";
-        var editJoDetailItemURL = "<?php echo e(url('/transaction/production-schedule/edit-jo-detail-item')); ?>";
-        var code_permission = 'T0004';
-        
+        var editJoDetailItemURL = "<?php echo e(url('/transaction/production-schedule/edit-jo-detail-item')); ?>";        
     </script>
     <script type="text/javascript" src="<?php echo e(asset('/js/pages/ppc/transactions/production-schedule/production-schedule.js')); ?>"></script>
 <?php $__env->stopPush(); ?>

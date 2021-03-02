@@ -25,7 +25,7 @@ foreach ($user_accesses as $user_access){
         <div class="col-lg-12 col-md-10 col-sm-12 col-xs-12">
             <div class="box">
                 <div class="box-body">
-		            <table class="table table-striped table-sm dt-responsive" id="tbl_transfer_item" width="100%">
+		            <table class="table table-striped table-sm table-bordered dt-responsive" id="tbl_transfer_item" width="100%">
                     <thead class="thead-dark">
                         <tr>
                             <th>Job Order No.</th>
@@ -56,8 +56,6 @@ foreach ($user_accesses as $user_access){
 
 @push('scripts')
 	<script type="text/javascript">
-		var token = $('meta[name="csrf-token"]').attr('content');
-        var code_permission = "R0002";
         var getTransferEntryURL = "{{ url('reports/transfer-item/get-TransferEntry') }}";
 	</script>
 	<script type="text/javascript" src="{{ asset('/js/pages/ppc/reports/transfer-item-report.js') }}"></script>

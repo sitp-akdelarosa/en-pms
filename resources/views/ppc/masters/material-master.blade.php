@@ -510,7 +510,6 @@ foreach ($user_accesses as $user_access){
 
 @push('scripts')
 <script type="text/javascript">
-	var token = $('meta[name="csrf-token"]').attr('content');
 	var assemblyListURL = "{{ url('/masters/material-master/material-list') }}";
 	var assemblyDeleteURL = "{{ url('/masters/material-master/destroy') }}";
 	var materialTypeURL = "{{ url('/masters/material-master/material-type') }}";
@@ -522,7 +521,6 @@ foreach ($user_accesses as $user_access){
 	var disabledURL = "{{ url('/masters/material-master/enable-disabled-material') }}";
 	var downloadExcelFileURL = "{{ url('/masters/material-master/download-excel-file') }}";
 	var AllMaterialTypeURL = "{{ url('/masters/material-master/all-material-types') }}";
-	var code_permission = "M0004";
 </script>
 <script type="text/javascript" src="{{ mix('/js/pages/ppc/masters/material-master/material-master.js') }}"></script>
 @endpush

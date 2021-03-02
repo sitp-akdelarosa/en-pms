@@ -32,7 +32,11 @@ class ApprovalController extends Controller
     public function index()
     {
         $user_accesses = $this->_helper->UserAccess();
-        return view('ppc.for-approval',['user_accesses' => $user_accesses]);
+
+        return view('ppc.for-approval', [
+            'user_accesses' => $user_accesses,
+            'permission_access' => 0
+        ]);
     }
 
     public function getTransferItems(Request $req)

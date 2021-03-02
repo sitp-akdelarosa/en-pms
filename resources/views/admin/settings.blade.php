@@ -105,7 +105,7 @@ foreach ($user_accesses as $user_access){
 
 						<div class="col-md-6">
 							<div class="table-responsive">
-								<table class="table table-sm table-striped dt-responsive nowrap" id="tbl_iso" style="width:100%">
+								<table class="table table-sm table-striped table-bordered dt-responsive nowrap" id="tbl_iso" style="width:100%">
 									<thead class="thead-dark">
 										<tr>
 											<th width="5%">
@@ -133,11 +133,9 @@ foreach ($user_accesses as $user_access){
 
 @push('scripts')
 	<script type="text/javascript">
-		var token = $('meta[name="csrf-token"]').attr('content');
 		var getISOTable = "{{ url('/admin/settings/getISOTable') }}";
 		var deleteISO = "{{ url('/admin/settings/destroy') }}";
 		var defultphoto = "{{ asset('images/default_upload_photo.jpg') }}";
-		var code_permission = 'A0005';
 	</script>
 	<script src="{{ mix('/js/pages/admin/settings/settings.js') }}"></script>
 @endpush

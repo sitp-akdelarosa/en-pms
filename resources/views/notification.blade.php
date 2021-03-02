@@ -41,8 +41,5 @@
 @endsection
 
 @push('scripts')
-    <script type="text/javascript">
-        var token = $('meta[name="csrf-token"]').attr('content');
-    </script>
     <script src="{{ mix('/js/pages/notification.js') }}"></script>
 @endpush

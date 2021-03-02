@@ -176,7 +176,6 @@ foreach ($user_accesses as $user_access){
 @endsection
 @push('scripts')
 	<script type="text/javascript">
-		var token = $('meta[name="csrf-token"]').attr('content');
 		var divListURL = "{{ url('masters/division-master/list') }}";
 		var disableEnableDivisionURL = "{{ url('masters/division-master/disableEnableDivision') }}";
 		var divDeleteURL = "{{ url('masters/division-master/destroy') }}";
@@ -184,7 +183,6 @@ foreach ($user_accesses as $user_access){
 		var getProcessURL = "{{ url('masters/division-master/get-process') }}";
 		var getProductlineURL = "{{ url('masters/division-master/get-productline') }}";
 		var getLeaderURL = "{{ url('masters/division-master/get-leader') }}";
-		var code_permission = "M0001";
 		var dropdownProduct = "{{ url('/admin/assign-production-line/productline-select') }}";
 		
 	</script>

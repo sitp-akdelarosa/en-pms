@@ -76,7 +76,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="table-responsive">
-									<table class="table table-sm table-hover table-striped dt-responsive nowrap" id="tbl_travel_sheet_status" style="width:100%">
+									<table class="table table-sm table-hover table-bordered table-striped dt-responsive nowrap" id="tbl_travel_sheet_status" style="width:100%">
 										<thead class="thead-dark">
 											<tr>
 												<th width="5%">
@@ -138,12 +138,6 @@
 @endsection
 @push('scripts')
     <script type="text/javascript">
-        var token = $('meta[name="csrf-token"]').attr('content');
-        var code_permission = 'R0004';
-    </script>	
-	<script type="text/javascript">
-        var token = $('meta[name="csrf-token"]').attr('content');
-        var code_permission = 'R0004';
         var downloadExcel = "{{ url('/ppc/reports/travel-sheet-status/downloadExcel') }}";
     </script>
 	<script type="text/javascript" src="{{ asset('/js/pages/ppc/reports/travel-sheet-status.js') }}"></script>

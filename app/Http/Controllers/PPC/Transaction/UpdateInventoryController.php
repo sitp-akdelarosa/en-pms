@@ -39,11 +39,13 @@ class UpdateInventoryController extends Controller
     {
         $user_accesses = $this->_helper->UserAccess();
         $item_classes = $this->_helper->getItemClassification();
+        $permission_access = $this->_helper->check_permission('T0001');
 
-        return view('ppc.transaction.update-inventory',[
-                    'user_accesses' => $user_accesses,
-                    'item_classes' => $item_classes
-                ]);
+        return view('ppc.transaction.update-inventory', [
+            'user_accesses' => $user_accesses,
+            'permission_access' => $permission_access,
+            'item_classes' => $item_classes
+        ]);
     }
   
     public function CheckFile(Request $req)

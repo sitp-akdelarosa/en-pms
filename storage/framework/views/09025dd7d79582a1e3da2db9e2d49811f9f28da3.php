@@ -151,7 +151,6 @@ foreach ($user_accesses as $user_access){
 <?php $__env->stopSection(); ?>
 <?php $__env->startPush('scripts'); ?>
     <script type="text/javascript">
-        var token = $('meta[name="csrf-token"]').attr('content');
         var checkfile = "<?php echo e(url('/transaction/update-inventory/CheckFileUpdateInventory')); ?>";
         var uploadInventory = "<?php echo e(url('/transaction/update-inventory/UploadInventory')); ?>";
         var materialDataTable = "<?php echo e(url('/transaction/update-inventory/materials')); ?>";
@@ -161,7 +160,6 @@ foreach ($user_accesses as $user_access){
         var warehouseURL = "<?php echo e(url('/transaction/update-inventory/warehouse')); ?>";
         var GetItemCodeURL = "<?php echo e(url('/transaction/update-inventory/GetItemCode')); ?>";
         var getItemCodeDetailsurl = "<?php echo e(url('/transaction/update-inventory/GetItemCodeDetails')); ?>";
-        var code_permission = 'T0001';
         var downloadNonexistingURL = "<?php echo e(url('/transaction/update-inventory/download-unregistered-materials')); ?>";
         var getNonexistingURL = "<?php echo e(url('/transaction/update-inventory/get-unregistered-materials')); ?>";
         var downloadMaterialFormatURL = "<?php echo e(url('/transaction/update-inventory/download-inventory-material-format')); ?>";

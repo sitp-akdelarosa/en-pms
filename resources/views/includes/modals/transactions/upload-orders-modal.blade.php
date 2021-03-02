@@ -11,7 +11,7 @@
                 
                 <div class="modal-body">
                     <p id="overwrite_msg"></p>
-                    <table class="table table-sm table-striped dt-responsive nowrap" id="tbl_overwrite" style="width:100%">
+                    <table class="table table-sm table-striped table-bordered dt-responsive nowrap" id="tbl_overwrite" style="width:100%">
                         <thead class="thead-dark">
                             <th></th>
                             <th>SC#</th>
@@ -57,7 +57,7 @@
                 <div class="modal-body">
                     <p>Most of data are uploaded but these products are not registered in Product Master.</p>
                     <br>
-                    <table class="table table-sm table-striped dt-responsive nowrap" id="tbl_not_registered" style="width:100%">
+                    <table class="table table-sm table-striped table-bordered dt-responsive nowrap" id="tbl_not_registered" style="width:100%">
                         <thead class="thead-dark">
                             <th>SC#</th>
                             <th>Product Code</th>
@@ -91,7 +91,7 @@
                 <div class="modal-body">
                     <p>Most of data are uploaded but these products are have a pending production schedule.</p>
                     <br>
-                    <table class="table table-sm table-striped dt-responsive nowrap" id="tbl_Schedule" style="width:100%">
+                    <table class="table table-sm table-striped table-bordered dt-responsive nowrap" id="tbl_Schedule" style="width:100%">
                         <thead class="thead-dark">
                             <th>SC#</th>
                             <th>Product Code</th>

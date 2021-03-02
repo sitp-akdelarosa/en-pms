@@ -32,7 +32,12 @@ class FGSummaryController extends Controller
     public function index()
     {
         $user_accesses = $this->_helper->UserAccess();
-        return view('ppc.reports.fg-summary',['user_accesses' => $user_accesses]);
+        $permission_access = $this->_helper->check_permission('R0006');
+
+        return view('ppc.reports.fg-summary', [
+            'user_accesses' => $user_accesses,
+            'permission_access' => $permission_access
+        ]);
     }
 
     public function getFG(Request $req)

@@ -4721,10 +4721,13 @@ $( function() {
 });
 
 function init() {
-	$('.loadingOverlay').show();
-	check_permission(code_permission, function(output) {
-		if (output == 1) {}
-	});
+	if (permission_access == '2' || permission_access == 2) {
+        $('.permission').prop('readonly', true);
+        $('.permission-button').prop('disabled', true);
+    } else {
+        $('.permission').prop('readonly', false);
+        $('.permission-button').prop('disabled', false);
+    }
 
 	var param = {
 		_token: token,

@@ -39,7 +39,7 @@ foreach ($user_accesses as $user_access){
 	                    </div>
 	                </div>
 
-		            <table class="table table-striped table-sm dt-responsive" id="tbl_fg_summary" width="100%">
+		            <table class="table table-striped table-sm table-bordered dt-responsive" id="tbl_fg_summary" width="100%">
 		                <thead class="thead-dark">
 		                    <tr>
 		                        <th></th>
@@ -62,8 +62,6 @@ foreach ($user_accesses as $user_access){
 
 @push('scripts')
 	<script type="text/javascript">
-		var token = $('meta[name="csrf-token"]').attr('content');
-        var code_permission = "R0006";
         var getFGURL = "{{ url('reports/fg-summary/get-FG') }}";
         var getSc_noURL = "{{ url('reports/fg-summary/get-sc-no') }}";
 	</script>

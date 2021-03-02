@@ -330,18 +330,22 @@ $(function () {
 });
 
 function init() {
-  check_permission(code_permission, function (output) {
-    if (output == 1) {}
+  if (permission_access == '2' || permission_access == 2) {
+    $('.permission').prop('readonly', true);
+    $('.permission-button').prop('disabled', true);
+  } else {
+    $('.permission').prop('readonly', false);
+    $('.permission-button').prop('disabled', false);
+  }
 
-    getTransferEntry(getTransferEntryURL, {
-      _token: token
-    });
-    getReceiveItems(getReceiveItemsURL, {
-      _token: token
-    });
-    checkAllCheckboxesInTable('.check_all_transfer_item', '.check_item');
-    getExtraDivCode();
+  getTransferEntry(getTransferEntryURL, {
+    _token: token
   });
+  getReceiveItems(getReceiveItemsURL, {
+    _token: token
+  });
+  checkAllCheckboxesInTable('.check_all_transfer_item', '.check_item');
+  getExtraDivCode();
 }
 
 function getTransferEntry(ajax_url, object_data) {

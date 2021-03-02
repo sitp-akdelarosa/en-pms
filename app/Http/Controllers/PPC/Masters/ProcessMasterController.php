@@ -31,7 +31,12 @@ class ProcessMasterController extends Controller
     public function index()
     {
         $user_accesses = $this->_helper->UserAccess();
-        return view('ppc.masters.process-master',['user_accesses' => $user_accesses]);
+        $permission_access = $this->_helper->check_permission('M0005');
+
+        return view('ppc.masters.process-master', [
+            'user_accesses' => $user_accesses,
+            'permission_access' => $permission_access
+        ]);
     }
 
     public function process_list()

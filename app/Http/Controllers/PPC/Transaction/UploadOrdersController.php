@@ -35,13 +35,19 @@ class UploadOrdersController extends Controller
     public function index()
     {
         $user_accesses = $this->_helper->UserAccess();
+        $permission_access = $this->_helper->check_permission('T0002');
+
+        return view('ppc.transaction.upload-orders', [
+            'user_accesses' => $user_accesses,
+            'permission_access' => $permission_access
+        ]);
         return view('ppc.transaction.upload-orders',['user_accesses' => $user_accesses]);
     }
 
     public function CheckFile(Request $req)
     {
         $file = $req->file('fileupload');
-        $fields;
+        $fields = [];
         Excel::load($file, function($reader) use(&$fields){
                     $fields = $reader->toArray();
                 });
