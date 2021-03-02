@@ -555,6 +555,7 @@ class ProductionOutputController extends Controller
 
                 if (count((array)$jo) > 0) {
                     if ($jo[0]->status == 4) {
+                        // get PRODUCTION SIDE travel sheet data
                         $travel_sheet = DB::table('prod_travel_sheets')
                             ->where('pre_travel_sheet_id', $data[0]->pre_travel_sheet_id)
                             ->select('id')

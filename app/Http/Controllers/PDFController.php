@@ -43,7 +43,8 @@ class PDFController extends Controller
 									join ppc_update_inventories as i
 									on rmwd.inv_id = i.id
 
-									where rmwi.id = ".$req->trans_id." 
+									where rmwi.id = ".$req->trans_id. " 
+									and rmwd.deleted <> 1
 									order by rmwd.id asc");
 		
 		$data = [
