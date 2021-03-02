@@ -573,7 +573,7 @@ class ProductionOutputController extends Controller
                                 'updated_at' => date('Y-m-d H:i:s')
                             ]);
 
-                        PpcJoDetailsSummary::where('id', $jo->jo_summary_id)
+                        PpcJoDetailsSummary::where('id', $jo[0]->jo_summary_id)
                             ->update([
                                 'status' => 2,
                                 'updated_at' => date('Y-m-d H:i:s')
