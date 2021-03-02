@@ -78,7 +78,7 @@
 									<th width="0.01%"></th>
 									<td width="8.3%" class="left-double-border">
 										<?php 
-											if (isset($items)) {
+											if (count((array)$items) > 0) {
 												$prev_lot_no = [];
 												array_push($prev_lot_no, $items[0]->lot_no);
 												$lot_no = '';
@@ -110,7 +110,7 @@
 									
 									<td width="8.3%">
 										<?php
-											if (isset($items)) {
+											if (count((array)$items) > 0) {
 												$prev_sc_no = [];
 												array_push($prev_sc_no, $items[0]->sc_no);
 												$sc_no = '';
@@ -141,7 +141,7 @@
 									</td>
 									<td width="12.3%">
 										<?php
-											if (isset($items)) {
+											if (count((array)$items) > 0) {
 												
 												$prev_description = [];
 												array_push($prev_description, $items[0]->description);
@@ -173,7 +173,7 @@
 									</td>
 									<td width="4.3%">
 										<?php
-											if (isset($items)) {
+											if (count((array)$items) > 0) {
 												$assign_qty = 0;
 												foreach ($items as $key => $item) {
 													$assign_qty += (double)$item->assign_qty;
