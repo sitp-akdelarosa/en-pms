@@ -549,38 +549,45 @@ class ProductionOutputController extends Controller
             $data = DB::select(DB::raw("CALL GET_travel_sheet_production_output(NULL,'" . $jo_sequence . "'," . Auth::user()->id . ")"));
 
             if (count((array) $data) > 0) {
-                $jo = DB::select(DB::raw("CALL GET_jo_list_by_ts_id(" . $data[0]->pre_travel_sheet_id . ")"));
+                //$jo = DB::select(DB::raw("CALL GET_jo_list_by_ts_id(" . $data[0]->pre_travel_sheet_id . ")"));
 
                 // DB::table('v_jo_list')->where('travel_sheet_id', $data[0]->pre_travel_sheet_id)->first();
 
-                if (count((array)$jo) > 0) {
-                    if ($jo[0]->status == 4) {
-                        // get PRODUCTION SIDE travel sheet data
-                        $travel_sheet = DB::table('prod_travel_sheets')
-                            ->where('pre_travel_sheet_id', $data[0]->pre_travel_sheet_id)
-                            ->select('id')
-                            ->first();
+                if ($data[0]->travel_sheet_status == 4) {
+                    // get PRODUCTION SIDE travel sheet data
+                    // $travel_sheet = DB::table('prod_travel_sheets')
+                    //     ->where('pre_travel_sheet_id', $data[0]->pre_travel_sheet_id)
+                    //     ->select('id')
+                    //     ->first();
 
-                        DB::table('prod_travel_sheet_processes')
-                            ->where('travel_sheet_id', $travel_sheet->id)
-                            ->where('sequence', 1)
-                            ->update([
-                                'is_current' => 1
-                            ]);
+                    $updated = DB::select(
+                                    DB::raw("CALL UPDATE_travel_sheet_status(
+                                        ". $data[0]->travel_sheet_id .",
+                                        ". $data[0]->pre_travel_sheet_id .",
+                                        '". $data[0]->jo_no ."'
+                                    )")
+                                );
 
-                        PpcPreTravelSheet::where('id', $data[0]->pre_travel_sheet_id)
-                            ->update([
-                                'status' => 2,
-                                'updated_at' => date('Y-m-d H:i:s')
-                            ]);
+                    // DB::table('prod_travel_sheet_processes')
+                    //     ->where('travel_sheet_id', $travel_sheet->id)
+                    //     ->where('sequence', 1)
+                    //     ->update([
+                    //         'is_current' => 1
+                    //     ]);
 
-                        PpcJoDetailsSummary::where('id', $jo[0]->jo_summary_id)
-                            ->update([
-                                'status' => 2,
-                                'updated_at' => date('Y-m-d H:i:s')
-                            ]);
-                    }
-                }  
+                    // PpcPreTravelSheet::where('id', $data[0]->pre_travel_sheet_id)
+                    //     ->update([
+                    //         'status' => 2,
+                    //         'updated_at' => date('Y-m-d H:i:s')
+                    //     ]);
+
+                    // PpcJoDetailsSummary::where('id', $jo[0]->jo_summary_id)
+                    //     ->update([
+                    //         'status' => 2,
+                    //         'updated_at' => date('Y-m-d H:i:s')
+                    //     ]);
+
+                }
             }
             
         }        
