@@ -543,47 +543,45 @@ class ProductionOutputController extends Controller
     {
         $data = [];
 
-        $travel_sheet_count = DB::table('v_travel_sheet_production_output')
-                                    ->where([
-                                        ['travel_sheet_status', '<>', 3],
-                                        ['jo_sequence','=',$jo_sequence],
-                                        ['user_id','=', Auth::user()->id]
-                                    ])->count();
+        $travel_sheet_count = DB::select(DB::raw("CALL GET_travel_sheet_production_output(3,'". $jo_sequence."',". Auth::user()->id.")"));
 
-        if ($travel_sheet_count) {
-            $data = DB::table('v_travel_sheet_production_output')
-                            ->where([
-                                ['jo_sequence','=',$jo_sequence],
-                                ['user_id','=', Auth::user()->id]
-                            ])->get();
-            
-            $jo = DB::table('v_jo_list')->where('travel_sheet_id', $data[0]->pre_travel_sheet_id)->first();
+        if (count((array)$travel_sheet_count) > 0) {
+            $data = DB::select(DB::raw("CALL GET_travel_sheet_production_output(NULL,'" . $jo_sequence . "'," . Auth::user()->id . ")"));
 
-            if ($jo->status == 4) {
-                $travel_sheet = DB::table('prod_travel_sheets')
-                                        ->where('pre_travel_sheet_id', $data[0]->pre_travel_sheet_id)
-                                        ->select('id')
-                                        ->first();
+            if (count((array) $data) > 0) {
+                $jo = DB::select(DB::raw("CALL GET_jo_list_by_ts_id(" . $data[0]->pre_travel_sheet_id . ")"));
 
-                $current_process_upd = DB::table('prod_travel_sheet_processes')
-                                        ->where('travel_sheet_id', $travel_sheet->id)
-                                        ->where('sequence', 1)
-                                        ->update([
-                                            'is_current' => 1
-                                        ]);
+                // DB::table('v_jo_list')->where('travel_sheet_id', $data[0]->pre_travel_sheet_id)->first();
 
-                PpcPreTravelSheet::where('id',$data[0]->pre_travel_sheet_id)
-                                    ->update([
-                                        'status' => 2,
-                                        'updated_at' => date('Y-m-d H:i:s')
-                                    ]);
+                if (count((array)$jo) > 0) {
+                    if ($jo[0]->status == 4) {
+                        $travel_sheet = DB::table('prod_travel_sheets')
+                            ->where('pre_travel_sheet_id', $data[0]->pre_travel_sheet_id)
+                            ->select('id')
+                            ->first();
 
-                PpcJoDetailsSummary::where('id', $jo->jo_summary_id)
-                                    ->update([
-                                        'status' => 2,
-                                        'updated_at' => date('Y-m-d H:i:s')
-                                    ]);
+                        DB::table('prod_travel_sheet_processes')
+                            ->where('travel_sheet_id', $travel_sheet->id)
+                            ->where('sequence', 1)
+                            ->update([
+                                'is_current' => 1
+                            ]);
+
+                        PpcPreTravelSheet::where('id', $data[0]->pre_travel_sheet_id)
+                            ->update([
+                                'status' => 2,
+                                'updated_at' => date('Y-m-d H:i:s')
+                            ]);
+
+                        PpcJoDetailsSummary::where('id', $jo->jo_summary_id)
+                            ->update([
+                                'status' => 2,
+                                'updated_at' => date('Y-m-d H:i:s')
+                            ]);
+                    }
+                }  
             }
+            
         }        
 
         return $data;
