@@ -80,7 +80,6 @@
 
 <?php $__env->startPush('scripts'); ?>
     <script type="text/javascript">
-        var token = $('meta[name="csrf-token"]').attr('content');
         var get_dashboard = "<?php echo e(url('/dashboard/get-dashboard')); ?>";
         var get_chartURl = "<?php echo e(url('/dashboard/pie-graph')); ?>";
         var get_jonoURL = "<?php echo e(url('/dashboard/get-jono')); ?>";

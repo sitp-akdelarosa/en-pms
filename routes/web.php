@@ -555,8 +555,8 @@ Route::group(['prefix' => 'prod', 'middleware' => ['ajax-session-expired', 'auth
 
 		Route::get('/summary-report', 'Production\Reports\SummaryReportController@index')
 			->name('prod.reports.production-summary-report');
-		Route::post('/summary-report/search_summart_report', 'Production\Reports\SummaryReportController@search_summart_report')
-			->name('prod.reports.production-summary-report.search_summart_report');
+		Route::get('/summary-report/filter-report', 'Production\Reports\SummaryReportController@filterReport')
+			->name('prod.reports.production-summary-report.filter-report');
 		Route::get('/summary-report/downloadExcel', 'Production\Reports\SummaryReportController@downloadExcel')
 			->name('prod.reports.production-summary-report.downloadExcel');
 	});

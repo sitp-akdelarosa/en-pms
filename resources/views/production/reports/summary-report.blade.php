@@ -25,48 +25,36 @@ foreach ($user_accesses as $user_access){
         <div class="col-lg-12 col-md-10 col-sm-12 col-xs-12">
             <div class="box">
                 <div class="box-body">
-                    <form id="frm_summary" role="form" method="POST" action="{{ url('prod/reports/summary-report/search_summart_report') }}">
-                        @csrf
-                        <input type="hidden" name="id" id="id">
-                        <div class="form-group row">
-				            <div class="col-md-2.5">
-				                <div class="input-group input-group-sm mb-3">
-				                    <div class="input-group-prepend">
-				                        <span class="input-group-text">Date From</span>
-				                    </div>
-				                    <input type="date" class="form-control" name="date_from" id="date_from" >
-				                </div>
-				            </div>
+					<div class="row">
+						<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
+							<button type="button" id="btn_filter" class="btn btn-block bg-blue permission-button">Search / Filter</button>
+						</div>
+						<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
+							<button type="button" id="btn_download" class="btn btn-block bg-green permission-button">Download</button>
+						</div>
 
-				            <div class="col-md-2">
-				                <div class="input-group input-group-sm mb-3">
-				                    <div class="input-group-prepend">
-				                        <span class="input-group-text">Date To</span>
-				                    </div>
-				                    <input type="date" class="form-control" name="date_to" id="date_to">
-				                </div>
-				            </div>
-
-							<div class="col-md-1">
-                            	<button type="submit" class="btn btn-block bg-blue   permission-button">Search</button>
-                            </div>
-							<div class="col-md-1">
-                            	<button type="button" id="btnDownload" class="btn btn-block bg-green  permission-button" disabled>Download</button>
-                            </div>
-
-                        </div>
-                    </form>
-		            <table class="table table-striped table-bordered table-sm dt-responsive" id="tbl_summary" width="100%">
+						<input type="hidden" id="dl_date_from" />
+						<input type="hidden" id="dl_date_to" />
+						<input type="hidden" id="dl_jo_no" />
+						<input type="hidden" id="dl_prod_code" />
+						<input type="hidden" id="dl_code_description" />
+						<input type="hidden" id="dl_div_code" />
+						<input type="hidden" id="dl_process_name" />
+					</div>
+		            <table class="table table-striped table-bordered table-sm nowrap" id="tbl_summary" width="100%">
 		                <thead class="thead-dark">
-                        <tr>
+                        	<tr>
 		                        <th rowspan="2">DATE</th>
 		                        <th rowspan="2">M/C</th>
 		                        <th rowspan="2">CODE</th>
+								<th rowspan="2">DESCRIPTION</th>
 		                        <th rowspan="2">ITEM</th>
 		                        <th rowspan="2">ALLOY</th>
 		                        <th rowspan="2">SIZE</th>
 		                        <th rowspan="2">CLASS</th>
-		                        <th rowspan="2">HEATNO</th>
+		                        <th rowspan="2">HEAT NO.</th>
+								<th rowspan="2">DIV. NO.</th>
+								<th rowspan="2">PROCESS</th>
 		                        <th colspan="4">OUTPUT (QTY)</th>
 		                        <th colspan="4">WEIGHT</th>
 		                        <th colspan="2">REJECTION RATE</th>
@@ -84,16 +72,15 @@ foreach ($user_accesses as $user_access){
 		                        <th>REWORK</th>
 		                        <th>SCRAP</th>
 	                        </tr>
-							
-
 		                </thead>
-		                <tbody id="tbl_operator_body"></tbody>
+		                <tbody></tbody>
 		            </table>
                 </div>
             </div>
         </div>
     </div>
 </section>
+@include('includes.modals.reports.production-summary-report')
 @endsection
 @push('scripts')
     <script type="text/javascript">

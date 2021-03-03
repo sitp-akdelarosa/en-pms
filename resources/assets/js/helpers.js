@@ -743,6 +743,10 @@ function isNumberKey(evt) {
 	return true;
 }
 
-function SessionTimeOutTimer() {
+function setMaxDate(txtDate,dDate) {
+    document.getElementById(txtDate).setAttribute("max", dDate);
+}
 
+function setMinxDate(txtDate,dDate) {
+    document.getElementById(txtDate).setAttribute("min", dDate);
 }
