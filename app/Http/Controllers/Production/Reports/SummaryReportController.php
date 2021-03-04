@@ -72,16 +72,17 @@ class SummaryReportController extends Controller
                 $sheet->mergeCells('I4:I5');
                 $sheet->mergeCells('J4:J5');
                 $sheet->mergeCells('K4:K5');
+                $sheet->mergeCells('L4:L5');
 
-                $sheet->mergeCells('L4:O4');
-                $sheet->mergeCells('P4:S4');
-                $sheet->mergeCells('T4:U4');
+                $sheet->mergeCells('M4:P4');
+                $sheet->mergeCells('Q4:T4');
+                $sheet->mergeCells('U4:V4');
 
-                $sheet->mergeCells('V4:V5');
+                $sheet->mergeCells('W4:W5');
 
                 $sheet->setHeight(6, 15);
 
-                $sheet->cells('A4:v5', function($cells) {
+                $sheet->cells('A4:W5', function($cells) {
                     $cells->setFont([
                         'family'     => 'Calibri',
                         'size'       => '11',
@@ -147,92 +148,98 @@ class SummaryReportController extends Controller
 
                 $sheet->cell('J4', function ($cell) {
                     $cell->setAlignment('center');
-                    $cell->setValue("DIV NO.");
+                    $cell->setValue("LOT NO.");
                     $cell->setBorder('thick', 'thick', 'thick', 'thick');
                 });
 
                 $sheet->cell('K4', function ($cell) {
+                    $cell->setAlignment('center');
+                    $cell->setValue("DIV NO.");
+                    $cell->setBorder('thick', 'thick', 'thick', 'thick');
+                });
+
+                $sheet->cell('L4', function ($cell) {
                     $cell->setAlignment('center');
                     $cell->setValue("PROCESS");
                     $cell->setBorder('thick', 'thick', 'thick', 'thick');
                 });
 
                 // ====== outputs ======
-                $sheet->cell('L4', function($cell) {
+                $sheet->cell('M4', function($cell) {
                     $cell->setAlignment('center');
                     $cell->setValue("OUTPUT (QTY)");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
                 
-                $sheet->cell('L5', function($cell) {
+                $sheet->cell('M5', function($cell) {
                     $cell->setAlignment('center');
                     $cell->setValue("TOTAL");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
 
-                $sheet->cell('M5', function($cell) {
+                $sheet->cell('N5', function($cell) {
                     $cell->setAlignment('center');
                     $cell->setValue("GOOD");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
 
-                $sheet->cell('N5', function($cell) {
+                $sheet->cell('O5', function($cell) {
                     $cell->setAlignment('center');
                     $cell->setValue("REWORK");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
-                $sheet->cell('O5', function($cell) {
+                $sheet->cell('P5', function($cell) {
                     $cell->setAlignment('center');
                     $cell->setValue("SCRAP");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
 
                 // ====== weight ======
-                $sheet->cell('P4', function($cell) {
+                $sheet->cell('Q4', function($cell) {
                     $cell->setAlignment('center');
                     $cell->setValue("WEIGHT");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
-                $sheet->cell('P5', function($cell) {
-                    $cell->setAlignment('center');
-                    $cell->setValue("CRUDE WT.");
-                    $cell->setBorder('thick','thick','thick','thick');
-                });
                 $sheet->cell('Q5', function($cell) {
                     $cell->setAlignment('center');
-                    $cell->setValue("GOOD");
+                    $cell->setValue("UNIT WT.");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
                 $sheet->cell('R5', function($cell) {
                     $cell->setAlignment('center');
-                    $cell->setValue("REWORK");
+                    $cell->setValue("GOOD");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
                 $sheet->cell('S5', function($cell) {
+                    $cell->setAlignment('center');
+                    $cell->setValue("REWORK");
+                    $cell->setBorder('thick','thick','thick','thick');
+                });
+                $sheet->cell('T5', function($cell) {
                     $cell->setAlignment('center');
                     $cell->setValue("SCRAP");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
 
                 // ====== reject rate ======
-                $sheet->cell('T4', function($cell) {
+                $sheet->cell('U4', function($cell) {
                     $cell->setAlignment('center');
                     $cell->setValue("REJECTION RATE");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
-                $sheet->cell('T5', function($cell) {
+                $sheet->cell('U5', function($cell) {
                     $cell->setAlignment('center');
                     $cell->setValue("REWORK");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
-                $sheet->cell('U5', function($cell) {
+                $sheet->cell('V5', function($cell) {
                     $cell->setAlignment('center');
                     $cell->setValue("SCRAP");
                     $cell->setBorder('thick','thick','thick','thick');
                 });
 
 
-                $sheet->cell('V4', function($cell) {
+                $sheet->cell('W4', function($cell) {
                     $cell->setAlignment('center');
                     $cell->setValue("JOB ORDER NO.");
                     $cell->setBorder('thick','thick','thick','thick');
@@ -279,61 +286,65 @@ class SummaryReportController extends Controller
                         $cell->setValue($dt->heat_no);
                         $cell->setBorder('thin','thin','thin','thin');
                     });
-                    $sheet->cell('J'.$row, function($cell) use($dt) {
+                    $sheet->cell('J' . $row, function ($cell) use ($dt) {
+                        $cell->setValue($dt->lot_no);
+                        $cell->setBorder('thin', 'thin', 'thin', 'thin');
+                    });
+                    $sheet->cell('K'.$row, function($cell) use($dt) {
                         $cell->setValue($dt->div_code);
                         $cell->setBorder('thin','thin','thin','thin');
                     });
-                    $sheet->cell('K'.$row, function($cell) use($dt) {
+                    $sheet->cell('L'.$row, function($cell) use($dt) {
                         $cell->setValue($dt->process_name);
                         $cell->setBorder('thin','thin','thin','thin');
                     });
 
                     // output
-                    $sheet->cell('L'.$row, function($cell) use($dt) {
+                    $sheet->cell('M'.$row, function($cell) use($dt) {
                         $cell->setValue($dt->total);
                         $cell->setBorder('thin','thin','thin','thin');
                     });
-                    $sheet->cell('M'.$row, function($cell) use($dt) {
+                    $sheet->cell('N'.$row, function($cell) use($dt) {
                         $cell->setValue($dt->good);
                         $cell->setBorder('thin','thin','thin','thin');
                     });
-                    $sheet->cell('N'.$row, function($cell) use($dt) {
+                    $sheet->cell('O'.$row, function($cell) use($dt) {
                         $cell->setValue($dt->rework);
                         $cell->setBorder('thin','thin','thin','thin');
                     });
-                    $sheet->cell('O'.$row, function($cell) use($dt) {
+                    $sheet->cell('P'.$row, function($cell) use($dt) {
                         $cell->setValue($dt->scrap);
                         $cell->setBorder('thin','thin','thin','thin');
                     });
 
                     //weight
-                    $sheet->cell('P'.$row, function($cell) use($dt) {
+                    $sheet->cell('Q'.$row, function($cell) use($dt) {
                         $cell->setValue($dt->finish_weight);
                         $cell->setBorder('thin','thin','thin','thin');
                     });                    
-                    $sheet->cell('Q'.$row, function($cell) use($dt) {
+                    $sheet->cell('R'.$row, function($cell) use($dt) {
                         $cell->setValue($dt->wgood);
                         $cell->setBorder('thin','thin','thin','thin');
                     });
-                    $sheet->cell('R'.$row, function($cell) use($dt) {
+                    $sheet->cell('S'.$row, function($cell) use($dt) {
                         $cell->setValue($dt->wrework);
                         $cell->setBorder('thin','thin','thin','thin');
                     });
-                    $sheet->cell('S'.$row, function($cell) use($dt) {
+                    $sheet->cell('T'.$row, function($cell) use($dt) {
                         $cell->setValue($dt->wscrap);
                         $cell->setBorder('thin','thin','thin','thin');
                     });
 
                     //rejection rate
-                    $sheet->cell('T' . $row, function ($cell) use ($dt) {
+                    $sheet->cell('U' . $row, function ($cell) use ($dt) {
                         $cell->setValue($dt->rrework);
                         $cell->setBorder('thin', 'thin', 'thin', 'thin');
                     });
-                    $sheet->cell('U' . $row, function ($cell) use ($dt) {
+                    $sheet->cell('V' . $row, function ($cell) use ($dt) {
                         $cell->setValue($dt->rscrap);
                         $cell->setBorder('thin', 'thin', 'thin', 'thin');
                     });
-                    $sheet->cell('V' . $row, function ($cell) use ($dt) {
+                    $sheet->cell('W' . $row, function ($cell) use ($dt) {
                         $cell->setValue($dt->jo_no);
                         $cell->setBorder('thin', 'thin', 'thin', 'thin');
                     });

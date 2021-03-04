@@ -180,6 +180,9 @@ function productionSummaryDataTable(arr) {
       data: 'heat_no',
       name: 'heat_no'
     }, {
+      data: 'lot_no',
+      name: 'lot_no'
+    }, {
       data: 'div_code',
       name: 'div_code'
     }, {

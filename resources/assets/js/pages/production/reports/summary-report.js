@@ -85,6 +85,7 @@ function productionSummaryDataTable(arr) {
             { data: 'size', name: 'size' },
             { data: 'class', name: 'class' },
             { data: 'heat_no', name: 'heat_no' },
+            { data: 'lot_no', name: 'lot_no' },
             { data: 'div_code', name: 'div_code' },
             { data: 'process_name', name: 'process_name' },
             { data: 'total', name: 'total' },
