@@ -534,6 +534,7 @@ class ProductionOutputController extends Controller
         $data =  DB::table('prod_transfer_items')->select(DB::raw("SUM(qty) as qty"))
                     ->where('current_process',$req->id)
                     ->where('item_status',0)
+                    ->where('deleted','<>',1)
                     ->first();
         if(isset($data->qty)){
             return response()->json($data->qty);
