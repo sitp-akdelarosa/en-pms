@@ -575,25 +575,6 @@ class ProductionScheduleController extends Controller
                                         <i class='fa fa-times'></i>
                                     </button>";
                         })
-                        // ->editColumn('status', function($data) {
-                        //     switch ($data->status) {
-                        //         case 0:
-                        //             return 'No quantity issued';
-                        //             break;
-                        //         case 1:
-                        //             return 'Ready to Issue';
-                        //             break;
-                        //         case 2:
-                        //             return 'In Production';
-                        //             break;
-                        //         case 3:
-                        //             return 'Cancelled';
-                        //             break;
-                        //         case 5:
-                        //             return 'CLOSED';
-                        //             break;
-                        //     }
-                        // })
 						->make(true);
     }
 
@@ -609,57 +590,99 @@ class ProductionScheduleController extends Controller
             'status' => "failed"
         ];
 
-        if (is_null($req->travel_sheet_id)) {
-            $detailsDecrement = DB::table('ppc_jo_details')
-                                    ->select('sc_no', 'product_code', 'sched_qty', 'material_heat_no', 'prod_sched_id', 'rmw_id')
-                                    ->where('jo_summary_id', $req->jo_summary_id)
-                                    ->get();
+        $pts = [];
 
-            foreach ($detailsDecrement as $key => $dt) {
-                $check_prod_sched = PpcProductionSummary::where('id', $dt->prod_sched_id)->select('sched_qty')->first();
+        if (!is_null($req->travel_sheet_id)) {
+            $checkStatus = [0, 1, 4];
+            if (in_array((int)$req->status, $checkStatus)) {
+                // DB::select(
+                //     DB::raw("CALL CANCEL_job_order_p1(". $req->jo_summary_id .",". Auth::user()->id .")")
+                // );
 
-                if ($check_prod_sched->sched_qty > 0) {
-                    PpcProductionSummary::where('id', $dt->prod_sched_id)->decrement('sched_qty', (float)$dt->sched_qty);
+                // DB::select(
+                //     DB::raw("CALL CANCEL_job_order_p2(" . $req->travel_sheet_id . "," . Auth::user()->id . ")")
+                // );
+                $detailsDecrement = DB::table('ppc_jo_details')
+                    ->select('sc_no', 'product_code', 'sched_qty', 'material_heat_no', 'prod_sched_id', 'rmw_id')
+                    ->where('jo_summary_id', $req->jo_summary_id)
+                    ->get();
+
+                foreach ($detailsDecrement as $key => $dt) {
+                    $check_prod_sched = PpcProductionSummary::where('id', $dt->prod_sched_id)->select('sched_qty')->first();
+
+                    if ($check_prod_sched->sched_qty > 0) {
+                        PpcProductionSummary::where('id', $dt->prod_sched_id)->decrement('sched_qty', (float) $dt->sched_qty);
+                    }
+
+                    PpcRawMaterialWithdrawalDetails::where('id', $dt->rmw_id)
+                        // ->where('create_user', Auth::user()->id)
+                        ->update(['sc_no' => DB::raw("REPLACE(sc_no, '" . $dt->sc_no . ", ', '')")]);
+
+                    PpcRawMaterialWithdrawalDetails::where('id', $dt->rmw_id)
+                        // ->where('create_user', Auth::user()->id)
+                        ->update(['sc_no' => DB::raw("REPLACE(sc_no, '" . $dt->sc_no . "', '')")]);
                 }
 
-                PpcRawMaterialWithdrawalDetails::where('id', $dt->rmw_id)
-                    // ->where('create_user', Auth::user()->id)
-                    ->update(['sc_no' => DB::raw("REPLACE(sc_no, '" . $dt->sc_no . ", ', '')")]);
-
-                PpcRawMaterialWithdrawalDetails::where('id', $dt->rmw_id)
-                    // ->where('create_user', Auth::user()->id)
-                    ->update(['sc_no' => DB::raw("REPLACE(sc_no, '" . $dt->sc_no . "', '')")]);
-            }
-
-            $summary_update = PpcJoDetailsSummary::where('id',$req->jo_summary_id)->update([
-                'cancelled' => 1,
-                'status' => 3,
-                'updated_at' => date('Y-m-d H:i:s'),
-                'update_user' => Auth::user()->id
-            ]);
-
-            if ($summary_update) {
-                PpcJoDetails::where('jo_summary_id', $req->jo_summary_id)->update([
+                $summary_update = PpcJoDetailsSummary::where('id', $req->jo_summary_id)->update([
                     'cancelled' => 1,
+                    'status' => 3,
                     'updated_at' => date('Y-m-d H:i:s'),
                     'update_user' => Auth::user()->id
                 ]);
-            }
 
-            PpcPreTravelSheet::where('id', $req->travel_sheet_id)->update(['status' => 3]);
+                if ($summary_update) {
+                    PpcJoDetails::where('jo_summary_id', $req->jo_summary_id)->update([
+                        'cancelled' => 1,
+                        'updated_at' => date('Y-m-d H:i:s'),
+                        'update_user' => Auth::user()->id
+                    ]);
+                }
 
-            ProdTravelSheet::where('pre_travel_sheet_id', $req->travel_sheet_id)->update(['status' => 3]);
+                PpcPreTravelSheet::where('id', $req->travel_sheet_id)->update(['status' => 3]);
 
-            if (isset($pts)) {
-                foreach ($pts as $k => $v) {
-                    ProdTravelSheetProcess::where('travel_sheet_id', $v->travel_sheet_id)->update(['status' => 3]);
+                ProdTravelSheet::where('pre_travel_sheet_id', $req->travel_sheet_id)->update(['status' => 3]);
+
+                $pts = ProdTravelSheet::where('pre_travel_sheet_id', $req->travel_sheet_id)->select('travel_sheet_id');
+
+                if (count((array) $pts) > 0) {
+                    foreach ($pts as $key => $ts) {
+                        ProdTravelSheetProcess::where('travel_sheet_id', $ts->travel_sheet_id)->update(['status' => 3]);
+                    }
+                }
+
+                $data = [
+                    'msg' => 'J.O. # ' . $req->jo_no . ' has successfully cancelled.',
+                    'status' => "success"
+                ];
+            } else {
+                switch ($req->status) {
+                    case '2':
+                        $data = [
+                            'msg' => 'J.O. # ' . $req->jo_no . ' is already On-going process',
+                            'status' => "failed"
+                        ];
+                        break;
+                    case '3':
+                        $data = [
+                            'msg' => 'J.O. # ' . $req->jo_no . ' is already Cancelled.',
+                            'status' => "failed"
+                        ];
+                        break;
+                    case '5':
+                        $data = [
+                            'msg' => 'J.O. # ' . $req->jo_no . ' is already Closed.',
+                            'status' => "failed"
+                        ];
+                        break;
+                    case '2':
+                        $data = [
+                            'msg' => 'J.O. # ' . $req->jo_no . ' is already In Production',
+                            'status' => "failed"
+                        ];
+                        break;
                 }
             }
-
-            $data = [
-                'msg'=> 'J.O. # '.$req->jo_no.' has successfully cancelled.',
-                'status' => "success"
-            ];
+                
         } else {
             $data = [
                 'msg'=> 'J.O. # '.$req->jo_no.' had already issued a Travel Sheet.',
