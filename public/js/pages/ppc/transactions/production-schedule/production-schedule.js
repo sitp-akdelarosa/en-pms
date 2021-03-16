@@ -17597,6 +17597,8 @@ $(function () {
     var jo_summary_id = data.jo_summary_id;
     var jo_no = data.jo_no;
     var status = $(this).attr('data-status');
+    var sc_no = data.sc_no;
+    $('#j_ship_date').val(data.ship_date);
 
     if (status == 3) {
       $('#btn_save_jo_item').prop('disabled', true);
@@ -17606,11 +17608,13 @@ $(function () {
       $('#j_ship_date').prop('readonly', false);
     }
 
+    var param = {
+      _token: token,
+      jo_summary_id: jo_summary_id,
+      sc_no: sc_no
+    };
     $('#j_jo_no').val(jo_no);
-    JOdetailsDataTable(getJODetailsURL, {
-      _toke: token,
-      jo_summary_id: jo_summary_id
-    }, status);
+    JOdetailsDataTable(getJODetailsURL, param, status);
     $('#modal_jo_details').modal('show');
   });
   $('#tbl_travel_sheet tbody').on('click', ' .btn_cancel_jo', function () {
@@ -18511,7 +18515,7 @@ function TravelSheetDataTable(ajax_url, object_data) {
     }, {
       data: 'description',
       name: 'description',
-      width: '11.14%'
+      width: '10.14%'
     }, {
       data: 'back_order_qty',
       name: 'back_order_qty',
@@ -18535,11 +18539,15 @@ function TravelSheetDataTable(ajax_url, object_data) {
     }, {
       data: 'material_heat_no',
       name: 'material_heat_no',
-      width: '7.14%'
+      width: '5.14%'
     }, {
       data: 'lot_no',
       name: 'lot_no',
-      width: '7.14%'
+      width: '5.14%'
+    }, {
+      data: 'ship_date',
+      name: 'ship_date',
+      width: '5.14%'
     }, {
       data: function data(_data) {
         switch (_data.status) {
@@ -18917,11 +18925,9 @@ function JOdetailsDataTable(ajax_url, ajax_data, status) {
       $("#tbl_jo_item_details").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
     },
     initComplete: function initComplete() {
-      $("#tbl_jo_item_details").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
-
-      if (saved_jo_details_arr.length > 0) {
-        $('#j_ship_date').val(saved_jo_details_arr[0].ship_date);
-      }
+      $("#tbl_jo_item_details").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>"); // if (saved_jo_details_arr.length > 0) {
+      //     $('#j_ship_date').val(saved_jo_details_arr[0].ship_date);
+      // }
 
       if (status == 3) {
         $('.btn_remove_detail').prop('disabled', true);

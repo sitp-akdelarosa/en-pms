@@ -253,6 +253,7 @@ foreach ($user_accesses as $user_access){
                                         <th>Material Used</th>
                                         <th>Material Heat No.</th>
                                         <th>Lot No.</th>
+                                        <th>Ship Date</th>
                                         <th>Status</th>
                                         <th>Update Date</th>
                                     </tr>

@@ -884,7 +884,9 @@ class ProductionScheduleController extends Controller
         return response()->json($data);
     }
 
-
+    /**
+     * Excel Data
+     */
     public function excelFilteredData(Request $req)
     {
         $data = $this->getFilteredOrders($req);
@@ -990,6 +992,15 @@ class ProductionScheduleController extends Controller
                 });
             });
         })->download('xlsx');
+    }
+
+    /**
+     * Getting of J.O. Details data
+     */
+    public function getJODetails(Request $req)
+    {
+        $data = PpcJoDetails::where('jo_summary_id', $req->jo_summary_id);
+        return DataTables::of($data)->make(true);
     }
 
     
@@ -2019,9 +2030,5 @@ class ProductionScheduleController extends Controller
         return $data;
     }
 
-    public function getJODetails(Request $req)
-    {
-        $data = PpcJoDetails::where('jo_summary_id',$req->jo_summary_id);
-        return DataTables::of($data)->make(true);
-    }
+    
 }
