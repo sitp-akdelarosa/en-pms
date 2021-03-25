@@ -45,24 +45,42 @@
 								$items = null;
 
 								if (isset($rm->id)) {
-									$items = \DB::select("SELECT rmw_no,
+									$scs = \DB::table('v_jo_details_for_rmw')
+												->where([
+													['rmw_no', '=', $rm->trans_no],
+													['rmw_id', '=', $rm->id]
+												])
+												->select('sc_no')
+												->get();
+									$items = \DB::select("SELECT DISTINCT rmw_no,
 															jo_summary_id,
 															jo_no,
 															lot_no,
 															product_code,
 															`description`,
-															sc_no,
-															SUM(assign_qty) as assign_qty
+															needed_qty as needed_qty
 													FROM v_jo_details_for_rmw
 													where rmw_no = '".$rm->trans_no."'
-													and rmw_id = ".$rm->id."
-													group by rmw_no,
-															jo_summary_id,
-															jo_no,
-															lot_no,
-															product_code,
-															`description`,
-															sc_no");
+													and rmw_id = ".$rm->id);
+
+									// $items = \DB::select("SELECT rmw_no,
+									// 						jo_summary_id,
+									// 						jo_no,
+									// 						lot_no,
+									// 						product_code,
+									// 						`description`,
+									// 						SUM(assign_qty) as assign_qty,
+									// 						needed_qty as needed_qty
+									// 				FROM v_jo_details_for_rmw
+									// 				where rmw_no = '".$rm->trans_no."'
+									// 				and rmw_id = ".$rm->id."
+									// 				group by rmw_no,
+									// 						jo_summary_id,
+									// 						jo_no,
+									// 						lot_no,
+									// 						product_code,
+									// 						`description`,
+									// 						needed_qty");
 								}
 								$row++;
 							?>
@@ -110,18 +128,18 @@
 									
 									<td width="8.3%">
 										<?php
-											if (count((array)$items) > 0) {
+											if (count((array)$scs) > 0) {
 												$prev_sc_no = [];
-												array_push($prev_sc_no, $items[0]->sc_no);
+												array_push($prev_sc_no, $scs[0]->sc_no);
 												$sc_no = '';
-												foreach ($items as $key => $item) {
-													if (!in_array($item->sc_no, $prev_sc_no)) {
-														$sc_no .= $item->sc_no.'</br>';
+												foreach ($scs as $key => $sc) {
+													if (!in_array($sc->sc_no, $prev_sc_no)) {
+														$sc_no .= $sc->sc_no.'</br>';
 													} else {
-														$sc_no = $item->sc_no.'</br>';
+														$sc_no = $sc->sc_no.'</br>';
 													}
 
-													array_push($prev_sc_no, $item->sc_no);
+													array_push($prev_sc_no, $sc->sc_no);
 												}
 												echo $sc_no;
 											}
@@ -174,12 +192,12 @@
 									<td width="4.3%">
 										<?php
 											if (count((array)$items) > 0) {
-												$assign_qty = 0;
+												$needed_qty = 0;
 												foreach ($items as $key => $item) {
-													$assign_qty += (double)$item->assign_qty;
+													$needed_qty += (double)$item->needed_qty;
 												}
 
-												echo $assign_qty;
+												echo $needed_qty;
 											}
 										?>
 									</td>
