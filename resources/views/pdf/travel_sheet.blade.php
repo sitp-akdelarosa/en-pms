@@ -70,7 +70,7 @@
 								<table class="table table-bordered table-sm" style="font-size:13px;width:100%;">
 									<thead>
 										<tr>
-											<td class="text-center" rowspan="2" colspan="3"><img src="{{ asset('/barcode.php').'?codetype=CODE39&size=30&text='.$header->jo_sequence.'&print=true' }}" class="img-fluid" alt="{{ $header->jo_sequence }}"></td> 
+											<td class="text-center" rowspan="2" colspan="3"><img src="{{ asset('/barcode.php').'?codetype=CODE128&size=30&text='.$header->jo_sequence.'&print=true' }}" class="img-fluid" alt="{{ $header->jo_sequence }}"></td> 
 											<td class="text-center">Type:</td>
 											<td class="text-center" colspan="4">{{ $header->type }}</td>
 											<td class="text-center" colspan="2">Material Used:</td>
