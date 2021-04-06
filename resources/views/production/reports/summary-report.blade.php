@@ -56,8 +56,8 @@ foreach ($user_accesses as $user_access){
 								<th rowspan="2">LOT NO.</th>
 								<th rowspan="2">DIV. NO.</th>
 								<th rowspan="2">PROCESS</th>
-		                        <th colspan="4">OUTPUT (QTY)</th>
-		                        <th colspan="4">WEIGHT</th>
+		                        <th colspan="6">OUTPUT (QTY)</th>
+		                        <th colspan="6">WEIGHT</th>
 		                        <th colspan="2">REJECTION RATE</th>
 		                        <th rowspan="2">JOB ORDER NO.</th>
 	                        </tr>
@@ -65,11 +65,15 @@ foreach ($user_accesses as $user_access){
 		                        <th>TOTAL</th>
 		                        <th>GOOD</th>
 		                        <th>REWORK</th>
-		                        <th>SCRAP</th>		                        
+		                        <th>SCRAP</th>
+								<th>ALLOY MIX</th>
+								<th>CONVERT</th>
 		                        <th>UNIT WT.</th>
 		                        <th>GOOD</th>
 		                        <th>REWORK</th>
 		                        <th>SCRAP</th>
+								<th>ALLOY MIX</th>
+								<th>CONVERT</th>
 		                        <th>REWORK</th>
 		                        <th>SCRAP</th>
 	                        </tr>

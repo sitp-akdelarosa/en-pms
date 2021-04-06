@@ -201,6 +201,12 @@ function productionSummaryDataTable(arr) {
       data: 'scrap',
       name: 'scrap'
     }, {
+      data: 'alloy_mix',
+      name: 'alloy_mix'
+    }, {
+      data: 'convert',
+      name: 'convert'
+    }, {
       data: 'finish_weight',
       name: 'finish_weight'
     }, {
@@ -212,6 +218,12 @@ function productionSummaryDataTable(arr) {
     }, {
       data: 'wscrap',
       name: 'wscrap'
+    }, {
+      data: 'walloy_mix',
+      name: 'walloy_mix'
+    }, {
+      data: 'wconvert',
+      name: 'wconvert'
     }, {
       data: 'rrework',
       name: 'rrework'
