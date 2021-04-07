@@ -1,13 +1,13 @@
 var prod_output_arr = [];
 var searched_jo_arr = [];
 
-$( function() {
+$(function() {
 
     makeSearchTable(searched_jo_arr);
-    checkAllCheckboxesInTable('.check_all','.check_item');
-	init();
+    checkAllCheckboxesInTable('.check_all', '.check_item');
+    init();
 
-	$('#tbl_searched_jo_body').on('click', '.btn_edit_travel_sheet',function() {
+    $('#tbl_searched_jo_body').on('click', '.btn_edit_travel_sheet', function() {
         $('#travel_sheet_process_id').val($(this).attr('data-id'));
         $('#travel_sheet_id').val($(this).attr('data-travel_sheet_id'));
         $('#jo_sequence').val($(this).attr('data-jo_sequence'));
@@ -35,31 +35,31 @@ $( function() {
         } else {
             $('#btn_save_output').prop('disabled', true);
         }
-		$('#modal_production_output').modal('show');
-	});
+        $('#modal_production_output').modal('show');
+    });
 
     $('#btn_delete_set').on('click', function() {
         var id;
         $(".check_item:checked").each(function() {
             id = ($(this).attr('data-travel_sheet_process_id'));
         });
-        if ($('.check_item:checked').length != 0){
+        if ($('.check_item:checked').length != 0) {
             $.ajax({
                 url: checkSequence,
                 type: 'POST',
                 dataType: 'JSON',
-                data: {_token: token,id:id},
+                data: { _token: token, id: id },
             }).done(function(data, textStatus, xhr) {
-                if(data.status == 'success'){
+                if (data.status == 'success') {
                     delete_set();
-                }else{
-                    msg('The quantity already done or ongoing to other processes','failed')
+                } else {
+                    msg('The quantity already done or ongoing to other processes', 'failed')
                 }
             }).fail(function(xhr, textStatus, errorThrown) {
                 ErrorMsg(xhr);
             });
-        }else{
-            msg('Please select at least 1 item' , 'warning');
+        } else {
+            msg('Please select at least 1 item', 'warning');
         }
     });
 
@@ -75,7 +75,7 @@ $( function() {
         }).done(function(data, textStatus, xhr) {
             if (data.status == 'failed') {
                 makeSearchTable([]);
-                msg(data.msg,data.status);
+                msg(data.msg, data.status);
             } else {
                 searched_jo_arr = data.jo;
                 makeSearchTable(searched_jo_arr);
@@ -83,41 +83,41 @@ $( function() {
         }).fail(function(xhr, textStatus, errorThrown) {
             makeSearchTable([]);
             ErrorMsg(xhr);
-        }).always( function(xhr,textStatus) {
+        }).always(function(xhr, textStatus) {
             $('.loadingOverlay').hide();
-        });      
+        });
     });
 
-    $('#search_jo').on('keyup',function() {
+    $('#search_jo').on('keyup', function() {
         if ($(this).val().trim() == "") {
             makeSearchTable([]);
-        } 
+        }
     })
 
-    $("#frm_prod_output").on('submit',function(e){ 
+    $("#frm_prod_output").on('submit', function(e) {
         e.preventDefault();
         var unprocessed = parseInt($('#unprocessed').val());
         var qtyTransfer = parseInt($('#total_qty_transfer').val());
-        var qty = (qtyTransfer == 0)? unprocessed:( unprocessed - qtyTransfer);
-        unprocessed = unprocessed - (parseInt($('#rework').val()) + parseInt($('#scrap').val()) + parseInt($('#good').val()));
+        var qty = (qtyTransfer == 0) ? unprocessed : (unprocessed - qtyTransfer);
+        unprocessed = unprocessed - (parseInt($('#rework').val()) + parseInt($('#scrap').val()) + parseInt($('#good').val()) + parseInt($('#convert').val()) + parseInt($('#alloy_mix').val()) + parseInt($('#nc').val()));
         qty = qty - (parseInt($('#rework').val()) + parseInt($('#scrap').val()) + parseInt($('#good').val()));
         //alert(qty);
-        if(parseInt($('#unprocessed').val()) == unprocessed){
-            msg('Please put some value on good , rework or scrap' , 'warning');
-        }else if(unprocessed < 0 && $('#current_process').val() !== 'CUTTING'){
-            msg("Please Input less than unprocessed","warning");
-        }else if(qtyTransfer > 0){
-            msg("The process has a pending Transfer Item of "+qtyTransfer,"warning");
-        }else if($('#good').val() < 0 || $('#scrap').val() < 0 || $('#rework').val() < 0 || $('#nc').val() < 0 || $('#alloy_mix').val() < 0 || $('#convert').val() < 0){
-            msg("Please Input valit number","warning");
-        }else{
+        if (parseInt($('#unprocessed').val()) == unprocessed) {
+            msg('Please put some value on quantity entries.', 'warning');
+        } else if (unprocessed < 0 && $('#current_process').val() !== 'CUTTING') {
+            msg("Please Input less than unprocessed", "warning");
+        } else if (qtyTransfer > 0) {
+            msg("The process has a pending Transfer Item of " + qtyTransfer, "warning");
+        } else if ($('#good').val() < 0 || $('#scrap').val() < 0 || $('#rework').val() < 0 || $('#nc').val() < 0 || $('#alloy_mix').val() < 0 || $('#convert').val() < 0) {
+            msg("Please Input valit number", "warning");
+        } else {
             $('.loadingOverlay-modal').show();
             $.ajax({
                 dataType: 'json',
-                type:'POST',
+                type: 'POST',
                 url: $(this).attr("action"),
-                data:  $(this).serialize()
-            }).done(function(data, textStatus, xhr){
+                data: $(this).serialize()
+            }).done(function(data, textStatus, xhr) {
                 prod_output_arr = [];
                 prod_output_arr = data.outputs;
                 makeProdOutputTable(prod_output_arr);
@@ -129,10 +129,10 @@ $( function() {
                 clear();
                 if (data.unprocessed !== undefined) {
                     $('#unprocessed').val(data.unprocessed);
-                }     
-            }).fail( function(xhr, textStatus, errorThrown) {
+                }
+            }).fail(function(xhr, textStatus, errorThrown) {
                 ErrorMsg(xhr);
-            }).always( function(xhr,textStatus) {
+            }).always(function(xhr, textStatus) {
                 $('.loadingOverlay-modal').hide();
             });
         }
@@ -143,7 +143,7 @@ $( function() {
         if ($(this).val() == '') {
             $(this).val(0);
         } else {
-            deductUnprocessed('good',$(this).val());
+            deductUnprocessed('good', $(this).val());
         }
     });
 
@@ -151,7 +151,7 @@ $( function() {
         if ($(this).val() == '') {
             $(this).val(0);
         } else {
-            deductUnprocessed('scrap',$(this).val());
+            deductUnprocessed('scrap', $(this).val());
         }
     });
 
@@ -159,7 +159,7 @@ $( function() {
         if ($(this).val() == '') {
             $(this).val(0);
         } else {
-            deductUnprocessed('rework',$(this).val());
+            deductUnprocessed('rework', $(this).val());
         }
     });
 
@@ -179,16 +179,16 @@ function init() {
     }
 }
 
-function deductUnprocessed(el_name,value) {
+function deductUnprocessed(el_name, value) {
     if (isNaN(value)) {
-        $('#'+el_name).addClass('is-invalid');
-        $('#'+el_name+'_feedback').addClass('invalid-feedback');
-        $('#'+el_name+'_feedback').html("Please input numbers only.");
+        $('#' + el_name).addClass('is-invalid');
+        $('#' + el_name + '_feedback').addClass('invalid-feedback');
+        $('#' + el_name + '_feedback').html("Please input numbers only.");
     } else {
         var unprocessed = parseInt($('#unprocessed').val());
         unprocessed = unprocessed - (parseInt($('#rework').val()) + parseInt($('#scrap').val()) + parseInt($('#good').val()));
-        if(unprocessed < 0 && $('#current_process').val() !== 'CUTTING'){
-            msg("Please Input less than unprocessed","warning");
+        if (unprocessed < 0 && $('#current_process').val() !== 'CUTTING') {
+            msg("Please Input less than unprocessed", "warning");
         }
     }
 }
@@ -198,7 +198,7 @@ function zero_it() {
 }
 
 function clear() {
-	$('.clear').val('');
+    $('.clear').val('');
 }
 
 function getOutputs(id) {
@@ -211,36 +211,41 @@ function getOutputs(id) {
             _token: token,
             id: id
         },
-    }).done(function(data, textStatus, xhr){
+    }).done(function(data, textStatus, xhr) {
         prod_output_arr = data;
         makeProdOutputTable(prod_output_arr);
-    }).fail( function(xhr, textStatus, errorThrown) {
+    }).fail(function(xhr, textStatus, errorThrown) {
         ErrorMsg(xhr);
     });
 }
 
 function makeProdOutputTable(arr) {
-	$('#tbl_production_ouput').dataTable().fnClearTable();
+    $('#tbl_production_ouput').dataTable().fnClearTable();
     $('#tbl_production_ouput').dataTable().fnDestroy();
     $('#tbl_production_ouput').dataTable({
         data: arr,
-        bLengthChange : false,
+        bLengthChange: false,
         searching: false,
-	    paging: false,
-        order: [[9,'asc']],
-        columns: [ 
-        	{ data: function(x) {
-                return "<input type='checkbox' class='table-checkbox check_item' data-travel_sheet_id='"+x.travel_sheet_id+"' data-travel_sheet_process_id='"+x.travel_sheet_process_id+"' value='"+x.id+"'>";
-            }, searchable: false, orderable: false },
-            {data:'unprocessed'},
-            {data:'good'},
-            {data:'rework'},
-            {data:'scrap'},
-            {data:'convert'},
-            {data:'alloy_mix'},
-            {data:'nc'},
-            {data: 'total'},
-            {data:'process_date'},
+        paging: false,
+        order: [
+            [9, 'asc']
+        ],
+        columns: [{
+                data: function(x) {
+                    return "<input type='checkbox' class='table-checkbox check_item' data-travel_sheet_id='" + x.travel_sheet_id + "' data-travel_sheet_process_id='" + x.travel_sheet_process_id + "' value='" + x.id + "'>";
+                },
+                searchable: false,
+                orderable: false
+            },
+            { data: 'unprocessed' },
+            { data: 'good' },
+            { data: 'rework' },
+            { data: 'scrap' },
+            { data: 'convert' },
+            { data: 'alloy_mix' },
+            { data: 'nc' },
+            { data: 'total' },
+            { data: 'process_date' },
         ],
         fnInitComplete: function() {
             $('.loadingOverlay-modal').hide();
@@ -250,36 +255,36 @@ function makeProdOutputTable(arr) {
 }
 
 function delete_set() {
-	var chkArray = [];
-	$(".check_item:checked").each(function() {
+    var chkArray = [];
+    $(".check_item:checked").each(function() {
         chkArray.push({
             travel_sheet_process_id: $(this).attr('data-travel_sheet_process_id'),
             travel_sheet_id: $(this).attr('data-travel_sheet_id'),
             id: $(this).val()
 
         });
-	});
+    });
 
-	if (chkArray.length > 0) {
-		$.ajax({
-			url: deleteProductonOutput,
-			type: 'POST',
-			dataType: 'JSON',
-			data: {_token: token,chkArray:chkArray},
-		}).done(function(data, textStatus, xhr) {
-			msg("Production Output was successfully deleted.", 'success');
+    if (chkArray.length > 0) {
+        $.ajax({
+            url: deleteProductonOutput,
+            type: 'POST',
+            dataType: 'JSON',
+            data: { _token: token, chkArray: chkArray },
+        }).done(function(data, textStatus, xhr) {
+            msg("Production Output was successfully deleted.", 'success');
             $('#unprocessed').val(data.unprocessed);
-			getOutputs( $('#travel_sheet_process_id').val());
+            getOutputs($('#travel_sheet_process_id').val());
             searched_jo_arr = [];
             searched_jo_arr = data.travel_sheet;
             makeSearchTable(searched_jo_arr);
             clear();
-		}).fail(function(xhr, textStatus, errorThrown) {
-			ErrorMsg(xhr);
-		});
-		
-	}
-    $('.check_all').prop('checked',false);
+        }).fail(function(xhr, textStatus, errorThrown) {
+            ErrorMsg(xhr);
+        });
+
+    }
+    $('.check_all').prop('checked', false);
 }
 
 function makeSearchTable(arr) {
@@ -288,94 +293,103 @@ function makeSearchTable(arr) {
     $('#tbl_searched_jo').dataTable().fnDestroy();
     $('#tbl_searched_jo').dataTable({
         data: arr,
-        bLengthChange : false,
+        bLengthChange: false,
         searching: false,
         paging: false,
-        order: [[1,'asc']],
-        columns: [ 
-            { data: function(x) {
-                return "<button class='btn btn-sm bg-blue btn_edit_travel_sheet' "+
-                            "data-travel_sheet_id='"+x.travel_sheet_id+"' "+
-                            "data-id='"+x.id+"' "+
-                            "data-jo_no='"+x.jo_no+"' "+
-                            "data-jo_sequence='"+x.jo_sequence+"' "+
-                            "data-prod_order_no='"+x.prod_order_no+"' "+
-                            "data-material_used='"+x.material_used+"' "+
-                            "data-material_heat_no='"+x.material_heat_no+"' "+
-                            "data-lot_no='"+x.lot_no+"' "+
-                            "data-type='"+x.type+"' "+
-                            "data-order_qty='"+x.order_qty+"' "+
-                            "data-previous_process='"+x.previous_process+"' "+
-                            "data-process='"+x.process+"' "+
-                            "data-sequence='"+x.sequence+"' "+
-                            "data-unprocessed='"+x.unprocessed+"' "+ 
-                            "data-prod_code='"+x.prod_code+"' "+
-                            "data-description='"+x.description+"' "+
-                            "data-total_issued_qty='"+x.total_issued_qty+"' "+
-                            "data-issued_qty='"+x.issued_qty+"' "+
-                            "data-sc_no='"+x.sc_no+"'>"+
-                            "<i class='fa fa-edit'></i>"+
+        order: [
+            [1, 'asc']
+        ],
+        columns: [{
+                data: function(x) {
+                    return "<button class='btn btn-sm bg-blue btn_edit_travel_sheet' " +
+                        "data-travel_sheet_id='" + x.travel_sheet_id + "' " +
+                        "data-id='" + x.id + "' " +
+                        "data-jo_no='" + x.jo_no + "' " +
+                        "data-jo_sequence='" + x.jo_sequence + "' " +
+                        "data-prod_order_no='" + x.prod_order_no + "' " +
+                        "data-material_used='" + x.material_used + "' " +
+                        "data-material_heat_no='" + x.material_heat_no + "' " +
+                        "data-lot_no='" + x.lot_no + "' " +
+                        "data-type='" + x.type + "' " +
+                        "data-order_qty='" + x.order_qty + "' " +
+                        "data-previous_process='" + x.previous_process + "' " +
+                        "data-process='" + x.process + "' " +
+                        "data-sequence='" + x.sequence + "' " +
+                        "data-unprocessed='" + x.unprocessed + "' " +
+                        "data-prod_code='" + x.prod_code + "' " +
+                        "data-description='" + x.description + "' " +
+                        "data-total_issued_qty='" + x.total_issued_qty + "' " +
+                        "data-issued_qty='" + x.issued_qty + "' " +
+                        "data-sc_no='" + x.sc_no + "'>" +
+                        "<i class='fa fa-edit'></i>" +
                         "</button>";
-            }, searchable: false, orderable: false, width: '3.33%' },
-            { data:'jo_no', width: '8.33%'},
-            { data:'jo_sequence', width: '10.33%'},
-            { data:'prod_code', width: '11.33%'},
-            { data:'div_code', width: '8.33%'},
-            { data:'issued_qty', width: '8.33%'},
-            { data:'process', width: '8.33%'},
-            { data:'unprocessed', width: '8.33%'},
-            { data:'good', width: '8.33%'},
-            { data:'rework', width: '8.33%'},
-            { data:'scrap', width: '8.33%'},
-            { data: function(x) {
+                },
+                searchable: false,
+                orderable: false,
+                width: '3.33%'
+            },
+            { data: 'jo_no', width: '8.33%' },
+            { data: 'jo_sequence', width: '10.33%' },
+            { data: 'prod_code', width: '11.33%' },
+            { data: 'div_code', width: '8.33%' },
+            { data: 'issued_qty', width: '8.33%' },
+            { data: 'process', width: '8.33%' },
+            { data: 'unprocessed', width: '8.33%' },
+            { data: 'good', width: '8.33%' },
+            { data: 'rework', width: '8.33%' },
+            { data: 'scrap', width: '8.33%' },
+            {
+                data: function(x) {
 
-                switch (x.status) {
-                    case 1:
-                    case '1':
-                        return 'DONE PROCESS'
-                        break;
-                    case 2:
-                    case '2':
-                        return 'ON-GOING'
-                        break;
-                    case 3:
-                    case '31':
-                        return 'CANCELLED'
-                        break;
-                    case 4:
-                    case '4':
-                        return 'TRANSFER ITEM'
-                        break;
-                    case 5:
-                    case '5':
-                        return 'ALL PROCESS DONE'
-                        break;
-                
-                    case 7:
-                    case '7':
-                        return 'RECEIVED';
-                        break;
-                        
-                    case 0:
-                    case '0':
-                        return 'WAITING';
-                        break;
-                }
-                // var status = 'ON PROCESS';
-                // if (x.status == 1) {
-                //     status = 'DONE'; //READY FOR FG
-                // }else if(x.status == 5){
-                //     status = 'FINISHED';
-                // }else if(x.status == 3){
-                //     status = 'TRANSFER ITEM';
-                // }
-                // return status;
-            }, width: '8.33%'},
+                    switch (x.status) {
+                        case 1:
+                        case '1':
+                            return 'DONE PROCESS'
+                            break;
+                        case 2:
+                        case '2':
+                            return 'ON-GOING'
+                            break;
+                        case 3:
+                        case '31':
+                            return 'CANCELLED'
+                            break;
+                        case 4:
+                        case '4':
+                            return 'TRANSFER ITEM'
+                            break;
+                        case 5:
+                        case '5':
+                            return 'ALL PROCESS DONE'
+                            break;
+
+                        case 7:
+                        case '7':
+                            return 'RECEIVED';
+                            break;
+
+                        case 0:
+                        case '0':
+                            return 'WAITING';
+                            break;
+                    }
+                    // var status = 'ON PROCESS';
+                    // if (x.status == 1) {
+                    //     status = 'DONE'; //READY FOR FG
+                    // }else if(x.status == 5){
+                    //     status = 'FINISHED';
+                    // }else if(x.status == 3){
+                    //     status = 'TRANSFER ITEM';
+                    // }
+                    // return status;
+                },
+                width: '8.33%'
+            },
         ],
         createdRow: function(row, data, dataIndex) {
             if (data.status == 1 || data.status == '1') {
                 $(row).css('background-color', 'rgb(139 241 191)'); // GREEN
-				$(row).css('color', '#000000');
+                $(row).css('color', '#000000');
             }
         },
         fnInitComplete: function() {
@@ -390,10 +404,10 @@ function getOperator() {
         url: getOperatorURl,
         type: 'POST',
         dataType: 'JSON',
-        data: {_token: token,operator:$('#operator').val()},
+        data: { _token: token, operator: $('#operator').val() },
     }).done(function(data, textStatus, xhr) {
         console.log('success');
-    }).fail( function(xhr, textStatus, errorThrown) {
+    }).fail(function(xhr, textStatus, errorThrown) {
         ErrorMsg(xhr);
     });
 }
@@ -403,10 +417,10 @@ function getTransferQty(id) {
         url: getTransferQtyURL,
         type: 'POST',
         dataType: 'JSON',
-        data: {_token: token,id:id},
+        data: { _token: token, id: id },
     }).done(function(data, textStatus, xhr) {
         $('#total_qty_transfer').val(data);
-    }).fail( function(xhr, textStatus, errorThrown) {
+    }).fail(function(xhr, textStatus, errorThrown) {
         ErrorMsg(xhr);
     });
 }

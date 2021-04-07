@@ -191,11 +191,11 @@ $(function () {
     var unprocessed = parseInt($('#unprocessed').val());
     var qtyTransfer = parseInt($('#total_qty_transfer').val());
     var qty = qtyTransfer == 0 ? unprocessed : unprocessed - qtyTransfer;
-    unprocessed = unprocessed - (parseInt($('#rework').val()) + parseInt($('#scrap').val()) + parseInt($('#good').val()));
+    unprocessed = unprocessed - (parseInt($('#rework').val()) + parseInt($('#scrap').val()) + parseInt($('#good').val()) + parseInt($('#convert').val()) + parseInt($('#alloy_mix').val()) + parseInt($('#nc').val()));
     qty = qty - (parseInt($('#rework').val()) + parseInt($('#scrap').val()) + parseInt($('#good').val())); //alert(qty);
 
     if (parseInt($('#unprocessed').val()) == unprocessed) {
-      msg('Please put some value on good , rework or scrap', 'warning');
+      msg('Please put some value on quantity entries.', 'warning');
     } else if (unprocessed < 0 && $('#current_process').val() !== 'CUTTING') {
       msg("Please Input less than unprocessed", "warning");
     } else if (qtyTransfer > 0) {
