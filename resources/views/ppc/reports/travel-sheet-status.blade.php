@@ -28,7 +28,7 @@
 	                            </div>
 
 	                            <div class="form-group row">
-	                    			<label for="character_num" class="col-sm-3 control-label">SC Number.:</label>
+	                    			<label for="character_num" class="col-sm-3 control-label">Product Code.:</label>
 	                                <div class="col-sm-9">
 	                                    <input type="text" class="form-control validate clear switch" name="sc_no" id="sc_no" disabled>
 	                                    <div id="sc_no_feedback"></div>
@@ -36,7 +36,7 @@
 	                            </div>
 
 	                            <div class="form-group row">
-	                    			<label for="character_code" class="col-sm-3 control-label">Product Code:</label>
+	                    			<label for="character_code" class="col-sm-3 control-label">Description:</label>
 	                                <div class="col-sm-9">
 	                                    <input type="text" class="form-control validate clear switch" name="prod_code" id="prod_code" disabled>
 	                                    <div id="prod_code_feedback"></div>
@@ -65,7 +65,6 @@
 											<option value="3">Cancelled</option>
 											<option value="4">Proceeded to Production</option>
 											<option value="5">Closed</option>
-											<option value="6">In Production</option>
 			                           	</select>
 	                                     	<div id="status_feedback"></div>
 									</div>
@@ -83,11 +82,11 @@
 													<input type="checkbox" class="table-checkbox check_all">
 												</th>
 												<th width="5%"></th>
-												<th>SC #</th>
 												<th>JO #</th>
+												<th>SC #</th>
 												<th>Product Code</th>
 												<th>Description</th>
-												<th>Based Qty</th>
+												<th>Qty</th>
 												<th>Prod Output Qty</th>
 												<th>Remaining</th>
 												<th>Current Process</th>
@@ -102,7 +101,7 @@
 							</div>
 						</div>
 					</form>
-				</div>
+				</div>s
 			</div>
 					
     	</div>

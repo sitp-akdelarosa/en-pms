@@ -83,6 +83,7 @@ foreach ($user_accesses as $user_access){
                         <th>Unprocessed</th>
                         <th>Good</th>
                         <th>Rework</th>
+                        <th>Reworked</th>
                         <th>Scrap</th>
                         <th>Status</th>
                     </tr>

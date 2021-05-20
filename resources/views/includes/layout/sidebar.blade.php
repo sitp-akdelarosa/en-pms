@@ -35,7 +35,7 @@
                                 ->select('ut.description','ut.category')
                                 ->where('u.id',Auth::user()->id)
                                 ->first();
-        ?>
+        ?>  
 
         <ul class="sidebar-menu" data-widget="tree">
             @if ($user_accecss->category == 'PRODUCTION')

@@ -498,7 +498,7 @@ class ProductionOutputController extends Controller
         $alloy_mix = ((int)$req->alloy_mix == 0)? 0:(int)$req->alloy_mix;
         $nc = ((int)$req->nc == 0)? 0:(int)$req->nc;
         
-        $sum = $good + $rework + $scrap + $convert + $alloy_mix + $nc;
+        $sum = $good + $rework + $scrap + $convert + $alloy_mix;
         $diff = $unprocessed - $sum;
         return $diff;
     }

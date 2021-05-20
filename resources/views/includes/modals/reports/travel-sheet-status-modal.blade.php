@@ -16,20 +16,18 @@
 
                     <div class="row">
                         <div class="col-md-4">
-
+                            <div class="form-group row">
+                                <label for="as_jo_sequence" class="col-sm-4 control-label mt-5">JO No.:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control validate srch-clear" name="as_jo_sequence" id="as_jo_sequence">
+                                    <div id="as_jo_sequence_feedback"></div>
+                                </div>
+                            </div>
                             <div class="form-group row">
                                 <label for="as_sc_no" class="col-sm-4 control-label mt-5">SC No.:</label>
                                 <div class="col-sm-8">
                                     <input type="text" class="form-control validate srch-clear" name="as_sc_no" id="as_sc_no">
                                     <div id="as_sc_no_feedback"></div>
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label for="as_jo_sequence" class="col-sm-4 control-label mt-5">J.O. No.:</label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control validate srch-clear" name="as_jo_sequence" id="as_jo_sequence">
-                                    <div id="as_jo_sequence_feedback"></div>
                                 </div>
                             </div>
 
@@ -102,6 +100,25 @@
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control validate srch-clear" name="as_crude_qty" id="as_crude_qty">
                                     <div id="as_crude_qty_feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label for="srch_material_heat_no" class="col-sm-3 control-label mt-5">Merge to Mother JO:</label>
+                            </div>
+                            <div class="form-group row">
+                                <label for="as_jo_no" class="col-sm-3 control-label mt-5">To JO:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control validate srch-clear" name="as_jo_no" id="as_jo_no">
+                                    <div id="as_jo_no_feedback"></div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="as_ch_qty" class="col-sm-3 control-label mt-5">Child Qty:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control validate srch-clear" name="as_ch_qty" id="as_ch_qty">
+                                    <div id="as_ch_qty_feedback"></div>
                                 </div>
                             </div>
                         </div>

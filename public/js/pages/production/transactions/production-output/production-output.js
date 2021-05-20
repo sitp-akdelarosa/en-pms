@@ -428,6 +428,9 @@ function makeSearchTable(arr) {
       data: 'rework',
       width: '8.33%'
     }, {
+      data: 'nc',
+      width: '8.33%'
+    }, {
       data: 'scrap',
       width: '8.33%'
     }, {

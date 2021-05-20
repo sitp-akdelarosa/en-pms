@@ -228,7 +228,7 @@
 				            </div>
 
 				            <div class="form-group row">
-				                <div class="col-sm-10">
+										                <div class="col-sm-10">
 				                    <div class="input-group input-group-sm">
 				                        <div class="input-group-prepend">
 				                            <span class="input-group-text">Operator ID:</span>
@@ -299,6 +299,18 @@
 				                </div>
 				            </div>
 
+				            <div class="form-group row">
+				                <div class="col-sm-10">
+				                    <div class="input-group input-group-sm">
+				                        <div class="input-group-prepend">
+				                            <span class="input-group-text">Reworked:</span>
+				                        </div>
+				                        <input type="number" step='1' class="form-control validate zero" name="nc" id="nc" value="0">
+				                        <span id="nc_feedback"></span>
+				                    </div>
+				                </div>
+							</div>
+
 				            <div class="form-group row mb-15">
 				                <div class="col-sm-10">
 				                    <div class="input-group input-group-sm">
@@ -323,18 +335,6 @@
 				                </div>
 				            </div>
 
-				            <div class="form-group row">
-				                <div class="col-sm-10">
-				                    <div class="input-group input-group-sm">
-				                        <div class="input-group-prepend">
-				                            <span class="input-group-text">NC:</span>
-				                        </div>
-				                        <input type="number" step='1' class="form-control validate zero" name="nc" id="nc" value="0">
-				                        <span id="nc_feedback"></span>
-				                    </div>
-				                </div>
-							</div>
-
                     	</div>
 
                     	<div class="col-md-9">
@@ -347,9 +347,9 @@
 	                                <th width="10%">Good</th>
 	                                <th width="10%">Rework</th>
 	                                <th width="10%">Scrap</th>
+	                                <th width="15%">Reworked</th>
 	                                <th width="10%">Convert</th>
 	                                <th width="20%">Alloy Mix</th>
-	                                <th width="30%">Non Conformance</th>
 	                                <th width="10%">Total</th>
 	                                <th width="20%">Process Date/Time</th>
 		                        </thead>

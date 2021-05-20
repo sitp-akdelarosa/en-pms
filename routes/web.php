@@ -415,6 +415,24 @@ Route::group(['middleware' => ['ajax-session-expired', 'auth', 'deleted_user', '
 			Route::post('/proceed-to-production', 'PPC\Transaction\TravelSheetController@proceedToProduction')
 				->name('transaction.travel-sheet.proceed-to-production');
 		});
+		Route::group(['prefix' => 'rework-sheet'], function () {
+			Route::get('/', 'PPC\Transaction\ReworkSheetController@index')
+				->name('transaction.rework-sheet');
+			Route::get('/set-up/jo-list', 'PPC\Transaction\ReworkSheetController@getJoDetails')
+				->name('transaction.rework-sheet.jo-list');
+			Route::get('/set-up/process', 'PPC\Transaction\ReworkSheetController@getProcess')
+				->name('transaction.rework-sheet.process');
+			Route::post('/set-up/save', 'PPC\Transaction\ReworkSheetController@save_travel_sheet_setup')
+				->name('transaction.rework-sheet.set-up.save');
+			Route::get('/pre-rework-sheet-data', 'PPC\Transaction\ReworkSheetController@getPreTravelSheetData')
+				->name('transaction.rework-sheet.pre-rework-sheet-data');
+			Route::post('/get-Sc_no', 'PPC\Transaction\ReworkSheetController@getSc_no')
+				->name('transaction.rework-sheet.get-Sc_no');
+			Route::get('/get-process-div', 'PPC\Transaction\ReworkSheetController@getProcessDiv')
+				->name('transaction.rework-sheet.get-process-div');
+			Route::post('/proceed-to-production', 'PPC\Transaction\ReworkSheetController@proceedToProduction')
+				->name('transaction.rework-sheet.proceed-to-production');
+		});
 
 		Route::group(['prefix' => 'cutting-schedule'], function () {
 			Route::get('/', 'PPC\Transaction\CuttingScheduleController@index')
